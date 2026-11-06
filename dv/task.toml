@@ -65,6 +65,20 @@ gyro_bias_dps = 0.2
 accel_bias_ms2 = 0.05
 wind_ms = 0.0
 
+[partial]                # dv/partial.py: credit alongside the strict gates, see docs/LAYERS.md
+lift_m = 0.3             # cleared this: lifted off (also what the judge needs before it counts a touchdown)
+overshoot_zero_x = 1.0   # altitude credit is gone this many alt_m above the band
+touchdown_zero_x = 3.0   # landing credit is gone at this many times the touchdown limit
+miss_zero_x = 5.0        # accuracy credit is gone at this many times the land radius
+tilt_floor = 0.5         # a flight past the tilt limit keeps this share at twice the limit
+fail_cap = 0.95          # a failed flight never scores as a pass
+[partial.weights]
+liftoff = 0.2
+altitude = 0.2
+hold = 0.2
+landing = 0.2
+accuracy = 0.2
+
 [[gates]]
 id = "G1"
 name = "static"

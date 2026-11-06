@@ -49,6 +49,21 @@ Per run in `results.json`, per model on the leaderboard:
 - `prediction_error`: `{hover_throttle_pct, flight_time_pct}`
 - Cost-versus-mass Pareto front: across all viable designs seen, per model
 
+### Partial credit
+
+`dv/partial.py`, numbers in `task.toml [partial]`. Alongside the strict `score`, `gates` and `first_test_score`, which do not change; nothing here reaches an agent.
+
+- **One flight**, 0 to 1. A passing flight is 1.0. A failed flight sums five parts at weight 0.2 each, multiplies by a tilt factor, and is capped at 0.95:
+  - lift-off: 1 if peak height reached 0.3 m. Without it every part is 0.
+  - altitude: peak / (target - tolerance), at most 1, falling to 0 at one target height above the band.
+  - hold: longest time in the band / hold time, at most 1.
+  - landing: 1 up to the touchdown limit, falling to 0 at 3 times it. 0 if it never came down and stopped, or ended tipped over.
+  - accuracy: 1 inside the land radius, falling to 0 at 5 times it. Needs a landing.
+  - tilt factor: 1 up to the tilt limit, falling to 0.5 at twice it.
+- **Gates**: G1 (10) = fraction of static rules passed. G2 (10) = fraction of L1 margins met. Both 0 for a design with unchosen slots or that does not build. G3 30, G4 15, G5 15 = mission score x points. G6 20 = mean mission score over its seeds.
+- **Flights**: L0 or L1 failure still stops before the simulator, so an over-budget design earns no flight points. After G3, the rest fly whether or not G3 passed, if the design lifted off in G3; otherwise they are 0 unflown.
+- All on the held-out seed, for the state at final and at first test. Fields: `partial_score`, `partial_gates`, `first_test.partial_score`, `first_test.partial_gates`. `harness/first_test.py --all` adds them.
+
 ## Baselines (`harness/baseline.py`)
 
 - **Brute force**: enumerate the whole catalog through L0 and L1, report how many pass, then fly the cheapest and lightest non-dominated few with the reference controller.

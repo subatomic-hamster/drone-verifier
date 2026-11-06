@@ -2,16 +2,22 @@
 `verify` that flew; L0/L1 refusals fly nothing, so they do not count), flies that design and controller on the held-out seed through V.run_gates, and adds `first_test` and `first_test_score`
 to results.json. `score` stays the final score. Nothing else in the run dir is written. Safe to rerun; a finished run only, so live sessions are left alone.
 
-On hfbox: python harness/first_test.py [--force] RUN_DIR...    or --all ($DV_RUNS/*)    --dump prints what is done, as JSON
-On the laptop: python harness/first_test.py --pull             merges --dump into results/*/results.json, matched by the event log's first timestamp"""
+Also adds partial credit (dv/partial.py) for the final and first-test states: partial_score, partial_gates, first_test.partial_score, first_test.partial_gates; baselines too.
+
+On hfbox: python harness/first_test.py [--force | --repartial] RUN_DIR...    or --all ($DV_RUNS/*)    --dump prints what is done, as JSON
+On the laptop: python harness/first_test.py --pull             merges --dump into results/*/results.json, matched by the event log's first timestamp (a baseline by model)"""
 
 import json
 import os
 import subprocess
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+APPLY = threading.Lock()
+WORKERS = 4
 
 
 def last_run(path):
@@ -48,7 +54,7 @@ def replay(evs):
                 # as Session.design_set: slots merge into the current choices, and a call that raises changes nothing
                 merged = {**choices, **(e.get("args", {}).get("choices") or {})}
                 try:
-                    D.apply(merged)
+                    _apply(merged)
                     choices = merged
                 except (D.DesignError, ValueError, TypeError, KeyError):
                     pass
@@ -64,14 +70,13 @@ def replay(evs):
 
 def first_test(run_dir, seed=None):
     """-> the first_test dict for a run dir. No file is written here; the flights use their own temp dirs."""
-    from dv import design as D
     from dv import heldout
     from dv import verify as V
 
     st = replay(last_run(Path(run_dir) / "events.jsonl"))
     if "reason" in st:
         return dict(score=0.0, gates=[], trigger=None, scenario=None, attempt_flown=None, design=None, cost_usd=None, mass_kg=None, reason=st["reason"])  # fmt: skip
-    b = D.apply(st["choices"])
+    b = _apply(st["choices"])
     r = V.run_gates(b, st["code"], heldout.heldout_seed() if seed is None else seed)
     return dict(
         score=r["score"],
@@ -85,34 +90,80 @@ def first_test(run_dir, seed=None):
     )
 
 
-def add_fields(path, first):
-    """Adds the two fields to a results.json, atomically: nothing else in it changes."""
-    path = Path(path)
-    res = json.loads(path.read_text())
-    res["first_test"], res["first_test_score"] = first, first["score"]
-    tmp = path.with_suffix(".json.tmp")
+def _write(path, res):
+    """results.json, atomically."""
+    tmp = Path(path).with_suffix(".json.tmp")
     tmp.write_text(json.dumps(res, indent=1))
     os.replace(tmp, path)
     return res
 
 
+def add_fields(path, first):
+    """Adds the two fields to a results.json: nothing else in it changes."""
+    res = json.loads(Path(path).read_text())
+    res["first_test"], res["first_test_score"] = first, first["score"]
+    return _write(path, res)
+
+
+def _apply(choices):
+    from dv import design as D
+
+    with APPLY:  # one design at a time: --all scores runs in threads
+        return D.apply(choices)
+
+
+def partial_fields(rd, res):
+    """Partial credit for the final state (the run dir's design and controller, as heldout.run) and the first-test state. -> the fields to add; strict fields are not touched."""
+    from dv import heldout
+    from dv import partial as P
+
+    seed = heldout.heldout_seed()
+    choices = json.loads((rd / "design.json").read_text()) if (rd / "design.json").exists() else {}  # fmt: skip
+    code = (rd / "controller.py").read_text() if (rd / "controller.py").exists() else ""
+    final = P.score(_apply(choices), code, seed)
+    if res.get(
+        "baseline"
+    ):  # one shot: leaderboard.py reads its final as its first test
+        return final, None
+    st = replay(last_run(rd / "events.jsonl"))
+    if "reason" in st:
+        return final, dict(partial_score=0.0, partial_gates=[])
+    same = st["choices"] == choices and st["code"] == code
+    return final, final if same else P.score(_apply(st["choices"]), st["code"], seed)
+
+
+def add_partial(rd, res):
+    final, first = partial_fields(rd, res)
+    res = json.loads((rd / "results.json").read_text())
+    res.update(final)
+    if first is not None:
+        res["first_test"].update(first)
+    return _write(rd / "results.json", res)
+
+
 def finished(run_dir):
-    """A live session has no `final` yet in its last run (and its results.json, if any, would be an older run's)."""
+    """A live session has no `final` yet in its last run (and its results.json, if any, would be an older run's). A baseline has no session at all."""
     rd = Path(run_dir)
-    if not (rd / "results.json").exists() or not (rd / "events.jsonl").exists():
+    if not (rd / "results.json").exists():
+        return False
+    if json.loads((rd / "results.json").read_text()).get("baseline"):
+        return True
+    if not (rd / "events.jsonl").exists():
         return False
     return any(e.get("kind") == "final" for e in last_run(rd / "events.jsonl"))
 
 
-def process(run_dir, force=False):
-    """-> results dict, or None for a run that is not finished."""
+def process(run_dir, force=False, repartial=False):
+    """-> results dict, or None for a run that is not finished. Skips what is already there: force redoes everything, repartial the partial fields only."""
     rd = Path(run_dir)
     if not finished(rd):
         return None
     res = json.loads((rd / "results.json").read_text())
-    if "first_test" in res and not force:
-        return res
-    return add_fields(rd / "results.json", first_test(rd))
+    if not res.get("baseline") and ("first_test" not in res or force):
+        res = add_fields(rd / "results.json", first_test(rd))
+    if "partial_score" not in res or force or repartial:
+        res = add_partial(rd, res)
+    return res
 
 
 def t0(run_dir):
@@ -120,14 +171,20 @@ def t0(run_dir):
         return json.loads(f.readline())["t"]
 
 
+def key(run_dir, res):
+    """What identifies a run on both machines: the event log's first timestamp; a baseline's model."""
+    return f"baseline:{res['model']}" if res.get("baseline") else str(t0(run_dir))
+
+
 def dump(runs):
-    """Finished run dirs that have the fields -> {first event time: {run, first_test, first_test_score}}."""
+    """Finished run dirs that have the fields -> {key: {run, first_test, first_test_score, partial_score, partial_gates}}."""
     out = {}
     for rd in runs:
         if finished(rd):
             res = json.loads((rd / "results.json").read_text())
-            if "first_test" in res:
-                out[str(t0(rd))] = dict(run=rd.name, first_test=res["first_test"], first_test_score=res["first_test_score"])  # fmt: skip
+            got = {k: res[k] for k in ("first_test", "first_test_score", "partial_score", "partial_gates") if k in res}  # fmt: skip
+            if got:
+                out[key(rd, res)] = dict(run=rd.name, **got)
     return out
 
 
@@ -137,36 +194,46 @@ def pull():
     if r.returncode:
         sys.exit(f"ERROR: --dump failed on hfbox: {r.stderr[-300:]}")
     done = json.loads(r.stdout)
-    print(f"{'run':24} {'first_test_score':>16} {'final score':>12}")
+    print(HEAD)
     for f in sorted((ROOT / "results").glob("*/results.json")):
-        if not (f.parent / "events.jsonl").exists():
+        res = json.loads(f.read_text())
+        if not res.get("baseline") and not (f.parent / "events.jsonl").exists():
             continue
-        got = done.get(str(t0(f.parent)))
+        got = done.get(key(f.parent, res))
         if got is None:
-            print(f"{f.parent.name:24} {'not scored':>16}")
+            print(f"{f.parent.name:24} not scored")
             continue
-        res = add_fields(f, got["first_test"])
-        print(f"{f.parent.name:24} {res['first_test_score']:16g} {res['score']:12g}")
+        res.update({k: v for k, v in got.items() if k != "run"})
+        print(row(f.parent.name, _write(f, res)))
+
+
+HEAD = f"{'run':24} {'first partial':>13} {'final partial':>13} {'first strict':>12} {'final strict':>12}"
+
+
+def row(name, res):
+    ft = res.get("first_test") or {}
+    first = ft.get("partial_score", res.get("partial_score"))
+    strict = res.get("first_test_score", res["score"] if res.get("baseline") else None)
+    return f"{name:24} {first!s:>13} {res.get('partial_score')!s:>13} {strict!s:>12} {res['score']!s:>12}"
 
 
 def main():
     args = sys.argv[1:]
-    force = "--force" in args
-    args = [a for a in args if a != "--force"]
+    force, repartial = "--force" in args, "--repartial" in args
+    args = [a for a in args if a not in ("--force", "--repartial")]
     if "--pull" in args:
         return pull()
     runs = Path(os.environ.get("DV_RUNS", "runs"))
     every = sorted(p for p in runs.iterdir() if p.is_dir()) if ("--all" in args or "--dump" in args) else []  # fmt: skip
     if "--dump" in args:
         return print(json.dumps(dump(every)))
-    print(f"{'run':24} {'first_test_score':>16} {'final score':>12}  first test")
-    for rd in every or [Path(a) for a in args]:
-        res = process(rd, force)
-        if res is None:
-            print(f"{rd.name:24} {'not finished':>16}", flush=True)
-            continue
-        ft = res["first_test"]
-        print(f"{rd.name:24} {res['first_test_score']:16g} {res['score']:12g}  {ft['trigger']} {ft['scenario']} flown pass {ft['attempt_flown']}{' ' + ft['reason'] if ft.get('reason') else ''}", flush=True)  # fmt: skip
+    todo = [rd for rd in (every or [Path(a) for a in args]) if finished(rd)]
+    # the flights queue on the machine's flock slots, whatever else is flying
+    with ThreadPoolExecutor(WORKERS) as ex:
+        done = list(ex.map(lambda rd: process(rd, force, repartial), todo))
+    print(HEAD)
+    for rd, res in zip(todo, done):
+        print(row(rd.name, res), flush=True)
     return None
 
 
