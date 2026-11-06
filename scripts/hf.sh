@@ -9,7 +9,7 @@ DIR=/workspace/wt/dv
 ENV="export OMP_NUM_THREADS=1 PYTHONPATH=$DIR/src:/workspace/wt/dv-dvsim/src/examples/hopper DV_RUNS=$DIR/runs DVSIM_ROOT=/workspace/wt/dv-dvsim/src PATH=/workspace/wt/dv-dvsim/src/.venv/bin:\$PATH; cd $DIR/src"
 s() { ssh -o BatchMode=yes -o ConnectTimeout=20 "$HOST" "$@" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
 
-sync() { rsync -a --delete --exclude .git --exclude runs --exclude results --exclude __pycache__ -e 'ssh -o BatchMode=yes -o ConnectTimeout=20' "$ROOT/" "$HOST:$DIR/src/" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
+sync() { rsync -a --delete --exclude .git --exclude runs --exclude results --exclude __pycache__ --exclude vendor/dvsim/.venv --exclude vendor/dvsim/build -e 'ssh -o BatchMode=yes -o ConnectTimeout=20' "$ROOT/" "$HOST:$DIR/src/" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
 
 case ${1:?usage} in
 sync) s "mkdir -p $DIR/src $DIR/runs $DIR/logs $DIR/slots"; sync ;;

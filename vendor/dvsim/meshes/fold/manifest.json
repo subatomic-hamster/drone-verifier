@@ -1,0 +1,3209 @@
+{
+ "generated_by": "cad/fold/build.py",
+ "units": "m for meshes, com, axes; mm in the CAD",
+ "params": {
+  "L_mm": 200.0,
+  "h_layer_mm": 15.0,
+  "link_thickness_mm": 8.0,
+  "hinge_stop_deg": 78.0,
+  "roll_stop_deg": 35.0,
+  "tilt_stop_deg": 120.0,
+  "arm_ax_mm": 60.0,
+  "arm_ay_mm": 60.0,
+  "platform_z_mm": 46.5,
+  "platform_z_batt_mm": 19.0
+ },
+ "bodies": [
+  "rail1",
+  "block2",
+  "link2",
+  "block3",
+  "rail3",
+  "block4",
+  "link4",
+  "block1"
+ ],
+ "joints": [
+  {
+   "name": "H2",
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "point_m": [
+    0.2,
+    0.0,
+    0.0
+   ],
+   "stop_deg": 78.0,
+   "firmware_deg": 75.0
+  },
+  {
+   "name": "R2",
+   "axis": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "point_m": [
+    0.2,
+    0.0,
+    0.015
+   ],
+   "stop_deg": 35.0,
+   "firmware_deg": 30.0
+  },
+  {
+   "name": "H3",
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "point_m": [
+    0.2,
+    0.2,
+    0.0
+   ],
+   "stop_deg": 78.0,
+   "firmware_deg": 75.0
+  },
+  {
+   "name": "R3",
+   "axis": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "point_m": [
+    0.2,
+    0.2,
+    0.0
+   ],
+   "stop_deg": 35.0,
+   "firmware_deg": 30.0
+  },
+  {
+   "name": "H4",
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "point_m": [
+    0.0,
+    0.2,
+    0.0
+   ],
+   "stop_deg": 78.0,
+   "firmware_deg": 75.0
+  },
+  {
+   "name": "R4",
+   "axis": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "point_m": [
+    0.0,
+    0.2,
+    0.015
+   ],
+   "stop_deg": 35.0,
+   "firmware_deg": 30.0
+  },
+  {
+   "name": "H1",
+   "axis": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "point_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "stop_deg": 78.0,
+   "firmware_deg": 75.0
+  },
+  {
+   "name": "R1",
+   "axis": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "point_m": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "stop_deg": 35.0,
+   "firmware_deg": 30.0
+  }
+ ],
+ "pods": [
+  {
+   "pod": 1,
+   "body": "rail1",
+   "tilt_axis_point_m": [
+    -0.06,
+    -0.06,
+    0.0
+   ],
+   "tilt_axis_dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "tilt_stop_deg": 120.0,
+   "firmware_tilt_deg": 115.0,
+   "prop_diameter_m": 0.0762,
+   "prop_above_axis_m": 0.0265
+  },
+  {
+   "pod": 2,
+   "body": "rail1",
+   "tilt_axis_point_m": [
+    0.26,
+    -0.06,
+    0.0
+   ],
+   "tilt_axis_dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "tilt_stop_deg": 120.0,
+   "firmware_tilt_deg": 115.0,
+   "prop_diameter_m": 0.0762,
+   "prop_above_axis_m": 0.0265
+  },
+  {
+   "pod": 3,
+   "body": "rail3",
+   "tilt_axis_point_m": [
+    0.26,
+    0.26,
+    0.0
+   ],
+   "tilt_axis_dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "tilt_stop_deg": 120.0,
+   "firmware_tilt_deg": 115.0,
+   "prop_diameter_m": 0.0762,
+   "prop_above_axis_m": 0.0265
+  },
+  {
+   "pod": 4,
+   "body": "rail3",
+   "tilt_axis_point_m": [
+    -0.06,
+    0.26,
+    0.0
+   ],
+   "tilt_axis_dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "tilt_stop_deg": 120.0,
+   "firmware_tilt_deg": 115.0,
+   "prop_diameter_m": 0.0762,
+   "prop_above_axis_m": 0.0265
+  }
+ ],
+ "totals": {
+  "modelled_g": 528.31,
+  "printed_cf_g": 118.91
+ },
+ "items": [
+  {
+   "name": "rail_plates.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "link",
+   "mass_g": 11.159,
+   "mass_kg": 0.01115929571071518,
+   "com_m": [
+    0.10499999999999998,
+    -6.776900066383009e-20,
+    3.368711489308835e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.939327247295533e-07,
+     8.769451653733994e-22,
+     7.796673647438485e-22
+    ],
+    [
+     8.769451653733994e-22,
+     1.9770454457522147e-05,
+     6.108772746908166e-25
+    ],
+    [
+     7.796673647438485e-22,
+     6.108772746908166e-25,
+     1.9956080328985007e-05
+    ]
+   ],
+   "mesh": "rail_plates.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7199.5
+  },
+  {
+   "name": "rail_spacers.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "AL",
+   "line": "link",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    0.10499999999999998,
+    -5.034403512013587e-19,
+    -1.0324460327371612e-20
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.95796064148574e-08,
+     1.5875152407882848e-23,
+     3.824475089839227e-24
+    ],
+    [
+     1.5875152407882848e-23,
+     4.359579606414862e-06,
+     -1.7043553556295945e-27
+    ],
+    [
+     3.824475089839227e-24,
+     -1.7043553556295945e-27,
+     4.376492546163053e-06
+    ]
+   ],
+   "mesh": "rail_spacers.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 451.6
+  },
+  {
+   "name": "rail_roll_cap.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 0.913,
+   "mass_kg": 0.0009130524200991533,
+   "com_m": [
+    0.02877276117196659,
+    7.283982021756605e-19,
+    0.0002987223770092844
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.531702204478993e-08,
+     1.4413030714110894e-23,
+     1.2446769717066461e-09
+    ],
+    [
+     1.4413030714110894e-23,
+     1.6756089552928387e-08,
+     1.7143183174961164e-25
+    ],
+    [
+     1.2446769717066461e-09,
+     1.7143183174961164e-25,
+     3.5221369442000655e-08
+    ]
+   ],
+   "mesh": "rail_roll_cap.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 952.7
+  },
+  {
+   "name": "rail_roll_bearings.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 0.9,
+   "mass_kg": 0.0009000000000000001,
+   "com_m": [
+    0.029000000000000033,
+    8.513902648530855e-20,
+    -6.83080744286753e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     9.924214176019791e-09,
+     8.027566875390328e-24,
+     2.2411741422779836e-24
+    ],
+    [
+     8.027566875390328e-24,
+     1.2237107088009435e-08,
+     4.677232992580183e-26
+    ],
+    [
+     2.2411741422779836e-24,
+     4.677232992580183e-26,
+     1.2237107088009435e-08
+    ]
+   ],
+   "mesh": "rail_roll_bearings.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 150.4
+  },
+  {
+   "name": "rail_knuckle.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 2.164,
+   "mass_kg": 0.00216388571655235,
+   "com_m": [
+    0.1922864444977676,
+    -2.144563845356327e-18,
+    7.744258330453402e-20
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     8.696331278195933e-08,
+     4.0213274749045784e-22,
+     6.126255394874603e-23
+    ],
+    [
+     4.0213274749045784e-22,
+     1.5658423339756602e-07,
+     -6.6257139274571025e-25
+    ],
+    [
+     6.126255394874603e-23,
+     -6.6257139274571025e-25,
+     2.2046609853630404e-07
+    ]
+   ],
+   "mesh": "rail_knuckle.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3180.7
+  },
+  {
+   "name": "rail_knuckle_bearings.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 0.9,
+   "mass_kg": 0.0009000000000000001,
+   "com_m": [
+    0.1999999999999992,
+    2.2871885872281454e-19,
+    2.519721477484261e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.223710708800982e-08,
+     1.1083465397959131e-22,
+     4.535498659471651e-23
+    ],
+    [
+     1.1083465397959131e-22,
+     1.223710708812666e-08,
+     -1.3145859395812414e-25
+    ],
+    [
+     4.535498659471651e-23,
+     -1.3145859395812414e-25,
+     9.924214176136429e-09
+    ]
+   ],
+   "mesh": "rail_knuckle_bearings.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 150.4
+  },
+  {
+   "name": "fc.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "pcb",
+   "line": "fc",
+   "mass_g": 5.0,
+   "mass_kg": 0.005,
+   "com_m": [
+    0.07,
+    0.0,
+    -0.008799999999999999
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.8867083333333367e-07,
+     -0.0,
+     1.5643015563952547e-21
+    ],
+    [
+     -0.0,
+     3.8867083333333637e-07,
+     -0.0
+    ],
+    [
+     1.5643015563952547e-21,
+     -0.0,
+     7.752083333333335e-07
+    ]
+   ],
+   "mesh": "fc.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1488.4
+  },
+  {
+   "name": "esc.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "pcb",
+   "line": "esc",
+   "mass_g": 6.0,
+   "mass_kg": 0.006,
+   "com_m": [
+    0.125,
+    0.0,
+    -0.0105
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     4.0450000000000006e-07,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     4.044999999999923e-07,
+     -0.0
+    ],
+    [
+     -0.0,
+     -0.0,
+     7.839999999999923e-07
+    ]
+   ],
+   "mesh": "esc.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3920.0
+  },
+  {
+   "name": "fc_esc_standoffs.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "print",
+   "material": "PETG",
+   "line": "mount",
+   "mass_g": 0.797,
+   "mass_kg": 0.0007966423406131286,
+   "com_m": [
+    0.0975,
+    7.249541057299558e-19,
+    -0.006000000000000002
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.0688908390313036e-07,
+     1.055915769635855e-22,
+     -7.392372936010361e-23
+    ],
+    [
+     1.055915769635855e-22,
+     7.093498539918084e-07,
+     -7.16136128176004e-24
+    ],
+    [
+     -7.392372936010361e-23,
+     -7.16136128176004e-24,
+     8.141145583199711e-07
+    ]
+   ],
+   "mesh": "fc_esc_standoffs.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 627.3
+  },
+  {
+   "name": "bec6.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "pcb",
+   "line": "bec6",
+   "mass_g": 7.0,
+   "mass_kg": 0.007,
+   "com_m": [
+    0.165,
+    0.0,
+    -0.011
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.3533333333333333e-07,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     3.033333333333333e-07,
+     -0.0
+    ],
+    [
+     -0.0,
+     -0.0,
+     3.9666666666666665e-07
+    ]
+   ],
+   "mesh": "bec6.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1848.0
+  },
+  {
+   "name": "pod1_servo.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_scs",
+   "mass_g": 13.2,
+   "mass_kg": 0.0132,
+   "com_m": [
+    -0.033375000000000016,
+    -0.0543,
+    0.0
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.531150000000126e-07,
+     3.468720598214017e-21,
+     -0.0
+    ],
+    [
+     3.468720598214017e-21,
+     8.623697499999926e-07,
+     -0.0
+    ],
+    [
+     -0.0,
+     -0.0,
+     1.293382750000016e-06
+    ]
+   ],
+   "mesh": "pod1_servo.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7088.2
+  },
+  {
+   "name": "pod1_cradle.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "cradle",
+   "mass_g": 1.647,
+   "mass_kg": 0.0016467032648420823,
+   "com_m": [
+    -0.03442315516189578,
+    -0.054183078256567443,
+    -0.0006774779280520224
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.0613627775504963e-07,
+     2.0996926501750015e-09,
+     -1.3961021205974625e-08
+    ],
+    [
+     2.0996926501750015e-09,
+     2.5424999661477596e-07,
+     -6.45116934970369e-09
+    ],
+    [
+     -1.3961021205974625e-08,
+     -6.45116934970369e-09,
+     3.460964486695573e-07
+    ]
+   ],
+   "mesh": "pod1_cradle.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1497.0
+  },
+  {
+   "name": "pod1_arm.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "arm",
+   "mass_g": 1.846,
+   "mass_kg": 0.0018455094319662973,
+   "com_m": [
+    0.0061249999999999985,
+    -0.0315,
+    -0.0024999999999999983
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.3993925868559956e-07,
+     -3.3084369439570856e-07,
+     2.819433575496078e-23
+    ],
+    [
+     -3.3084369439570856e-07,
+     4.814338525625178e-07,
+     -2.2555468603968618e-23
+    ],
+    [
+     2.819433575496078e-23,
+     -2.2555468603968618e-23,
+     7.194507055898193e-07
+    ]
+   ],
+   "mesh": "pod1_arm.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1190.7
+  },
+  {
+   "name": "pod1_bracket.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p1",
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "bracket",
+   "mass_g": 2.08,
+   "mass_kg": 0.0020802906504589274,
+   "com_m": [
+    -0.052631972744726,
+    -0.05999999999999998,
+    0.0034197077922522223
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.7936265812053262e-07,
+     -6.4494664962319646e-21,
+     3.304742622445862e-08
+    ],
+    [
+     -6.4494664962319646e-21,
+     1.5340479180365636e-07,
+     5.0386457001812224e-23
+    ],
+    [
+     3.304742622445862e-08,
+     5.0386457001812224e-23,
+     1.6283030056730586e-07
+    ]
+   ],
+   "mesh": "pod1_bracket.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 2403.2
+  },
+  {
+   "name": "pod1_horn.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p1",
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_scs",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    -0.04702499999999971,
+    -0.059999999999999686,
+    -1.1015447000645022e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "mesh": "pod1_horn.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 344.0
+  },
+  {
+   "name": "pod1_motor.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p1",
+   "kind": "bought",
+   "material": "motor",
+   "line": "motor",
+   "mass_g": 8.5,
+   "mass_kg": 0.0085,
+   "com_m": [
+    -0.06000000000000002,
+    -0.06000000000000001,
+    0.01625
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.8237068957678197e-07,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     2.8237068957676127e-07,
+     1.2938614453463605e-21
+    ],
+    [
+     -0.0,
+     1.2938614453463605e-21,
+     3.0655387915353377e-07
+    ]
+   ],
+   "mesh": "pod1_motor.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3059.2
+  },
+  {
+   "name": "pod1_prop.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p1",
+   "kind": "bought",
+   "material": "prop",
+   "line": "prop",
+   "mass_g": 2.0,
+   "mass_kg": 0.002,
+   "com_m": [
+    -0.05999999999999999,
+    -0.06000000000000001,
+    0.026500000000000006
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.261027706380253e-07,
+     -1.0909861526883564e-21,
+     5.454930763441782e-22
+    ],
+    [
+     -1.0909861526883564e-21,
+     7.261027706380297e-07,
+     -1.0909861526883564e-21
+    ],
+    [
+     5.454930763441782e-22,
+     -1.0909861526883564e-21,
+     1.4492055412760547e-06
+    ]
+   ],
+   "mesh": "pod1_prop.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 13658.4
+  },
+  {
+   "name": "flow_tof.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p1",
+   "kind": "bought",
+   "material": "pcb",
+   "line": "flow",
+   "mass_g": 2.0,
+   "mass_kg": 0.002,
+   "com_m": [
+    -0.0591,
+    -0.06000000000000002,
+    -0.011499999999999998
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.416666666666332e-08,
+     1.119916515891629e-21,
+     -2.7997912897290727e-22
+    ],
+    [
+     1.119916515891629e-21,
+     6.684000000000039e-08,
+     -0.0
+    ],
+    [
+     -2.7997912897290727e-22,
+     -0.0,
+     9.800666666666282e-08
+    ]
+   ],
+   "mesh": "flow_tof.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 831.6
+  },
+  {
+   "name": "pod2_servo.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_scs",
+   "mass_g": 13.2,
+   "mass_kg": 0.0132,
+   "com_m": [
+    0.23337499999999994,
+    -0.05429999999999997,
+    0.0
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.53115000000033e-07,
+     -0.0,
+     4.624960797618687e-22
+    ],
+    [
+     -0.0,
+     8.623697500001846e-07,
+     -0.0
+    ],
+    [
+     4.624960797618687e-22,
+     -0.0,
+     1.2933827500001957e-06
+    ]
+   ],
+   "mesh": "pod2_servo.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7088.2
+  },
+  {
+   "name": "pod2_cradle.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "cradle",
+   "mass_g": 1.647,
+   "mass_kg": 0.0016467032648420728,
+   "com_m": [
+    0.23442315516189635,
+    -0.054183078256567804,
+    -0.0006774779280520317
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.061362777550107e-07,
+     -2.0996926501780753e-09,
+     1.3961021205973695e-08
+    ],
+    [
+     -2.0996926501780753e-09,
+     2.54249996614869e-07,
+     -6.45116934970349e-09
+    ],
+    [
+     1.3961021205973695e-08,
+     -6.45116934970349e-09,
+     3.460964486696064e-07
+    ]
+   ],
+   "mesh": "pod2_cradle.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1497.0
+  },
+  {
+   "name": "pod2_arm.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "arm",
+   "mass_g": 1.846,
+   "mass_kg": 0.001845509431966298,
+   "com_m": [
+    0.19387500000000005,
+    -0.031499999999999966,
+    -0.0024999999999999974
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.399392586856024e-07,
+     3.3084369439570793e-07,
+     -1.8044374883174895e-22
+    ],
+    [
+     3.3084369439570793e-07,
+     4.814338525623828e-07,
+     -1.353328116238117e-22
+    ],
+    [
+     -1.8044374883174895e-22,
+     -1.353328116238117e-22,
+     7.194507055896685e-07
+    ]
+   ],
+   "mesh": "pod2_arm.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1190.7
+  },
+  {
+   "name": "pod2_bracket.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p2",
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "bracket",
+   "mass_g": 2.08,
+   "mass_kg": 0.002080290650458929,
+   "com_m": [
+    0.2526319727447245,
+    -0.05999999999999975,
+    0.0034197077922522097
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.7936265812056433e-07,
+     3.160238583153653e-19,
+     -3.3047426224469556e-08
+    ],
+    [
+     3.160238583153653e-19,
+     1.5340479180492646e-07,
+     1.965071823070671e-21
+    ],
+    [
+     -3.3047426224469556e-08,
+     1.965071823070671e-21,
+     1.628303005686179e-07
+    ]
+   ],
+   "mesh": "pod2_bracket.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 2403.2
+  },
+  {
+   "name": "pod2_horn.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p2",
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_scs",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    0.24702500000000285,
+    -0.060000000000000484,
+    -5.507723500322624e-20
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     -0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "mesh": "pod2_horn.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 344.0
+  },
+  {
+   "name": "pod2_motor.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p2",
+   "kind": "bought",
+   "material": "motor",
+   "line": "motor",
+   "mass_g": 8.5,
+   "mass_kg": 0.0085,
+   "com_m": [
+    0.2600000000000001,
+    -0.06000000000000004,
+    0.01625000000000001
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.823706895767562e-07,
+     -2.0701783125541774e-20,
+     1.0350891562770887e-20
+    ],
+    [
+     -2.0701783125541774e-20,
+     2.823706895766164e-07,
+     -3.881584336039083e-21
+    ],
+    [
+     1.0350891562770887e-20,
+     -3.881584336039083e-21,
+     3.065538791533682e-07
+    ]
+   ],
+   "mesh": "pod2_motor.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3059.2
+  },
+  {
+   "name": "pod2_prop.rail1",
+   "body": 0,
+   "body_name": "rail1",
+   "tilt": "p2",
+   "kind": "bought",
+   "material": "prop",
+   "line": "prop",
+   "mass_g": 2.0,
+   "mass_kg": 0.002,
+   "com_m": [
+    0.25999999999999995,
+    -0.059999999999999984,
+    0.02649999999999999
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.261027706380339e-07,
+     1.3091833832260274e-20,
+     -2.1819723053767125e-21
+    ],
+    [
+     1.3091833832260274e-20,
+     7.261027706380732e-07,
+     1.0909861526883563e-21
+    ],
+    [
+     -2.1819723053767125e-21,
+     1.0909861526883563e-21,
+     1.449205541276089e-06
+    ]
+   ],
+   "mesh": "pod2_prop.rail1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 13658.4
+  },
+  {
+   "name": "link_plates.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "link",
+   "mass_g": 10.415,
+   "mass_kg": 0.01041529571071518,
+   "com_m": [
+    0.19999999999999998,
+    0.10875000000000001,
+    0.014999999999999996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.6207608957522123e-05,
+     4.619359970092773e-20,
+     -1.1548399925231933e-20
+    ],
+    [
+     4.619359970092773e-20,
+     3.711167247296452e-07,
+     -2.887099981307983e-21
+    ],
+    [
+     -1.1548399925231933e-20,
+     -2.887099981307983e-21,
+     1.6384306828985167e-05
+    ]
+   ],
+   "mesh": "link_plates.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 6719.5
+  },
+  {
+   "name": "link_spacers.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "AL",
+   "line": "link",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    0.19999999999999984,
+    0.10874999999999987,
+    0.01499999999999999
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.878642106414865e-06,
+     -1.2372550071124567e-20,
+     -2.577614598150951e-21
+    ],
+    [
+     -1.2372550071124567e-20,
+     1.9579606414889404e-08,
+     -1.0310458392603804e-21
+    ],
+    [
+     -2.577614598150951e-21,
+     -1.0310458392603804e-21,
+     3.895555046163091e-06
+    ]
+   ],
+   "mesh": "link_spacers.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 451.6
+  },
+  {
+   "name": "link_roll_cap.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 0.935,
+   "mass_kg": 0.0009352545384779912,
+   "com_m": [
+    0.1996046732274673,
+    0.03573213695454584,
+    0.015000000659184996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.4918803867296417e-08,
+     -1.4617511245680262e-09,
+     5.921332524072315e-15
+    ],
+    [
+     -1.4617511245680262e-09,
+     2.7422652557845e-08,
+     4.024959368616951e-15
+    ],
+    [
+     5.921332524072315e-15,
+     4.024959368616951e-15,
+     3.268355662890597e-08
+    ]
+   ],
+   "mesh": "link_roll_cap.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1494.7
+  },
+  {
+   "name": "link_roll_horn.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_sts",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    0.1999999999999999,
+    0.029174999999999993,
+    0.014999999999999994
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     -0.0,
+     0.0
+    ]
+   ],
+   "mesh": "link_roll_horn.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 396.9
+  },
+  {
+   "name": "link_knuckle.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 2.213,
+   "mass_kg": 0.002212533193190998,
+   "com_m": [
+    0.20000000000000015,
+    0.19302585780938197,
+    0.015000000000000019
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.5828019784791e-07,
+     1.874362709267131e-20,
+     4.685906773167828e-21
+    ],
+    [
+     1.874362709267131e-20,
+     8.250838442159955e-08,
+     9.371813546335655e-21
+    ],
+    [
+     4.685906773167828e-21,
+     9.371813546335655e-21,
+     2.1718822820880273e-07
+    ]
+   ],
+   "mesh": "link_knuckle.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3517.9
+  },
+  {
+   "name": "link_hinge_horn.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_sts",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    0.20000000000000004,
+    0.19999999999999996,
+    0.010024999999999996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     -0.0,
+     0.0
+    ]
+   ],
+   "mesh": "link_hinge_horn.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 344.0
+  },
+  {
+   "name": "pi5.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "pcb",
+   "line": "pi5",
+   "mass_g": 46.0,
+   "mass_kg": 0.046,
+   "com_m": [
+    0.20008771035186132,
+    0.11891585925548195,
+    0.05266647118816934
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.7816822221922376e-05,
+     -3.6153682894991074e-07,
+     -2.0157469656250414e-07
+    ],
+    [
+     -3.6153682894991074e-07,
+     1.1245094615573682e-05,
+     -3.073471298479201e-06
+    ],
+    [
+     -2.0157469656250414e-07,
+     -3.073471298479201e-06,
+     3.668095626760805e-05
+    ]
+   ],
+   "mesh": "pi5.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 15688.0
+  },
+  {
+   "name": "pi5_heatsink.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "AL",
+   "line": "heatsink",
+   "mass_g": 4.0,
+   "mass_kg": 0.004,
+   "com_m": [
+    0.20000000000000015,
+    0.0925,
+    0.052299999999999965
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.2033333333334922e-07,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     2.2033333333323796e-07,
+     -1.9868214925130212e-20
+    ],
+    [
+     -0.0,
+     -1.9868214925130212e-20,
+     4.166666666665713e-07
+    ]
+   ],
+   "mesh": "pi5_heatsink.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3750.0
+  },
+  {
+   "name": "pi_saddle.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "print",
+   "material": "PETG",
+   "line": "mount",
+   "mass_g": 9.488,
+   "mass_kg": 0.009488424000000002,
+   "com_m": [
+    0.20000000000000012,
+    0.10200000000000005,
+    0.037154288467716
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     6.63365130543883e-06,
+     3.784894943237305e-20,
+     -1.6085803508758545e-19
+    ],
+    [
+     3.784894943237305e-20,
+     2.9528034474390877e-06,
+     -4.7311186790466316e-20
+    ],
+    [
+     -1.6085803508758545e-19,
+     -4.7311186790466316e-20,
+     7.1508642860001676e-06
+    ]
+   ],
+   "mesh": "pi_saddle.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7471.2
+  },
+  {
+   "name": "bec5.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "pcb",
+   "line": "bec5",
+   "mass_g": 7.0,
+   "mass_kg": 0.007,
+   "com_m": [
+    0.20000000000000018,
+    0.15,
+    0.040200000000000014
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.033333333333333e-07,
+     1.6933137720281428e-19,
+     7.761021455128989e-20
+    ],
+    [
+     1.6933137720281428e-19,
+     1.3533333333288178e-07,
+     2.8221896200469044e-20
+    ],
+    [
+     7.761021455128989e-20,
+     2.8221896200469044e-20,
+     3.966666666662151e-07
+    ]
+   ],
+   "mesh": "bec5.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1848.0
+  },
+  {
+   "name": "rx.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "pcb",
+   "line": "rx",
+   "mass_g": 3.0,
+   "mass_kg": 0.003,
+   "com_m": [
+    0.2,
+    0.048,
+    0.0427
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.125e-07,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     5.8499999999976344e-08,
+     7.39144900488475e-22
+    ],
+    [
+     -0.0,
+     7.39144900488475e-22,
+     1.665e-07
+    ]
+   ],
+   "mesh": "rx.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 945.0
+  },
+  {
+   "name": "bec_rx_shelves.link2",
+   "body": 2,
+   "body_name": "link2",
+   "tilt": null,
+   "kind": "print",
+   "material": "PETG",
+   "line": "mount",
+   "mass_g": 4.716,
+   "mass_kg": 0.004715978393882799,
+   "com_m": [
+    0.19999999999999962,
+    0.09500703239046339,
+    0.03136266898246579
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.2869298580968916e-05,
+     -2.5625550442441108e-19,
+     -6.406387610610277e-20
+    ],
+    [
+     -2.5625550442441108e-19,
+     4.3284395548213883e-07,
+     2.578308691274216e-07
+    ],
+    [
+     -6.406387610610277e-20,
+     2.578308691274216e-07,
+     1.2883702714565192e-05
+    ]
+   ],
+   "mesh": "bec_rx_shelves.link2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 4113.5
+  },
+  {
+   "name": "block_cradle.block1",
+   "body": 7,
+   "body_name": "block1",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "block",
+   "mass_g": 4.625,
+   "mass_kg": 0.00462493077147818,
+   "com_m": [
+    0.008079680637319706,
+    -0.00043696880480774815,
+    -0.006201137224445687
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     6.229992476252697e-07,
+     -1.6328634393814346e-08,
+     -4.526452527438512e-08
+    ],
+    [
+     -1.6328634393814346e-08,
+     1.0147535333974278e-06,
+     3.13465394220391e-08
+    ],
+    [
+     -4.526452527438512e-08,
+     3.13465394220391e-08,
+     6.941881489588438e-07
+    ]
+   ],
+   "mesh": "block_cradle.block1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 4322.3
+  },
+  {
+   "name": "block_shaft.block1",
+   "body": 7,
+   "body_name": "block1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    0.02602500000000001,
+    -8.113976567373393e-21,
+    1.936352374044362e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.0701062134678945e-09,
+     -2.5962931757057505e-24,
+     -3.973483087556031e-24
+    ],
+    [
+     -2.5962931757057505e-24,
+     1.7751928106733708e-08,
+     4.158756803345277e-26
+    ],
+    [
+     -3.973483087556031e-24,
+     4.158756803345277e-26,
+     1.7751928106733708e-08
+    ]
+   ],
+   "mesh": "block_shaft.block1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 269.1
+  },
+  {
+   "name": "hinge_servo.block1",
+   "body": 7,
+   "body_name": "block1",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_sts",
+   "mass_g": 20.0,
+   "mass_kg": 0.02,
+   "com_m": [
+    0.005699999999999998,
+    0.0,
+    -0.0052499999999999995
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.5977666666666664e-06,
+     -0.0,
+     -7.275484707677428e-23
+    ],
+    [
+     -0.0,
+     2.2508166666666655e-06,
+     -0.0
+    ],
+    [
+     -7.275484707677428e-23,
+     -0.0,
+     1.1410833333333326e-06
+    ]
+   ],
+   "mesh": "hinge_servo.block1.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 8000.5
+  },
+  {
+   "name": "block_clevis.block2",
+   "body": 1,
+   "body_name": "block2",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "block",
+   "mass_g": 6.041,
+   "mass_kg": 0.006040930547141414,
+   "com_m": [
+    0.2011956605798786,
+    0.006077720075989814,
+    0.005991243535429243
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.0292426945672814e-06,
+     2.889876733970559e-07,
+     2.3091315194443484e-07
+    ],
+    [
+     2.889876733970559e-07,
+     1.0610132609296685e-06,
+     -2.138327370023555e-07
+    ],
+    [
+     2.3091315194443484e-07,
+     -2.138327370023555e-07,
+     1.4105869129106947e-06
+    ]
+   ],
+   "mesh": "block_clevis.block2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 5863.7
+  },
+  {
+   "name": "block_shaft.block2",
+   "body": 1,
+   "body_name": "block2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    0.19999999999999996,
+    -4.755276662140935e-19,
+    1.4444981613860328e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.6948386440067244e-08,
+     -5.092720460754219e-22,
+     5.84732855729066e-23
+    ],
+    [
+     -5.092720460754219e-22,
+     1.6948386440038425e-08,
+     9.028113508662018e-28
+    ],
+    [
+     5.84732855729066e-23,
+     9.028113508662018e-28,
+     3.0701062134356e-09
+    ]
+   ],
+   "mesh": "block_shaft.block2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 262.3
+  },
+  {
+   "name": "roll_servo.block2",
+   "body": 1,
+   "body_name": "block2",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_sts",
+   "mass_g": 20.0,
+   "mass_kg": 0.02,
+   "com_m": [
+    0.19429999999999994,
+    0.013749999999999997,
+    0.014999999999999998
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.5977666666666655e-06,
+     9.312620425827108e-21,
+     -1.8625240851654215e-20
+    ],
+    [
+     9.312620425827108e-21,
+     1.1410833333339556e-06,
+     -5.820387766141942e-22
+    ],
+    [
+     -1.8625240851654215e-20,
+     -5.820387766141942e-22,
+     2.2508166666672792e-06
+    ]
+   ],
+   "mesh": "roll_servo.block2.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 8000.5
+  },
+  {
+   "name": "rail_plates.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "link",
+   "mass_g": 11.159,
+   "mass_kg": 0.01115929571071518,
+   "com_m": [
+    0.09499999999999999,
+    0.19999999999999998,
+    0.0
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.939327247295528e-07,
+     -9.238719940185546e-20,
+     -0.0
+    ],
+    [
+     -9.238719940185546e-20,
+     1.9770454457522133e-05,
+     -3.8494666417439776e-22
+    ],
+    [
+     -0.0,
+     -3.8494666417439776e-22,
+     1.995608032898507e-05
+    ]
+   ],
+   "mesh": "rail_plates.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7199.5
+  },
+  {
+   "name": "rail_spacers.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "AL",
+   "line": "link",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    0.09500000000000003,
+    0.20000000000000034,
+    -2.8842936787577834e-20
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.9579606414773963e-08,
+     3.711765021337376e-20,
+     -8.60568350334823e-25
+    ],
+    [
+     3.711765021337376e-20,
+     4.359579606414854e-06,
+     -6.5740919194377505e-24
+    ],
+    [
+     -8.60568350334823e-25,
+     -6.5740919194377505e-24,
+     4.376492546162955e-06
+    ]
+   ],
+   "mesh": "rail_spacers.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 451.6
+  },
+  {
+   "name": "rail_roll_cap.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 0.913,
+   "mass_kg": 0.0009130524200991537,
+   "com_m": [
+    0.17122723882803362,
+    0.1999999999999992,
+    0.00029872237700928384
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.5317022045090586e-08,
+     -1.749380209675467e-19,
+     -1.2446769717067015e-09
+    ],
+    [
+     -1.749380209675467e-19,
+     1.6756089552798182e-08,
+     -3.207568943123066e-22
+    ],
+    [
+     -1.2446769717067015e-09,
+     -3.207568943123066e-22,
+     3.5221369442190185e-08
+    ]
+   ],
+   "mesh": "rail_roll_cap.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 952.7
+  },
+  {
+   "name": "rail_roll_bearings.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 0.9,
+   "mass_kg": 0.0009000000000000001,
+   "com_m": [
+    0.17100000000000126,
+    0.20000000000000184,
+    -6.456786286053477e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     9.924214175545757e-09,
+     3.901254526931187e-19,
+     1.4995492442871086e-24
+    ],
+    [
+     3.901254526931187e-19,
+     1.2237107087697632e-08,
+     1.2470353564217359e-22
+    ],
+    [
+     1.4995492442871086e-24,
+     1.2470353564217359e-22,
+     1.2237107087223908e-08
+    ]
+   ],
+   "mesh": "rail_roll_bearings.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 150.4
+  },
+  {
+   "name": "rail_knuckle.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 2.164,
+   "mass_kg": 0.0021638857165523504,
+   "com_m": [
+    0.007713555502232732,
+    0.20000000000000004,
+    1.072281922678162e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     8.696331278196402e-08,
+     1.2671907357221226e-21,
+     6.760309827468633e-25
+    ],
+    [
+     1.2671907357221226e-21,
+     1.5658423339772675e-07,
+     3.4323874062317e-22
+    ],
+    [
+     6.760309827468633e-25,
+     3.4323874062317e-22,
+     2.2046609853646598e-07
+    ]
+   ],
+   "mesh": "rail_knuckle.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3180.7
+  },
+  {
+   "name": "rail_knuckle_bearings.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 0.9,
+   "mass_kg": 0.0009000000000000001,
+   "com_m": [
+    -1.0630074983136765e-19,
+    0.20000000000000023,
+    0.0
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.2237107087970655e-08,
+     -1.5142896149311115e-23,
+     7.937122654075451e-26
+    ],
+    [
+     -1.5142896149311115e-23,
+     1.2237107088009891e-08,
+     9.288701254598014e-23
+    ],
+    [
+     7.937122654075451e-26,
+     9.288701254598014e-23,
+     9.924214175980414e-09
+    ]
+   ],
+   "mesh": "rail_knuckle_bearings.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 150.4
+  },
+  {
+   "name": "pod3_servo.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_scs",
+   "mass_g": 13.2,
+   "mass_kg": 0.0132,
+   "com_m": [
+    0.23337500000000044,
+    0.25430000000000025,
+    0.0
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.531149999990078e-07,
+     2.108982123714126e-18,
+     -4.624960797618698e-22
+    ],
+    [
+     2.108982123714126e-18,
+     8.623697499979665e-07,
+     3.699968638094958e-21
+    ],
+    [
+     -4.624960797618698e-22,
+     3.699968638094958e-21,
+     1.2933827499969793e-06
+    ]
+   ],
+   "mesh": "pod3_servo.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7088.2
+  },
+  {
+   "name": "pod3_cradle.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "cradle",
+   "mass_g": 1.647,
+   "mass_kg": 0.0016467032648420728,
+   "com_m": [
+    0.23442315516189716,
+    0.2541830782565705,
+    -0.0006774779280520249
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.0613627775371373e-07,
+     2.0996926514238118e-09,
+     1.3961021205972863e-08
+    ],
+    [
+     2.0996926514238118e-09,
+     2.542499966145247e-07,
+     6.451169349707172e-09
+    ],
+    [
+     1.3961021205972863e-08,
+     6.451169349707172e-09,
+     3.460964486679346e-07
+    ]
+   ],
+   "mesh": "pod3_cradle.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1497.0
+  },
+  {
+   "name": "pod3_arm.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "arm",
+   "mass_g": 1.846,
+   "mass_kg": 0.0018455094319663017,
+   "com_m": [
+    0.19387499999999966,
+    0.23149999999999873,
+    -0.0024999999999999922
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.3993925868633616e-07,
+     -3.308436943962175e-07,
+     1.4435499906539916e-21
+    ],
+    [
+     -3.308436943962175e-07,
+     4.814338525624751e-07,
+     7.217749953269959e-21
+    ],
+    [
+     1.4435499906539916e-21,
+     7.217749953269959e-21,
+     7.19450705590523e-07
+    ]
+   ],
+   "mesh": "pod3_arm.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1190.7
+  },
+  {
+   "name": "pod3_bracket.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p3",
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "bracket",
+   "mass_g": 2.08,
+   "mass_kg": 0.0020802906504589253,
+   "com_m": [
+    0.2526319727447266,
+    0.26000000000000123,
+    0.003419707792252239
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.7936265811987223e-07,
+     5.159573196985592e-19,
+     -3.304742622445507e-08
+    ],
+    [
+     5.159573196985592e-19,
+     1.5340479180356022e-07,
+     8.868016432318985e-21
+    ],
+    [
+     -3.304742622445507e-08,
+     8.868016432318985e-21,
+     1.6283030056655515e-07
+    ]
+   ],
+   "mesh": "pod3_bracket.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 2403.2
+  },
+  {
+   "name": "pod3_horn.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p3",
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_scs",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    0.24702499999999977,
+    0.25999999999999984,
+    -1.7624715201032113e-17
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "mesh": "pod3_horn.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 344.0
+  },
+  {
+   "name": "pod3_motor.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p3",
+   "kind": "bought",
+   "material": "motor",
+   "line": "motor",
+   "mass_g": 8.5,
+   "mass_kg": 0.0085,
+   "com_m": [
+    0.26000000000000006,
+    0.2600000000000001,
+    0.016250000000000007
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.8237068957603663e-07,
+     8.280713250216707e-20,
+     5.175445781385442e-21
+    ],
+    [
+     8.280713250216707e-20,
+     2.823706895769476e-07,
+     1.0350891562770884e-20
+    ],
+    [
+     5.175445781385442e-21,
+     1.0350891562770884e-20,
+     3.0655387915295413e-07
+    ]
+   ],
+   "mesh": "pod3_motor.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3059.2
+  },
+  {
+   "name": "pod3_prop.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p3",
+   "kind": "bought",
+   "material": "prop",
+   "line": "prop",
+   "mass_g": 2.0,
+   "mass_kg": 0.002,
+   "com_m": [
+    0.26000000000000006,
+    0.26,
+    0.026500000000000006
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.261027706380211e-07,
+     -0.0,
+     6.545916916130141e-21
+    ],
+    [
+     -0.0,
+     7.261027706380387e-07,
+     4.363944610753427e-21
+    ],
+    [
+     6.545916916130141e-21,
+     4.363944610753427e-21,
+     1.4492055412760727e-06
+    ]
+   ],
+   "mesh": "pod3_prop.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 13658.4
+  },
+  {
+   "name": "pod4_servo.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_scs",
+   "mass_g": 13.2,
+   "mass_kg": 0.0132,
+   "com_m": [
+    -0.033375,
+    0.25430000000000014,
+    0.0
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.53114999999784e-07,
+     -4.162464717856823e-20,
+     -0.0
+    ],
+    [
+     -4.162464717856823e-20,
+     8.623697500000018e-07,
+     4.107790372404001e-37
+    ],
+    [
+     -0.0,
+     4.107790372404001e-37,
+     1.293382749999753e-06
+    ]
+   ],
+   "mesh": "pod4_servo.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 7088.2
+  },
+  {
+   "name": "pod4_cradle.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "cradle",
+   "mass_g": 1.647,
+   "mass_kg": 0.0016467032648420864,
+   "com_m": [
+    -0.03442315516189579,
+    0.2541830782565662,
+    -0.0006774779280520262
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.0613627775599214e-07,
+     -2.099692650110461e-09,
+     -1.3961021205974815e-08
+    ],
+    [
+     -2.099692650110461e-09,
+     2.542499966147755e-07,
+     6.451169349706051e-09
+    ],
+    [
+     -1.3961021205974815e-08,
+     6.451169349706051e-09,
+     3.46096448670508e-07
+    ]
+   ],
+   "mesh": "pod4_cradle.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1497.0
+  },
+  {
+   "name": "pod4_arm.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "arm",
+   "mass_g": 1.846,
+   "mass_kg": 0.0018455094319662962,
+   "com_m": [
+    0.006125,
+    0.23150000000000046,
+    -0.0024999999999999996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.399392586852506e-07,
+     3.3084369439571296e-07,
+     -5.6388671509921546e-24
+    ],
+    [
+     3.3084369439571296e-07,
+     4.814338525625178e-07,
+     -2.345768734812736e-21
+    ],
+    [
+     -5.6388671509921546e-24,
+     -2.345768734812736e-21,
+     7.194507055894721e-07
+    ]
+   ],
+   "mesh": "pod4_arm.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1190.7
+  },
+  {
+   "name": "pod4_bracket.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p4",
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "bracket",
+   "mass_g": 2.08,
+   "mass_kg": 0.002080290650458928,
+   "com_m": [
+    -0.052631972744725884,
+    0.2599999999999992,
+    0.0034197077922522158
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.7936265812105797e-07,
+     1.3221406317275507e-19,
+     3.304742622445933e-08
+    ],
+    [
+     1.3221406317275507e-19,
+     1.534047918036666e-07,
+     -3.627824904130474e-21
+    ],
+    [
+     3.304742622445933e-08,
+     -3.627824904130474e-21,
+     1.6283030056784412e-07
+    ]
+   ],
+   "mesh": "pod4_bracket.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 2403.2
+  },
+  {
+   "name": "pod4_horn.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p4",
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_scs",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    -0.04702499999999994,
+    0.26,
+    1.6523170500967761e-18
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     -0.0
+    ],
+    [
+     0.0,
+     -0.0,
+     0.0
+    ]
+   ],
+   "mesh": "pod4_horn.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 344.0
+  },
+  {
+   "name": "pod4_motor.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p4",
+   "kind": "bought",
+   "material": "motor",
+   "line": "motor",
+   "mass_g": 8.5,
+   "mass_kg": 0.0085,
+   "com_m": [
+    -0.06,
+    0.2599999999999998,
+    0.01625
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.8237068957752725e-07,
+     1.449124818787924e-19,
+     -0.0
+    ],
+    [
+     1.449124818787924e-19,
+     2.823706895767768e-07,
+     -5.692990359523987e-20
+    ],
+    [
+     -0.0,
+     -5.692990359523987e-20,
+     3.0655387915427905e-07
+    ]
+   ],
+   "mesh": "pod4_motor.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3059.2
+  },
+  {
+   "name": "pod4_prop.rail3",
+   "body": 4,
+   "body_name": "rail3",
+   "tilt": "p4",
+   "kind": "bought",
+   "material": "prop",
+   "line": "prop",
+   "mass_g": 2.0,
+   "mass_kg": 0.002,
+   "com_m": [
+    -0.05999999999999999,
+    0.26000000000000006,
+    0.026500000000000017
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     7.261027706379512e-07,
+     -4.3639446107534265e-21,
+     -1.6364792290325348e-21
+    ],
+    [
+     -4.3639446107534265e-21,
+     7.261027706380276e-07,
+     1.527380613763699e-20
+    ],
+    [
+     -1.6364792290325348e-21,
+     1.527380613763699e-20,
+     1.4492055412759848e-06
+    ]
+   ],
+   "mesh": "pod4_prop.rail3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 13658.4
+  },
+  {
+   "name": "link_plates.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "cf",
+   "material": "CF",
+   "line": "link",
+   "mass_g": 10.415,
+   "mass_kg": 0.01041529571071518,
+   "com_m": [
+    -3.710510503015789e-17,
+    0.09125000000000003,
+    0.015000000000000008
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.62076089575221e-05,
+     -5.3567339956354564e-21,
+     1.2164534268776753e-22
+    ],
+    [
+     -5.3567339956354564e-21,
+     3.7111672472955173e-07,
+     5.774199962615966e-21
+    ],
+    [
+     1.2164534268776753e-22,
+     5.774199962615966e-21,
+     1.6384306828984967e-05
+    ]
+   ],
+   "mesh": "link_plates.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 6719.5
+  },
+  {
+   "name": "link_spacers.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "bought",
+   "material": "AL",
+   "line": "link",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    -3.7254585988900483e-17,
+    0.09125000000000007,
+    0.014999999999999996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.878642106414849e-06,
+     -1.294429049663894e-21,
+     6.108409594576758e-24
+    ],
+    [
+     -1.294429049663894e-21,
+     1.957960641485751e-08,
+     -2.577614598150952e-22
+    ],
+    [
+     6.108409594576758e-24,
+     -2.577614598150952e-22,
+     3.89555504616304e-06
+    ]
+   ],
+   "mesh": "link_spacers.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 451.6
+  },
+  {
+   "name": "link_roll_cap.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 0.935,
+   "mass_kg": 0.0009352545384779907,
+   "com_m": [
+    0.00039532677253241666,
+    0.16426786304545432,
+    0.015000000659185034
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.4918803867265553e-08,
+     -1.4617511245554632e-09,
+     -5.921336648681522e-15
+    ],
+    [
+     -1.4617511245554632e-09,
+     2.742265255777926e-08,
+     -4.024962719292862e-15
+    ],
+    [
+     -5.921336648681522e-15,
+     -4.024962719292862e-15,
+     3.268355662880812e-08
+    ]
+   ],
+   "mesh": "link_roll_cap.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 1494.7
+  },
+  {
+   "name": "link_roll_horn.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_sts",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    -1.0200074434118175e-17,
+    0.17082500000000153,
+    0.015000000000000003
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     -0.0,
+     -0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     0.0
+    ],
+    [
+     -0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "mesh": "link_roll_horn.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 396.9
+  },
+  {
+   "name": "link_knuckle.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "link",
+   "mass_g": 2.213,
+   "mass_kg": 0.0022125331931909997,
+   "com_m": [
+    -6.846782821051108e-17,
+    0.006974142190618198,
+    0.014999999999999996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.5828019784798487e-07,
+     -6.195936616597392e-23,
+     -6.845054246285502e-24
+    ],
+    [
+     -6.195936616597392e-23,
+     8.250838442155185e-08,
+     -1.0982593999612083e-22
+    ],
+    [
+     -6.845054246285502e-24,
+     -1.0982593999612083e-22,
+     2.1718822820883243e-07
+    ]
+   ],
+   "mesh": "link_knuckle.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3517.9
+  },
+  {
+   "name": "link_hinge_horn.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "bought",
+   "material": "POM",
+   "line": "servo_sts",
+   "mass_g": 0.0,
+   "mass_kg": 0.0,
+   "com_m": [
+    -6.935902021410095e-17,
+    2.8419853261664356e-17,
+    0.010025000000000001
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0
+    ],
+    [
+     0.0,
+     0.0,
+     0.0
+    ]
+   ],
+   "mesh": "link_hinge_horn.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 344.0
+  },
+  {
+   "name": "battery.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "bought",
+   "material": "lipo",
+   "line": "battery",
+   "mass_g": 143.0,
+   "mass_kg": 0.14300000000000002,
+   "com_m": [
+    -3.385895059596795e-17,
+    0.09800000000000005,
+    0.0352
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     8.137891666666624e-05,
+     -9.239593814603985e-21,
+     3.20576713841653e-21
+    ],
+    [
+     -9.239593814603985e-21,
+     2.4500666666666637e-05,
+     -1.0852386303642552e-19
+    ],
+    [
+     3.20576713841653e-21,
+     -1.0852386303642552e-19,
+     8.44295833333329e-05
+    ]
+   ],
+   "mesh": "battery.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 78540.0
+  },
+  {
+   "name": "battery_tray.link4",
+   "body": 6,
+   "body_name": "link4",
+   "tilt": null,
+   "kind": "print",
+   "material": "PETG",
+   "line": "mount",
+   "mass_g": 4.691,
+   "mass_kg": 0.004690871999999999,
+   "com_m": [
+    -3.639229477216459e-17,
+    0.09800000000000003,
+    0.019600000000000013
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     2.5652971706399973e-06,
+     -8.844154848475285e-22,
+     7.543555625488785e-22
+    ],
+    [
+     -8.844154848475285e-22,
+     5.650311686399974e-07,
+     8.279457688331605e-21
+    ],
+    [
+     7.543555625488785e-22,
+     8.279457688331605e-21,
+     3.12920253e-06
+    ]
+   ],
+   "mesh": "battery_tray.link4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 3693.6
+  },
+  {
+   "name": "block_cradle.block3",
+   "body": 3,
+   "body_name": "block3",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "block",
+   "mass_g": 4.625,
+   "mass_kg": 0.004624930771478188,
+   "com_m": [
+    0.1919203193626784,
+    0.20043696880480696,
+    -0.006201137224445638
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     6.229992476258219e-07,
+     -1.6328634393818012e-08,
+     4.5264525274441096e-08
+    ],
+    [
+     -1.6328634393818012e-08,
+     1.0147535333993666e-06,
+     -3.134653942198804e-08
+    ],
+    [
+     4.5264525274441096e-08,
+     -3.134653942198804e-08,
+     6.941881489612541e-07
+    ]
+   ],
+   "mesh": "block_cradle.block3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 4322.3
+  },
+  {
+   "name": "block_shaft.block3",
+   "body": 3,
+   "body_name": "block3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    0.17397500000000027,
+    0.20000000000000065,
+    1.549081899235495e-18
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     3.0701062133805963e-09,
+     3.460930614146502e-20,
+     2.7214552457028127e-24
+    ],
+    [
+     3.460930614146502e-20,
+     1.7751928106706077e-08,
+     2.5213420294465824e-22
+    ],
+    [
+     2.7214552457028127e-24,
+     2.5213420294465824e-22,
+     1.7751928106626475e-08
+    ]
+   ],
+   "mesh": "block_shaft.block3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 269.1
+  },
+  {
+   "name": "hinge_servo.block3",
+   "body": 3,
+   "body_name": "block3",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_sts",
+   "mass_g": 20.0,
+   "mass_kg": 0.02,
+   "com_m": [
+    0.19429999999999994,
+    0.2,
+    -0.005249999999999996
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.5977666666660326e-06,
+     -1.4900192681323372e-19,
+     4.656310212913554e-21
+    ],
+    [
+     -1.4900192681323372e-19,
+     2.2508166666666838e-06,
+     1.8625240851654215e-20
+    ],
+    [
+     4.656310212913554e-21,
+     1.8625240851654215e-20,
+     1.1410833333327636e-06
+    ]
+   ],
+   "mesh": "hinge_servo.block3.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 8000.5
+  },
+  {
+   "name": "block_clevis.block4",
+   "body": 5,
+   "body_name": "block4",
+   "tilt": null,
+   "kind": "print",
+   "material": "PA12CF",
+   "line": "block",
+   "mass_g": 6.041,
+   "mass_kg": 0.0060409305471414146,
+   "com_m": [
+    -0.0011956605798785504,
+    0.19392227992401026,
+    0.005991243535429253
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.0292426945672822e-06,
+     2.889876733970314e-07,
+     -2.3091315194443265e-07
+    ],
+    [
+     2.889876733970314e-07,
+     1.061013260930003e-06,
+     2.1383273700236145e-07
+    ],
+    [
+     -2.3091315194443265e-07,
+     2.1383273700236145e-07,
+     1.4105869129110327e-06
+    ]
+   ],
+   "mesh": "block_clevis.block4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 5863.7
+  },
+  {
+   "name": "block_shaft.block4",
+   "body": 5,
+   "body_name": "block4",
+   "tilt": null,
+   "kind": "bought",
+   "material": "steel",
+   "line": "block",
+   "mass_g": 1.0,
+   "mass_kg": 0.001,
+   "com_m": [
+    1.5167230694553361e-18,
+    0.19999999999999987,
+    -2.1667472420790518e-19
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.6948386440144943e-08,
+     1.1555985291062987e-25,
+     -1.7333977936632447e-25
+    ],
+    [
+     1.1555985291062987e-25,
+     1.694838644006728e-08,
+     7.499834453916293e-23
+    ],
+    [
+     -1.7333977936632447e-25,
+     7.499834453916293e-23,
+     3.0701062135421033e-09
+    ]
+   ],
+   "mesh": "block_shaft.block4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 262.3
+  },
+  {
+   "name": "roll_servo.block4",
+   "body": 5,
+   "body_name": "block4",
+   "tilt": null,
+   "kind": "bought",
+   "material": "alu",
+   "line": "servo_sts",
+   "mass_g": 20.0,
+   "mass_kg": 0.02,
+   "com_m": [
+    0.005699999999999988,
+    0.18625000000000003,
+    0.015000000000000005
+   ],
+   "inertia_kgm2_about_com": [
+    [
+     1.5977666666666289e-06,
+     4.656310212913555e-21,
+     2.910193883070972e-22
+    ],
+    [
+     4.656310212913555e-21,
+     1.1410833333333314e-06,
+     1.862524085165422e-20
+    ],
+    [
+     2.910193883070972e-22,
+     1.862524085165422e-20,
+     2.2508166666666846e-06
+    ]
+   ],
+   "mesh": "roll_servo.block4.stl",
+   "valid": true,
+   "watertight": true,
+   "volume_mm3": 8000.5
+  }
+ ],
+ "checks": {
+  "C-STOPS": {
+   "pass": true,
+   "detail": "measured first contact (deg) H2 +78.07/-78.07; R2 +35.18/-35.18; H3 +78.07/-78.07; R3 +35.16/-35.16; H4 +78.07/-78.07; R4 +35.18/-35.18; H1 +78.07/-78.07; R1 +35.16/-35.16; T1 +120.16/-120.16; T2 +120.16/-120.16; T3 +120.16/-120.16; T4 +120.16/-120.16 | envelope needs H2 75.0, R2 32.6, H3 76.0, R3 30.0, H4 75.0, R4 32.6, H1 76.0, R1 30.0",
+   "value": {
+    "stops": {
+     "H2": [
+      78.0703125,
+      78.0703125
+     ],
+     "R2": [
+      35.1796875,
+      35.1796875
+     ],
+     "H3": [
+      78.0703125,
+      78.0703125
+     ],
+     "R3": [
+      35.1640625,
+      35.1640625
+     ],
+     "H4": [
+      78.0703125,
+      78.0703125
+     ],
+     "R4": [
+      35.1796875,
+      35.1796875
+     ],
+     "H1": [
+      78.0703125,
+      78.0703125
+     ],
+     "R1": [
+      35.1640625,
+      35.1640625
+     ],
+     "T1": [
+      120.1640625,
+      120.1640625
+     ],
+     "T2": [
+      120.1640625,
+      120.1640625
+     ],
+     "T3": [
+      120.1640625,
+      120.1640625
+     ],
+     "T4": [
+      120.1640625,
+      120.1640625
+     ]
+    },
+    "need_deg": {
+     "H2": 75.0,
+     "R2": 32.55498907310435,
+     "H3": 75.99784653322376,
+     "R3": 30.00000000000066,
+     "H4": 75.00000000000003,
+     "R4": 32.554989073104835,
+     "H1": 75.99784653322376,
+     "R1": 29.999999999999996
+    }
+   }
+  },
+  "C-SWEEP": {
+   "pass": true,
+   "detail": "73 envelope poses x 11 tilts x 6 patterns = 4453 evaluations, 103 s; min prop-disc clearance 5.31 mm pod3_prop.rail3 vs pi_saddle.link2 (skew 75, twist -20, tilt -90 all); min tilting-group clearance 1.40 mm flow_tof.rail1 vs pod1_cradle.rail1 (skew -75, twist -20, tilt -60 all)",
+   "value": {
+    "evaluations": 4453,
+    "min_disc_mm": 5.307067842215771,
+    "min_group_mm": 1.4000000000000057,
+    "violations": [],
+    "limit_disc_mm": 5.0
+   }
+  },
+  "C-FOLD": {
+   "pass": true,
+   "detail": "18 designed contacts exempt; interior 15 / 165 deg (skew +-75, twist 0): min clearance 0.50 mm rail_knuckle.rail1 vs block_clevis.block2 (need >= 0.5); firmware envelope (73 poses): no pair touches; largest twist (deg, 5 deg steps to 30) without contact: at |skew| 45 30, 60 30, 75 25; 112 s",
+   "value": {
+    "exempt": 18,
+    "safe_twist_deg": {
+     "45": 30,
+     "60": 30,
+     "75": 25
+    },
+    "contacts": []
+   }
+  },
+  "C-CABLE": {
+   "pass": true,
+   "detail": "465 joint poses (skew +-75, twist +-35); corner 1 path 61..80 mm (change 19) vs loop 85; corner 2 path 71..89 mm (change 18) vs loop 85; corner 3 path 60..80 mm (change 20) vs loop 85; corner 4 path 69..89 mm (change 21) vs loop 85; clip points moved to the surface by <= 4.1 mm; loop R 9.0 mm (min bend 5.0)",
+   "value": {
+    "rows": [
+     "corner 1 path 61..80 mm (change 19) vs loop 85",
+     "corner 2 path 71..89 mm (change 18) vs loop 85",
+     "corner 3 path 60..80 mm (change 20) vs loop 85",
+     "corner 4 path 69..89 mm (change 21) vs loop 85"
+    ]
+   }
+  },
+  "C-MASS": {
+   "pass": true,
+   "detail": "link, CF ladder + spacers 59.6/64.0 (-7%); arms + brackets + hardware 23.7/23.0 (+3%); tilt-servo cradles + board mounts (new line) 26.3/28.5 (-8%); wiring (carried) 24.0/24.0 (+0%); motor 34.0/34.0 (+0%); prop 8.0/8.0 (+0%); tilt servo SCS0009 52.8/52.8 (+0%); corner U-joint block 28.9/28.0 (+3%); corner servo STS3032 80.0/80.0 (+0%); FC 5.0/5.0 (+0%); ESC 6.0/6.0 (+0%); Pi 5 46.0/46.0 (+0%); heatsink 4.0/4.0 (+0%); BEC 5 V 7.0/7.0 (+0%); BEC 6 V 7.0/7.0 (+0%); receiver 3.0/3.0 (+0%); flow + ToF 2.0/2.0 (+0%); battery 143.0/143.0 (+0%); of which printed board mounts 19.7 g; carried (not modelled) wiring 24 g + hardware 8 g [est]; total 560.3 g vs 560.23 (+0.0%)",
+   "value": {
+    "by_line": {
+     "link": 59.598,
+     "block": 28.932000000000002,
+     "fc": 5.0,
+     "esc": 6.0,
+     "cradlemount": 26.279999999999998,
+     "bec6": 7.0,
+     "servo_scs": 52.8,
+     "armbr": 23.704,
+     "motor": 34.0,
+     "prop": 8.0,
+     "flow": 2.0,
+     "servo_sts": 80.0,
+     "pi5": 46.0,
+     "heatsink": 4.0,
+     "bec5": 7.0,
+     "rx": 3.0,
+     "battery": 143.0,
+     "wiring": 24.0
+    },
+    "total_g": 560.314,
+    "outside": []
+   }
+  }
+ }
+}

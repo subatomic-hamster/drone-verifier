@@ -1,0 +1,5 @@
+# Installed by scripts/build.sh into vendor/dvsim/.venv (uv pip install -r requirements.txt, with cmake and ninja on PATH).
+# dvsim itself (builds the C++ kernel and the viewer; pulls numpy, mcp -> starlette/uvicorn/anyio, gymnasium, pinned in its pyproject.toml):
+-e ./vendor/dvsim
+# only for tests/ and harness/tests/:
+pytest
