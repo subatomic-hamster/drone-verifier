@@ -1,0 +1,283 @@
+# drone-verifier: the single source of the task. The prompt, the tools and the gates read this file. Numbers pinned by reference/.
+# Prices: dvsim's part files carry almost none, so they live here and are written into the in-memory library (dvsim's BOM then sums them). An option with `price_src` is a real
+# vendor price from examples/hopper/README.md's table; everything else is an ESTIMATE of a typical list price (no price_src), shown as such in parts_search. The kit's duct + motor +
+# fan add to the README's $145 bundle (sale price; split estimated).
+
+[mission]
+alt_m = 3.0
+alt_tol_m = 0.3
+hold_s = 3.0
+land_radius_m = 0.5
+touchdown_m_s = 1.5
+tilt_max_deg = 30.0
+mission_s = 40.0
+t_cal_s = 2.0
+liftoff_by_s = 15.0
+
+[limits]
+cost_max_usd = 700.0
+mass_max_kg = 1.35
+envelope_mm = [370, 370, 380]
+tw_min = 1.8
+soc_min_pct = 20.0
+
+[budget]
+verify = 12
+wall_min = 25
+agent_budget_usd = 15.0   # harness cap per agent run
+
+[sandbox]
+step_deadline_ms = 25
+late_frac_max = 0.01
+hang_s = 1.0
+
+[heldout]
+seed = 910273            # DV_HELDOUT_SEED overrides. Never disclosed to agents.
+
+[public]
+seed = 1
+
+[scenarios.nominal]
+wind_ms = 0.0
+w20_ms = 0.0
+rain_mmh = 0.0
+[scenarios.wind]
+wind_ms = 3.0
+w20_ms = 3.0
+rain_mmh = 0.0
+[scenarios.rain]
+wind_ms = 2.0
+w20_ms = 2.0
+rain_mmh = 25.0
+rain_t_on_s = 3.0
+rain_ramp_s = 2.0
+
+[robust]                 # G6: per-flight scatter on 5 seeds
+seeds = 5
+mass_tol = 0.05
+cg_tol_m = 0.005
+thrust_tol = 0.03
+noise_extra = 0.5
+backlash_deg = 1.0
+gyro_bias_dps = 0.2
+accel_bias_ms2 = 0.05
+wind_ms = 0.0
+
+[[gates]]
+id = "G1"
+name = "static"
+what = "cost, mass, envelope, design rules"
+points = 10
+[[gates]]
+id = "G2"
+name = "lift"
+what = "thrust to weight, pack and ESC current margins in a static thrust run"
+points = 10
+[[gates]]
+id = "G3"
+name = "nominal"
+what = "the mission, no disturbance"
+points = 30
+[[gates]]
+id = "G4"
+name = "wind"
+what = "the mission in 3 m/s steady wind plus gusts"
+points = 15
+[[gates]]
+id = "G5"
+name = "rain"
+what = "the mission in 25 mm/h rain and 2 m/s wind (thrust loss, drop drag, range sensor dropouts)"
+points = 15
+[[gates]]
+id = "G6"
+name = "robust"
+what = "the mission on 5 seeds: mass +-5 %, CG +-5 mm, more sensor noise, servo backlash; points pro rata"
+points = 20
+
+# ---- fixed airframe kit: not a choice, priced here so the BOM is whole -------------------------------------------------
+[kit]
+"hopper-deck-frame-edf80" = 15.0
+"qx-80mm-12-blade-edf-duct" = 45.0
+"qx-qf3538-2000kv-edf-motor" = 80.0
+"qx-80mm-12-blade-edf-fan" = 20.0
+"generic-jet-vane-alu-45x34" = 4.0
+"pjrc-teensy-4-0" = 24.0
+"generic-avionics-harness" = 30.0     # includes ICM-42688-P and MS5611 boards
+
+# ---- catalog ------------------------------------------------------------------------------------------------------------
+# One slot, many options. `part` is the dvsim part; `spec` is shown to the agent on top of the part's own numbers; `set` adds values the part file lacks.
+[slots.battery]
+what = "the flight pack, on the +x side of the deck; also give battery_x_mm and battery_y_mm in design_set to balance the centre of mass"
+instances = ["batt"]
+spec = ["capacity_ah", "cells_series", "v_nominal", "c_rating_cont", "i_max_continuous", "r_internal_pack", "length", "width", "height"]
+[[slots.battery.options]]
+part = "tattu-2200mah-6s-95c-xt60"
+price = 65.0
+[[slots.battery.options]]
+part = "tattu-1300mah-6s-100c-funfly-xt60"
+price = 42.0
+[[slots.battery.options]]
+part = "tattu-1400mah-6s-150c-xt60"
+price = 58.0
+[[slots.battery.options]]
+part = "gnb-4000mah-6s-70c-tplug"
+price = 110.0
+[[slots.battery.options]]
+part = "gnb-3000mah-4s-100c-xt60"
+price = 48.0
+[[slots.battery.options]]
+part = "ovonic-3500mah-4s-130c-xt60"
+price = 52.0
+
+[slots.esc]
+what = "the fan's speed controller; the fan draws about 105 A at full throttle on 6S and the ESC limits motor current to its continuous rating"
+instances = ["esc"]
+[[slots.esc.options]]
+part = "hobbywing-platinum-120a-v5-esc"
+price = 149.9
+price_src = "originhobbies.com HW30203402, 2026-10-08, examples/hopper/README.md"
+spec = { continuous_a = 120 }
+[[slots.esc.options]]
+part = "iflight-blitz-e80-single"
+price = 48.0
+spec = { continuous_a = 80 }
+place = [-0.085, 0.0, 0.00425]
+bus_v = 25.2
+set = { current_continuous = [80.0, "A"], r_on_total = [0.002, "ohm"], switching_loss_fraction = [0.01, "1"], quiescent_current = [0.05, "A"] }
+[[slots.esc.options]]
+part = "tmotor-alpha-60a-6s"
+price = 62.0
+spec = { continuous_a = 40, peak_10s_a = 60 }
+place = [-0.085, 0.0, 0.00795]
+set = { current_continuous = [40.0, "A"], r_on_total = [0.003, "ohm"], switching_loss_fraction = [0.01, "1"], quiescent_current = [0.05, "A"] }
+[[slots.esc.options]]
+part = "bluerobotics-basic-esc"
+price = 40.0
+spec = { continuous_a = 30 }
+[[slots.esc.options]]
+part = "hobbywing-seaking-60a-v3-1"
+price = 75.0
+spec = { continuous_a = 60, max_v = 12.6 }
+
+[slots.servo]
+what = "four vane servos on the 5 V bus"
+instances = ["sv1", "sv2", "sv3", "sv4"]
+spec = ["gear_ratio", "no_load_speed_5v", "stall_torque_5v"]
+[[slots.servo.options]]
+part = "robotis-xl330-m288-t"
+price = 27.49
+price_src = "robotis.us, 2026-10-08, examples/hopper/README.md"
+[[slots.servo.options]]
+part = "robotis-xl330-m077-t"
+price = 24.0
+set = { device_p_default = [400, "count"], device_i_default = [0, "count"], device_d_default = [0, "count"], device_max_torque_default = [1000, "0.1 %"] }
+
+[slots.regulator]
+what = "two 5 V regulators feeding two servos each, plus the flight computer and range sensor"
+instances = ["reg1", "reg2"]
+spec = ["output_voltage", "output_current_typ_max"]
+[[slots.regulator.options]]
+part = "pololu-d24v50f5"
+price = 15.0
+[[slots.regulator.options]]
+part = "pololu-d24v25f5"
+price = 12.0
+joinable = true
+[[slots.regulator.options]]
+part = "pololu-d24v10f5"
+price = 9.0
+joinable = true
+
+[slots.gnss]
+what = "GNSS receiver: position and velocity fixes at 10 Hz; its module rides on the avionics harness"
+instances = ["gnss_chip"]
+[[slots.gnss.options]]
+part = "sparkfun-gps-rtk-sma-16481"
+chip = "ublox-zed-f9p"
+price = 259.95
+price_src = "sparkfun.com GPS-16481 (also the part file), examples/hopper/README.md"
+harness_mass = 0.060
+spec = { horizontal_sigma_m = 0.02, rtk = true }
+horiz_std = 0.02
+vert_std = 0.03
+corr_time_s = 20.0
+corr_frac = 0.5
+[[slots.gnss.options]]
+part = "matek-m9n-5883"
+chip = "ublox-neo-m8n"
+price = 45.0
+harness_mass = 0.036
+spec = { horizontal_sigma_m = 1.0 }
+horiz_std = 1.0
+vert_std = 1.5
+corr_time_s = 600.0
+corr_frac = 0.9
+[[slots.gnss.options]]
+part = "matek-m10q-5883"
+chip = "ublox-neo-m8n"
+price = 32.0
+harness_mass = 0.030
+spec = { horizontal_sigma_m = 1.5 }
+horiz_std = 1.5
+vert_std = 2.25
+corr_time_s = 600.0
+corr_frac = 0.9
+[[slots.gnss.options]]
+part = "holybro-m8n-gps"
+chip = "ublox-neo-m8n"
+price = 25.0
+harness_mass = 0.054
+spec = { horizontal_sigma_m = 2.12 }
+horiz_std = 2.1233
+vert_std = 3.185
+corr_time_s = 600.0
+corr_frac = 0.9
+
+[slots.range]
+what = "downward range sensor under the deck"
+instances = ["lidar"]
+[[slots.range.options]]
+part = "benewake-tf-luna"
+price = 25.0
+spec = { max_range_m = 8.0, min_range_m = 0.2, sigma_m = 0.03 }
+fov = 0.0349
+min_range = 0.2
+max_range = 8.0
+resolution = 0.01
+rate_hz = 100.0
+sigma0 = 0.03
+sigma1 = 0.01
+[[slots.range.options]]
+part = "benewake-tfmini-s"
+price = 45.0
+spec = { max_range_m = 12.0, min_range_m = 0.1, sigma_m = 0.03 }
+to_pins = ["J.2", "J.1"]
+fov = 0.0349
+min_range = 0.1
+max_range = 12.0
+resolution = 0.01
+rate_hz = 100.0
+sigma0 = 0.03
+sigma1 = 0.01
+[[slots.range.options]]
+part = "pololu-vl53l1x-carrier"
+price = 15.0
+spec = { max_range_m = 1.3, min_range_m = 0.04, sigma_m = 0.02, field_of_view_deg = 27 }
+fov = 0.4712
+min_range = 0.04
+max_range = 1.3         # short mode: the long mode's 4 m is a dark-room figure
+resolution = 0.001
+rate_hz = 50.0
+sigma0 = 0.02
+sigma1 = 0.02
+
+[slots.legs]
+what = "four legs"
+instances = ["leg1", "leg2", "leg3", "leg4"]
+spec = ["length", "foot_friction"]
+[[slots.legs.options]]
+part = "generic-lander-leg-skid"
+price = 5.0
+[[slots.legs.options]]
+part = "generic-rocket-landing-leg"
+price = 4.0

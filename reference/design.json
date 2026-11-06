@@ -1,0 +1,11 @@
+{
+  "battery": "tattu-2200mah-6s-95c-xt60",
+  "esc": "hobbywing-platinum-120a-v5-esc",
+  "servo": "robotis-xl330-m288-t",
+  "regulator": "pololu-d24v50f5",
+  "gnss": "matek-m10q-5883",
+  "range": "benewake-tf-luna",
+  "legs": "generic-lander-leg-skid",
+  "battery_x_mm": 60.0,
+  "battery_y_mm": 5.0
+}
