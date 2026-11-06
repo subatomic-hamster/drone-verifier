@@ -1,0 +1,217 @@
+{
+ "model": "grok",
+ "trial": 0,
+ "score": 20.0,
+ "gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "pass": true,
+   "points": 10,
+   "max_points": 10,
+   "reason": "cost, mass, envelope and design rules within limits"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "pass": true,
+   "points": 10,
+   "max_points": 10,
+   "reason": "T/W 2.19, hover at 56 % throttle and 459 W, 329 s flight time, 73 A peak"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "pass": false,
+   "points": 0,
+   "max_points": 30,
+   "reason": "no controller: call write_controller"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "pass": false,
+   "points": 0,
+   "max_points": 15,
+   "reason": "not run: an earlier gate failed"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "pass": false,
+   "points": 0,
+   "max_points": 15,
+   "reason": "not run: an earlier gate failed"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "pass": false,
+   "points": 0,
+   "max_points": 20,
+   "reason": "not run: an earlier gate failed"
+  }
+ ],
+ "verify_calls": 0,
+ "flights": 0,
+ "tokens": {
+  "input": 531705,
+  "output": 39454
+ },
+ "cost_usd": 0.628902,
+ "first_pass_flight_s": null,
+ "failure_reasons": [],
+ "wall_s": 717.4,
+ "feedback": "whatif",
+ "pass_within_budget": false,
+ "first_viable": null,
+ "viable_designs": [],
+ "robustness_gap": null,
+ "prediction_error": {
+  "hover_throttle_pct": null,
+  "flight_time_pct": null
+ },
+ "thrust_l1_vs_static_sim_pct": 3.7,
+ "energy_invariant": {
+  "ok": true,
+  "flights": []
+ },
+ "design": {
+  "battery": "tattu-2200mah-6s-95c-xt60",
+  "esc": "hobbywing-platinum-120a-v5-esc",
+  "servo": "robotis-xl330-m077-t",
+  "regulator": "pololu-d24v50f5",
+  "gnss": "matek-m9n-5883",
+  "range": "benewake-tf-luna",
+  "legs": "generic-lander-leg-skid",
+  "battery_x_mm": 58,
+  "battery_y_mm": 8
+ },
+ "cost_usd_bom": 584.2,
+ "mass_kg": 1.2673,
+ "cost_by_kind": {
+  "printed": 13.33,
+  "part": 511.41,
+  "wire": 4.46,
+  "gnss_module": 55.0
+ },
+ "heldout_flights": 0,
+ "first_test": {
+  "score": 0.0,
+  "gates": [],
+  "trigger": null,
+  "scenario": null,
+  "attempt_flown": null,
+  "design": null,
+  "cost_usd": null,
+  "mass_kg": null,
+  "reason": "the agent never reached the simulator",
+  "partial_score": 0.0,
+  "partial_gates": [],
+  "hard_score": 0.0,
+  "hard_gates": []
+ },
+ "first_test_score": 0.0,
+ "partial_score": 20.0,
+ "partial_gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the static rules passed"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the L1 margins met"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "points": 0.0,
+   "max_points": 30,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "points": 0.0,
+   "max_points": 20,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  }
+ ],
+ "hard_score": 20.0,
+ "hard_gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the static rules passed"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the L1 margins met"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "points": 0.0,
+   "max_points": 30,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "points": 0.0,
+   "max_points": 20,
+   "fraction": 0.0,
+   "reason": "not flown: no controller"
+  }
+ ]
+}

@@ -7,6 +7,31 @@ nominal, wind, rain, robustness). The score is gate points on held-out seeds. De
 The simulator is dvsim (proprietary robot design and MuJoCo-based sim kernel), **vendored** at `vendor/dvsim` (commit and date in
 `vendor/dvsim/VENDORED`). A fresh clone builds it from source; no dvsim checkout is needed anywhere.
 
+## Results
+
+One run per model at full feedback, so this is a demonstration, not a statistic. Ranked on the hidden exam score of the agent's state at its first simulator test.
+The exam has about double the wind, rain and scatter of the gates the agents see, and scores flight quality continuously, so 100 is out of reach (`docs/LAYERS.md`).
+Its numbers were frozen on the human reference before any agent was scored. Per-run scores: `benchmark/`.
+
+| Model                                             | First test (exam) | Final (exam) | Strict gates, final | Flights | Cost      |
+| ------------------------------------------------- | ----------------- | ------------ | ------------------- | ------- | --------- |
+| Opus                                              | 88.2              | 88.2         | 100                 | 11      | $1.00     |
+| Fable (a)                                         | 55.2              | 81.1         | 100                 | 26      | unknown   |
+| Sonnet                                            | 40.9              | 72.5         | 100                 | 32      | $1.70     |
+| DeepSeek 4 Pro (b)                                | 30.1              | 30.1         | 20                  | 1       | $0.04     |
+| DeepSeek Flash                                    | 25.7              | 41.0         | 20                  | 5       | $0.08     |
+| Nemotron 3.5 VL                                   | 25.5              | 27.5         | 20                  | 6       | free      |
+| Gemini 3.5 Flash Lite (c)                         | 20.0              | 25.4         | 20                  | 14      | free tier |
+| Haiku                                             | 20.0              | 24.6         | 20                  | 15      | $0.55     |
+| Grok 4.7 (d)                                      | 0.0               | 20.0         | 20                  | 0       | $0.63     |
+| Baseline: human reference                         | 86.2              | 86.2         | 100                 |         |           |
+| Baseline: brute force, fixed reference controller | 49.8              | 49.8         | 20                  |         |           |
+
+(a) Killed at the wall limit; the harness finished the run and it did not pass inside the verify budget. (b) Six connection resets during the run.
+(c) 48 free-tier quota errors, and killed at the wall limit. (d) Spent its 12 minutes without flying; every call reached xAI. Runs were capped at 12 minutes.
+
+Exam scores of Opus, the first and final state of Haiku, and the human reference were re-flown from their saved state and matched; the other runs were not re-flown. Simulation only: nothing here was built or flown for real.
+
 ## Prerequisites
 
 Linux x86_64 (the build and the viewer are tested on Ubuntu 24.04, GCC 13).
@@ -58,7 +83,7 @@ The agent works only through the MCP tools at `http://127.0.0.1:8801/mcp`. The r
     python harness/bench.py --models haiku,sonnet,opus,fable --trials 1 --parallel 4
 
 Models: `haiku sonnet opus fable` run through Claude Code; `nemotron` (NVIDIA NIM, free, `nvidia/nemotron-3.5-super-vl-120b-a12b`),
-`deepseek-flash` and `deepseek-pro` (paid, direct DeepSeek provider) run through the `omp` CLI, isolated the same way (only our MCP tools, no built-ins).
+`deepseek-flash` and `deepseek-pro` (paid, direct DeepSeek provider), `gemini-flash-lite` (needs `GEMINI_API_KEY`) and `grok` (needs `XAI_API_KEY`) run through the `omp` CLI, isolated the same way (only our MCP tools, no built-ins).
 
 `bench.py` starts one headless session per run through `scripts/hf.sh` (ports 8804-8811), runs the agents from this machine,
 and pulls results into `results/`. `python harness/leaderboard.py` builds the leaderboard. Where the sessions run is one knob, `DV_HOST`:

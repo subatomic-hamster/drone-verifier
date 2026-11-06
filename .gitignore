@@ -1,4 +1,5 @@
 runs/
+!benchmark/runs/
 results/
 *.dvsimog
 *.mp4

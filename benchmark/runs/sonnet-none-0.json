@@ -1,0 +1,217 @@
+{
+ "model": "sonnet-none",
+ "trial": 0,
+ "score": 0.0,
+ "gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "pass": false,
+   "points": 0,
+   "max_points": 10,
+   "reason": "REGULATOR_CURRENT: two servos at stall, flight computer and range sensor draw 3.19 A, regulator rated 2.5 A"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "pass": false,
+   "points": 0,
+   "max_points": 10,
+   "reason": "not run: an earlier gate failed"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "pass": false,
+   "points": 0,
+   "max_points": 30,
+   "reason": "not run: an earlier gate failed"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "pass": false,
+   "points": 0,
+   "max_points": 15,
+   "reason": "not run: an earlier gate failed"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "pass": false,
+   "points": 0,
+   "max_points": 15,
+   "reason": "not run: an earlier gate failed"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "pass": false,
+   "points": 0,
+   "max_points": 20,
+   "reason": "not run: an earlier gate failed"
+  }
+ ],
+ "verify_calls": 0,
+ "flights": 0,
+ "tokens": {
+  "input": 259716,
+  "output": 283
+ },
+ "cost_usd": null,
+ "first_pass_flight_s": null,
+ "failure_reasons": [],
+ "wall_s": 67.3,
+ "feedback": "none",
+ "pass_within_budget": false,
+ "first_viable": null,
+ "viable_designs": [],
+ "robustness_gap": null,
+ "prediction_error": {
+  "hover_throttle_pct": null,
+  "flight_time_pct": null
+ },
+ "thrust_l1_vs_static_sim_pct": 3.7,
+ "energy_invariant": {
+  "ok": true,
+  "flights": []
+ },
+ "design": {
+  "battery": "tattu-2200mah-6s-95c-xt60",
+  "esc": "iflight-blitz-e80-single",
+  "servo": "robotis-xl330-m077-t",
+  "regulator": "pololu-d24v25f5",
+  "gnss": "matek-m9n-5883",
+  "range": "benewake-tf-luna",
+  "legs": "generic-rocket-landing-leg",
+  "battery_x_mm": 60,
+  "battery_y_mm": 0
+ },
+ "cost_usd_bom": 490.29,
+ "mass_kg": 1.1314,
+ "cost_by_kind": {
+  "printed": 13.33,
+  "part": 417.5,
+  "wire": 4.46,
+  "gnss_module": 55.0
+ },
+ "heldout_flights": 0,
+ "first_test": {
+  "score": 0.0,
+  "gates": [],
+  "trigger": null,
+  "scenario": null,
+  "attempt_flown": null,
+  "design": null,
+  "cost_usd": null,
+  "mass_kg": null,
+  "reason": "the agent never reached the simulator",
+  "partial_score": 0.0,
+  "partial_gates": [],
+  "hard_score": 0.0,
+  "hard_gates": []
+ },
+ "first_test_score": 0.0,
+ "partial_score": 19.1,
+ "partial_gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "points": 9.09,
+   "max_points": 10,
+   "fraction": 0.9091,
+   "reason": "fraction of the static rules passed"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the L1 margins met"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "points": 0.0,
+   "max_points": 30,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "points": 0.0,
+   "max_points": 20,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  }
+ ],
+ "hard_score": 19.1,
+ "hard_gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "points": 9.09,
+   "max_points": 10,
+   "fraction": 0.9091,
+   "reason": "fraction of the static rules passed"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the L1 margins met"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "points": 0.0,
+   "max_points": 30,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "points": 0.0,
+   "max_points": 15,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "points": 0.0,
+   "max_points": 20,
+   "fraction": 0.0,
+   "reason": "not flown: G1 failed"
+  }
+ ]
+}

@@ -1,0 +1,472 @@
+{
+ "model": "human",
+ "trial": 1,
+ "baseline": true,
+ "score": 100.0,
+ "gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "pass": true,
+   "points": 10,
+   "max_points": 10,
+   "reason": "cost, mass, envelope and design rules within limits"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "pass": true,
+   "points": 10,
+   "max_points": 10,
+   "reason": "T/W 2.20, hover at 56 % throttle and 456 W, 331 s flight time, 73 A peak"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "pass": true,
+   "points": 30,
+   "max_points": 30,
+   "reason": "mission complete"
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "pass": true,
+   "points": 15,
+   "max_points": 15,
+   "reason": "mission complete"
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "pass": true,
+   "points": 15,
+   "max_points": 15,
+   "reason": "mission complete"
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "pass": true,
+   "points": 20.0,
+   "max_points": 20,
+   "reason": "5 of 5 seeds pass"
+  }
+ ],
+ "verify_calls": 0,
+ "flights": 16,
+ "tokens": {
+  "input": 0,
+  "output": 0
+ },
+ "cost_usd": 0.0,
+ "wall_s": null,
+ "failure_reasons": [],
+ "pass_within_budget": true,
+ "robustness_gap": 0.0,
+ "first_viable": {
+  "iteration": 1,
+  "verify_calls": 0,
+  "cost_usd": 574.04,
+  "mass_kg": 1.2613
+ },
+ "design": {
+  "battery": "tattu-2200mah-6s-95c-xt60",
+  "esc": "hobbywing-platinum-120a-v5-esc",
+  "servo": "robotis-xl330-m288-t",
+  "regulator": "pololu-d24v50f5",
+  "gnss": "matek-m10q-5883",
+  "range": "benewake-tf-luna",
+  "legs": "generic-lander-leg-skid",
+  "battery_x_mm": 60.0,
+  "battery_y_mm": 5.0
+ },
+ "cost_usd_bom": 574.04,
+ "mass_kg": 1.2613,
+ "partial_score": 100.0,
+ "partial_gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the static rules passed"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the L1 margins met"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "points": 30.0,
+   "max_points": 30,
+   "fraction": 1.0,
+   "reason": "mission complete",
+   "flight": {
+    "seed": 910274,
+    "scenario": "nominal",
+    "pass": true,
+    "mission": 1.0,
+    "parts": {
+     "liftoff": 1.0,
+     "altitude": 1.0,
+     "hold": 1.0,
+     "landing": 1.0,
+     "accuracy": 1.0
+    },
+    "reason": "mission complete",
+    "lifted": true
+   }
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "points": 15.0,
+   "max_points": 15,
+   "fraction": 1.0,
+   "reason": "mission complete",
+   "flight": {
+    "seed": 910275,
+    "scenario": "wind",
+    "pass": true,
+    "mission": 1.0,
+    "parts": {
+     "liftoff": 1.0,
+     "altitude": 1.0,
+     "hold": 1.0,
+     "landing": 1.0,
+     "accuracy": 1.0
+    },
+    "reason": "mission complete",
+    "lifted": true
+   }
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "points": 15.0,
+   "max_points": 15,
+   "fraction": 1.0,
+   "reason": "mission complete",
+   "flight": {
+    "seed": 910276,
+    "scenario": "rain",
+    "pass": true,
+    "mission": 1.0,
+    "parts": {
+     "liftoff": 1.0,
+     "altitude": 1.0,
+     "hold": 1.0,
+     "landing": 1.0,
+     "accuracy": 1.0
+    },
+    "reason": "mission complete",
+    "lifted": true
+   }
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "points": 20.0,
+   "max_points": 20,
+   "fraction": 1.0,
+   "reason": "mean mission score over 5 seeds",
+   "flights": [
+    {
+     "seed": 910283,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 1.0,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true
+    },
+    {
+     "seed": 910284,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 1.0,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true
+    },
+    {
+     "seed": 910285,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 1.0,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true
+    },
+    {
+     "seed": 910286,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 1.0,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true
+    },
+    {
+     "seed": 910287,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 1.0,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true
+    }
+   ]
+  }
+ ],
+ "hard_score": 86.2,
+ "hard_gates": [
+  {
+   "id": "G1",
+   "name": "static",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the static rules passed"
+  },
+  {
+   "id": "G2",
+   "name": "lift",
+   "points": 10.0,
+   "max_points": 10,
+   "fraction": 1.0,
+   "reason": "fraction of the L1 margins met"
+  },
+  {
+   "id": "G3",
+   "name": "nominal",
+   "points": 25.43,
+   "max_points": 30,
+   "fraction": 0.8476,
+   "reason": "mission complete",
+   "flight": {
+    "seed": 910274,
+    "scenario": "nominal",
+    "pass": true,
+    "mission": 0.8476,
+    "parts": {
+     "liftoff": 1.0,
+     "altitude": 1.0,
+     "hold": 1.0,
+     "landing": 1.0,
+     "accuracy": 1.0
+    },
+    "reason": "mission complete",
+    "lifted": true,
+    "alt_rms_m": 0.11,
+    "hold_std_m": 0.11,
+    "touchdown_m_s": 0.471,
+    "land_dist_m": 0.218,
+    "tilt_max_deg": 7.72
+   }
+  },
+  {
+   "id": "G4",
+   "name": "wind",
+   "points": 11.61,
+   "max_points": 15,
+   "fraction": 0.7737,
+   "reason": "mission complete",
+   "flight": {
+    "seed": 910275,
+    "scenario": "wind",
+    "pass": true,
+    "mission": 0.7737,
+    "parts": {
+     "liftoff": 1.0,
+     "altitude": 1.0,
+     "hold": 1.0,
+     "landing": 1.0,
+     "accuracy": 1.0
+    },
+    "reason": "mission complete",
+    "lifted": true,
+    "alt_rms_m": 0.142,
+    "hold_std_m": 0.141,
+    "touchdown_m_s": 0.368,
+    "land_dist_m": 0.824,
+    "tilt_max_deg": 16.63
+   }
+  },
+  {
+   "id": "G5",
+   "name": "rain",
+   "points": 12.23,
+   "max_points": 15,
+   "fraction": 0.8152,
+   "reason": "mission complete",
+   "flight": {
+    "seed": 910276,
+    "scenario": "rain",
+    "pass": true,
+    "mission": 0.8152,
+    "parts": {
+     "liftoff": 1.0,
+     "altitude": 1.0,
+     "hold": 1.0,
+     "landing": 1.0,
+     "accuracy": 1.0
+    },
+    "reason": "mission complete",
+    "lifted": true,
+    "alt_rms_m": 0.131,
+    "hold_std_m": 0.124,
+    "touchdown_m_s": 0.424,
+    "land_dist_m": 0.287,
+    "tilt_max_deg": 15.07
+   }
+  },
+  {
+   "id": "G6",
+   "name": "robust",
+   "points": 16.88,
+   "max_points": 20,
+   "fraction": 0.8442,
+   "reason": "mean mission score over 5 seeds",
+   "flights": [
+    {
+     "seed": 910283,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 0.8248,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true,
+     "alt_rms_m": 0.14,
+     "hold_std_m": 0.136,
+     "touchdown_m_s": 0.465,
+     "land_dist_m": 0.235,
+     "tilt_max_deg": 9.54
+    },
+    {
+     "seed": 910284,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 0.8563,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true,
+     "alt_rms_m": 0.099,
+     "hold_std_m": 0.038,
+     "touchdown_m_s": 0.449,
+     "land_dist_m": 0.458,
+     "tilt_max_deg": 9.3
+    },
+    {
+     "seed": 910285,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 0.8328,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true,
+     "alt_rms_m": 0.105,
+     "hold_std_m": 0.051,
+     "touchdown_m_s": 0.388,
+     "land_dist_m": 0.525,
+     "tilt_max_deg": 15.19
+    },
+    {
+     "seed": 910286,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 0.8476,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true,
+     "alt_rms_m": 0.124,
+     "hold_std_m": 0.05,
+     "touchdown_m_s": 0.4,
+     "land_dist_m": 0.419,
+     "tilt_max_deg": 10.11
+    },
+    {
+     "seed": 910287,
+     "scenario": "robust",
+     "pass": true,
+     "mission": 0.8597,
+     "parts": {
+      "liftoff": 1.0,
+      "altitude": 1.0,
+      "hold": 1.0,
+      "landing": 1.0,
+      "accuracy": 1.0
+     },
+     "reason": "mission complete",
+     "lifted": true,
+     "alt_rms_m": 0.109,
+     "hold_std_m": 0.109,
+     "touchdown_m_s": 0.457,
+     "land_dist_m": 0.127,
+     "tilt_max_deg": 6.43
+    }
+   ]
+  }
+ ]
+}
