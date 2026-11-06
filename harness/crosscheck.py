@@ -7,14 +7,16 @@ crosscheck = {score_full, score_half, score_change, gates_half:[{id,pass}], dt_s
 """
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).parent))
+import hosts
+
 HF = str(ROOT / "scripts" / "hf.sh")
-RR = "/workspace/wt/dv/runs"
+RR = hosts.RUNS
 MIN_SCORE = 50  # whatif runs scoring at least this are re-flown
 
 
@@ -34,12 +36,7 @@ def fly_half(rd):
 
 
 def ssh(cmd, data=None):
-    return subprocess.run(
-        ["ssh", "-o", "BatchMode=yes", os.environ.get("DV_HOST", "hfbox"), cmd],
-        input=data,
-        capture_output=True,
-        text=True,
-    )
+    return hosts.run(cmd, input=data)
 
 
 def main():

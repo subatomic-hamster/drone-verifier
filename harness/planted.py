@@ -4,10 +4,12 @@ Rows: {name, flagged, layer, gate, why} for the planted flaws; `clean`: lines of
 
 import json
 import re
-import subprocess
 import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import hosts
 
 ROOT = Path(__file__).resolve().parent.parent
 ROW = re.compile(r"^(\S.*?)\s{2,}(yes|NO)\s+(L\d|-)\s+(G\d|-)\s+(.*)$")
@@ -51,17 +53,7 @@ if __name__ == "__main__":
     if sys.argv[1:]:
         text = Path(sys.argv[1]).read_text()
     else:
-        text = subprocess.run(
-            [
-                "ssh",
-                "-o",
-                "BatchMode=yes",
-                "hfbox",
-                "cat /workspace/wt/dv/logs/planted.log",
-            ],
-            capture_output=True,
-            text=True,
-        ).stdout
+        text = hosts.cat(f"{hosts.DIR}/logs/planted.log") or ""
     out = parse(text)
     (ROOT / "results").mkdir(exist_ok=True)
     (ROOT / "results" / "planted.json").write_text(json.dumps(out, indent=1))

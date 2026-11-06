@@ -19,8 +19,11 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).parent))
+import hosts
+
 HF = str(ROOT / "scripts" / "hf.sh")
-REMOTE_RUNS = "/workspace/wt/dv/runs"
+REMOTE_RUNS = hosts.RUNS
 FIXED = ("battery_x_mm", "battery_y_mm")
 
 
@@ -199,18 +202,9 @@ def main():
             "controller.py",
             "results.json",
         ):  # results.json last: marks it done; the others feed crosscheck.py
-            out = subprocess.run(
-                [
-                    "ssh",
-                    "-o",
-                    "BatchMode=yes",
-                    os.environ.get("DV_HOST", "hfbox"),
-                    f"cat {REMOTE_RUNS}/baseline-{name}/{f}",
-                ],
-                capture_output=True,
-                text=True,
+            (ROOT / "results" / local / f).write_text(
+                hosts.cat(f"{REMOTE_RUNS}/baseline-{name}/{f}") or ""
             )
-            (ROOT / "results" / local / f).write_text(out.stdout)
     subprocess.run([sys.executable, str(ROOT / "harness" / "leaderboard.py")])
 
 

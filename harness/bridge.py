@@ -10,32 +10,17 @@ slow fly/verify never blocks /state. /stream is a separate ssh exec of the GUI's
 import argparse
 import base64
 import json
-import os
 import queue
 import subprocess
+import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-HOST = os.environ.get("DV_HOST", "hfbox")
-SSH = [
-    "ssh",
-    "-T",
-    "-o",
-    "BatchMode=yes",
-    "-o",
-    "ConnectTimeout=20",
-    "-o",
-    "ServerAliveInterval=10",
-    "-o",
-    "ServerAliveCountMax=3",
-    HOST,
-]
-ENV = (
-    "export OMP_NUM_THREADS=1 PYTHONPATH=/workspace/wt/dv/src:/workspace/wt/dv-dvsim/src/examples/hopper DV_RUNS=/workspace/wt/dv/runs "
-    "DVSIM_ROOT=/workspace/wt/dv-dvsim/src PATH=/workspace/wt/dv-dvsim/src/.venv/bin:$PATH; cd /workspace/wt/dv/src; "
-)
-PIPE_CMD = "python3 /workspace/wt/dv/src/dv/pipe.py {port}"
+import hosts
+
+ENV = hosts.ENV
+PIPE_CMD = f"python3 {hosts.SRC}/dv/pipe.py {{port}}"
 STREAM_CMD = (
     ENV + "python -m dv.gui_stream --port {port}"
 )  # GUI provides: fragmented MP4 (H.264) on stdout
@@ -87,7 +72,7 @@ class Link:
             t0 = time.time()
             try:
                 self.proc = p = subprocess.Popen(
-                    SSH + [PIPE_CMD.format(port=self.port)],
+                    hosts.argv(PIPE_CMD.format(port=self.port)),
                     stdin=subprocess.PIPE,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -177,7 +162,7 @@ class Stream:
     def pump(self):
         while self.viewers:
             p = subprocess.Popen(
-                SSH + [STREAM_CMD.format(port=self.port)],
+                hosts.argv(STREAM_CMD.format(port=self.port)),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL,
             )
@@ -330,6 +315,10 @@ def main():
     a.add_argument("--port", required=True)
     a.add_argument("--session", default="")
     a = a.parse_args()
+    if hosts.LOCAL:
+        sys.exit(
+            "DV_HOST=local: no bridge needed, the sessions listen on 127.0.0.1 directly"
+        )
     links = {}
     servers = []
     for p in map(int, a.port.split(",")):

@@ -3,13 +3,19 @@
 # Code in /workspace/wt/dv/src, dvsim build in /workspace/wt/dv-dvsim/src, runs in /workspace/wt/dv/runs. Long-lived sessions are tmux dv-NAME.
 set -euo pipefail
 export SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-/run/user/1000/hfbox-agent.sock}
-HOST=${DV_HOST:-hfbox}
+HOST=${DV_HOST:-hfbox}   # an ssh host, or "local": same commands as local subprocesses, no ssh, no rsync (harness/hosts.py reads the same knob)
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-DIR=/workspace/wt/dv
-ENV="export OMP_NUM_THREADS=1 PYTHONPATH=$DIR/src:/workspace/wt/dv-dvsim/src/examples/hopper DV_RUNS=$DIR/runs DVSIM_ROOT=/workspace/wt/dv-dvsim/src PATH=/workspace/wt/dv-dvsim/src/.venv/bin:\$PATH; cd $DIR/src"
-s() { ssh -o BatchMode=yes -o ConnectTimeout=20 "$HOST" "$@" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
+if [ "$HOST" = local ]; then
+    DIR=${DV_DIR:-$ROOT/.dv}; SRC=$ROOT; DVSIM=${DVSIM_ROOT:-$ROOT/vendor/dvsim}; RUNS=${DV_RUNS:-$DIR/runs}
+    s() { bash -c "$1"; }
+    sync() { :; }
+else
+    DIR=${DV_DIR:-/workspace/wt/dv}; SRC=$DIR/src; DVSIM=/workspace/wt/dv-dvsim/src; RUNS=$DIR/runs
+    s() { ssh -o BatchMode=yes -o ConnectTimeout=20 "$HOST" "$@" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
+fi
+ENV="export OMP_NUM_THREADS=1 PYTHONPATH=$SRC:$DVSIM/examples/hopper DV_RUNS=$RUNS DVSIM_ROOT=$DVSIM PATH=$DVSIM/.venv/bin:\$PATH; cd $SRC"
 
-sync() { rsync -a --delete --exclude .git --exclude runs --exclude results --exclude __pycache__ --exclude vendor/dvsim/.venv --exclude vendor/dvsim/build -e 'ssh -o BatchMode=yes -o ConnectTimeout=20' "$ROOT/" "$HOST:$DIR/src/" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
+[ "$HOST" = local ] || sync() { rsync -a --delete --exclude .git --exclude runs --exclude results --exclude __pycache__ --exclude vendor/dvsim/.venv --exclude vendor/dvsim/build -e 'ssh -o BatchMode=yes -o ConnectTimeout=20' "$ROOT/" "$HOST:$DIR/src/" 2> >(grep -Ev '^(depth=|verify return|Connecting to)' >&2); }
 
 case ${1:?usage} in
 sync) s "mkdir -p $DIR/src $DIR/runs $DIR/logs $DIR/slots"; sync ;;

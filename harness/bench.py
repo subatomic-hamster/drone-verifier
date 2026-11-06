@@ -20,13 +20,15 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import hosts
 from run_agent import ROOT, run_agent
 
 HF = str(ROOT / "scripts" / "hf.sh")
 RESULTS = ROOT / "results"
-REMOTE_RUNS = "/workspace/wt/dv/runs"
+REMOTE_RUNS = hosts.RUNS
+BASE = int(os.environ.get("DV_PORT_BASE", 8804))
 PORTS = list(
-    range(8804, 8812)
+    range(BASE, BASE + 8)
 )  # 8 headless sessions (8801-8803 stay free for the GUI demo and its bridge): agents wait on the LLM, flights are capped by the flock slots in dv.verify
 SESSIONS = dict(zip(PORTS, "ABCDEFGH"))
 START_LOCK = threading.Lock()
@@ -62,15 +64,7 @@ def sh(*args, timeout=300):
 
 
 def ssh(cmd):
-    return sh(
-        "ssh",
-        "-o",
-        "BatchMode=yes",
-        "-o",
-        "ConnectTimeout=20",
-        os.environ.get("DV_HOST", "hfbox"),
-        cmd,
-    )
+    return hosts.run(cmd)
 
 
 def ssh_cat(path):
@@ -184,16 +178,11 @@ def main():
     ports = queue.Queue()
     [ports.put(p) for p in PORTS[:n]]
     # sshd forbids port forwarding: the bridge speaks to dv/pipe.py over plain ssh exec
-    tun = subprocess.Popen(
-        [
-            sys.executable,
-            str(Path(__file__).parent / "bridge.py"),
-            "--port",
-            ",".join(map(str, PORTS[:n])),
-        ]
-    )
+    tun = hosts.bridge(
+        PORTS[:n]
+    )  # None with DV_HOST=local: the sessions already listen on 127.0.0.1
     time.sleep(4)
-    if tun.poll() is not None:
+    if tun and tun.poll() is not None:
         sys.exit("ERROR: bridge did not start (port in use?)")
     wall_min = a.wall_min or (12 if a.sweep else None)
     wall_s = wall_min * 60 if wall_min else None
@@ -214,7 +203,8 @@ def main():
             for line in ex.map(job, todo):
                 print(line, flush=True)
     finally:
-        tun.terminate()
+        if tun:
+            tun.terminate()
     subprocess.run([sys.executable, str(Path(__file__).parent / "leaderboard.py")])
 
 
