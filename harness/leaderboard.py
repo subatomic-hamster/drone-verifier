@@ -51,6 +51,11 @@ def viable(r):
     return v
 
 
+def first_test_score(r):
+    """The ranking score. A baseline has one shot, so its score is its first test; an agent run that first_test.py has not scored yet has none."""
+    return r.get("first_test_score", r.get("score") if r.get("baseline") else None)
+
+
 def entry(model, rs):
     best = max(rs, key=lambda r: r.get("score", 0))
     g = lambda k: mean(r.get(k) for r in rs)
@@ -65,6 +70,7 @@ def entry(model, rs):
         "baseline": any(r.get("baseline") for r in rs),
         "trials": len(rs),
         "n_note": f"n={len(rs)}" + (" (one run: not a rate)" if len(rs) == 1 else ""),
+        "first_test_score": mean(first_test_score(r) for r in rs),
         "score": g("score"),
         "best_gate": ok[-1] if ok else None,
         "gates": [
@@ -128,13 +134,16 @@ def build(results_dir=RESULTS):
             )
             c["runs"] += 1
             c["passed"] += passed(r)
+            c.setdefault("first_tests", []).append(first_test_score(r))
     for lv in curve.values():
         for c in lv.values():
             c["rate"] = round(c["passed"] / c["runs"], 2)
+            c["first_test"] = mean(c.pop("first_tests"))
     entries = [entry(m, rs) for m, rs in main.items()]
-    # ties: fewer verify calls, then less wall time, then fewer tokens
+    # rank on the first test (unscored last), ties: final score, fewer verify calls, then less wall time, then fewer tokens
     entries.sort(
         key=lambda e: (
+            -(e["first_test_score"] if e["first_test_score"] is not None else -1),
             -e["score"],
             e["verify_calls"] or 0,
             e["wall_s"] or 0,
@@ -165,7 +174,7 @@ if __name__ == "__main__":
         for x in e:
             p = x["pass_within_budget"]
             print(
-                f"{x['model']:12} {x['score']:6} {x['n_note']} gate={x['best_gate']} pass={p['passed']}/{p['runs']} verify={x['verify_calls']} ${x['cost_usd']}{' [baseline]' if x['baseline'] else ''}"
+                f"{x['model']:12} first={x['first_test_score']} final={x['score']:6} {x['n_note']} gate={x['best_gate']} pass={p['passed']}/{p['runs']} verify={x['verify_calls']} ${x['cost_usd']}{' [baseline]' if x['baseline'] else ''}"
             )
         for m, lv in lb["feedback_curve"].items():
             print(m, {l: f"{c['passed']}/{c['runs']}" for l, c in lv.items()})
