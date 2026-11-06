@@ -40,6 +40,7 @@ body { margin:0; height:100vh; overflow:hidden; background:var(--bg); color:var(
 .rung .st { font-weight:800; text-align:right; }
 .rung .tx { grid-column:1 / -1; font-size:.85rem; line-height:1.15; overflow:hidden; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:1; }
 .rung .tx:empty { display:none; }
+.single .rung .tx { -webkit-line-clamp:2; }
 .rung.pass { background:#0f3a20; border-color:var(--green); color:var(--fg); }
 .rung.fail { background:#4a1512; border-color:var(--red); color:var(--fg); }
 .rung.fail .tx { -webkit-line-clamp:2; font-size:.95rem; }

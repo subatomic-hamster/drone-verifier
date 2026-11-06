@@ -26,13 +26,15 @@ const LAYERS = [
   { id: "L2", name: "sim", gates: ["G3", "G4", "G5"] },
   { id: "L3", name: "perturbed", gates: ["G6"] },
 ];
-const ANALYTIC = /^(tw|hover|flight_time|peak)/; // constraint names that belong to L1; the rest are L0
+// the constraint names dv/analytic.py gives L1; the rest are L0
+const ANALYTIC =
+  /^(tw|hover_throttle|hover_power|flight_time|pack_current|esc_peak_current)$/;
 const LEVELS = ["none", "passfail", "diag", "whatif"];
 const AGENT_SAW = {
-  none: "nothing, only that it was recorded",
+  none: "nothing",
   passfail: "pass/fail only",
-  diag: "rules, margins, telemetry",
-  whatif: "rules, margins, telemetry, what-if",
+  diag: "all of this",
+  whatif: "all of this + what-if",
 };
 const TARGET = 3.0,
   BAND = 0.3;
@@ -86,6 +88,9 @@ class Feed {
     this.dirty = true;
     if (e.feedback) this.feedback = e.feedback;
     switch (e.kind) {
+      case "config":
+        if (e.model && e.model !== "unknown") this.label = e.model;
+        break;
       case "agent_text":
         this.add(e.kind, "k-agent", String(e.text).trim().slice(0, 240));
         break;
@@ -307,7 +312,7 @@ function rung(f, l) {
         text:
           l.id === "L0"
             ? "cost, mass, envelope, rules within limits"
-            : `thrust to weight ${tw.toFixed(2)}`,
+            : `T/W ${tw.toFixed(2)}, hover at ${or(f.meters.hover_throttle_pct, (x) => x.toFixed(0))} % throttle`,
       };
   }
   return { state: "", text: "" };
@@ -723,10 +728,17 @@ const MAX_GAP_S = 2; // no video: long silences are cut to this at playback
 async function replaySession(url, video, speed) {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
-  const ev = (await r.text())
+  let ev = (await r.text())
     .split("\n")
     .filter(Boolean)
     .map((l) => JSON.parse(l));
+  // a rerun in the same run dir appends to the file; stream.mp4 is that last run's
+  ev = ev.slice(
+    Math.max(
+      0,
+      ev.findLastIndex((e) => e.seq === 0),
+    ),
+  );
   const name = url.split("/").slice(-2, -1)[0] || url;
   const f = new Feed(name);
   const abs = new URL(url, location.href);
