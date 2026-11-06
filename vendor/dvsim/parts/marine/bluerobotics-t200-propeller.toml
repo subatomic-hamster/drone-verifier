@@ -1,0 +1,71 @@
+id = "bluerobotics-t200-propeller"
+name = "Blue Robotics T200 propeller (3-blade, 76 mm, in the T200 nozzle)"
+category = "prop"
+vendor = "Blue Robotics"
+part_number = "(supplied with T200-THRUSTER-R2-RP)"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+
+# Marine propeller coefficients C_T = T / (rho n^2 D^4), C_Q = Q / (rho n^2 D^5) against the advance ratio J = V_a / (n D) for the rotor device
+# (`water = true`: rho = the Sea's density, V_a relative to the water current). Only the J = 0 (bollard) point is derived from published data; the rest of
+# the curve is an ESTIMATED straight-line decline (see ct_cq_j).
+[params]
+diameter  = { value = 0.076, unit = "m", src = "S1", fidelity = "datasheet" }
+blade_count = { value = 3, unit = "1", fidelity = "estimated", rationale = "The T200 propeller is a 3-blade design in a nozzle (product photos); not stated in the spec table." }
+mass      = { value = 0.015, unit = "kg", fidelity = "estimated", rationale = "Not published; the 427 g thruster is ~96 % motor / nozzle / cable. A 76 mm 3-blade polycarbonate propeller weighs ~10-20 g; 15 g taken (it only moves the 0.412 kg motor mass in bluerobotics-t200-thruster)." }
+ct_static = { value = 0.416, unit = "1", fidelity = "derived", derivation = "C_T(0) = T / (rho n^2 D^4): T = 3.71 kgf x 9.80665 = 36.38 N at full throttle 12 V (S1), n = 3075 rpm / 60 = 51.25 rev/s (S2), rho = 998.2 kg/m3 (fresh water, 20 degC; the tank fluid is not stated), D = 0.076 m: rho n^2 D^4 = 998.2 x 2626.6 x 3.336e-5 = 87.47 N, C_T = 36.38 / 87.47 = 0.416. Static thrust with the thruster in a tank; the nozzle's contribution is inside it." }
+thrust_reverse_ratio = { value = 0.787, unit = "1", fidelity = "derived", derivation = "Full-throttle thrust at 12 V forward 3.71 kgf, reverse 2.92 kgf (S1): 2.92 / 3.71 = 0.787. The rotor device multiplies the (otherwise mirrored) thrust by this factor in reverse spin (Rotor.rev_thrust), i.e. it assumes the rpm at full reverse equals the forward rpm and the whole shortfall is C_T; the vendor gives no reverse rpm, current or advance-ratio curve." }
+cq_static = { value = 0.0703, unit = "1", fidelity = "derived", derivation = "C_Q(0) = Q / (rho n^2 D^5) with Q = P_shaft / omega = 150 W / 322 rad/s = 0.467 N*m; P_shaft = 75 % (ESTIMATED motor efficiency, see bluerobotics-t200-thruster kv) x 200.6 W at the motor terminals (12 V - 0.2 V ESC drop, 17 A; S1). rho n^2 D^5 = 87.47 x 0.076 = 6.648 N*m, C_Q = 0.467 / 6.648 = 0.0703. Figure of merit of that point: ideal power T^1.5 / sqrt(2 rho A) = 219.4 / 3.009 = 73 W over 150 W = 0.49." }
+
+[tables.ct_cq_j]
+# C_T(J), C_Q(J) for the rotor device (columns j, ct, cq). J = 0 row = ct_static / cq_static. ESTIMATED shape: C_T falls linearly to zero at J = 0.8 and C_Q to 40 % of its
+# bollard value there. Open marine propellers show a near-linear K_T(J) between the bollard point and the zero-thrust advance ratio, which sits at
+# J ~ 0.7-1.0 for a pitch / diameter around 0.8-1.1; the T200 pitch is unpublished. Unvalidated for J > 0 (a boat cruising at 1-2 m/s has J = V / (n D) = 0.2-0.5).
+columns = ["j", "ct", "cq"]
+rows = [
+  [0.0, 0.4160, 0.07030],
+  [0.2, 0.3120, 0.06000],
+  [0.4, 0.2080, 0.04920],
+  [0.6, 0.1040, 0.03800],
+  [0.8, 0.0000, 0.02810],
+]
+fidelity = "estimated"
+rationale = "J = 0 row derived (ct_static, cq_static); the J dependence is a straight-line estimate: no open-water curve of the T200 propeller is published."
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.038, 0.004]
+pos = [0.0, 0.0, 0.004]
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "bore.t200"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Hub on the thruster's shaft end, axis down the shaft; the propeller spins freely about z (the builder uses a hinge). Interface family name only."
+
+[visual]
+rationale = "3-blade 76 mm propeller (part params); broad blades and a large hub, as a nozzle propeller has, instead of the slender default drone-prop chord."
+
+[[visual.elements]]
+gen = "propeller"
+params = { chord = 0.045, hub_d = 0.022 }
+
+[[sources]]
+id = "S1"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+title = "T200 Thruster (R2-RP) product page, Technical Details tab (Blue Robotics)"
+accessed = "2026-10-08"
+quote = "Full Throttle FWD/REV Thrust @ 12 V | 3.71 / 2.92 kg f ... Full Throttle Current (Power) @ 12 V | 17 Amps (205 Watts) ... Propeller Diameter | 76 mm"
+
+[[sources]]
+id = "S2"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+title = "T200 Thruster (R2-RP) product page, FAQ on water flow rate (Blue Robotics)"
+accessed = "2026-10-08"
+quote = "and spins at about 3075 RPM full throttle 12 V, and 3600 RPM 16 V."

@@ -1,0 +1,100 @@
+id = "holybro-x500v2-arm-tube"
+name = "Holybro X500 V2 carbon fibre arm tube (#510177)"
+category = "frame.tube"
+vendor = "Holybro"
+part_number = "510177"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+
+# Dimensions measured on Holybro's published x500v2-frame.step with OpenCascade (BRepGProp volume, cylinder faces).
+# Holybro text says '16mm carbon fiber tubes'; the CAD tube is OD 15.4 mm / ID 14.0 mm. Both are recorded.
+[params]
+nominal_outer_diameter = { value = 0.016, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.cad_outer_diameter]
+value = 0.0154
+unit = "m"
+fidelity = "derived"
+derivation = "Cylinder face radius 7.7 mm of the arm-tube solid (volume 5209 mm3) in x500v2-frame.step, read with OpenCascade BRepAdaptor_Surface."
+
+[params.cad_inner_diameter]
+value = 0.014
+unit = "m"
+fidelity = "derived"
+derivation = "Inner cylinder face radius 7.0 mm of the same solid in x500v2-frame.step."
+
+[params.cad_length]
+value = 0.1611
+unit = "m"
+fidelity = "derived"
+derivation = "Volume 5209 mm3 = pi*(7.7^2 - 7.0^2)*L gives L = 161.1 mm; cross-check lateral area 7798 mm2 / (2*pi*7.7) = 161.2 mm. Tube axis is at 45 degrees in the X frame with centre of mass 148.2 mm from the frame centre."
+
+[params.cad_volume]
+value = 5.209e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "Solid volume from x500v2-frame.step (OpenCascade BRepGProp::VolumeProperties); includes the small cross hole."
+
+[params.mass]
+value = 8.07e-3
+unit = "kg"
+fidelity = "derived"
+derivation = "cad_volume 5.209e-6 m3 * carbon-fibre-epoxy-ud estimated density 1550 kg/m3 = 8.07 g per tube. Not weighed; density is itself estimated (see parts/common/carbon-fibre-epoxy-ud.toml)."
+
+[params.mass_tol]
+value = 0.0008
+unit = "kg"
+fidelity = "estimated"
+rationale = "Mass is CAD volume times an estimated UD density (1550 kg/m3, itself estimated), so +-10% of 8.07 g is carried; the tube has not been weighed and the CAD OD (15.4 mm) differs from the nominal 16 mm."
+
+[geometry]
+# Part frame: origin at the tube centre, z along the tube axis (mated, z points outward away from the frame centre),
+# tube x = up when installed (set by the connector port ref), cylinder [radius, half-length] along local z.
+shape = "cylinder"
+size = [0.0077, 0.08055]
+material = "carbon-fibre-epoxy-ud"
+
+[[ports]]
+name = "body_clamp"
+kind = "mech"
+type = "tube.16"
+gender = "male"
+pos = [0.0, 0.0, -0.0704]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0007
+fidelity = "derived"
+derivation = "Body-side clamp centre is 77.8 mm and the tube centre of mass 148.2 mm from the frame centre along the arm (STEP-derived, cad_length param / holybro-x500v2-arm-connectors), so the clamp sits 148.2 - 77.8 = 70.4 mm from the tube centre towards the frame (z = -0.0704; the tube spans +-80.55 mm). thickness 0.0007 = tube wall (15.4 - 14.0)/2 mm. Clamp family named by the nominal 16 mm tube (tube.16; CAD OD 15.4 mm is recorded in cad_outer_diameter). Axisymmetric: 360 = discrete stand-in for continuous."
+
+[[ports]]
+name = "end_clamp"
+kind = "mech"
+type = "tube.16"
+gender = "male"
+pos = [0.0, 0.0, 0.0765]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0007
+fidelity = "derived"
+derivation = "Arm-end (motor-side) clamp centre is 224.7 mm from the frame centre (STEP, holybro-x500v2-arm-connectors) vs the tube centre 148.2 mm: 224.7 - 148.2 = 76.5 mm (z = +0.0765; the tube end is at +0.08055, so the clamp centre is 4.05 mm inside the tube end). thickness as body_clamp. Mated with the body_clamp port as a closure mate: both positions are consistent with a single tube pose."
+
+[[ports]]
+name = "esc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0077, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "ESC seat on the top of the tube (tube x = up) at the tube centre, radial 148 mm from the frame centre, in the free span between the body clamp (ends ~90 mm) and the arm-end clamp (~200 mm). The kit ships the ESCs pre-installed on the arms (kit doc) but where and how (zip tie / heat shrink) is not published; the 26 mm ESC fits. Surface radius 0.0077 m = CAD tube radius; ref along the tube axis (+z). Resolve with the assembly photos."
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs)"
+accessed = "2026-10-06"
+quote = "Arm - High-strength & ultra-lightweight 16mm carbon fiber tubes with newly designed fiber-reinforced nylon connectors"

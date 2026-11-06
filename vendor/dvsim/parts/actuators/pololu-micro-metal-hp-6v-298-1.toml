@@ -1,0 +1,132 @@
+id = "pololu-micro-metal-hp-6v-298-1"
+name = "Pololu 298:1 Micro Metal Gearmotor HP 6V (item 994)"
+category = "motor.dc.gearmotor"
+vendor = "Pololu"
+part_number = "Pololu 994"
+url = "https://www.pololu.com/product/994"
+
+# Frame: origin on the output-shaft axis at the gearbox face plate; +z = shaft direction; body (gearbox cross-section 10 x 12 mm, x = 12 mm, y = 10 mm) occupies z in [-0.025, 0];
+# the 3 mm D-shaft extends 9 mm to z = +0.009. The shaft is not centred in the 10 x 12 cross-section (not published numerically); the origin is on the shaft axis.
+# Size note: Pololu lists 25 mm body length on the Specs tab but its footnote says the shaft adds 10 mm to a 26 mm length; 25 mm is used.
+# NOTE: the extrapolated stall torque (4.0 kg.cm) is twice Pololu's recommended instantaneous torque limit (2 kg.cm); DRC should limit load to the recommended value, not stall.
+
+[params]
+mass               = { value = 0.0095,  unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_width         = { value = 0.012,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_height        = { value = 0.010,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_length        = { value = 0.025,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_diameter     = { value = 0.003,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_length       = { value = 0.009,   unit = "m",      src = "S2", fidelity = "datasheet" }
+shaft_type         = { value = "3 mm D-shaft", unit = "-", src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 297.92,  unit = "1",      src = "S1", fidelity = "datasheet" }
+gear_material      = { value = "nitride-hardened martensitic stainless steel gears, brass plates", unit = "-", src = "S3", fidelity = "datasheet" }
+v_nominal          = { value = 6.0,     unit = "V",      src = "S1", fidelity = "datasheet" }
+no_load_speed_6v   = { value = 10.472,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 100 rpm
+no_load_current_6v = { value = 0.10,    unit = "A",      src = "S1", fidelity = "datasheet" }  # typical, +/-50 %
+stall_torque_6v    = { value = 0.39227, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 4.0 kg.cm, extrapolated
+stall_current_6v   = { value = 1.6,     unit = "A",      src = "S1", fidelity = "datasheet" }  # extrapolated
+max_output_power_6v = { value = 1.1,    unit = "W",      src = "S1", fidelity = "datasheet" }
+max_efficiency_6v  = { value = 0.31,    unit = "1",      src = "S1", fidelity = "datasheet" }
+speed_at_max_eff   = { value = 9.111,   unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 87 rpm
+torque_at_max_eff  = { value = 0.06374, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 0.65 kg.cm
+current_at_max_eff = { value = 0.31,    unit = "A",      src = "S1", fidelity = "datasheet" }
+torque_limit_instantaneous = { value = 0.1961, unit = "N*m", src = "S4", fidelity = "datasheet" }  # 2 kg.cm recommended upper limit (all ratios except 380:1 and 1000:1)
+
+# --- DC-motor equivalent (motor side), derived at 6 V ---
+r_effective = { value = 3.75, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 6 V / 1.6 A = 3.75 ohm (Pololu stall values are theoretical extrapolations, so this is the winding resistance)." }
+omega_noload_motor_6v = { value = 3119.9, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 297.92 * 10.472 rad/s = 3119.9 rad/s (29796 RPM)." }
+ke = { value = 0.001803, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (6 - 0.10*3.75)/(297.92*10.472) = 5.625/3119.9 = 1.803e-3 V*s/rad. Same motor as the other HP 6V ratios (1.73e-3 to 1.80e-3)." }
+kt_motor = { value = 0.001803, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.487, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 0.39227/(297.92*0.001803*(1.6-0.10)) = 0.487 (lower than the short-ratio HP gearmotors because of the extra gear stages). (Pololu's separate 'max efficiency' of 31 % is the overall motor+gearbox peak.)" }
+friction_torque_motor_noload = { value = 0.00018, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.001803*0.10 = 1.80e-4 N*m at the motor shaft (no-load current is typical +/-50 %)." }
+
+[[ports]]
+name = "body"
+kind = "mech"
+type = "body.10x12"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0125]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "10 x 12 mm gearbox cross-section, clamped by Pololu micro metal gearmotor brackets (S2); no face mounting holes documented in the retrieved text."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.3d"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "3 mm D-shaft, 9 mm long; matches Pololu 3 mm wheels/hubs."
+
+[[ports]]
+name = "motor_power"
+pins = ["MOT.1", "MOT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }  # rated (nominal) voltage
+i_peak = { value = 1.6, unit = "A", src = "S1", fidelity = "datasheet" }  # extrapolated stall current
+i_max = { value = 0.4, unit = "A", fidelity = "derived", derivation = "Pololu's general recommendation for brushed DC motors is 25 % or less of the stall current: 0.25 * 1.6 A = 0.4 A." }
+note = "Two motor terminals; terminal style not stated in the retrieved text."
+
+# Pin level: the two solder terminals on the motor end cap; spacing 7 mm for the precious-metal-brush versions (P1). Polarity is not marked (swap to reverse).
+[[connectors]]
+id = "MOT"
+name = "motor terminals (2 solder tabs)"
+type = "solder-pad-1x2"
+port_type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.025]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.007
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "P1 gives the terminal spacing but not their orientation on the end cap: placed on the rear face at z = -body_length, spaced along x (positional estimate)."
+pins = [
+  { number = 1, name = "M1", kind = "power", dir = "in", v_max = 6.0, i_max = 0.4 },
+  { number = 2, name = "M2", kind = "power", dir = "in", v_max = 6.0, i_max = 0.4 },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/994"
+title = "Pololu item 994 product page (Micro Metal Gearmotor), terminal dimensions"
+accessed = "2026-10-09"
+quote = "Note that the HPCB terminals are 0.5 mm wider than those on the other Micro Metal Gearmotor versions (2 mm vs. 1.5 mm), and they are about 1 mm closer together (6 mm vs. 7 mm)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/994/specs"
+title = "Pololu item 994 Specs tab (298:1 Micro Metal Gearmotor HP 6V)"
+accessed = "2026-10-07"
+quote = "Size: | 10 × 12 × 25 mm| 1| Weight: | 9.5 g | Shaft diameter: | 3 mm| 2| General specifications| Gear ratio: | 297.92:1 | No-load speed @ 6V: | 100 rpm| 3| No-load current @ 6V: | 0.10 A| 4| Stall current @ 6V: | 1.6 A| 5| Stall torque @ 6V: | 4.0 kg·cm| 5| Max output power @ 6V: | 1.1 W | Encoder: | no encoder | Motor type: | 1.6A stall @ 6V (HP 6V) | Performance at maximum efficiency| Max efficiency @ 6V: | 31 % | Speed at max efficiency: | 87 rpm | Torque at max efficiency: | 0.65 kg·cm | Current at max efficiency: | 0.31 A | Output power at max efficiency: | 0.58 W | Notes:| 1| Output shaft adds 10 mm to the 26 mm length. See dimension diagram for details.| 2| D shaft.| 3| Typical; ±20%.| 4| Typical, ±50%; no-load current depends on internal friction"
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/1093"
+title = "Pololu item 1093 (HP 6V 30:1) product page, description and dimensions; the 10 x 12 mm body and shaft apply to all Micro Metal ratios"
+accessed = "2026-10-07"
+quote = "Our Micro Metal Gearmotors all have gearboxes with a 10 × 12 mm cross section and a 9 mm-long, 3 mm-diameter D-shaped gearbox output shaft. || Our mounting bracket (also available in white) and extended mounting bracket are specifically designed to securely mount the gearmotor while enclosing the exposed gears."
+
+[[sources]]
+id = "S3"
+url = "https://www.pololu.com/category/60/micro-metal-gearmotors"
+title = "Pololu Micro Metal Gearmotors category page (family overview and comparison table)"
+accessed = "2026-10-07"
+quote = "Our Micro Metal Gearmotor family consists of tiny brushed DC metal gearmotors with nitride-hardened martensitic stainless steel gears in a wide range of gear ratios, motor windings, brushes, and encoder configurations"
+
+[[sources]]
+id = "S4"
+url = "https://www.pololu.com/category/60/micro-metal-gearmotors"
+title = "Pololu Micro Metal Gearmotors category page, note on load limits"
+accessed = "2026-10-07"
+quote = "Note:| Stalling or overloading gearmotors can greatly decrease their lifetimes and even result in immediate damage. The recommended upper limit for instantaneous torque is 2.5 kg⋅cm (35 oz⋅in) for the 380:1 and 1000:1 gearboxes, and 2 kg⋅cm (25 oz⋅in) for all the other gear ratios || a general recommendation for brushed DC motor operation is 25% or less of the stall current."

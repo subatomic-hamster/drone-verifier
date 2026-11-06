@@ -1,0 +1,113 @@
+id = "qx-80mm-12-blade-edf-fan"
+name = "QX-Motor 80 mm 12-blade ducted-fan rotor (EDF), static C_T / C_Q from the vendor's 6S throttle table"
+category = "prop"
+vendor = "QX-Motor"
+part_number = "80mm 12-blade EDF (rotor + stator, with QF3538-2000KV)"
+url = "https://www.qx-motor.com/products/80mm-ducted-fan-edf-jet-12-blade-cw-ccw-with-qx-motor-6s-12s-motor-engine-power-120a-esc-for-fms-freewing-rc-airplane-model"
+
+# The spinning part of the EDF set: the 12-blade rotor on the 5 mm shaft of parts/propulsion/qx-qf3538-2000kv-edf-motor, inside the housing
+# parts/propulsion/qx-80mm-12-blade-edf-duct. Part frame: origin at the hub centre (the plane of the blades), z = shaft axis towards the inlet, the hub
+# bore opens towards -z (down the shaft). Thrust is along the shaft axis; the air enters from +z and leaves towards -z.
+#
+# How the coefficients were derived. The vendor prints one throttle sweep at 24 V (below, [tables.throttle_6s]); it has no rpm, torque or
+# advance-ratio column. Full-throttle row: the ESC passes the whole 24 V, so the winding current is (I_bus - i_q) / (1 + sw) and the shaft speed
+# w = (V - I_m (R + r_on)) / Ke with the motor's estimated resistance 10 mOhm (+25 degC), the ESC's 1.5 mOhm FET resistance, 1 % switching loss and
+# 50 mA quiescent current (qx-qf3538-2000kv-edf-motor, hobbywing-platinum-120a-v5-esc): 103.9 A, 4772 rad/s = 45 570 rpm. Then
+#   C_T = T / (rho n^2 D^4) = 39.23 N / (1.225 x 759.5^2 x 0.08^4) = 1.355    (rho 1.225 assumed: the vendor states no air density)
+#   C_Q = Kt (I_m - i0) / (rho n^2 D^5) = 0.4866 N m / (...) = 0.210           (i0 = 2 A estimated)
+# C_T 1.355 is an order above a propeller's 0.1 because a ducted fan has ten times the disc loading (7.8 kPa) and C_T is referred to rho n^2 D^4.
+# The momentum-theory exit speed is v_e = sqrt(T / (rho A_e)) = 97 m/s for A_e = 3.4e-3 m^2 (qx-80mm-12-blade-edf-duct), the ideal jet power T v_e / 2 =
+# 1.9 kW is 82 % of the 2.32 kW shaft power (Q w): a plausible fan efficiency. The other six throttle rows are NOT inputs: with constant C_T, C_Q the
+# model reproduces their thrust at the same bus current to within -7 % / +4 % (rms 4 %, see [tables.model_check]): the table's thrust-input-power
+# exponent is 0.76 (ln(4000/2100) / ln(2520/1080)), above the 2/3 of constant C_T / C_Q, so the model over-predicts the thrust at the low end of the
+# table (40 % row) by 7 % and the hover point (about 13 N, below the table's range) is an extrapolation of at least that error.
+# Advance ratio: the vendor has no data. ct(J) = ct_static (1 - J nD / v_e) with v_e / (n D) = 97 / 60.8 = 1.60 (a ducted fan's thrust falls by the ram
+# drag of the air it takes in, T = m_dot (v_e - v_inf), m_dot and v_e both proportional to n), extended to J < 0 (descent: the inflow adds to the jet's
+# speed relative to the air). cq(J) falls half as fast (estimated).
+
+[params]
+diameter    = { value = 0.080, unit = "m", src = "S1", fidelity = "datasheet" }          # "80mm"
+geom_thickness = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Axial extent of the blade ring (the DRC's disc thickness): twelve 15 mm chords pitched 35 degrees span about 8 mm axially; 6 mm taken." }
+blade_count = { value = 12, unit = "1", src = "S1", fidelity = "datasheet" }             # "12 blade"
+mass        = { value = 0.045, unit = "kg", fidelity = "estimated", rationale = "The vendor lists the motor (335 g) but not the fan or the duct. A 12-blade 80 mm rotor of reinforced plastic with a 35 mm hub is a few tens of grams; 45 g is a guess (+-50 %), not checked against a teardown." }
+j_prop      = { value = 3.6e-5, unit = "kg*m^2", fidelity = "derived", derivation = "Solid disc of the part's mass and 40 mm radius, J = m r^2 / 2 = 0.045 x 0.04^2 / 2 = 3.6e-5 kg m^2 (the geometry below); the real rotor's mass sits in the hub and the blade roots, so this is an upper bound." }
+ct_static   = { value = 1.355, unit = "1", fidelity = "derived", derivation = "Full-throttle row of [tables.throttle_6s] with the motor model: C_T = T / (rho n^2 D^4), T = 4000 g x 9.80665 = 39.23 N, n = 759.5 rev/s from w = 4772 rad/s (V = 24 V, I_bus = 105 A, R = 10 mOhm, r_on = 1.5 mOhm, sw = 1 %, i_q = 50 mA), rho = 1.225, D = 0.08. Sensitivity: R +-3 mOhm moves w by 1.3 % and C_T by 2.7 %." }
+cq_static   = { value = 0.2102, unit = "1", fidelity = "derived", derivation = "Same row: C_Q = Kt (I_m - i0) / (rho n^2 D^5), Kt = 0.0047746 N m/A, I_m = 103.9 A, i0 = 2 A (estimated): 0.4866 N m / 2.315 = 0.2102. Q / T = 0.0124 m." }
+k_h         = { value = 8.47e-5, unit = "kg", fidelity = "derived", derivation = "Inlet momentum drag, F = m_dot v_perp with m_dot = T / v_e = 39.23 N / 97 m/s = 0.404 kg/s at full throttle, divided by w = 4772 rad/s (the device's F = -k_h |w| v_perp; m_dot is proportional to n, so the ratio is constant). The air the fan takes in leaves with the vehicle's sideways velocity removed. Assumes the intake sees all of the air-relative sideways speed." }
+v_exit_over_nd = { value = 1.60, unit = "1", fidelity = "derived", derivation = "v_e / (n D) = 97 m/s / (759.5 rev/s x 0.08 m) = 1.60 with v_e from momentum theory (see the header); sets the slope of ct(J) = ct_static (1 - J / 1.60)." }
+
+[tables.throttle_6s]
+# The vendor's throttle sweep of the 2000 KV / 6S set, copied from the product page (S1). Volts are the table's own (24 V on every row of the sweep).
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "thrust_g", "g_per_W"]
+rows = [
+  [40, 24, 45.0, 1080, 2100, 1.94],
+  [50, 24, 55.0, 1320, 2500, 1.89],
+  [60, 24, 65.0, 1560, 2950, 1.89],
+  [70, 24, 75.0, 1800, 3200, 1.78],
+  [80, 24, 85.0, 2040, 3600, 1.76],
+  [90, 24, 95.0, 2280, 3850, 1.69],
+  [100, 24, 105.0, 2520, 4000, 1.59],
+]
+src = "S1"
+fidelity = "datasheet"
+note = "The page also prints a first row '22 V, 96.0 A, 2112 W, 350 g, 1.66 g/W' at 100 %: its 350 g is inconsistent with its own g/W column (350 g / 2112 W is 0.17 g/W, not 1.66), so the row is not used."
+
+[tables.model_check]
+# Thrust of the device model (constant ct_static, cq_static) at the bus current of each vendor row, 24 V, same motor / ESC numbers as above. The throttle
+# column is the vendor's; the model's own duty is lower than the vendor's percentage for the same current (the vendor's throttle scale is not linear in duty).
+columns = ["current_A", "duty", "rpm", "thrust_model_N", "thrust_table_N", "ratio"]
+rows = [
+  [45.0, 0.743, 34281, 22.20, 20.59, 0.928],
+  [55.0, 0.797, 36686, 25.42, 24.52, 0.964],
+  [65.0, 0.846, 38809, 28.45, 28.93, 1.017],
+  [75.0, 0.889, 40720, 31.32, 31.38, 1.002],
+  [85.0, 0.929, 42463, 34.06, 35.30, 1.036],
+  [95.0, 0.966, 44072, 36.69, 37.76, 1.029],
+  [105.0, 1.000, 45569, 39.23, 39.23, 1.000],
+]
+fidelity = "derived"
+derivation = "Steady-state solution of the device model (ESC duty d, torque balance Kt (I_m - i0) = C_Q rho n^2 D^5) with d chosen to give the vendor's bus current; computed by the script that derived ct_static (hfbox sandbox, 2026-10-08)."
+
+[tables.ct_cq_j]
+# C_T(J), C_Q(J) for the rotor device, J = V_axial / (n D) (negative: the vehicle descends against the jet).
+columns = ["j", "ct", "cq"]
+rows = [
+  [-0.4, 1.6940, 0.2355],
+  [0.0, 1.3550, 0.2102],
+  [0.4, 1.0153, 0.1850],
+  [1.0, 0.5081, 0.1471],
+  [1.6, 0.0000, 0.1092],
+]
+fidelity = "estimated"
+rationale = "ct(J) = ct_static (1 - J / 1.60): the ram drag of the inflow on a ducted fan with constant m_dot / n and v_e / n (momentum theory); cq(J) = cq_static (1 - 0.3 J): a guess (the fan does less work per kg when the air arrives with speed, but m_dot rises). No wind-tunnel data of this fan exists; the hopper flies at |J| < 0.2 (8 m/s at 40 rev/s x 0.08 m x 25), where the thrust changes by 12 % at most."
+
+[geometry]
+shape = "cylinder"
+size = [0.04, 0.006]
+pos = [0.0, 0.0, 0.0]
+
+[visual]
+rationale = "12-blade ducted-fan rotor: hub with a conical spinner and twelve short broad blades (QX-Motor product photo of the 80 mm set)."
+
+[[visual.elements]]
+gen = "edf_fan"
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Hub bore on the 5 mm motor shaft (vendor: 'Shaft diameter 5.0mm'). Origin at the blade plane, axis down the shaft (-z), ref along a blade. Symmetry 1: the rotor spins freely, so the builder uses a hinge."
+
+[[sources]]
+id = "S1"
+url = "https://www.qx-motor.com/products/80mm-ducted-fan-edf-jet-12-blade-cw-ccw-with-qx-motor-6s-12s-motor-engine-power-120a-esc-for-fms-freewing-rc-airplane-model"
+title = "QX-Motor - 80mm Ducted Fan EDF Jet 12 blade CW CCW With QX-MOTOR 6S 12S Motor (product page, throttle table of the 2000KV / 6S motor)"
+accessed = "2026-10-08"
+quote = "2000KV 6S: 24 V 45.0 A 1080 W 2100 g 1.94 g/W 40% | 24 V 55.0 A 1320 W 2500 g 1.89 g/W 50% | 24 V 65.0 A 1560 W 2950 g 1.89 g/W 60% | 24 V 75.0 A 1800 W 3200 g 1.78 g/W 70% | 24 V 85.0 A 2040 W 3600 g 1.76 g/W 80% | 24 V 95.0 A 2280 W 3850 g 1.69 g/W 90% | 24 V 105.0 A 2520 W 4000 g 1.59 g/W 100%"

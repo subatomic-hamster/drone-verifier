@@ -1,0 +1,102 @@
+id = "relay-40a-automotive-12v"
+name = "12 V 40 A automotive relay, 5-pin SPDT (Bosch style), with socket (cuas2 weapon-rail contactor)"
+category = "switch.relay"
+vendor = "generic (Parts Express 12 VDC 5-pin 30/40 A relay and 5-pin socket)"
+part_number = "5-pin 12 VDC 30/40 A SPDT"
+url = "https://www.parts-express.com/electronic-parts/relays/12v-relays-sockets/reviewrating/1to5"
+
+# Part frame: origin at the centre of the relay underside (the spade side), z up, body 28 x 28 x 25 mm (class size, the listing text read gives none).
+# Terminals (DIN 72552): 86 coil +, 85 coil -, 30 common, 87 normally open, 87a normally closed (not wired). The key (1 A) and the E-stop carry only the coil current (about 0.13 A).
+# The contact feeds both ESCs and the 5 V buck from the 12 V bus (up to about 2 x 12 A peak for the flywheel motors plus the servos).
+
+[params]
+coil_voltage    = { value = 12.0, unit = "V", fidelity = "estimated", rationale = "12 VDC coil (title of the listing)." }
+coil_resistance = { value = 90.0, unit = "ohm", fidelity = "estimated", rationale = "Class value: 12 V automotive 40 A relays draw 120-160 mA (75-100 ohm)." }
+coil_current    = { value = 0.133, unit = "A", fidelity = "derived", derivation = "12 V / 90 ohm = 0.133 A." }
+contact_current = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "Rated 30/40 A (listing title) as NO/NC; the NO contact is taken at 30 A continuous." }
+length          = { value = 0.028, unit = "m", fidelity = "estimated", rationale = "Class size of an ISO mini / Bosch-style relay, about 28 mm." }
+width           = { value = 0.028, unit = "m", fidelity = "estimated", rationale = "As length." }
+height          = { value = 0.025, unit = "m", fidelity = "estimated", rationale = "As length." }
+mass            = { value = 0.035, unit = "kg", fidelity = "estimated", rationale = "Class value: 5-pin automotive relays weigh 30-40 g." }
+price           = { value = 8.96, unit = "USD", fidelity = "derived", derivation = "Parts Express relay USD 3.98 + 5-pin socket USD 4.98 (search snippet of the listing page, not opened) = 8.96." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.014, 0.014, 0.0125]
+pos = [0.0, 0.0, 0.0125]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "coil"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["COIL.1", "COIL.2"]
+v_max = { value = 16.0, unit = "V", fidelity = "estimated", rationale = "12 V coil with margin (typical 130 %)." }
+i_max = { value = 0.3, unit = "A", fidelity = "estimated", rationale = "0.133 A coil current with margin." }
+note = "86 (+, from the E-stop) and 85 (-, to the supervisor MOSFET drain)."
+
+[[ports]]
+name = "contact"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+pins = ["SW.1", "SW.2"]
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "NO contact 30 A (listing 30/40 A)." }
+note = "30 (common) and 87 (normally open)."
+
+[[connectors]]
+id = "COIL"
+name = "coil spades 86, 85"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.006, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0125
+fidelity = "estimated"
+rationale = "DIN 72552 terminal numbers; spade positions are positional estimates."
+pins = [
+  { number = 1, name = "86", kind = "power", dir = "in", v_max = 16.0 },
+  { number = 2, name = "85", kind = "power", dir = "io", v_max = 16.0, note = "switched to ground by the supervisor MOSFET, so it is a power node, not a ground" },
+]
+
+[[connectors]]
+id = "SW"
+name = "contact spades 30, 87"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.006, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0125
+fidelity = "estimated"
+rationale = "As COIL; 87a (normally closed) is not wired and not listed."
+pins = [
+  { number = 1, name = "30", kind = "power", dir = "io", i_max = 30.0 },
+  { number = 2, name = "87", kind = "power", dir = "io", i_max = 30.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.parts-express.com/electronic-parts/relays/12v-relays-sockets/reviewrating/1to5"
+title = "Parts Express 12 V relays and sockets (search snippet: 12 VDC 5-pin Bosch-style SPDT 30/40 A relay USD 3.98, 5-pin socket USD 4.98)"
+accessed = "2026-10-27"
+quote = "12 VDC 5-pin Bosch-style SPDT 30/40A relay is listed at $3.98, and a 5-pin relay socket at $4.98"

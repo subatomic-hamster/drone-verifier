@@ -1,0 +1,73 @@
+id = "ublox-ann-mb-00"
+name = "u-blox ANN-MB-00 multi-band active GNSS antenna (L1/L2, 5 m cable, SMA)"
+category = "antenna.gnss"
+vendor = "u-blox"
+part_number = "ANN-MB-00"
+url = "https://www.u-blox.com/en/product/ann-mb-series"
+
+# The antenna that goes with a ZED-F9P (parts/electronics/sparkfun-gps-rtk-sma-16481.toml); the ZED-F9P data sheet recommends identical antennas on identical orientation for a
+# moving-base pair. The product facts below come from distributor listings that could not be re-fetched for verbatim quotes (Richardson RFPD returned HTTP 403, the datasheet PDF mirrors
+# were not reachable), so every figure is tagged ESTIMATED even where two listings agreed: 82 x 60 x 22.5 mm, 5 m cable, SMA connector, 50 ohm, peak gain 2-3.5 dBi (listings
+# disagree), LNA gain 21-28 dB (listings disagree). The simulation uses only the position of the antenna; none of these values enters a physical model.
+# Part frame: origin at the centre of the underside, z up (the antenna's ground plane is its base).
+[params]
+length      = { value = 0.082, unit = "m", fidelity = "estimated", rationale = "Listings (Richardson RFPD, Mouser table): 82 mm." }
+width       = { value = 0.060, unit = "m", fidelity = "estimated", rationale = "Listings (Richardson RFPD, Mouser table): 60 mm." }
+height      = { value = 0.0225, unit = "m", fidelity = "estimated", rationale = "Listings (Richardson RFPD, Mouser table): 22.5 mm." }
+cable_length = { value = 5.0, unit = "m", fidelity = "estimated", rationale = "The ANN-MB-00 variant is sold with a 5 m cable (Ciiva / Richardson listings); the antenna is mounted at the mast top, the receiver on the cabin floor, 4 m of coax with slack." }
+mass        = { value = 0.30, unit = "kg", fidelity = "estimated", rationale = "No weight found in the listings. A 82 x 60 x 22.5 mm potted antenna is ~0.1 kg and 5 m of RG174-class coax adds ~0.15 kg: 0.30 kg with the magnet-free bracket. +-50 %." }
+
+price       = { value = 60.0, unit = "USD", fidelity = "estimated", rationale = "Richardson RFPD single-unit list price 60.00 USD (0 stock), seen 2026-10-16 through a search snippet; Future Electronics lists 35.42 USD for 1 unit (no US stock, ~20 week lead), ArduSimple 53.80 (currency not shown). 60 USD is the highest in-stock-or-listed single-unit figure: the BOM is not understated." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.041, 0.030, 0.01125]
+pos = [0.0, 0.0, 0.01125]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside (ground plane) on the mast-top plate."
+
+[[ports]]
+name = "rf"
+kind = "signal"
+type = "sma"
+gender = "male"
+lead = { length = "cable_length" }
+pins = ["RF.1", "RF.2"]
+note = "5 m coax pigtail ending in an SMA plug; the cable is inside the part's mass."
+
+[[connectors]]
+id = "RF"
+name = "SMA plug on the 5 m cable"
+type = "sma"
+gender = "male"
+pos = [0.041, 0.0, 0.01125]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.003
+fidelity = "derived"
+derivation = "The listings give an SMA connector; an SMA plug has the centre contact (RF, with the module's DC bias for the LNA riding on it) and the shell. The cable exits at the antenna's side (pose is a drawing choice)."
+pins = [
+  { number = 1, name = "RF", kind = "signal", dir = "io", v = 3.3, note = "RF out / LNA bias in" },
+  { number = 2, name = "SHELL", kind = "ground" },
+]
+
+[visual]
+rationale = "Flat grey-white patch antenna housing, drawn from the part's length, width and height."
+
+[[visual.elements]]
+gen = "box_device"
+colors = { body = "plastic-white", label = "plastic-white", conn = "steel" }

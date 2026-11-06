@@ -1,0 +1,62 @@
+id = "liion-cell-ocv-chen2020-lgm50"
+ports_note = "Data-only open-circuit-voltage curve for a 21700 NMC811 / graphite-SiOx Li-ion cell; not a physical part, no ports."
+name = "Li-ion 21700 cell OCV vs SOC, from the Chen et al. 2020 LG M50 electrode fits"
+category = "battery.cell_curve"
+vendor = "C.-H. Chen, F. Brosa Planella, K. O'Regan, D. Gastol, W. D. Widanage, E. Kendrick (measured on LG INR21700 M50 cells)"
+part_number = "LG INR21700 M50 (5 Ah NMC811 / graphite-SiOx)"
+url = "https://doi.org/10.1149/1945-7111/ab9050"
+
+# Chen et al., "Development of Experimental Techniques for Parameterization of Multi-scale Lithium-ion Battery Models", J. Electrochem. Soc. 167 080534 (2020). The paper gives
+# the half-cell open-circuit potential fits of the NMC811 positive and the graphite-SiOx negative electrode; the PyBaMM parameter set Chen2020 (v24.1, Chen2020.py) implements them.
+# The full-cell OCV(SOC) below is OUR evaluation: U_p(x_p) - U_n(x_n) with the electrode stoichiometries moving linearly with SOC, x_n = xn100 - (1 - SOC) dn, x_p = xp100 +
+# (1 - SOC) dn dxp/dxn, where
+#   xn100 = 29866 / 33133 = 0.9014 and xp100 = 17038 / 63104 = 0.2700 (maximum concentrations over the Chen2020 electrode capacities: the 100 % state of the cell),
+#   dxp/dxn = (0.75 x 85.2e-6 m x 33133 mol/m3) / (0.665 x 75.6e-6 m x 63104 mol/m3) = 0.6674 (active-material fraction x thickness x max concentration: ratio of the electrode capacities),
+#   dn solved so that OCV(SOC = 0) = 2.5 V (the M50's end-of-discharge voltage).
+# CAVEATS: (1) the top of the curve is 4.181 V, not 4.2 V (the fit window ends where the paper's cell was charged to 4.2 V; our 100 % point is 0.02 V low).
+# (2) The Auline S70 21700 pack's cell chemistry is not published: NMC 21700 is ASSUMED, so this is the closest sourced curve (a high-power cell: its true OCV may differ by tens of mV).
+# (3) 25 degC, equilibrium: the polarisation is in the pack's r_internal, not here.
+
+[params]
+voc_full = { value = 4.181, unit = "V", fidelity = "derived", derivation = "Table value at SOC = 1: U_p(0.2700) - U_n(0.9014) with the Chen2020 OCP fits." }
+voc_at_soc0 = { value = 2.5, unit = "V", fidelity = "derived", derivation = "Imposed: the stoichiometric window is solved so that OCV(SOC = 0) = 2.5 V, the LG M50 end-of-discharge voltage." }
+xn100 = { value = 0.9014, unit = "1", src = "S1", fidelity = "literature" }
+xp100 = { value = 0.2700, unit = "1", src = "S1", fidelity = "literature" }
+dxp_dxn = { value = 0.6674, unit = "1", src = "S1", fidelity = "literature" }
+
+[tables.ocv_vs_soc]
+# SOC fraction 0..1 (1 = full), step 0.05; ocv_V = full-cell OCV evaluated from the Chen 2020 electrode fits as described above, rounded to 3 decimals. 21 points.
+columns = ["soc", "ocv_V"]
+rows = [
+  [0.00, 2.500],
+  [0.05, 3.107],
+  [0.10, 3.292],
+  [0.15, 3.431],
+  [0.20, 3.484],
+  [0.25, 3.526],
+  [0.30, 3.578],
+  [0.35, 3.626],
+  [0.40, 3.664],
+  [0.45, 3.702],
+  [0.50, 3.746],
+  [0.55, 3.793],
+  [0.60, 3.835],
+  [0.65, 3.882],
+  [0.70, 3.941],
+  [0.75, 3.987],
+  [0.80, 4.034],
+  [0.85, 4.076],
+  [0.90, 4.095],
+  [0.95, 4.114],
+  [1.00, 4.181],
+]
+src = "S1"
+fidelity = "derived"
+derivation = "Table = U_p(x_p) - U_n(x_n) with the Chen 2020 / PyBaMM Chen2020 electrode OCP fits, stoichiometries x_n = 0.9014 - (1 - SOC) dn and x_p = 0.2700 + (1 - SOC) dn x 0.6674, dn solved so that OCV(0) = 2.5 V (header comment); evaluated by hand-written bisection in python, rounded to 3 decimals. The full-cell window is our construction from published electrode data, not a published full-cell table."
+
+[[sources]]
+id = "S1"
+url = "https://github.com/pybamm-team/PyBaMM/blob/v24.1/pybamm/input/parameters/lithium_ion/Chen2020.py"
+title = "PyBaMM v24.1 parameter set Chen2020 (Chen et al., J. Electrochem. Soc. 167 080534, 2020): electrode OCP fits, maximum concentrations, thicknesses and active-material fractions"
+accessed = "2026-10-16"
+quote = "Maximum concentration in negative electrode [mol.m-3] 33133 ... Maximum concentration in positive electrode [mol.m-3] 63104 ... Negative electrode active material volume fraction 0.75 ... Positive electrode active material volume fraction 0.665 ... Negative electrode thickness [m] 85.2e-6 ... Positive electrode thickness [m] 75.6e-6"

@@ -1,0 +1,90 @@
+id = "fold-bec-6v"
+name = "BEC 6 V 5 A buck module for the servo rail (2-6S in), 22 x 14 mm"
+category = "psu.bec"
+vendor = "generic (part not chosen)"
+part_number = "6V 5A BEC (to be chosen)"
+url = "docs/fold/bom.md"
+
+# Spec 3.1 / 3.3: a class, not a bought part. 6.0 V is inside both servo ranges (STS 4.8-6, SCS 4-7.4); the FC switches this rail (GP14). Frame as fold-bec-5v.
+
+[params]
+mass = { value = 0.007, unit = "kg", fidelity = "estimated", rationale = "Spec 3.1 BEC line." }
+price = { value = 7.0, unit = "USD", fidelity = "estimated", rationale = "Spec 3.5: two BECs $14." }
+efficiency = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "Class value for a 3S to 6 V buck at 1-2 A." }
+i_out_rated = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "'5 A' class (spec 3.3)." }
+v_out_nominal = { value = 6.0, unit = "V", fidelity = "estimated", rationale = "6 V module class; inside the STS (4.8-6) and SCS (4-7.4) ranges." }
+r_out = { value = 0.02, unit = "ohm", fidelity = "estimated", rationale = "Output impedance of a small buck module under load; no data, tune on the bench." }
+current_limit = { value = 5.5, unit = "A", fidelity = "estimated", rationale = "110 % of the 5 A class." }
+
+[geometry]
+shape = "box"
+size = [0.011, 0.007, 0.003]
+pos = [0.0, 0.0, 0.003]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["IN.VIN", "IN.G"]
+v_max = { value = 25.2, unit = "V", fidelity = "estimated", rationale = "2-6S class." }
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "source"
+pins = ["OUT.V", "OUT.G"]
+v_nominal = { value = 6.0, unit = "V", fidelity = "estimated", rationale = "Output of a 6 V BEC." }
+i_max = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "Class value." }
+
+[[connectors]]
+id = "IN"
+name = "input pads VIN, GND"
+type = "solder-pad"
+port_type = "solder-pad"
+gender = "neutral"
+pos = [-0.011, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.003
+fidelity = "estimated"
+rationale = "Layout choice of the unchosen module."
+pins = [
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v = 12.6, v_max = 25.2 },
+  { number = "G", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "OUT"
+name = "output pads 6 V, GND"
+type = "solder-pad"
+port_type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.011, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.003
+fidelity = "estimated"
+rationale = "Layout choice of the unchosen module."
+pins = [
+  { number = "V", name = "6V", kind = "power", dir = "out", v = 6.0 },
+  { number = "G", name = "GND", kind = "ground" },
+]

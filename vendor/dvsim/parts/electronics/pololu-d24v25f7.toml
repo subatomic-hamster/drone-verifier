@@ -1,0 +1,87 @@
+id = "pololu-d24v25f7"
+name = "Pololu 7.5 V, 2.5 A step-down regulator D24V25F7"
+category = "pcb.bec"
+vendor = "Pololu"
+part_number = "D24V25F7 (item 2853)"
+url = "https://www.pololu.com/product/2853"
+
+# Efficiency, dropout and max current versus load are published as graphs only (images), so only the headline numbers are recorded.
+# The current is the title/Features figure: 'Maximum output current' for the D24V10/D24V5 families, 'typical maximum continuous' for the rest.
+[params]
+length = { value = 0.0178, unit = "m", src = "S1", fidelity = "datasheet" }
+width = { value = 0.0178, unit = "m", src = "S1", fidelity = "datasheet" }
+height = { value = 0.009, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_max = { value = 38, unit = "V", src = "S1", fidelity = "datasheet" }
+output_voltage = { value = 7.5, unit = "V", src = "S1", fidelity = "datasheet" }
+output_current_typ_max = { value = 2.5, unit = "A", src = "S1", fidelity = "datasheet" }
+efficiency_min = { value = 0.85, unit = "1", src = "S1", fidelity = "datasheet" }
+efficiency_max = { value = 0.95, unit = "1", src = "S1", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.00218, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.13.46x13.46.m2"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Two holes at opposite corners (2-hole diagonal pair), 13.46 mm apart horizontally and vertically"
+
+[[ports]]
+name = "vin"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 38, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+pins = ["IO.VIN", "IO.GND1"]
+
+[[ports]]
+name = "vout"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 7.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.5, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+pins = ["IO.VOUT", "IO.GND2"]
+note = "Thermally limited; see the Pololu efficiency / maximum-current graphs"
+
+# Pin level: S2 lists five connection points (EN, VIN, 2x GND, VOUT); the order along the board edge is not in the page text, so it is estimated.
+[[connectors]]
+id = "IO"
+name = "5 solder pads on a 0.1 in grid"
+type = "pad-1x5-2.54mm"
+gender = "neutral"
+pos = [0.0, -0.0089, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.00254
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "S2 gives the five connection points ('enable (EN), input voltage (VIN), 2x ground (GND), and output voltage (VOUT)'); the left-to-right order along the board edge is not in the page text: estimated."
+pins = [
+  { number = "EN", name = "EN", kind = "signal", dir = "in", note = "enable input; the page text gives no threshold here, left out" },
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v_max = 38.0 },
+  { number = "GND1", name = "GND", kind = "ground", note = "input-side ground pad; the two GND pads are the same net" },
+  { number = "GND2", name = "GND", kind = "ground", note = "output-side ground pad" },
+  { number = "VOUT", name = "VOUT", kind = "power", dir = "out", v = 7.5, i_max = 2.5 },
+]
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/2853"
+title = "Pololu D24V25Fx step-down regulator product page, Connections"
+accessed = "2026-10-09"
+quote = "This buck regulator has five connection points for four different connections: enable (EN), input voltage (VIN), 2x ground (GND), and output voltage (VOUT)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2853"
+title = "Pololu 7.5V, 2.5A Step-Down Voltage Regulator D24V25F7 (Pololu product page)"
+accessed = "2026-10-07"
+quote = "Input voltage: | 4.5 V to 38 V for the version that outputs 3.3 V | [ | output voltage + dropout voltage | ] to 38 V for output voltages of 5 V and higher (see below for more information on dropout voltage) | Fixed 3.3 V, 5 V, 6 V, 7.5 V, or 9 V output (depending on regulator version) with 4% accuracy | Typical maximum continuous output current: 2.5 A | Integrated reverse-voltage protection, over-current and short-circuit protection, over-temperature shutoff, and soft-start | Typical efficiency of 85% to 95%, depending on input voltage and load; the switching frequency automatically changes at light loads to maintain high efficiencies | Typical no-load quiescent current under 1 mA; can be reduced to 10 µA to 20 µA per volt on VIN by disabling the board | Compact size:  0.7″ × 0.7″ × 0.35″ (17.8 mm × 17.8 mm × 9 mm) | Two 0.086″ mounting holes for #2 or M2 | screws ... .  The mounting holes are at opposite corners of the board and are separated by 0.53″ both horizontally and vertically."

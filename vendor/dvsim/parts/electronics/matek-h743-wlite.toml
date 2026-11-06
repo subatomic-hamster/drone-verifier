@@ -1,0 +1,90 @@
+id = "matek-h743-wlite"
+name = "Matek H743-WLITE flight controller (25x25, 6-30V, 3x BEC)"
+category = "pcb.fc"
+vendor = "Matek Systems"
+part_number = "H743-WLITE"
+url = "https://www.mateksys.com/?portfolio=h743-wlite"
+
+# Sibling of the H743-WING family (the H743-WING product page itself could not be fetched; ArduPilot lists the
+# WING/SLIM/MINI/WLITE family together with MPU6000+ICM20602 and DPS310 for older members).
+# Sensors on the WLITE: ICM-42688-P IMU, DPS310 barometer. Vendor lists it as EOL.
+[params]
+mass            = { value = 0.022, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.044, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.029, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0145, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+vbat_min        = { value = 6.8, unit = "V", src = "S1", fidelity = "datasheet" }
+vbat_max        = { value = 30, unit = "V", src = "S1", fidelity = "datasheet" }
+current_sense_peak = { value = 220, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_5v_current_cont = { value = 2, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_5v_current_peak = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_9v_12v_current_cont = { value = 2, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_vx_current_cont = { value = 8, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_vx_current_peak = { value = 10, unit = "A", src = "S1", fidelity = "datasheet" }
+ldo_3v3_current_max = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }
+uart_count      = { value = 7, unit = "1", src = "S1", fidelity = "datasheet" }
+pwm_outputs     = { value = 13, unit = "1", src = "S1", fidelity = "datasheet" }
+i2c_ports       = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+can_buses       = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.25x25.m2"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "Φ2 mm holes per S1; the pattern is square, the board outline (44x29) is not"
+
+[[ports]]
+name = "vbat_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 30, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "ESC power pads, 6.8-30 V (2-6S LiPo); high-precision current sense 90 A continuous / 220 A peak"
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+
+[[ports]]
+name = "serial"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 7
+
+[[ports]]
+name = "pwm_out"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+count = 13
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+count = 2
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "neutral"
+connector = "USB/Beep Extender with Type-C (USB2.0)"
+
+[[sources]]
+id = "S1"
+url = "https://www.mateksys.com/?portfolio=h743-wlite"
+title = "(EOL) Flight Controller H743-WLITE (Matek Systems product page)"
+accessed = "2026-10-07"
+quote = "MCU: STM32H743VIH6, 480MHz , 512KB RAM, 2MB Flash IMU: ICM42688-P Baro: DPS310 (I2C2) ... 7x Uarts (1,2,3,4,6,7,8) with built-in inversion. 13x PWM outputs(12+LED) ... 2x I2C 1x CAN ... Input voltage range: 6.8~30V (2~6S LiPo) ... Sense resistor: 90A continuous, 220A peak BEC 5V output ... Continuous current: 2 Amps, Max.3A BEC 9V /12V output ... Continuous current: 2 Amps, Max.3A ... BEC Vx output ... Continuous current: 8 Amps, Max.10A BEC 3.3V output ... Continuous current: 200mA ... Mounting: 25 x 25mm, Φ2mm Dimensions: 44 x 29 x 14.5 mm Weight: 22g  w/ USB/buzzer adapter"

@@ -1,0 +1,116 @@
+id = "hobbywing-xrotor-micro-30a-esc"
+name = "Hobbywing XRotor Micro 30A single ESC (BLHeli-S)"
+category = "esc"
+vendor = "Hobbywing"
+part_number = "XRotor Micro BLHeli-S 30A"
+url = "https://rcdrone.top/products/hobbywing-xrotor-micro-blheli-s-30a-esc"
+
+# Tiny single ESC for racing quads. The reseller listing publishes only the model name (30 A), the mass "6g (with line)" and the signal modes; it gives no
+# voltage range, no burst current and no dimensions, so none are set (cell range / v_max are left to the user's frame choice and must be checked against
+# the Hobbywing datasheet). The 30 A figure comes from the model name/title, hence only a continuous current is recorded. Part frame: origin at the body centre.
+
+[params]
+mass            = { value = 0.006, unit = "kg", src = "S1", fidelity = "datasheet" }          # "Weight: 6g (with line)"
+i_cont_per_ch   = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+channels        = { value = 1, unit = "1", fidelity = "derived", derivation = "Single ESC: one motor channel." }
+firmware        = { value = "BLHeli-S", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.010, 0.008, 0.002]
+
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Battery leads; wire gauge and voltage range not stated in S1"
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1 gives the model name, '6g (with line)' and the signal modes only: no lead gauge, connector or pinout. Leads are drawn at
+# the ends (battery in on -x, motor and signal out on +x); contact counts follow from the port types. All of it is estimated.
+[[connectors]]
+id = "IN"
+name = "battery leads"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.01, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists '6g (with line)' - the ESC has leads - but no gauge, length or connector; two leads (+, -) are implied by a DC supply input."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", i_max = 30.0 },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 30.0 },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor output leads"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.01, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the 30 A rating only; three phase leads A B C by convention (swapping two reverses the motor), exit end and spacing assumed."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 30.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 30.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 30.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "signal lead"
+type = "servo-lead-2"
+gender = "neutral"
+pos = [0.01, 0.006, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists the PWM/Oneshot/Multishot signal modes (the port is DShot-typed) and no wiring; a signal + ground pair is the minimum the input needs, no BEC is listed."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/hobbywing-xrotor-micro-blheli-s-30a-esc"
+title = "rcdrone.top (Hobbywing distributor) - 4pcs/lot Hobbywing XRotor Micro BLHeli-s 30A ESC"
+accessed = "2026-10-07"
+quote = "Hobbywing XRotor Micro BLHeli-s 30A ESC Brushless Speed Controller for RC Racer Drone FPV Racing Quadcopter | Weight: 6g (with line) | Native support BLHeli-S firmware | PWM throttle signal mode (1000μs-2000μs), Oneshot125 (125-250μs), Oneshot42 (42-8μs) and Multishot (2-25μs)"

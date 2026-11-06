@@ -1,0 +1,65 @@
+id = "cuas-turret-yoke"
+name = "Turret yoke: turntable plate + upright, aluminium 6061 (custom-machined)"
+category = "frame.bracket"
+vendor = "custom (machined from stock plate)"
+part_number = "n/a"
+url = "https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=ma6061t6"
+
+# Part frame: origin on the pan axis at the pan servo's horn face, z up. A 4 mm turntable plate on the horn and a 6 mm upright on its -y
+# side carry the tilt servo, whose output axis (tilt axis) is horizontal along y, 85 mm above the horn face, through the pan axis.
+[params]
+turntable_thickness = { value = 0.004, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+upright_thickness   = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+tilt_axis_height    = { value = 0.085, unit = "m", fidelity = "estimated", rationale = "Design choice: clears the launcher (action box half height 35 mm) above the turntable." }
+
+[params.mass]
+value = 0.244
+unit = "kg"
+fidelity = "derived"
+derivation = "Turntable 0.14 x 0.09 x 0.004 m = 5.04e-5 m3 plus upright 0.07 x 0.006 x 0.095 m = 3.99e-5 m3, total 9.03e-5 m3 x 2700 kg/m3 (aluminium-6061, parts/common) = 0.244 kg; holes not subtracted."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+rationale = "Custom-machined 6061 plate parts: bare brushed aluminium, the [geometry] boxes with softened edges."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "alu-brushed" }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.07, 0.045, 0.002]
+pos = [0.0, 0.0, 0.002]
+material = "aluminium-6061"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.035, 0.003, 0.0475]
+pos = [0.0, -0.045, 0.0475]
+material = "aluminium-6061"
+
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl430"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Turntable plate bolted on the pan servo horn."
+
+# Tilt servo seat on the +y face of the upright: the XL430 body then extends towards +y and its output axis points +y.
+[[ports]]
+name = "servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl430-base"
+gender = "neutral"
+pos = [0.012, -0.042, 0.085]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.006
+fidelity = "estimated"
+rationale = "Seat for the XL430 base port (frame convention). x offset 12 mm so the tilt axis passes through x = 0, the pan axis."

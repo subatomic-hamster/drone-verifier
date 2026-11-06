@@ -1,0 +1,451 @@
+id = "nvidia-jetson-orin-nano-devkit-8gb"
+name = "NVIDIA Jetson Orin Nano Developer Kit (8 GB, Super), module + reference carrier board + heatsink"
+category = "computer.sbc"
+vendor = "NVIDIA"
+part_number = "Jetson Orin Nano 8GB Developer Kit (P3768 carrier + P3767 module)"
+url = "https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/latest/hardware_layout.html"
+
+# The developer kit as bought: the 8 GB module (parts/electronics/nvidia-jetson-orin-nano-8gb-module.toml) on NVIDIA's reference carrier board, with heatsink and fan. Pin tables are the
+# carrier-board specification SP-11324-001 v1.0 (S1), Table 3-3 (J12), Tables 2-1 to 2-3 (USB) and section 3.8 (DC jack). Only the connectors a cuas-lite build wires are listed: the 40-pin header J12,
+# the DC jack J16, the USB-C port J5 and the two stacked USB-A connectors J6 / J7 (four USB-A ports). Not listed: the two 22-pin MIPI CSI connectors, the 12-pin button header, the fan header,
+# the CAN / PoE / RTC headers (the optional CAN header J17 is an unpopulated footprint with 3.3 V CAN_TX / CAN_RX logic, S1 Table 3-5: the dog uses a USB CAN adapter instead), the M.2 slots and DisplayPort. The RJ45 jack J15 (the Mid-360 link) is listed.
+# Part frame: origin at the centre of the carrier board's underside, +x along the 100 mm side, +y along the 79 mm side, z up. The connector poses are placed on the product photos (the specification's
+# placement figures carry no dimensions), so they are estimates; the pin tables are not.
+# Mass: S5 (an NVIDIA forum answer; scope disputed in the thread, see the note on the param). The kit's included 19 V power supply is not part of it.
+
+[params]
+length                  = { value = 0.103, unit = "m", src = "S2", fidelity = "datasheet" }   # whole kit, 103.00 +-0.20 mm (S1 Figure 4-2 agrees)
+width                   = { value = 0.0905, unit = "m", src = "S2", fidelity = "datasheet" }
+height                  = { value = 0.03477, unit = "m", src = "S2", fidelity = "datasheet" }   # includes feet, carrier board, module and thermal solution; +-1.09 mm (S1)
+carrier_length          = { value = 0.100, unit = "m", src = "S1", fidelity = "datasheet" }
+carrier_width           = { value = 0.079, unit = "m", src = "S1", fidelity = "datasheet" }
+carrier_thickness       = { value = 0.00157, unit = "m", src = "S1", fidelity = "datasheet" }
+mass                    = { value = 0.174, unit = "kg", src = "S5", fidelity = "literature" }   # 'The Orin nano devkit is 0.174kg' (NVIDIA forum, Feb 2023); a commenter asked whether that is the module only, the answer repeated it is the devkit
+dc_input_min            = { value = 9.0, unit = "V", src = "S1", fidelity = "datasheet" }   # DC Jack: 9-20 V (19 V supply provided)
+dc_input_max            = { value = 20.0, unit = "V", src = "S1", fidelity = "datasheet" }
+dc_input_supplied       = { value = 19.0, unit = "V", src = "S4", fidelity = "datasheet" }
+dc_jack_max_current     = { value = 3.5, unit = "A", src = "S1", fidelity = "datasheet" }   # max current supported by the J16 barrel jack
+dc_jack_size            = { value = "5.5 mm outer x 2.5 mm pin, 9.5 mm barrel, centre positive", unit = "-", src = "S1", fidelity = "datasheet" }
+power_mode_low          = { value = 7, unit = "W", src = "S2", fidelity = "datasheet" }   # the kit's module range is 7 W - 25 W
+power_mode_mid          = { value = 15, unit = "W", src = "S3", fidelity = "datasheet" }   # module data sheet: 7 W and 15 W modes
+power_mode_super        = { value = 25, unit = "W", src = "S4", fidelity = "datasheet" }   # 25 W default mode / MAXN SUPER of the Super kit
+gpio_level              = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }   # 'All signals on the 40-pin header are 3.3V levels'
+usb_a_ports             = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }   # USB 3.2 Gen2x1 hub to 4x Type A, host only
+usb_a_vbus_limit        = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }   # per stack of two ports
+operating_temp_min      = { value = 273.15, unit = "K", src = "S1", fidelity = "datasheet" }   # 0 degC
+operating_temp_max      = { value = 308.15, unit = "K", src = "S1", fidelity = "datasheet" }   # 35 degC developer-kit operating range
+ai_performance_super    = { value = 67, unit = "TOPS", src = "S2", fidelity = "datasheet" }
+price               = { value = 399.0, unit = "USD", src = "S7", fidelity = "datasheet" }   # retailer price on 2026-10-11 (NVIDIA's own page shows none); excluded from the 150 USD budget by the project brief
+
+# Envelope (collision, wire clearance): the whole kit 103 x 90.5 x 34.77 mm (length / width / height above), underside at z = 0.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0515, 0.04525, 0.017385]
+pos = [0.0, 0.0, 0.017385]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Board lying on its four rubber feet; the carrier's mounting-hole pattern is only in a figure without dimensions (S1 Figure 4-1), so no bolt pattern is declared."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "dc-barrel.5.5x2.5"
+gender = "female"
+role = "sink"
+pins = ["J16.1", "J16.2"]
+v_max = { value = 20.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3.5, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "9-20 V DC, centre pin positive; the kit ships a 19 V supply (S1, S4)."
+
+# Pin-wire groupings (a pin wire end `jetson.J7.1` is folded into the port that lists the pin).
+[[ports]]
+name = "header_5v_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+pins = ["J12.2", "J12.6"]
+v_max = { value = 5.0, unit = "V", fidelity = "estimated", rationale = "Nominal 5 V of the 40-pin header's 5V0 pins (the pin table names them 5V0); the permitted load per pin is stated in the pin table notes (1 A each)." }
+note = "Header 5V0 (pin 2) with ground (pin 6): the Pico's VSYS."
+
+[[ports]]
+name = "header_5v_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+pins = ["J12.4", "J12.9"]
+v_max = { value = 5.0, unit = "V", fidelity = "estimated", rationale = "As header_5v_a." }
+note = "Header 5V0 (pin 4) with ground (pin 9): the two hall sensors."
+
+[[ports]]
+name = "usb_j7"
+kind = "signal"
+type = "usb"
+gender = "female"
+pins = ["J7.1", "J7.2", "J7.3", "J7.4"]
+note = "USB-A socket J7 (the USB 2.0 contact set: VBUS, D-, D+, GND)."
+
+[[ports]]
+name = "usb_j6"
+kind = "signal"
+type = "usb"
+gender = "female"
+pins = ["J6.1", "J6.2", "J6.3", "J6.4"]
+note = "USB-A socket J6 (the USB 2.0 contact set: VBUS, D-, D+, GND)."
+
+# ---- added for the dog (SP3b): the stacks' second ports, the USB-C port, the UART1 / I2C1 header signals and two 3.3 V header feeds ----
+[[ports]]
+name = "usb_j6_p1"
+kind = "signal"
+type = "usb"
+gender = "female"
+pins = ["J6.10", "J6.11", "J6.12", "J6.13"]
+note = "The other USB-A port of the J6 stack (stack pins 10-13: VBUS, D-, D+, GND of port 1; usb_j6 is port 2)."
+
+[[ports]]
+name = "usb_j7_p1"
+kind = "signal"
+type = "usb"
+gender = "female"
+pins = ["J7.10", "J7.11", "J7.12", "J7.13"]
+note = "The other USB-A port of the J7 stack (stack pins 10-13: VBUS, D-, D+, GND of port 1; usb_j7 is port 2)."
+
+[[ports]]
+name = "usb_j5"
+kind = "signal"
+type = "usb-c"
+gender = "female"
+pins = ["J5.A4", "J5.A7", "J5.A6", "J5.A1", "J5.A3", "J5.A2", "J5.A12", "J5.B10", "J5.B11"]
+note = "USB-C J5, the contacts of a USB 3 peripheral in the order of the D435i's usb port: VBUS, D-, D+, GND, TX1-, TX1+, GND, RX1-, RX1+."
+
+[[ports]]
+name = "eth"
+kind = "signal"
+type = "ethernet"
+gender = "female"
+pins = ["J15.1", "J15.2", "J15.3", "J15.6"]
+note = "RJ45 J15, the 100BASE-TX pairs a Livox-class sensor uses: MDI0+ (1) = TX+, MDI0- (2) = TX-, MDI1+ (3) = RX+, MDI1- (6) = RX-; the gigabit pairs 3+ / 3- / 4+ / 4- are not wired by a 100 Mbit peer."
+
+[[ports]]
+name = "uart1"
+kind = "signal"
+type = "uart"
+gender = "male"
+pins = ["J12.8", "J12.10", "J12.6"]
+note = "Header UART1: TXD (pin 8), RXD (pin 10), GND (pin 6); /dev/ttyTHS1 on JetPack 6."
+
+[[ports]]
+name = "i2c1"
+kind = "signal"
+type = "i2c"
+gender = "male"
+pins = ["J12.3", "J12.5"]
+note = "Header I2C1: SDA (pin 3), SCL (pin 5), 2.2 kohm pull-ups on the carrier."
+
+[[ports]]
+name = "header_3v3_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+pins = ["J12.1", "J12.9"]
+v_max = { value = 3.3, unit = "V", fidelity = "estimated", rationale = "Nominal 3.3 V of the header's 3V3 pins; the pin table gives 1 A per power pin." }
+note = "Header 3V3 (pin 1) with ground (pin 9)."
+
+[[ports]]
+name = "header_3v3_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+pins = ["J12.17", "J12.9"]
+v_max = { value = 3.3, unit = "V", fidelity = "estimated", rationale = "As header_3v3_a." }
+note = "Header 3V3 (pin 17) with ground (pin 9)."
+
+# ---- 40-pin expansion header J12 (S1 Table 3-3). Pin names are the module pin names of the specification's Figure 3-1; a trailing * in the table marks an active-low signal and is dropped here.
+# alt: a0 = default usage, a1 = the table's alternate functionality. All signals are 3.3 V; pins 3, 5, 27 and 28 are open-drain I2C lines with pull-ups on the carrier (2.2 kohm for 3 / 5, 1.5 kohm for 27 / 28),
+# the other signals pass TI TXB0108 level translators with weak output drivers (i_max is the table's pin drive: 2 mA open-drain, 20 uA elsewhere). Power pins carry 1 A each.
+# Linux: pins 3 / 5 are I2C bus 7 (SoC GP16_I2C8), pins 27 / 28 are I2C bus 1 (GP14_I2C2); UART1 on pins 8 / 10 is /dev/ttyTHS1 on JetPack 6 (forum, not in the specification).
+[[connectors]]
+id = "J12"
+name = "40-pin expansion header"
+type = "header-2x20-2.54mm"
+gender = "male"
+pos = [-0.020, 0.0295, 0.0105]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 20
+pitch = 0.00254
+layout = "dual"
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Header on the long edge opposite the USB / Ethernet end block, near the module, as in the product photos; the specification's placement figure has no dimensions (positional estimate)."
+note = "Pin table: S1 Table 3-3 / Figure 3-1. SoC names and pad numbers (PAC.06 ... PI.00) are in the table; Linux GPIO and PWM chip numbers follow NVIDIA's Jetson.GPIO library (S6): PWM on pin 15 (3280000.pwm), pin 32 (32e0000.pwm), pin 33 (32c0000.pwm)."
+pins = [
+  { number = 1, name = "3V3", kind = "power", dir = "out", v = 3.3, i_max = 1.0, note = "main 3.3 V supply" },
+  { number = 2, name = "5V0", kind = "power", dir = "out", v = 5.0, i_max = 1.0, note = "main 5.0 V supply (input / output)" },
+  { number = 3, name = "I2C1_SDA", kind = "signal", dir = "io", v = 3.3, i_max = 0.002, alt = ["a0:I2C1_SDA"], note = "I2C #1 data, SoC GP16_I2C8_DAT (PDD.02), open-drain, 2.2 kohm pull-up on the carrier" },
+  { number = 4, name = "5V0", kind = "power", dir = "out", v = 5.0, i_max = 1.0, note = "main 5.0 V supply (input / output)" },
+  { number = 5, name = "I2C1_SCL", kind = "signal", dir = "io", v = 3.3, i_max = 0.002, alt = ["a0:I2C1_SCL"], note = "I2C #1 clock, SoC GP15_I2C8_CLK (PDD.01), open-drain, 2.2 kohm pull-up on the carrier" },
+  { number = 6, name = "GND", kind = "ground" },
+  { number = 7, name = "GPIO09", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:AUD_MCLK"], note = "SoC GP167 (PAC.06); alternate: audio primary clock" },
+  { number = 8, name = "UART1_TXD", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:UART1_TXD", "a1:GPIO"], note = "UART #1 transmit, SoC GP70_UART1_TXD_BOOT2_STRAP (PR.02)" },
+  { number = 9, name = "GND", kind = "ground" },
+  { number = 10, name = "UART1_RXD", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:UART1_RXD", "a1:GPIO"], note = "UART #1 receive, SoC GP71_UART1_RXD (PR.03)" },
+  { number = 11, name = "UART1_RTS", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:UART1_RTS", "a1:GPIO"], note = "UART #1 request to send (active low), SoC GP72_UART1_RTS_N (PR.04)" },
+  { number = 12, name = "I2S0_SCLK", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:I2S0_SCLK"], note = "SoC GP122 (PH.07); alternate: audio I2S #0 clock" },
+  { number = 13, name = "SPI1_SCK", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI1_SCK"], note = "SoC GP36_SPI3_CLK (PY.00); alternate: SPI #1 shift clock" },
+  { number = 14, name = "GND", kind = "ground" },
+  { number = 15, name = "GPIO12", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:PWM1"], note = "SoC GP88_PWM1 (PN.01); hardware PWM (pwmchip 3280000.pwm)" },
+  { number = 16, name = "SPI1_CS1", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI1_CS1"], note = "SPI #1 chip select 1 (active low), SoC GP40_SPI3_CS1_N (PY.04)" },
+  { number = 17, name = "3V3", kind = "power", dir = "out", v = 3.3, i_max = 1.0, note = "main 3.3 V supply" },
+  { number = 18, name = "SPI1_CS0", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI1_CS0"], note = "SPI #1 chip select 0 (module pin SPI1_CS0, active low; the table's text says 'SPI #0 Chip Select #0'), SoC GP39_SPI3_CS0_N" },
+  { number = 19, name = "SPI0_MOSI", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI0_MOSI"], note = "SPI #0 primary out / secondary in, SoC GP49_SPI1_MOSI (PZ.05)" },
+  { number = 20, name = "GND", kind = "ground" },
+  { number = 21, name = "SPI0_MISO", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI0_MISO"], note = "SPI #0 primary in / secondary out, SoC GP48_SPI1_MISO (PZ.04)" },
+  { number = 22, name = "SPI1_MISO", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI1_MISO"], note = "SPI #1 primary in / secondary out, SoC GP37_SPI3_MISO (PY.01)" },
+  { number = 23, name = "SPI0_SCK", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI0_SCK"], note = "SPI #0 shift clock, SoC GP47_SPI1_CLK (PZ.03)" },
+  { number = 24, name = "SPI0_CS0", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI0_CS0"], note = "SPI #0 chip select 0 (active low), SoC GP50_SPI1_CS0_N" },
+  { number = 25, name = "GND", kind = "ground" },
+  { number = 26, name = "SPI0_CS1", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI0_CS1"], note = "SPI #0 chip select 1 (active low), SoC GP51_SPI1_CS1_N (PZ.07)" },
+  { number = 27, name = "I2C0_SDA", kind = "signal", dir = "io", v = 3.3, i_max = 0.002, alt = ["a0:I2C0_SDA", "a1:GPIO"], note = "I2C #0 data, SoC GP14_I2C2_DAT (PDD.00), open-drain, 1.5 kohm pull-up on the carrier" },
+  { number = 28, name = "I2C0_SCL", kind = "signal", dir = "io", v = 3.3, i_max = 0.002, alt = ["a0:I2C0_SCL", "a1:GPIO"], note = "I2C #0 clock, SoC GP13_I2C2_CLK (PCC.07), open-drain, 1.5 kohm pull-up on the carrier" },
+  { number = 29, name = "GPIO01", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:GPCLK0"], note = "SoC GP65 (PQ.05); alternate: general purpose clock #0" },
+  { number = 30, name = "GND", kind = "ground" },
+  { number = 31, name = "GPIO11", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:GPCLK1"], note = "SoC GP66 (PQ.06); alternate: general purpose clock #1" },
+  { number = 32, name = "GPIO07", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:PWM7"], note = "SoC GP113_PWM7 (PG.06); hardware PWM (pwmchip 32e0000.pwm)" },
+  { number = 33, name = "GPIO13", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:PWM"], note = "SoC GP115 (PH.00); hardware PWM (pwmchip 32c0000.pwm)" },
+  { number = 34, name = "GND", kind = "ground" },
+  { number = 35, name = "I2S0_FS", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:I2S0_FS"], note = "SoC GP125 (PI.02); alternate: audio I2S #0 field select" },
+  { number = 36, name = "UART1_CTS", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:UART1_CTS", "a1:GPIO"], note = "UART #1 clear to send (active low), SoC GP73_UART1_CTS_N (PR.05)" },
+  { number = 37, name = "SPI1_MOSI", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:SPI1_MOSI"], note = "SPI #1 primary out / secondary in, SoC GP38_SPI3_MOSI (PY.02)" },
+  { number = 38, name = "I2S0_DIN", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:I2S0_DIN"], note = "SoC GP124 (PI.01); alternate: audio I2S #0 data in" },
+  { number = 39, name = "GND", kind = "ground" },
+  { number = 40, name = "I2S0_DOUT", kind = "signal", dir = "io", v = 3.3, i_max = 0.00002, alt = ["a0:GPIO", "a1:I2S0_DOUT"], note = "SoC GP123 (PI.00); alternate: audio I2S #0 data out" },
+]
+
+# ---- DC power jack J16 (S1 section 3.8): barrel 5.5 mm, accepts a 2.5 mm pin, centre positive, 3.5 A max.
+[[connectors]]
+id = "J16"
+name = "DC power jack"
+type = "dc-barrel-5.5x2.5"
+gender = "female"
+pos = [0.047, -0.0225, 0.0075]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "On the end of the board next to the USB / Ethernet block (product photos); the specification's placement figure has no dimensions (positional estimate)."
+pins = [
+  { number = 1, name = "DC+", kind = "power", dir = "in", v_min = 9.0, v_max = 20.0, i_max = 3.5, note = "centre pin, positive (S1 section 3.8)" },
+  { number = 2, name = "DC-", kind = "ground", note = "sleeve" },
+]
+
+# ---- Gigabit Ethernet RJ45 J15 (S1 Table 2-4): MDI pairs 0-3 on connector pins 1, 2, 3, 6, 7, 8, 9, 10 (the table's own numbering of the 18-pin RA jack with magnetics and LEDs).
+[[connectors]]
+id = "J15"
+name = "RJ45 Gigabit Ethernet jack"
+type = "rj45-1000base-t"
+port_type = "ethernet"
+gender = "female"
+pos = [0.047, 0.0, 0.0075]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 10
+pitch = 0.001
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "On the USB / Ethernet end block (product photos); the specification's placement figure has no dimensions (positional estimate). The pin numbers are the carrier board's numbering of the jack's 20 terminals, NOT the 8P8C plug contact numbers."
+pins = [
+  { number = 1, name = "MDI0+", kind = "signal", dir = "io", note = "GPE_MDI0_P, module pin 186" },
+  { number = 2, name = "MDI0-", kind = "signal", dir = "io", note = "GPE_MDI0_N, module pin 184" },
+  { number = 3, name = "MDI1+", kind = "signal", dir = "io", note = "GPE_MDI1_P, module pin 192" },
+  { number = 6, name = "MDI1-", kind = "signal", dir = "io", note = "GPE_MDI1_N, module pin 190" },
+  { number = 7, name = "MDI2+", kind = "signal", dir = "io", note = "GPE_MDI2_P, module pin 198" },
+  { number = 8, name = "MDI2-", kind = "signal", dir = "io", note = "GPE_MDI2_N, module pin 196" },
+  { number = 9, name = "MDI3+", kind = "signal", dir = "io", note = "GPE_MDI3_P, module pin 204" },
+  { number = 10, name = "MDI3-", kind = "signal", dir = "io", note = "GPE_MDI3_N, module pin 202" },
+]
+
+# ---- USB-C J5 (S1 Table 2-1): host, device and USB recovery. VBUS pins are A4/A9/B4/B9, grounds A1/A12/B1/B12.
+[[connectors]]
+id = "J5"
+name = "USB 3.2 Type-C port (host / device / recovery)"
+type = "usb-c"
+gender = "female"
+pos = [0.047, 0.0045, 0.0045]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 2
+cols = 12
+pitch = 0.0005
+layout = "seq"
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "On the end of the board between the DC jack and the USB-A stacks (product photos); positional estimate. Pins are laid out as a 2 x 12 grid at the plug's 0.5 mm pitch."
+pins = [
+  { number = "A1", name = "GND", kind = "ground" },
+  { number = "A2", name = "TX1_P", kind = "signal", dir = "out", note = "USB 3.2 #1 transmit 1" },
+  { number = "A3", name = "TX1_N", kind = "signal", dir = "out", note = "USB 3.2 #1 transmit 1" },
+  { number = "A4", name = "VBUS", kind = "power", dir = "io", v = 5.0, note = "USB VBUS_A" },
+  { number = "A5", name = "CC1", kind = "signal", dir = "out", note = "from the CC controller" },
+  { number = "A6", name = "D1_P", kind = "signal", dir = "io", note = "USB 2.0 #0 data 1 (D+)" },
+  { number = "A7", name = "D1_N", kind = "signal", dir = "io", note = "USB 2.0 #0 data 1 (D-)" },
+  { number = "A8", name = "SBU1", kind = "nc", note = "unconnected" },
+  { number = "A9", name = "VBUS", kind = "power", dir = "io", v = 5.0, note = "USB VBUS_A" },
+  { number = "A10", name = "RX2_N", kind = "signal", dir = "in", note = "USB 3.2 #1 receive 2" },
+  { number = "A11", name = "RX2_P", kind = "signal", dir = "in", note = "USB 3.2 #1 receive 2" },
+  { number = "A12", name = "GND", kind = "ground" },
+  { number = "B12", name = "GND", kind = "ground" },
+  { number = "B11", name = "RX1_P", kind = "signal", dir = "in", note = "USB 3.2 #1 receive 1" },
+  { number = "B10", name = "RX1_N", kind = "signal", dir = "in", note = "USB 3.2 #1 receive 1" },
+  { number = "B9", name = "VBUS", kind = "power", dir = "io", v = 5.0, note = "USB VBUS_A" },
+  { number = "B8", name = "SBU2", kind = "nc", note = "unconnected" },
+  { number = "B7", name = "D2_N", kind = "signal", dir = "io", note = "USB 2.0 #0 data 2 (D-)" },
+  { number = "B6", name = "D2_P", kind = "signal", dir = "io", note = "USB 2.0 #0 data 2 (D+)" },
+  { number = "B5", name = "CC2", kind = "signal", dir = "out", note = "from the CC controller" },
+  { number = "B4", name = "VBUS", kind = "power", dir = "io", v = 5.0, note = "USB VBUS_A" },
+  { number = "B3", name = "TX2_N", kind = "signal", dir = "out", note = "USB 3.2 #1 transmit 2" },
+  { number = "B2", name = "TX2_P", kind = "signal", dir = "out", note = "USB 3.2 #1 transmit 2" },
+  { number = "B1", name = "GND", kind = "ground" },
+]
+
+# ---- USB-A stacks J6 and J7 (S1 Tables 2-2 and 2-3): two ports each, host only, VBUS switched and limited to 3 A per stack. Per port: VBUS, D-, D+, GND, SSRX-, SSRX+, GND, SSTX-, SSTX+ (pins 1-9 of a stack
+# are its second port, pins 10-18 its first port). A USB 2.0 device (the Pico, the Brio at 1080p) needs only pins 1-4 (or 10-13) of one port.
+[[connectors]]
+id = "J6"
+name = "USB 3.2 Type-A dual stack (ports 1 and 2)"
+type = "usb-a-stack-2"
+port_type = "usb"
+gender = "female"
+pos = [0.0455, 0.0255, 0.0085]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 2
+cols = 9
+pitch = 0.00200
+layout = "seq"
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Two stacks on the end of the board with the Ethernet jack (product photos); positional estimate."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "out", v = 5.0, i_max = 3.0, note = "port 2 VBUS (3 A load switch per stack)" },
+  { number = 2, name = "D-", kind = "signal", dir = "io", note = "port 2, USB 2.0 data from the hub" },
+  { number = 3, name = "D+", kind = "signal", dir = "io", note = "port 2, USB 2.0 data from the hub" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "SSRX-", kind = "signal", dir = "in", note = "port 2, USB 3.1 receive" },
+  { number = 6, name = "SSRX+", kind = "signal", dir = "in", note = "port 2, USB 3.1 receive" },
+  { number = 7, name = "GND", kind = "ground" },
+  { number = 8, name = "SSTX-", kind = "signal", dir = "out", note = "port 2, USB 3.1 transmit" },
+  { number = 9, name = "SSTX+", kind = "signal", dir = "out", note = "port 2, USB 3.1 transmit" },
+  { number = 10, name = "VBUS", kind = "power", dir = "out", v = 5.0, i_max = 3.0, note = "port 1 VBUS (shares the stack's 3 A switch)" },
+  { number = 11, name = "D-", kind = "signal", dir = "io", note = "port 1, USB 2.0 data from the hub" },
+  { number = 12, name = "D+", kind = "signal", dir = "io", note = "port 1, USB 2.0 data from the hub" },
+  { number = 13, name = "GND", kind = "ground" },
+  { number = 14, name = "SSRX-", kind = "signal", dir = "in", note = "port 1, USB 3.1 receive" },
+  { number = 15, name = "SSRX+", kind = "signal", dir = "in", note = "port 1, USB 3.1 receive" },
+  { number = 16, name = "GND", kind = "ground" },
+  { number = 17, name = "SSTX-", kind = "signal", dir = "out", note = "port 1, USB 3.1 transmit" },
+  { number = 18, name = "SSTX+", kind = "signal", dir = "out", note = "port 1, USB 3.1 transmit" },
+]
+
+[[connectors]]
+id = "J7"
+name = "USB 3.2 Type-A dual stack (ports 3 and 4)"
+type = "usb-a-stack-2"
+port_type = "usb"
+gender = "female"
+pos = [0.0455, 0.0125, 0.0085]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 2
+cols = 9
+pitch = 0.00200
+layout = "seq"
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "As J6 (the second stack); positional estimate."
+note = "Table 2-3 lists the same pin order as J6 (port 4 = pins 1-9, port 3 = pins 10-18)."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "out", v = 5.0, i_max = 3.0, note = "port 4 VBUS (3 A load switch per stack)" },
+  { number = 2, name = "D-", kind = "signal", dir = "io", note = "port 4, USB 2.0 data from the hub" },
+  { number = 3, name = "D+", kind = "signal", dir = "io", note = "port 4, USB 2.0 data from the hub" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "SSRX-", kind = "signal", dir = "in", note = "port 4, USB 3.1 receive" },
+  { number = 6, name = "SSRX+", kind = "signal", dir = "in", note = "port 4, USB 3.1 receive" },
+  { number = 7, name = "GND", kind = "ground" },
+  { number = 8, name = "SSTX-", kind = "signal", dir = "out", note = "port 4, USB 3.1 transmit" },
+  { number = 9, name = "SSTX+", kind = "signal", dir = "out", note = "port 4, USB 3.1 transmit" },
+  { number = 10, name = "VBUS", kind = "power", dir = "out", v = 5.0, i_max = 3.0, note = "port 3 VBUS (shares the stack's 3 A switch)" },
+  { number = 11, name = "D-", kind = "signal", dir = "io", note = "port 3, USB 2.0 data from the hub" },
+  { number = 12, name = "D+", kind = "signal", dir = "io", note = "port 3, USB 2.0 data from the hub" },
+  { number = 13, name = "GND", kind = "ground" },
+  { number = 14, name = "SSRX-", kind = "signal", dir = "in", note = "port 3, USB 3.1 receive" },
+  { number = 15, name = "SSRX+", kind = "signal", dir = "in", note = "port 3, USB 3.1 receive" },
+  { number = 16, name = "GND", kind = "ground" },
+  { number = 17, name = "SSTX-", kind = "signal", dir = "out", note = "port 3, USB 3.1 transmit" },
+  { number = 18, name = "SSTX+", kind = "signal", dir = "out", note = "port 3, USB 3.1 transmit" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/latest/hardware_layout.html"
+title = "NVIDIA Jetson Orin Nano Developer Kit Carrier Board Specification SP-11324-001 v1.0 (referenced by the NVIDIA hardware-layout page; read from a public mirror at https://gzhls.at/blob/ldb/d/a/7/6/f487430a9edf313e0aea8393ee3caf5a805c.pdf)"
+accessed = "2026-10-11"
+quote = "DC Jack: 9-20 V (19V supply provided) ... All signals on the 40-pin header are 3.3V levels ... 3 I2C1_SDA 191 GP16_I2C8_DAT I2C #1 Data Bidir OD ±2 mA PDD.02 ... 8 UART1_TXD 203 GP70_UART1_TXD_BOOT2_STRAP UART #1 Transmit GPIO Output/Bidir ±20uA PR.02 ... 15 GPIO12 218 GP88_PWM1 GPIO ... 32 GPIO07 206 GP113_PWM7 GPIO PWM ... 33 GPIO13 228 GP115 GPIO PWM ... The mating barrel jack connector dimensions are: Barrel length: 9.5 mm Barrel diameter: 5.5 mm Pin receptacle: Accepts 2.5 mm jack pin The center pin is positive (+V) Max current supported is 3.5 A ... USB 3.2 (Gen2x1) Hub to 4x Type A (host only) ... A load switch supplying VBUS is provided for each of the USB 3.2 ports per stack and is limited to 3A of output current ... Developer kit operating temperature range 0 C to 35 C ... Developer Kit Mechanical Dimensions 103.00 ± 0.20 mm 90.50 ± 0.20 mm 34.77 ± 1.09 mm ... Developer Kit Carrier Board Mechanical Dimensions 100.00 ± 0.13 mm 79.00 ± 0.13 mm ... 1.57 ± 0.16 mm"
+
+[[sources]]
+id = "S2"
+url = "https://www.electrokit.com/upload/quick/db/0e/bff7_datasheet.pdf"
+title = "NVIDIA Jetson Orin Nano Super Developer Kit technical specifications (NVIDIA datasheet, Dec 2024, copy hosted by Electrokit)"
+accessed = "2026-10-11"
+quote = "AI Performance 67 TOPS ... Power 7W-25W ... USB Type-A connector: 4x USB 3.2 Gen2 USB Type-C connector for UFP ... 40-pin expansion header (UART, SPI, I2S, I2C, GPIO) 12-pin button header 4-pin fan header DC power jack ... Mechanical 103mm x 90.5mm x 34.77mm (Height includes feet, carrier board, module, and thermal solution)"
+
+[[sources]]
+id = "S3"
+url = "https://connecttech.com/ftp/pdf/nvidia_jetson_orin_datasheet.pdf"
+title = "NVIDIA Jetson Orin Nano Series Data Sheet (copy hosted by Connect Tech)"
+accessed = "2026-10-07"
+quote = "Supported Power Input: 5V – 20V Jetson Orin Nano 8GB Modes: 7W | 15W"
+
+[[sources]]
+id = "S4"
+url = "https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/latest/quick_start.html"
+title = "NVIDIA Jetson Orin Nano Developer Kit Getting Started (quick start)"
+accessed = "2026-10-11"
+quote = "Power supply (19 V) ... Connect the included 19 V power supply. The developer kit powers on automatically. ... The default power mode is typically 25W. To enable maximum performance: ... MAXN SUPER"
+
+[[sources]]
+id = "S5"
+url = "https://forums.developer.nvidia.com/t/jetson-orin-devkit-weight/242644"
+title = "NVIDIA Developer Forums: What is the weight of a Jetson Orin DevKit?"
+accessed = "2026-10-11"
+quote = "The Orin nano devkit is 0.174kg. ... 0.174 kg is the weight of just the SOM right? ... 0.174kg is weight of Orin nano devkit."
+
+[[sources]]
+id = "S7"
+url = "https://www.sparkfun.com/products/22098"
+title = "SparkFun: NVIDIA Jetson Orin Nano Super Developer Kit"
+accessed = "2026-10-11"
+quote = "NVIDIA Jetson Orin™ Nano Super Developer Kit ... $399.00 ... 19V Power Supply (45W)"
+
+[[sources]]
+id = "S6"
+url = "https://raw.githubusercontent.com/NVIDIA/jetson-gpio/master/lib/python/Jetson/GPIO/gpio_pin_data.py"
+title = "NVIDIA Jetson.GPIO library, gpio_pin_data.py (JETSON_ORIN_NANO uses the Orin NX pin table)"
+accessed = "2026-10-11"
+quote = "15 GPIO12 GP88_PWM1 3280000.pwm ... 32 GPIO07 GP113_PWM7 32e0000.pwm ... 33 GPIO13 GP115 32c0000.pwm (rows of the JETSON_ORIN_NX_PIN_DEFS table: board pin, CVM name, SoC name, PWM chip)"

@@ -1,0 +1,23 @@
+id = "petg"
+name = "PETG (Prusament PETG, 3D-printing grade)"
+category = "material"
+vendor = "Prusa Polymers"
+part_number = "Prusament PETG"
+url = "https://www.3dprintergear.com.au/assets/files/technical-data-sheet%20(1).pdf"
+
+# Printed-specimen moduli depend on print direction; the horizontal (XY) value is stored as the default.
+[params]
+density         = { value = 1270, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 1.5e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+youngs_modulus_vertical = { value = 1.6e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+flexural_modulus = { value = 1.7e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.30, 0.55, 0.75, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://www.3dprintergear.com.au/assets/files/technical-data-sheet%20(1).pdf"
+title = "Prusament PETG by Prusa Polymers, technical data sheet (hosted by 3DPrinterGear)"
+accessed = "2026-10-07"
+quote = "Prusament PETG ... Density [g/cm3] 1.27 ISO 1183 ... Property\\Print Direction Horizontal Vertical xz Method ... Tensile Modulus [GPa] 1.5 ± 0.1 1.6 ± 0.1 ISO 527-1 ... Flexural Modulus [GPa] 1.7 ± 0.1 1.6 ± 0.1 ISO 178"

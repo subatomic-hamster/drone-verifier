@@ -1,0 +1,61 @@
+id = "trinamic-tmc2226"
+name = "Trinamic (ADI) TMC2226 silent stepper driver IC, 2 A RMS / 2.8 A peak"
+category = "driver.stepper"
+vendor = "Trinamic Motion Control / Analog Devices"
+part_number = "TMC2226"
+url = "https://www.radiolocman.com/datasheet/data.html?di=618187"
+
+# Frame: the IC itself has no module frame; designs normally use a carrier module. No mech port is declared. Electrical ports only.
+# Electrical limits listed here are identical to the TMC2209 feature list (same front-page bullet text). Package/pinout is NOT in the retrieved page text, so it is not asserted.
+# Not retrievable here: the ADI/Trinamic PDF datasheet host was unreachable from the build environment; figures come from the radiolocman extract of the datasheet front page.
+
+[params]
+v_motor_min        = { value = 4.75,    unit = "V",    src = "S1", fidelity = "datasheet" }
+v_motor_max        = { value = 29.0,    unit = "V",    src = "S1", fidelity = "datasheet" }
+i_rms_max_per_phase = { value = 2.0,    unit = "A",    src = "S1", fidelity = "datasheet" }
+i_peak_max_per_phase = { value = 2.8,   unit = "A",    src = "S1", fidelity = "datasheet" }
+rds_on_per_switch  = { value = 0.170,   unit = "ohm",  src = "S1", fidelity = "datasheet" }  # LS and HS each, typ. at 25 degC
+microstep_pin_modes = { value = "8, 16, 32 or 64 via MS pins; 256 via MicroPlyer interpolation", unit = "-", src = "S1", fidelity = "datasheet" }
+microstep_max_divisor = { value = 256,  unit = "1",    src = "S1", fidelity = "datasheet" }
+features           = { value = "StealthChop2, SpreadCycle, StallGuard4, CoolStep, UART interface option, internal sense resistor option", unit = "-", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "vmot"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 29.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.75, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }  # RMS per phase
+i_peak = { value = 2.8, unit = "A", src = "S1", fidelity = "datasheet" }  # peak per phase
+
+[[ports]]
+name = "motor_out"
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "source"
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }  # RMS per phase
+i_peak = { value = 2.8, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "step_dir"
+kind = "signal"
+type = "step-dir"
+gender = "neutral"
+note = "STEP/DIR with MS1/MS2 microstep pin selection; logic voltage range not in the retrieved extract."
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+note = "UART interface option for configuration and StallGuard4 (wire count not in the retrieved extract)."
+
+[[sources]]
+id = "S1"
+url = "https://www.radiolocman.com/datasheet/data.html?di=618187"
+title = "Radiolocman datasheet extract, TRINAMIC TMC2226 (83-page datasheet front page, uploaded 2020-05-26)"
+accessed = "2026-10-07"
+quote = "Step/Dir Drivers for Two-Phase Bipolar Stepper Motors up to 2.8A peak – StealthChop™ for Quiet Movement – UART Interface Option – Sensorless Stall Detection StallGuard4. || 2-phase stepper motors up to 2.8A coil current (peak), 2A RMS| STEP/DIR Interface with 8, 16, 32 or 64 microstep pin setting| Smooth Running 256 microsteps by MicroPlyer™ interpolation| StealthChop2™ silent motor operation| SpreadCycle™ highly dynamic motor control chopper| StallGuard4™ load and stall detection for StealthChop| CoolStep™ current control for energy savings up to 75%| Low RDSon, Low Heat-Up LS 170mΩ & HS 170mΩ (typ. at 25°C)| Voltage Range 4.75… 29V DC| Low Power Standby to fit standby energy regulations Internal Sense Resistor option (no sense resistors required)| Passive Braking, Freewheeling, and automatic power down …"

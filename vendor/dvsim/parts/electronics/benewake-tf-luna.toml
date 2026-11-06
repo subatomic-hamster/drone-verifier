@@ -1,0 +1,98 @@
+id = "benewake-tf-luna"
+name = "Benewake TF-Luna single-point LiDAR (8 m, UART/I2C/IO)"
+category = "sensor.rangefinder"
+vendor = "Benewake"
+part_number = "TF-Luna"
+url = "https://files.waveshare.com/upload/c/c3/SJ-GU-TF-Luna_A05_Datasheet.pdf"
+
+# Product specification SJ-GU-TF-Luna A05 (Waveshare-hosted copy of the Benewake document).
+[params]
+mass_max            = { value = 0.005, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.02125, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.0125, unit = "m", src = "S1", fidelity = "datasheet" }
+range_max_90pct     = { value = 8, unit = "m", src = "S1", fidelity = "datasheet" }
+range_max_10pct     = { value = 2.5, unit = "m", src = "S1", fidelity = "datasheet" }
+range_min           = { value = 0.2, unit = "m", src = "S1", fidelity = "datasheet" }
+accuracy_short      = { value = 0.06, unit = "m", src = "S1", fidelity = "datasheet" }
+accuracy_long_pct   = { value = 2, unit = "%", src = "S1", fidelity = "datasheet" }
+resolution          = { value = 0.01, unit = "m", src = "S1", fidelity = "datasheet" }
+frame_rate_max      = { value = 250, unit = "Hz", src = "S1", fidelity = "datasheet" }
+frame_rate_default  = { value = 100, unit = "Hz", src = "S1", fidelity = "datasheet" }
+fov                 = { value = 0.0349, unit = "rad", src = "S1", fidelity = "datasheet" }
+supply_voltage_min  = { value = 3.7, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_avg_max = { value = 0.07, unit = "A", src = "S1", fidelity = "datasheet" }
+supply_current_peak = { value = 0.15, unit = "A", src = "S1", fidelity = "datasheet" }
+power_max           = { value = 0.35, unit = "W", src = "S1", fidelity = "datasheet" }
+default_baud        = { value = 115200, unit = "baud", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 263.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 333.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+v_max = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.15, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "sink"
+pins = ["C.1", "C.4"]
+note = "i_max is the peak current; connector style not given in the extracted datasheet text"
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+pins = ["C.3", "C.2"]
+level = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+pins = ["C.2", "C.3"]
+level = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "default address 0x10, range 0x08~0x77, max 400 kbps (S1)"
+
+# Pin level: the six-pin interface of S2 (pins 2 and 3 are the UART or I2C pair depending on the mode; the UART port lists [TXD, RXD], the I2C port [SDA, SCL]).
+# S2 does not name the connector family or pitch ('1 x 6 Pin JST to Dupont Connector' is the shipped cable); the 1.25 mm JST-GH-class pitch of Benewake's other
+# modules (the TFmini datasheet names 'GH1.25-4p') is assumed, and the position on the 35 x 21.25 x 12.5 mm body is estimated.
+[[connectors]]
+id = "C"
+name = "6-pin interface"
+type = "jst-gh-6"
+gender = "male"
+pos = [0.0, -0.0106, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S2"
+fidelity = "estimated"
+rationale = "S2 gives the six pin functions in order; the connector family, pitch and place on the body are not in S2 (1.25 mm assumed from the sibling TFmini datasheet)."
+pins = [
+  { number = 1, name = "+5V", kind = "power", dir = "in", v = 5.0, v_min = 3.7, v_max = 5.2, src = "S1", fidelity = "datasheet", note = "supply voltage 3.7V-5.2V (S1)" },
+  { number = 2, name = "RXD/SDA", kind = "signal", dir = "io", v = 3.3, alt = ["UART RX", "I2C SDA"], note = "UART RX / I2C data" },
+  { number = 3, name = "TXD/SCL", kind = "signal", dir = "io", v = 3.3, alt = ["UART TX", "I2C SCL"], note = "UART TX / I2C clock" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "CFG", kind = "signal", dir = "in", v = 3.3, note = "configuration input: I2C mode: ground; UART mode: disconnected or 3.3 V" },
+  { number = 6, name = "MUX", kind = "signal", dir = "out", v = 3.3, note = "multiplexing output: on/off mode output; in I2C mode the data-ready signal" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://core-electronics.com.au/tf-luna-lidar-sensor-8m-range.html"
+title = "TF-Luna LiDAR Sensor (8m range), Core Electronics (distributor) product page, pin definition table (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "Number | Function | Description: 1 +5V Power supply; 2 RXD/SDA UART RX / I2C data; 3 TXD/SCL UART TX / I2C clock; 4 GND ground; 5 Configuration Input I2C mode: ground UART mode: disconnected or 3.3V; 6 Multiplexing output On/off mode: output I2C mode open and on/off mode close: data ready signal"
+
+[[sources]]
+id = "S1"
+url = "https://files.waveshare.com/upload/c/c3/SJ-GU-TF-Luna_A05_Datasheet.pdf"
+title = "TF-Luna LiDAR module Product specification SJ-GU-TF-Luna A05 (Benewake; Waveshare-hosted copy)"
+accessed = "2026-10-07"
+quote = "0.2m~8m(90%reflectivity indoor 0klux) 0.2m~2.5m(10%reflectivity indoor 0klux) ... ±6cm@(0.2m-3m) ±2%@(3m-8m) Distance resolution 1cm Frame rate 1-250Hz ... Operation temperature -10℃~60℃ ... FOV 2° Supply voltage 3.7V-5.2V Average current ≤70mA ... Power consumption ≤0.35W Peak current 150mA Communication level LVTTL(3.3V) Communication interface UART, I²C, I/O Dimension 35mm*21.25mm*12.5mm (L*W*H) ... Weight <5g ... Default baud rate 115200（adjustable）"

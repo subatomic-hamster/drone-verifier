@@ -1,0 +1,36 @@
+id = "haluminium-2020-s6"
+name = "20x20 T-slot aluminium extrusion, slot 6.2 mm (haluminium HY-S6-2020)"
+category = "structure.extrusion"
+vendor = "haluminium"
+part_number = "HY-S6-2020"
+url = "https://fab.academany.org/2021/labs/agrilab/students/antonio-anaya/files/week10/profile_alum_2020_datasheet.pdf"
+
+# Inertia is the vendor's "Mass of Inertia" (second moment of area), identical about x and y for the square profile.
+[params]
+section_width    = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+section_height   = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+slot_width       = { value = 0.0062, unit = "m", src = "S1", fidelity = "datasheet" }
+slot_depth       = { value = 0.0061, unit = "m", src = "S1", fidelity = "datasheet" }
+center_hole_diameter = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_per_m       = { value = 0.50, unit = "kg/m", src = "S1", fidelity = "datasheet" }
+second_moment_area_x = { value = 7.2e-9, unit = "m^4", src = "S1", fidelity = "datasheet" }
+second_moment_area_y = { value = 7.2e-9, unit = "m^4", src = "S1", fidelity = "datasheet" }
+section_modulus_x = { value = 7.2e-7, unit = "m^3", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "center_bore"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "Center hole phi5 mm along the extrusion axis (S1); 4-fold symmetric profile"
+
+[[sources]]
+id = "S1"
+url = "https://fab.academany.org/2021/labs/agrilab/students/antonio-anaya/files/week10/profile_alum_2020_datasheet.pdf"
+title = "20 Series T-Slot Aluminium Extrusion Profile (haluminium datasheet, mirrored by Fab Academy student site)"
+accessed = "2026-10-07"
+quote = "Code: S6-20×20 Slot Width: 6.2 mm Weight: 0.50 kg/m Mass of Inertia: lx: 0.72 cm4 ly: 0.72 cm4 Section Modulus: zx: 0.72 cm3 zy: 0.72 cm3 ... Order No: HY-S6-2020, T-slot height: 6.1 mm, Section size: 20 mm × 20 mm, Hole: φ5 mm, Thickness of diagonal bar: 1.5 mm."

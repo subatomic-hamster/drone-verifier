@@ -1,0 +1,40 @@
+id = "tmotor-p12x4"
+name = "T-Motor P12*4 carbon-fibre propeller (12x4 in, 2-blade)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "P12*4"
+url = "https://rcdrone.top/products/t-motor-p12-inch-cf-prop"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# Prop used in the T-Motor MN2806-KV400 ("P12*4") and MN3508-KV700 ("12*4CF") bench tests (parts/propulsion/tmotor-mn2806-kv400.toml, tmotor-mn3508-kv700.toml).
+# The listing publishes only the model "12*4" and the packing (2 props: 1 CW + 1 CCW, 2 aluminium mounting plates): no mass, no thrust limit, no rpm range.
+# Pitch/diameter come from the model name; no mass/j_prop params are set.
+
+[params]
+diameter    = { value = 0.3048, unit = "m", fidelity = "derived", derivation = "Model number '12*4\"' (S1): 12 in x 0.0254 m/in = 0.3048 m." }
+pitch       = { value = 0.1016, unit = "m", fidelity = "derived", derivation = "Model number '12*4\"' (S1): 4 in x 0.0254 m/in = 0.1016 m." }
+blade_count = { value = 2, unit = "1", fidelity = "estimated", rationale = "Not stated in S1. Sold as 2 props '1 clockwise, 1 counter clockwise' (one prop per motor); all sibling T-Motor CF multirotor props are 2-blade." }
+material    = { value = "carbon fibre", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "cylinder"
+size = [0.1524, 0.0060]       # disc envelope: radius D/2, half-height 6 mm (blade thickness envelope, estimated)
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+fidelity = "estimated"
+rationale = "Hub bore is not published; the pair ships with 2 aluminium mounting plates (S1) that adapt it to the motor. 6 mm taken from the M6 prop-adapter thread of the MN2806/MN3508 motors (their prop_adapter_thread param) and the sibling NS15*5 drawing."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/t-motor-p12-inch-cf-prop"
+title = "rcdrone.top (T-Motor distributor) - T-Motor P12 inch CF Prop 12*4 drone propellers"
+accessed = "2026-10-07"
+quote = "Model Number : 12*4\" | High quality ultra-light carbon fiber propellers especially designed for multicopters. | Will fit all MN series T-motors. | Each set includes 2 propellers.1 clockwise, 1 counter clockwise and 2 aluminum mounting plates."

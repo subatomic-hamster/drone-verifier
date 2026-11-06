@@ -1,0 +1,48 @@
+id = "so101-screw-m2x6"
+name = "M2x6 mm self-tapping screw (SO-101 servo mounting screws)"
+category = "fastener"
+vendor = "generic (supplied with Feetech STS3215 servo kit; datasheet 8-PA2.0 self-tapping)"
+part_number = "M2x6 (PA2.0 self-tapping)"
+url = "https://huggingface.co/docs/lerobot/so101"
+
+[params]
+thread_diameter = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+length = { value = 0.006, unit = "m", src = "S1", fidelity = "datasheet" }
+count_follower_arm = { value = 24, unit = "1", fidelity = "derived", derivation ="Sum of M2x6 counts in the LeRobot follower assembly steps (S1): joint 1 motor 4 + motor holder 2; joint 2 motor 4; joint 3 motor 4; joint 4 motor 4; joint 5 motor 2 ('2 M2x6mm front screws'); gripper motor 2 on each side = 4. 6+4+4+4+2+4 = 24." }
+mass = { value = 0.00028, unit = "kg", fidelity = "estimated", rationale ="No published mass. Pan head M2x6 steel: shank 2 mm x 6 mm = 19 mm^3 plus head ~4 mm dia x 1.6 mm (~17 mm^3) = ~36 mm^3 * 7.85 g/cm^3 = 0.28 g." }
+material_density = { value = 7850, unit = "kg/m^3", fidelity = "estimated", rationale ="Screw material not stated; carbon steel density used." }
+thread_pitch = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "The part is a PA2.0 self-tapping screw (S1); its pitch is not published. 0.4 mm is the ISO metric coarse pitch of nominal M2 (S2, ISO 4762 table row 'M 2 0.4'), used as a placeholder; a self-tapping thread is normally coarser." }
+
+[geometry]
+shape = "cylinder"
+size = [0.001, 0.003]
+# size = radius, half-height (m): shank only (thread_diameter / 2, length / 2); the head (est. ~4 mm dia x 1.6 mm, see mass rationale) is not modelled.
+
+# Same convention as parts/structure/iso4762-m3x12.toml: pos at the underside of the head, axis along the shank out of the tip (mates a female thread.m2 port).
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m2"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.006
+thickness = 0.006
+fidelity = "derived"
+derivation = "Port convention (pos at head underside, axis down the shank); length = param length (6 mm, S1 'M2x6mm'); thickness = length (the clamped stack cannot exceed the shank length)."
+
+[[sources]]
+id = "S1"
+url = "https://huggingface.co/docs/lerobot/so101"
+title = "LeRobot SO-101 assembly guide (Joint 1) and Feetech STS3215 datasheet drawing page 6/8 (8-PA2.0 self-tapping screws)"
+accessed = "2026-10-06"
+quote = "Fasten the motor with 4 M2x6mm screws (smallest screws). Two from the top and two from the bottom. || Slide over the first motor holder and fasten it using two M2x6mm screws (one on each side)."
+
+[[sources]]
+id = "S2"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 key dimensions table (fasten.it): metric coarse pitch P for M2"
+accessed = "2026-10-07"
+quote = "M 2 0.4 3.8 3.98 3.62 2 1.86 1.5 1 0.55 16  (d, P, dk max plain, dk max knurled, dk min, k max, k min, s nom, t min, w min, b)"

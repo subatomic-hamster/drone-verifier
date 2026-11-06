@@ -1,0 +1,64 @@
+id = "facmogu-5v-4a-psu"
+name = "Facmogu 5V 4A AC-DC power supply adapter (SO-101 BOM power supply)"
+category = "psu"
+vendor = "Facmogu"
+part_number = "B087LY41PV (Amazon ASIN)"
+url = "https://www.amazon.com/Facmogu-Switching-Transformer-Compatible-5-5x2-1mm/dp/B087LY41PV/"
+
+# SO-ARM100 README BOM row "Power Supply" (US) links this product; the same BOM says a 12V 5A+ supply is needed instead if the 12V servos are used.
+# Seeed Studio's SO-ARM101 kit page lists the standard-kit supply as "5.5 mm × 2.1 mm DC 5 V 4 A".
+
+[params]
+v_out_nominal = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_out_rated   = { value = 4.0, unit = "A", src = "S1", fidelity = "datasheet" }
+v_in_min      = { value = 100.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_in_max      = { value = 240.0, unit = "V", src = "S1", fidelity = "datasheet" }
+connector     = { value = "DC barrel 5.5x2.1 mm (also supplied with a 5.5x2.5 mm tip)", unit = "-", src = "S1", fidelity = "datasheet" }
+mass          = { value = 0.12, unit = "kg", fidelity = "estimated", rationale ="Product page text retrieved lists no weight. Typical 20 W wall-mount switching adapters are of the order of 100-150 g; 0.12 kg taken. Does not enter the arm's moving mass." }
+r_out         = { value = 0.03, unit = "ohm", fidelity = "estimated", rationale ="No published output impedance or load regulation. A 1-3 % regulation at 4 A on 5 V (0.05-0.15 V) corresponds to 0.012-0.04 ohm; 0.03 ohm taken. Excludes the output cable." }
+current_limit = { value = 4.5, unit = "A", fidelity = "estimated", rationale ="No published over-current threshold. Small adapters typically trip/hiccup at 110-150 % of rating; 4.5 A (112 %) is a conservative placeholder for a simulator limit." }
+
+[geometry]
+shape = "box"
+size = [0.0375, 0.0225, 0.015]
+size_fidelity = "estimated"
+size_rationale = "Half extents (m) of an assumed 75 x 45 x 30 mm wall-mount adapter body; the product page text retrieved gives no dimensions. Typical 20 W adapters are of this order; used only for drawing, never for kinematics. No mesh."
+
+# Electrical only: no mechanical ports (the adapter plugs into a wall socket; not part of the arm assembly).
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "dc-barrel.5.5x2.1"
+gender = "male"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 4.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "5 V nominal output on the 5.5 x 2.1 mm barrel tip (the supply also ships a 5.5 x 2.5 mm tip, S1); v_max is the nominal output voltage (param v_out_nominal), i_max the rated current (param i_out_rated)."
+
+# Pin level: output barrel plug (S1 title: 'Barrel Connector 5.5x2.5mm & 5.5x2.1mm'); polarity not stated, centre-positive assumed.
+[[connectors]]
+id = "OUT"
+name = "DC output plug"
+type = "dc-barrel-5.5x2.1"
+gender = "male"
+pos = [0.0375, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 (product title) names the 5.5 x 2.1 mm barrel connector, 5 V 4 A; the polarity is not stated, centre-positive assumed."
+pins = [
+  { number = 1, name = "DC+", kind = "power", dir = "out", v = 5.0, i_max = 4.0, note = "centre pin (assumed)" },
+  { number = 2, name = "DC-", kind = "ground", note = "sleeve" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.amazon.com/Facmogu-Switching-Transformer-Compatible-5-5x2-1mm/dp/B087LY41PV/"
+title = "Amazon product page title, Facmogu 5V 4A power supply"
+accessed = "2026-10-06"
+quote = "Facmogu 5V 4A AC to DC Power Supply Adapter, AC 100-240V to DC 5 Volt 4 Amp | 5V Switching Transformer | Wall Mounted Adapter with Barrel Connector 5.5x2.5mm & 5.5x2.1mm"

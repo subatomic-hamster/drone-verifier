@@ -1,0 +1,97 @@
+id = "holybro-sik-telemetry-radio-v3"
+name = "Holybro SiK Telemetry Radio V3 (100 mW / 500 mW air or ground unit, 433/915 MHz)"
+category = "radio.telemetry"
+vendor = "Holybro"
+part_number = "SiK Telemetry Radio V3"
+url = "https://docs.holybro.com/radio/sik-telemetry-radio-v3.md"
+
+# X500 V2 kit includes one 'SiK Telemetry Radio V3 433/915MHz' (power variant not stated) on the air side
+# plus one for the ground station. Mass only is needed for the mass budget; one unit flies.
+[params]
+mass_with_antenna = { value = 0.0235, unit = "kg", src = "S1", fidelity = "datasheet" }
+supply_voltage    = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+receive_current   = { value = 0.025, unit = "A", src = "S1", fidelity = "datasheet" }
+transmit_current_20dbm = { value = 0.1, unit = "A", src = "S1", fidelity = "datasheet" }
+length            = { value = 0.053, unit = "m", src = "S1", fidelity = "datasheet" }
+width             = { value = 0.028, unit = "m", src = "S1", fidelity = "datasheet" }
+height            = { value = 0.0107, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0235
+unit = "kg"
+src = "S1"
+fidelity = "datasheet"       # same as mass_with_antenna ("Weight 23.5g w/ antenna"); the builder reads 'mass'
+
+[params.supply_current_avg]
+value = 0.0625
+unit = "A"
+fidelity = "derived"
+derivation = "Average of the published receive current 25 mA and transmit current 100 mA at 20 dBm (receive_current, transmit_current_20dbm; Holybro S1, @5 V), i.e. a 50 % transmit duty: (25 + 100) / 2 = 62.5 mA. The 50 % duty is an unsourced assumption (a two-way link that splits airtime evenly between the two radios); the radio ships in 100 mW (20 dBm) and 500 mW variants and the kit's variant is not stated, so the 100 mW figures are used."
+
+[geometry]
+# Part frame: origin at the centre of the underside, x along the 53 mm length, z up. Antenna not included.
+shape = "box"
+size = [0.0265, 0.014, 0.00535]      # half-extents of 53 x 28 x 10.7 mm (S1, without antenna)
+pos = [0.0, 0.0, 0.00535]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat (mates 'sik' of holybro-x500v2-top-plate). No mounting method is published for the air-side radio; flat tape/velcro mount assumed."
+
+[[ports]]
+name = "telem"
+lead = {}   # the radio part folds its JST-GH cable into this port (see note); the length is not published
+kind ="signal"
+type = "jst-gh.6"
+gender = "neutral"
+pins = ["TELEM.1", "TELEM.2", "TELEM.3", "TELEM.4", "TELEM.5", "TELEM.6"]
+note = "6-pin JST-GH, 3.3 V TTL UART (S2); the 5 V supply (S1) arrives through this connector from the Pixhawk TELEM1 (assumed: the page lists a 5 V input and no separate power plug for the 100/500 mW units). Neutral because the radio has a board header and the JST-GH to JST-GH telemetry cable to the Pixhawk TELEM1 is not a filed part; the cable is folded into this port."
+
+# Pin level: the radio's 6-pin JST-GH telemetry port (S2 '6-pin JST-GH connector, 3.3V-TTL'). The page prints no pin table; the radio is
+# cabled 1:1 to the Pixhawk TELEM port, so pin n carries what pin n of TELEM1 carries (holybro-pixhawk-6c S10: VCC, UART TX, UART RX, CTS, RTS,
+# GND), with TX / RX mirrored. Pose: the +x end of the 53 x 28 mm board (estimate).
+[[connectors]]
+id = "TELEM"
+name = "telemetry port (JST-GH 6)"
+type = "jst-gh-6"
+gender = "female"
+pos = [0.0265, 0.0, 0.00535]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S2"
+fidelity = "derived"
+derivation = "S2 states the 6-pin JST-GH, 3.3 V TTL port; the pin functions are those of the Pixhawk TELEM1 header the cable joins (1:1 cable), mirrored at the UART signals."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "in", v = 5.0, i_max = 0.1 },
+  { number = 2, name = "RX", kind = "signal", dir = "in", v = 3.3, alt = ["UART RX"] },
+  { number = 3, name = "TX", kind = "signal", dir = "out", v = 3.3, alt = ["UART TX"] },
+  { number = 4, name = "RTS", kind = "signal", dir = "out", v = 3.3 },
+  { number = 5, name = "CTS", kind = "signal", dir = "in", v = 3.3 },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/radio/sik-telemetry-radio-v3.md"
+title = "SiK Telemetry Radio V3 (Holybro docs), Connectors & Power"
+accessed = "2026-10-07"
+quote = "6-pin JST-GH connector, 3.3V-TTL"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/radio/sik-telemetry-radio-v3.md"
+title = "SiK Telemetry Radio V3 (Holybro docs), Specification"
+accessed = "2026-10-06"
+quote = "Dimension 28 x 53 x 10.7mm (without antenna) ... Weight 23.5g w/ antenna ... Input Voltage (DC) 5V ... Transmit current: 100 mA at 20 dBm * Receive current: 25 mA (@5V)"

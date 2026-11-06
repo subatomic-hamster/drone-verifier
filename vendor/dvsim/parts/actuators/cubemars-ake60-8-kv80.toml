@@ -1,0 +1,91 @@
+id = "cubemars-ake60-8-kv80"
+name = "CubeMars AKE60-8 KV80 quasi-direct-drive actuator (8:1, no driver board)"
+category = "actuator.bldc.qdd"
+vendor = "CubeMars"
+part_number = "AKE60-8 KV80"
+url = "https://www.cubemars.com/product/ake60-8-kv80-quasi-direct-drive-actuator.html"
+
+# Frame: origin on the output axis at the output face; +z = out of the output face (output axis); cylindrical body, diameter 69 mm, length 25 mm, occupies z in [-0.025, 0].
+# The AKE series is sold WITHOUT a driver board (product comparison table: "Driver Board: No"), so the electrical interface is the three motor phases plus an encoder sensing magnet; no CAN/UART port is modelled.
+# The page mentions "bi-directional mounting"; mounting and output patterns are in CubeMars' drawings (not retrieved); ports below are opaque family tags.
+# Efficiency is NOT derivable: "Peak current" is DC bus current (ADC) and no gearbox efficiency is published. No back-drive torque is published for this model.
+
+[params]
+mass               = { value = 0.260,   unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_diameter      = { value = 0.069,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_length        = { value = 0.025,   unit = "m",      src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 8.0,     unit = "1",      src = "S1", fidelity = "datasheet" }
+v_rated            = { value = 24.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+torque_rated       = { value = 5.0,     unit = "N*m",    src = "S1", fidelity = "datasheet" }
+torque_peak        = { value = 12.5,    unit = "N*m",    src = "S1", fidelity = "datasheet" }
+speed_rated        = { value = 18.850,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 180 rpm
+speed_no_load      = { value = 25.133,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 240 rpm, output side
+current_rated      = { value = 4.8,     unit = "A",      src = "S1", fidelity = "datasheet" }  # ADC
+current_peak       = { value = 12.0,    unit = "A",      src = "S1", fidelity = "datasheet" }  # ADC
+power_rated        = { value = 95.0,    unit = "W",      src = "S2", fidelity = "datasheet" }
+kv                 = { value = 80.0,    unit = "rpm/V",  src = "S1", fidelity = "datasheet" }
+kt_motor_published = { value = 0.13,    unit = "N*m/A",  src = "S1", fidelity = "datasheet" }  # motor side
+ke_published       = { value = 12.5,    unit = "V/krpm", src = "S1", fidelity = "datasheet" }
+r_phase_to_phase   = { value = 0.577,   unit = "ohm",    src = "S1", fidelity = "datasheet" }
+l_phase_to_phase   = { value = 7.04e-4, unit = "H",      src = "S1", fidelity = "datasheet" }
+rotor_inertia      = { value = 6.4739e-5, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }  # 647.39 g.cm^2 ("Inertia"), motor-side assumed
+motor_constant_km  = { value = 0.15,    unit = "N*m/sqrt(W)", src = "S1", fidelity = "datasheet" }
+backlash           = { value = 2.618e-3, unit = "rad",   src = "S1", fidelity = "datasheet" }  # 9 arcmin
+tau_mechanical     = { value = 1.2e-3,  unit = "s",      src = "S1", fidelity = "datasheet" }  # 1.2 ms
+tau_electrical     = { value = 1.7e-3,  unit = "s",      src = "S1", fidelity = "datasheet" }  # 1.7 ms
+pole_pairs         = { value = 14,      unit = "1",      src = "S1", fidelity = "datasheet" }
+winding            = { value = "star",  unit = "-",      src = "S1", fidelity = "datasheet" }
+
+# --- derived electrical model ---
+ke_si = { value = 0.11937, unit = "V*s/rad", fidelity = "derived", derivation = "KE = 12.5 V/krpm = 12.5/104.72 = 0.11937 V*s/rad (line-to-line, motor side), equal to 60/(2*pi*KV) = 0.11937. NOTE: published Kt is 0.13 N*m/A, 9 % above KE in SI; the two should be equal, so the source is inconsistent. Both are kept." }
+r_phase_equivalent_wye = { value = 0.2885, unit = "ohm", fidelity = "derived", derivation = "Equivalent-wye phase resistance = R_phase_to_phase / 2 = 0.577/2 = 0.2885 ohm (star winding)." }
+kt_output_ideal = { value = 1.04, unit = "N*m/A", fidelity = "derived", derivation = "Kt_motor_published * N = 0.13 * 8 = 1.04 N*m per A (lossless gearbox). Check: 12 A * 1.04 = 12.5 N*m, exactly the published 12.5 N*m peak torque (ratio 1.00)." }
+j_reflected_output = { value = 4.143e-3, unit = "kg*m^2", fidelity = "estimated", rationale = "J_rotor * N^2 = 6.4739e-5 * 64. CubeMars does not state whether the published inertia is rotor-only or reflected; rotor-only is the usual convention for this field." }
+noload_speed_check = { value = 240.0, unit = "rpm", fidelity = "derived", derivation = "24 V * KV 80 / 8 = 240 rpm, matching the published no-load speed." }
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.cubemars-ake60-8-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Body mounting pattern is in CubeMars' drawings (not retrieved); opaque family tag. Symmetry 1 is the conservative default."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "flange.cubemars-ake60-8-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Output flange pattern is in CubeMars' drawings (not retrieved); opaque family tag."
+
+[[ports]]
+name = "phases"
+kind = "power"
+type = "bldc-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }  # rated voltage; absolute maximum not published on the page
+i_max = { value = 4.8, unit = "A", src = "S1", fidelity = "datasheet" }  # rated ADC
+i_peak = { value = 12.0, unit = "A", src = "S1", fidelity = "datasheet" }  # peak ADC
+note = "Three motor phases for an external FOC driver; the page text does not name a phase connector. The packing list includes a phi6 x 2.5 mm sensing magnet for an external encoder."
+
+[[sources]]
+id = "S1"
+url = "https://www.cubemars.com/product/ake60-8-kv80-quasi-direct-drive-actuator.html"
+title = "CubeMars AKE60-8 KV80 product page, Specification table"
+accessed = "2026-10-07"
+quote = "Motor Dimensions| φ69*25mm| Motor Weight| 260g| Peak Torque| 12.5Nm| No-load Speed| 240rpm || Peak torque (Nm)| 12.5| Driving way| FOC| Peak current (ADC)| 12| Operation ambient temperature| -20℃~50℃| Kv (rpm/V)| 80| Winding type| star| Kt (Nm/A)| 0.13| Insulation class| F| Ke (V/krpm)| 12.5| Insulation High-voltage (V)| 500| Phase to Phase resistance (mΩ)| 577| Insulation resistance (MΩ)| 10| Phase to Phase inductance (μH)| 704| Pole pairs| 14| Inertia (gcm²)| 647.39| Backlash (arcmin)| 9| Km (Nm/√W)| 0.15| Rated voltage (V)| 24| Mechanical time constant (ms)| 1.2| No-load speed (rpm)| 240| Electrical time constant (ms)| 1.7| Rated torque (Nm)| 5| Weight (g)| 260| Rated speed (rpm)| 180| Maximum torque weight ratio (Nm/kg)| 46| Rated current (ADC)| 4.8| Reduction Ratio| 8:1| || Accessory Pack:| 1 × φ6 × 2.5 mm sensing magnet"
+
+[[sources]]
+id = "S2"
+url = "https://www.cubemars.com/product/ake60-8-kv80-quasi-direct-drive-actuator.html"
+title = "CubeMars AKE60-8 KV80 page, AK-series product comparison row (rated power, driver board)"
+accessed = "2026-10-07"
+quote = "AKE Series Quasi Direct Drive Motor| AKE60-8 KV80| 24| 95| 5| 4.8| 180| 12.5| 12| 240| 8:1| 260| Ф69*25| No|"

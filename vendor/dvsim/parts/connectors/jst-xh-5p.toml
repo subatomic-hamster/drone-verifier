@@ -1,0 +1,87 @@
+id = "jst-xh-5p"
+name = "JST XH 2.5 mm wire-to-board connector, 5 positions (4S LiPo balance lead)"
+category = "connector"
+vendor = "JST"
+part_number = "XHP-5 housing / B5B-XH-A header (series ratings)"
+url = "https://www.jst-mfg.com/product/pdf/eng/eXH.pdf"
+
+# Series datasheet: ratings apply to every XH position count (see jst-xh-3p). A 4S LiPo balance lead is XH with n = cells + 1 = 5 pins.
+# No mass in the datasheet text.
+[params]
+pitch               = { value = 2.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+current_rated       = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 250, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_initial_max = { value = 0.010, unit = "ohm", src = "S1", fidelity = "datasheet" }
+contact_resistance_after_test_max = { value = 0.020, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 1e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 248.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }
+wire_awg_min        = { value = 30, unit = "AWG", src = "S1", fidelity = "datasheet" }
+wire_awg_max        = { value = 22, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "housing"
+pins = ["HOUSING.1", "HOUSING.2", "HOUSING.3", "HOUSING.4", "HOUSING.5"]
+kind = "power"
+type = "jst-xh.5"
+gender = "female"
+v_max = { value = 250, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Cable-side crimp housing; the 3 A rating is for AWG #22 wire"
+
+[[ports]]
+name = "header"
+pins = ["HEADER.1", "HEADER.2", "HEADER.3", "HEADER.4", "HEADER.5"]
+kind = "power"
+type = "jst-xh.5"
+gender = "male"
+v_max = { value = 250, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+
+# Pin level (derived): 5 circuits in one row, numbered 1..5 (4S balance-lead taps); the function of each contact is defined by the pack that uses it, not by the connector.
+[[connectors]]
+id = "HOUSING"
+name = "cable-side crimp housing (5 circuits)"
+type = "jst-xh.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.0025
+src = "S1"
+fidelity = "derived"
+derivation = "Contact count is the part designation (5 positions); pitch is the S1 series value (2.5 mm); numbering 1..5 along the row is assumed."
+pose_rationale = "A catalogue connector has no board frame: mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" }, { number = 4, name = "4", kind = "power" }, { number = 5, name = "5", kind = "power" },
+]
+
+[[connectors]]
+id = "HEADER"
+name = "board-side header (5 circuits)"
+type = "jst-xh.5"
+gender = "male"
+pos = [0.03, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.0025
+src = "S1"
+fidelity = "derived"
+derivation = "As HOUSING."
+pose_rationale = "Placed 30 mm to the side of the housing so the halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" }, { number = 4, name = "4", kind = "power" }, { number = 5, name = "5", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.jst-mfg.com/product/pdf/eng/eXH.pdf"
+title = "XH CONNECTOR 2.5 mm pitch Wire-to-Board connectors (JST datasheet)"
+accessed = "2026-10-07"
+quote = "Current rating: 3 A AC/DC (AWG #22) • Voltage rating: 250 V AC/DC • Temperature range: -25°C to +85°C (including temperature rise in applying electrical current) • Contact resistance: Initial value/ 10 mΩ max. After environmental tests/ 20 mΩ max. • Insulation resistance: 1,000 MΩ min. • Applicable wire range: Conductor size/ AWG #30 to AWG #22"

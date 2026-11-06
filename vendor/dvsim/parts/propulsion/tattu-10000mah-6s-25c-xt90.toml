@@ -1,0 +1,70 @@
+id = "tattu-10000mah-6s-25c-xt90"
+name = "Tattu 6S 10000mAh 25C 22.2V LiPo pack (XT90S option)"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "Tattu 6S 10000mAh 25C"
+url = "https://rcdrone.top/products/tattu-6s-10000mah-25c-22-2v-lipo-battery-for-drone"
+
+# Part frame: origin at the pack centre, x along length (165 mm), y along width (64 mm), z up (59 mm). The listing offers plug options
+# "XT90S, XT60, AS150, EC5"; XT90 is chosen here for the port (higher-current of the offered hobby plugs). Pack-side connector gender is a
+# modelling convention (neutral mates either). Internal resistance not published for this model: pack value estimated.
+
+[params]
+capacity_ah     = { value = 10.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 36000.0, unit = "C", fidelity = "derived", derivation = "10.0 Ah x 3600 s/h = 36000 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 25, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 50, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 250.0, unit = "A", fidelity = "derived", derivation = "25 C x 10.0 Ah = 250 A (rating label only)." }
+mass            = { value = 1.400, unit = "kg", src = "S1", fidelity = "datasheet" }          # 1400 g
+length          = { value = 0.165, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.064, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.059, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90S (options XT90S, XT60, AS150, EC5)", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.120, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0156, unit = "ohm", fidelity = "estimated", rationale = "Tattu publishes no internal resistance for this pack. Per-cell DC resistance scaled inversely with capacity, R_cell = 0.026 ohm*Ah / capacity (anchored to the 4-6 mOhm/cell at ~5 Ah used for the 5200 mAh Tattu in parts/drone/tattu-4s-5200mah-35c.toml): 0.026/10.0 = 2.6 mOhm/cell x 6 cells = 15.6 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.0825, 0.032, 0.0295]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 250.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 25 C x 10.0 Ah = 250 A (S1 rating label); exceeds the XT90 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug (XT90S, other plugs optional), drawn on the +x face. S1 names the plug family but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90S)"
+type = "xt90"
+gender = "neutral"
+pos = [0.0825, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90S plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/tattu-6s-10000mah-25c-22-2v-lipo-battery-for-drone"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu 6S 10000mAh 25C 22.2V LiPo Battery For Drone, Specifications"
+accessed = "2026-10-07"
+quote = "Capacity|10000mAh|Voltage|22.2V (6S)|Discharge Rate|25C|Max Burst Discharge Rate|50C|Configuration|6S1P|Net Weight|1400g|Dimensions|165mm x 64mm x 59mm|Wire Gauge|AWG10#|Discharge Wire Length|120mm|Discharge Plug|XT90S, XT60, AS150, EC5"

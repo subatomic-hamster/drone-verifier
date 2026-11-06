@@ -1,0 +1,63 @@
+id = "tvc-gimbal-cradle"
+name = "TVC gimbal, cradle: 29 mm motor holder turned by the yaw servo, PLA (design of this repo)"
+category = "rocket.gimbal"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# The innermost member of the two-axis gimbal (see tvc-gimbal-plate): a 70 mm sleeve for a 29 mm motor casing (bore 0.0295 m), hinged to the ring about x by
+# the yaw servo (its yaw horn seat at (0.021, 0, 0), the stubs pass through the ring wall). Gimbal centre at the origin, +z towards the nose. The motor seat sits
+# 5 mm below the centre, so an F15 / E16 casing (114 mm, case port at its middle) spans z in [-0.062, 0.052]; the nozzle is 0.062 m below the gimbal
+# centre (the lever arm that makes a thrust tilt a torque on the airframe).
+[params]
+bore = { value = 0.0295, unit = "m", fidelity = "estimated", rationale = "Design choice: 0.5 mm over the 29 mm motor casing (parts/rocket/estes-f15 diameter)." }
+outer_radius = { value = 0.017, unit = "m", fidelity = "estimated", rationale = "Design choice: wall 2.25 mm." }
+height = { value = 0.07, unit = "m", fidelity = "estimated", rationale = "Design choice: 70 mm sleeve, z in [-0.04, 0.03]." }
+mass = { value = 0.0190, unit = "kg", fidelity = "derived", derivation = "PLA 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 1178 kg/m3 times the volume: sleeve pi (0.017^2 - 0.01475^2) x 0.07 m = 1.571e-5 m3 plus the two stubs 2 x pi 0.004^2 x 0.004 m = 4e-7 m3 = 1.61e-5 m3 = 0.0190 kg." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.017, 0.035]
+pos = [0.0, 0.0, -0.005]
+material = "pla"
+
+# Yaw servo output hub (the servo's output port mates here with a hinge about x).
+[[ports]]
+name = "yaw_horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl330"
+gender = "female"
+pos = [0.021, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Stub end at the ring's outer surface on the yaw axis; the horn thickness is the XL330 hub's 3 mm."
+
+# The motor sleeve: the motor's case port (middle of the casing) mates 5 mm below the gimbal centre.
+[[ports]]
+name = "motor_seat"
+kind = "mech"
+type = "tube-clamp.29"
+gender = "female"
+pos = [0.0, 0.0, -0.005]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Mid-height of the sleeve; thrust axis = the sleeve axis."
+
+[visual]
+rationale = "Design of this repo: printed 29 mm motor sleeve with a base flange and the horn boss on +x."
+
+[[visual.elements]]
+gen = "tvc_gimbal"
+params = { kind = "cradle" }
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

@@ -1,0 +1,147 @@
+id = "torqeedo-deep-blue-50i-controller"
+name = "Torqeedo Deep Blue 50i motor controller (352 V traction inverter, bidirectional throttle)"
+category = "esc"
+vendor = "Torqeedo"
+part_number = "Deep Blue 50i (integrated electronics)"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+
+# The Deep Blue i drive carries its inverter in the 80 kg "motor weight ... including electronics" (S1); Torqeedo publishes neither its interface (the real
+# drive is throttled over its own CAN protocol) nor its losses. For the simulator it is the same averaged ESC chain as every other ESC (docs/models.md), commanded by
+# the autopilot's PWM-class throttle channel: bidirectional, 0 = stopped. ESTIMATES: the FET resistance, switching and quiescent figures below are chosen so that the
+# controller loses ~3 % of the rated 55 kW (typical of a SiC / IGBT traction inverter at 350 V), and the interface is the Pixhawk's PWM channel instead of CAN (the PX4
+# `bidirectional` throttle of the marine rotors; no vendor protocol is simulated).
+# Part frame: origin at the centre of the underside, x along the length, z up.
+[params]
+current_continuous = { value = 156.5, unit = "A", fidelity = "derived", derivation = "Continuous input power 55.1 kW / nominal pack voltage 352 V (S1) = 156.5 A." }
+current_peak       = { value = 187.5, unit = "A", fidelity = "derived", derivation = "Peak input power 66.0 kW / 352 V (S1) = 187.5 A." }
+mass               = { value = 18.0, unit = "kg", fidelity = "estimated", rationale = "S1 gives 80 kg for motor plus electronics; the inverter's share is not published. A 55 kW liquid-cooled traction inverter weighs 10-20 kg (18 kg: the motor part carries 62)." }
+v_min              = { value = 250.0, unit = "V", fidelity = "estimated", rationale = "Lowest operating DC voltage of a ~95-cell Li-ion pack (3.0 V/cell cut-off x 95 = 285 V) minus margin. Not published." }
+v_max              = { value = 420.0, unit = "V", fidelity = "estimated", rationale = "Fully charged ~95-cell NMC pack 4.2 V/cell = 399 V plus 5 % margin. Not published." }
+size_length        = { value = 0.45, unit = "m", fidelity = "estimated", rationale = "Sealed inverter housing; no dimension published. Drawing and collision only." }
+size_width         = { value = 0.30, unit = "m", fidelity = "estimated", rationale = "As size_length." }
+size_height        = { value = 0.15, unit = "m", fidelity = "estimated", rationale = "As size_length." }
+r_on_total         = { value = 0.040, unit = "ohm", fidelity = "estimated", rationale = "Total series conduction resistance of a 3-phase inverter leg pair + bus bars (two FETs/IGBT drops + cabling): 0.04 ohm gives 1.0 kW (1.8 %) at 156.5 A. Not published." }
+switching_loss_fraction = { value = 0.015, unit = "1", fidelity = "estimated", rationale = "Switching + dead-time loss as a fraction of the motor-side power (device field Esc.sw_loss): 0.8 kW (1.5 %) at the rated point; with the conduction loss the controller is ~96.7 % efficient (~3 % of 55 kW, as the header)." }
+quiescent_current  = { value = 0.10, unit = "A", fidelity = "estimated", rationale = "Bus-side current of the controller electronics, gate drivers and the cooling-pump/CAN interface at zero throttle: 35 W at 352 V. Not published." }
+signal_neutral_us  = { value = 1500.0, unit = "us", fidelity = "estimated", rationale = "The simulated throttle channel is the Pixhawk PWM convention of the other marine ESCs (1500 us neutral, 1100-1900 us full range); the real drive takes CAN." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.225, 0.15, 0.075]
+pos = [0.0, 0.0, 0.075]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat on the deck."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["DC.1", "DC.2"]
+v_max = { value = 420.0, unit = "V", fidelity = "estimated", rationale = "As the v_max param." }
+i_max = { value = 187.5, unit = "A", fidelity = "derived", derivation = "Peak input power 66.0 kW / 352 V (S1)." }
+note = "DC input from the traction battery (2 x 2/0 AWG lugs on studs)."
+
+[[ports]]
+name = "motor_out"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+i_max = { value = 187.5, unit = "A", fidelity = "derived", derivation = "Peak input power 66.0 kW / 352 V (S1)." }
+note = "Three phase output studs."
+
+[[ports]]
+name = "signal"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+pins = ["CTL.1", "CTL.2"]
+note = "Throttle command, 1100-1900 us around 1500 us (the simulated interface; the real drive takes CAN)."
+
+[[connectors]]
+id = "DC"
+name = "DC input studs (battery + / -)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.225, 0.0, 0.075]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.05
+fidelity = "estimated"
+rationale = "The vendor publishes no terminal drawing; a DC link of a traction inverter has a positive and a negative stud (two lugs on the housing's rear wall, drawing choice)."
+pins = [
+  { number = 1, name = "DC+", kind = "power", dir = "in", v_min = 250.0, v_max = 420.0, i_max = 187.5 },
+  { number = 2, name = "DC-", kind = "ground" },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor phase output studs"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.225, 0.0, 0.075]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.05
+fidelity = "estimated"
+rationale = "As DC: three phase studs on the front wall (drawing choice; no vendor drawing)."
+pins = [
+  { number = 1, name = "U", kind = "power", dir = "out", i_max = 187.5 },
+  { number = 2, name = "V", kind = "power", dir = "out", i_max = 187.5 },
+  { number = 3, name = "W", kind = "power", dir = "out", i_max = 187.5 },
+]
+
+[[connectors]]
+id = "CTL"
+name = "throttle signal lead (PWM + ground)"
+type = "wire-lead"
+port_type = "pwm"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.15, 0.075]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.02
+fidelity = "estimated"
+rationale = "Simulated interface: a servo-style signal + ground lead on the side wall (the real drive uses its CAN bus)."
+pins = [
+  { number = 1, name = "PWM", kind = "signal", dir = "in", v = 3.3, v_min = 3.0, v_max = 5.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[visual]
+rationale = "Sealed cast-aluminium inverter box with cooling ribs, drawn from the part's size."
+
+[[visual.elements]]
+gen = "esc_sealed"
+
+[[sources]]
+id = "S1"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+title = "Deep Blue 50i 1200 (Torqeedo product page, technical data)"
+accessed = "2026-10-13"
+quote = "Input power (peak) in kW 66.0 | Input power (continuous) in kW 55.1 | Motor weight without battery, including electronics in kg 80 | Nominal voltage 352 V"

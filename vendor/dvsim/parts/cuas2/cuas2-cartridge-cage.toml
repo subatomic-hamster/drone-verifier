@@ -1,0 +1,42 @@
+id = "cuas2-cartridge-cage"
+name = "cuas2 cartridge_cage (3D printed PETG, M3 launcher cartridge: motor plates, barrel, D1 rails, F1 flange, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "cartridge_cage"
+url = "cad/cuas2/modules/launcher_cartridge.py"
+
+# Mesh in the head frame H (bolted pair with the cradle by the D1 dovetails, identity transform). Supports: yes (barrel overhang).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/cartridge_cage.stl"
+material = "petg"
+bbox_min = [-0.024, -0.04146, -0.053]
+bbox_max = [0.078, 0.04146, 0.021]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame, axis +z: 'a' side of the closure mates to the gap plate and the valve housing (F1 flange)."

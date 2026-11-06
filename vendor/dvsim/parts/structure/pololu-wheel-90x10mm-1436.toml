@@ -1,0 +1,48 @@
+id = "pololu-wheel-90x10mm-1436"
+name = "Pololu Wheel 90x10mm (red, silicone tire; item 1436 sells a pair)"
+category = "wheel"
+vendor = "Pololu"
+part_number = "Pololu 1436 (pair)"
+url = "https://www.pololu.com/product/1436"
+
+# Frame: origin at the wheel centre, +z = the axle direction (the cylinder axis); the wheel occupies z in [-0.005, +0.005]. The hub seat is the
+# inner face (z = -0.005), where a Pololu universal mounting hub screws on. Contact: the geometry carries the tire friction (priority 1: it replaces
+# the floor's), see params.tire_friction.
+
+[params]
+mass          = { value = 0.0227, unit = "kg", src = "S1", fidelity = "datasheet" }  # 0.8 oz per wheel including the tire (0.8 x 28.35 g = 22.7 g)
+diameter      = { value = 0.090,  unit = "m",  src = "S1", fidelity = "datasheet" }
+width         = { value = 0.010,  unit = "m",  src = "S1", fidelity = "datasheet" }
+tire_friction = { value = 0.8,    unit = "1",  fidelity = "estimated", rationale = "Pololu publishes no tire friction coefficient. Silicone rubber on a hard dry floor is ~0.7 - 1.2 (typical handbook range); 0.8 taken, the geometry's friction[0] repeats it. MuJoCo's own default is 1.0. Only slip under hard acceleration depends on it." }
+
+[geometry]
+shape = "cylinder"
+size = [0.045, 0.005]
+friction = [0.8, 0.005, 0.0001]        # sliding (= params.tire_friction), torsional (m), rolling (m): condim 3 uses the first only
+
+[[ports]]
+name = "hub_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.005]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0
+note = "The wheel is 'compatible with several of our universal mounting hubs' (S1); the screw circle is not given in the retrieved text, so the seat is a plain flat mount on the wheel's axis (the hub's six #4-40 holes are not mated)."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "S1"
+note = "Red six-spoke plastic hub, black silicone tyre with fine tread (source: 'Color: red'; product photo)."
+
+[[visual.elements]]
+gen = "wheel_tyre"
+colors = { hub = "plastic-red", tyre = "rubber", rib = "rubber" }
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1436/specs"
+title = "Pololu item 1436 (Pololu Wheel 90x10mm Pair - Red), description and Specs tab"
+accessed = "2026-10-07"
+quote = "These red plastic wheels have silicone tires and measure 90 mm (3.54″) in diameter, and they press-fit onto 3mm D shafts, such as those on our micro metal gearmotors. Additionally, this wheel is compatible with several of our universal mounting hubs, which can serve as adapters for motors with different shafts. This product is a pair of wheels. || Size: 90 x 10 mm Weight: 0.8 oz|1| Shaft diameter: 3 mm|2| General specifications Color: red Notes: 1|Per wheel, including tire."

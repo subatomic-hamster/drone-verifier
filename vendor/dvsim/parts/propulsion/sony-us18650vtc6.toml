@@ -1,0 +1,56 @@
+id = "sony-us18650vtc6"
+name = "Sony/Murata US18650VTC6 3.0 Ah 18650 Li-ion cell"
+category = "battery.cell"
+vendor = "Sony Energy Devices (Murata)"
+part_number = "US18650VTC6"
+url = "https://www.kronium.cz/uploads/SONY_US18650VTC6.pdf"
+
+# Part frame: origin at the cell centre, z along the cell axis (positive terminal at +z). Cylinder 18.5 mm max x 65.2 mm max (with plastic tube).
+# 18650 format (not 21700); included as the Sony cell requested alongside the 21700 types. Sony Technical Information rev 0.1 (2015) gives no
+# max-continuous-current line; the datasheet characterises discharge at 0.6/3/10/20 A. i_max_continuous is therefore the 20 A highest characterised
+# point, flagged estimated (the commonly quoted 30 A figure is not in this document).
+
+[params]
+capacity_ah     = { value = 3.0, unit = "Ah", src = "S1", fidelity = "datasheet" }            # rated at 0.2 C
+capacity_nominal_ah = { value = 3.13, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 10800.0, unit = "C", fidelity = "derived", derivation = "3.0 Ah x 3600 s/h = 10800 C (coulombs)." }
+v_nominal       = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_charge_std    = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+r_ac_1khz       = { value = 0.0128, unit = "ohm", src = "S1", fidelity = "datasheet" }        # 12.8 mOhm typical
+mass            = { value = 0.0465, unit = "kg", src = "S1", fidelity = "datasheet" }         # 46.5 g average
+diameter        = { value = 0.0185, unit = "m", src = "S1", fidelity = "datasheet" }          # max, with plastic tube
+length          = { value = 0.0652, unit = "m", src = "S1", fidelity = "datasheet" }          # max
+i_max_continuous = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "The Sony document characterises discharge only up to 20 A (cell reaches ~90 C cut-off at 20 A per its temperature trace, which is why the test uses '2.5V or 90deg.C cutoff') and states no continuous limit. 20 A is taken as the highest tested point; this is conservative relative to the 30 A (temperature-limited) figure quoted by retailers, which is not in the retrieved document." }
+
+[tables.capacity_vs_rate]
+# Sony datasheet section 2 (23 C, charge 4.2 V CC/CV): capacity delivered to the cut-off voltage given
+columns = ["i_discharge_A", "capacity_mAh", "energy_Wh", "cutoff_V"]
+rows = [
+  [0.6, 3000, 10.8, 2.0],
+  [3.0, 3007, 10.8, 2.5],
+  [10.0, 2940, 10.5, 2.5],
+]
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+radius = 0.00925
+length = 0.0652
+
+[[ports]]
+name = "terminal"
+kind = "power"
+type = "cell-terminal"
+gender = "neutral"
+role = "source"
+v_max = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "Highest discharge current characterised in the Sony document (20 A); no continuous rating stated there." }
+
+[[sources]]
+id = "S1"
+url = "https://www.kronium.cz/uploads/SONY_US18650VTC6.pdf"
+title = "Sony Energy Devices - Lithium Ion Rechargeable Battery Technical Information, US18650VTC6, Revision 0.1 (20 Jan 2015), hosted copy"
+accessed = "2026-10-07"
+quote = "Nominal Capacity at 0.2C 3130mAh 11.3Wh | Rated Capacity at 0.2C 3000mAh 10.8Wh | Capacity at 1C 3007mAh 10.8Wh discharge 2.5V cut off at 23 | Capacity at 10A 2940mAh 10.5Wh | Nominal Voltage 3.6V | Internal Impedance 12.8mΩ Typ. measured by AC1kHz | Charge Up Voltage : 4.2 ± 0.05V | Charge Current : 3.0A | Size (with plastic tube) : Diameter 18.50mm max Length 65.20mm max | Weight : 46.5g Average"

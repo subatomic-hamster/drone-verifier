@@ -1,0 +1,86 @@
+id = "jst-ph-2p"
+name = "JST PH 2.0 mm wire-to-board connector, 2 positions (small LiPo/JST-PH battery lead)"
+category = "connector"
+vendor = "JST"
+part_number = "PHR-2 housing / B2B-PH-K header (series ratings)"
+url = "https://www.jst-mfg.com/product/pdf/eng/ePH.pdf"
+
+# Series datasheet: ratings apply to every PH position count (2-16). No mating-cycle count or mass in the datasheet text.
+[params]
+pitch               = { value = 2.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+current_rated       = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 100, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_initial_max = { value = 0.010, unit = "ohm", src = "S1", fidelity = "datasheet" }
+contact_resistance_after_test_max = { value = 0.020, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 1e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 378.15, unit = "K", src = "S1", fidelity = "datasheet" }
+wire_awg_min        = { value = 32, unit = "AWG", src = "S1", fidelity = "datasheet" }
+wire_awg_max        = { value = 24, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "housing"
+pins = ["HOUSING.1", "HOUSING.2"]
+kind = "power"
+type = "jst-ph.2"
+gender = "female"
+v_max = { value = 100, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Cable-side crimp housing; the 2 A rating is for AWG #24 wire"
+
+[[ports]]
+name = "header"
+pins = ["HEADER.1", "HEADER.2"]
+kind = "power"
+type = "jst-ph.2"
+gender = "male"
+v_max = { value = 100, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+
+# Pin level (derived): 2 circuits, numbered 1..2; polarity marking is defined by the pack or board that uses the connector, not by the connector.
+[[connectors]]
+id = "HOUSING"
+name = "cable-side crimp housing (2 circuits)"
+type = "jst-ph.2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.002
+src = "S1"
+fidelity = "derived"
+derivation = "Contact count is the part designation (2 positions); pitch is the S1 series value (2.0 mm); numbering 1..2 along the row is assumed."
+pose_rationale = "A catalogue connector has no board frame: mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "HEADER"
+name = "board-side header (2 circuits)"
+type = "jst-ph.2"
+gender = "male"
+pos = [0.03, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.002
+src = "S1"
+fidelity = "derived"
+derivation = "As HOUSING."
+pose_rationale = "Placed 30 mm to the side of the housing so the halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.jst-mfg.com/product/pdf/eng/ePH.pdf"
+title = "PH CONNECTOR 2.0 mm pitch Wire-to-Board connectors (JST datasheet)"
+accessed = "2026-10-07"
+quote = "Current rating: 2 A AC/DC (AWG #24） Voltage rating: 100 V AC/DC Temperature range: ‑40℃ to +105℃ ... Contact resistance: Initial value/ 10 mΩ max. After test/ 20 mΩ max. Insulation resistance: 1,000 MΩ min. ... Conductor size/ AWG #32 to AWG #24"

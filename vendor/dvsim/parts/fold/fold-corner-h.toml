@@ -1,0 +1,52 @@
+id = "fold-corner-h"
+name = "fold drone corner block, hinge-servo type (corners 1 and 3): printed U-joint cradle + M3 shoulder shaft; carries the STS3032 of the hinge"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "corner_h"
+url = "cad/fold/modules/corner.py"
+
+# Frame = the reference pose of block 1 (corner at the origin). Block 3 is this part turned 180 deg about the loop centre.
+# Ports: h = the hinge axis (vertical), r = the roll axis (along the rail), servo = the STS3032 seat (case under the hinge axis, horn up to the link knuckle).
+# Mass: cradle 4.625 + shaft 1.0 (bearings and shaft are CAD "bought" items at their listed mass).
+
+[params]
+mass = { value = 0.005625, unit = "kg", fidelity = "derived", derivation = "CAD manifest block_cradle 4.625 g (printed, 2 walls + 20 % infill PA12-CF [est]) + block_shaft 1.0 g (M3 shoulder shaft, listed) of cad/fold/build.py." }
+mass_tol = { value = 0.0006, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/block_cradle_block1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/block_shaft_block1.stl"
+
+[[ports]]
+name = "h"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "r"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "servo"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3032-base"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0195]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

@@ -1,0 +1,36 @@
+id = "fold-battery-tray"
+name = "fold drone battery tray on link 4 (printed)"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "battery_tray"
+url = "cad/fold/modules/link.py"
+
+# Frame = the reference pose of the loop (world frame at the flat square), mounted on link 4. Ports: origin (seat on the link), battery (flat seat, 20.2 mm over the loop plane).
+
+[params]
+mass = { value = 0.004691, unit = "kg", fidelity = "derived", derivation = "CAD manifest battery_tray 4.691 g (round 2; was 6.924) (printed, 2 walls + 20 % infill PA12-CF [est]) of cad/fold/build.py." }
+mass_tol = { value = 0.0005, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/battery_tray_link4.stl"
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "battery"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.098, 0.0202]  # SYNC: pack moved from the 46.5 mm spine to this tray on link 4 (PLATFORM_Z_BATT 19 mm): pack base 20.2 mm, COM 35.2 mm (manifest battery.link4)
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

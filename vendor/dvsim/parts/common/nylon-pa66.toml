@@ -1,0 +1,21 @@
+id = "nylon-pa66"
+name = "Nylon PA66 (unfilled, Zytel 101L NC010)"
+category = "material"
+vendor = "Celanese (ex-DuPont)"
+part_number = "Zytel 101L NC010"
+url = "https://quickparts.com/wp-content/uploads/2023/04/zytel®-101l-nc010-gb.pdf"
+
+[params]
+density         = { value = 1140, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 3.1e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+poisson_ratio   = { value = 0.37, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.17, 0.17, 0.18, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://quickparts.com/wp-content/uploads/2023/04/zytel®-101l-nc010-gb.pdf"
+title = "Zytel 101L NC010 datasheet (Celanese), hosted by Quickparts"
+accessed = "2026-10-07"
+quote = "Tensile Modulus 3100 / 1400 MPa ISO 527-1/-2 ... Density 1140 / - kg/m³ ISO 1183 (dry / conditioned); Poisson's ratio 0.37 / 0.43"

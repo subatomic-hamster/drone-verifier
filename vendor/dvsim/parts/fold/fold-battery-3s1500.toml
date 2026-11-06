@@ -1,0 +1,83 @@
+id = "fold-battery-3s1500"
+name = "CNHL Black Series 1500 mAh 3S 100C LiPo, XT60 (143 g)"
+category = "battery.lipo"
+vendor = "CNHL"
+part_number = "Black Series 1500mAh 11.1V 3S 100C XT60"
+url = "https://www.amazon.com/dp/B0FR32RQ9X"
+
+# The sourced pack (p14-sources.md 4): 143 g +-5, 30 x 34 x 77 mm, XT60, 12 AWG. The CAD and spec 3.1 carry 128 g [est] for a 75C class pack: this is 15 g heavier (battery choice
+# is stated in docs/fold/bom.md; SYNC owns the budget). Frame: origin at the underside centre, x across (34 mm), y along (77 mm), z up (30 mm). The XT60 lead leaves at -y (toward corner 1).
+
+[params]
+mass = { value = 0.143, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass_tol = { value = 0.005, unit = "kg", src = "S1", fidelity = "datasheet" }
+capacity_ah = { value = 1.5, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity = { value = 5400.0, unit = "C", src = "S1", fidelity = "datasheet" }
+cells_series = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal = { value = 11.1, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full = { value = 12.6, unit = "V", fidelity = "derived", derivation = "3 cells x 4.2 V." }
+c_rating_cont = { value = 100, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst = { value = 200, unit = "C", fidelity = "estimated", rationale = "The listing gives one C number; burst assumed 2 x continuous (as for the Tattu 35C / 70C part of this library)." }
+i_max_continuous = { value = 150.0, unit = "A", fidelity = "derived", derivation = "100 C x 1.5 Ah (label rating only; the XT60 limits the port)." }
+length = { value = 0.077, unit = "m", src = "S1", fidelity = "datasheet" }
+width = { value = 0.034, unit = "m", src = "S1", fidelity = "datasheet" }
+height = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.030, unit = "ohm", fidelity = "estimated", rationale = "Not published. 3 cells x ~10 mOhm for a 1500 mAh 100C-class cell at full charge; +-40 %. Bench B-END replaces it." }
+thevenin_r1 = { value = 0.012, unit = "ohm", fidelity = "estimated", rationale = "About 40 % of the DC resistance, as for the Tattu part of this library." }
+thevenin_tau = { value = 3.3, unit = "s", fidelity = "estimated", rationale = "Order of the Tattu part's literature value (Bauersfeld & Scaramuzza); not measured for this pack." }
+price = { value = 22.0, unit = "USD", fidelity = "estimated", rationale = "Listing price not fetched; ~$20-25 for this class (spec 3.5: $20)." }
+
+[[sources]]
+id = "S1"
+url = "https://www.amazon.com/dp/B0FR32RQ9X"
+title = "CNHL Black Series 1500mAh 11.1V 3S 100C LiPo, XT60 (Amazon B0FR32RQ9X; same data on chinahobbyline), looked up by the orchestrator 2026-10-31"
+accessed = "2026-10-31"
+quote = "143g +-5, 30 x 34 x 77 mm, XT60, 12 AWG, 1500mAh 3S 100C"
+
+[geometry]
+shape = "box"
+size = [0.017, 0.0385, 0.015]
+pos = [0.0, 0.0, 0.015]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power_out"
+lead = {}
+kind = "power"
+type = "xt60"
+gender = "male"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 12.6, unit = "V", fidelity = "derived", derivation = "3 cells x 4.2 V." }
+i_max = { value = 30.0, unit = "A", fidelity = "derived", derivation = "XT60 continuous rating (amass-xt60: 30 A), the connector limits the pack lead." }
+note = "XT60 on the 12 AWG leads (S1); the lead is inside the 143 g listing mass."
+
+[[connectors]]
+id = "OUT"
+name = "XT60 on the 12 AWG discharge leads"
+type = "xt60"
+port_type = "xt60"
+gender = "male"
+joinable = true  # the pack lead is spliced (Y) to feed the ESC pads and the 6 V BEC
+pos = [0.0, -0.0385, 0.015]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+fidelity = "estimated"
+rationale = "Lead exit side and connector pose are our choice; the listing gives the plug type and the gauge."
+pins = [
+  { number = 1, name = "+", kind = "power", dir = "out", v = 12.6, i_max = 30.0 },
+  { number = 2, name = "-", kind = "ground" },
+]

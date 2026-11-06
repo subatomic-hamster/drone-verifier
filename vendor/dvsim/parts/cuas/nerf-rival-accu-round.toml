@@ -1,0 +1,58 @@
+id = "nerf-rival-accu-round"
+name = "Nerf Rival round (Accu-Round class), 22.2 mm foam ball; 100-pack price from a compatible third-party round"
+category = "ammo.foam"
+vendor = "Hasbro (Nerf); price reference Worker (Cheetah Rounds)"
+part_number = "Nerf Rival round"
+url = "https://nerf.fandom.com/wiki/Rival_Round"
+
+# Projectile of cuas-lite: a point mass with quadratic drag in the simulator (like the pellet parts in this directory). The drag coefficient of this round is NOT published and not recorded here.
+# DISCREPANCY WITH THE BRIEFING: the briefing's values (17.8 mm, 0.95 g) do not match any source found. The Nerf wiki gives 7/8 in = 22.2 mm and Daily Dabble gives 1.86 g; a compatible third-party round (Worker Cheetah)
+# measures 22.7 mm and 1.75 g. The sourced values are recorded; 17.8 mm / 0.95 g were not found anywhere.
+# Rival blasters are described as 130-size / 180-size flywheel blasters in the community (not established here for the stock Rival motor); see parts/actuators/generic-180-brushed-motor-6v.toml.
+# Material: the Hasbro pages give no material. The compatible Worker round is listed as 'EVA Foam'; closed-cell foam for the original is plausible but not verified.
+
+[params]
+diameter = { value = 0.0222, unit = "m", src = "S1", fidelity = "literature" }
+mass     = { value = 0.00186, unit = "kg", src = "S2", fidelity = "literature" }
+material = { value = "foam (compatible Worker round: EVA foam)", unit = "-", src = "S3", fidelity = "literature" }
+mass_compatible_round     = { value = 0.00175, unit = "kg", src = "S3", fidelity = "datasheet" }   # Worker Cheetah, a third-party Rival-compatible round
+diameter_compatible_round = { value = 0.0227, unit = "m", src = "S3", fidelity = "datasheet" }
+caliber  = { value = 0.0222, unit = "m", src = "S1", fidelity = "literature" }   # the launcher device's pellet diameter (drag reference), same as `diameter`
+cd       = { value = 0.47, unit = "1", fidelity = "estimated", rationale = "Drag coefficient of a smooth sphere in the subcritical regime (Re = 30 m/s x 22.2 mm / 1.5e-5 m2/s = 4.4e4, Cd about 0.47, standard sphere-drag curve); the foam ball's surface roughness is not measured. docs/cuas-lite/spec.md 5.3 and python/dvsim/lite/sim_io.py BALL use the same 0.47." }
+price_per_100_usd ={ value = 14.99, unit = "USD", src = "S3", fidelity = "datasheet" }   # Worker Cheetah Rounds 100-pack, 2026-10-11, page showed 'Sold out'
+price         = { value = 14.99, unit = "USD", src = "S3", fidelity = "datasheet" }   # one 100-round pack (BOM line)
+
+[visual]
+src = "V1"
+note = "Small orange foam ball (listing photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "V1"
+url = "https://outofdarts.com/products/worker-ammo-rival-rounds"
+title = "Out of Darts listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "Worker Cheetah Rounds 100-Pack"
+
+[[sources]]
+id = "S1"
+url = "https://nerf.fandom.com/wiki/Rival_Round"
+title = "Nerf Wiki: Rival Round (diameter; found in a web search snippet, the page itself returned HTTP 402 to a fetch)"
+accessed = "2026-10-11"
+quote = "Dimensions 7/8\" diameter (22.2 mm diameter)"
+
+[[sources]]
+id = "S2"
+url = "https://www.dailydabble.com/nerf-rival-accu-round-foam-balls/"
+title = "Daily Dabble: Nerf Rival Accu-Round foam balls"
+accessed = "2026-10-11"
+quote = "Nerf Rival Round Weight: 1.86 grams ... Nerf Rival Round Size: 22.2 mm diameter (7/8 of an inch)"
+
+[[sources]]
+id = "S3"
+url = "https://outofdarts.com/products/worker-ammo-rival-rounds"
+title = "Out of Darts: Worker Cheetah Rounds 100-Pack (Rival-compatible)"
+accessed = "2026-10-11"
+quote = "Worker Cheetah Rounds 100-Pack ... $14.99 USD ... 22.7mm OD ... 1.75g each (175g/pack) ... EVA Foam ... Sold out"

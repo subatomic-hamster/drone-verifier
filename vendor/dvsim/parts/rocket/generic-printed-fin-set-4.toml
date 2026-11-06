@@ -1,0 +1,70 @@
+id = "generic-printed-fin-set-4"
+name = "Four swept trapezoidal fins for a 4 in (101.6 mm) tube, 1.5 mm PLA, root chord 0.16 m, span 0.12 m (design of this repo)"
+category = "rocket.fin-set"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# Part frame: origin on the axis at the root chord's trailing-edge plane (the tube's aft end), +z towards the nose. Fin k points radially at
+# k x 90 deg. Trapezoid: root chord Cr = 0.16 m (z in [0, 0.16]), tip chord Ct = 0.08 m, span s = 0.12 m, tip leading edge swept 0.09 m behind the root's
+# (tip chord z in [-0.01, 0.07]). The collision / mass shape is one rectangle of the same area per fin (mean chord 0.12 m, centred at the centroid
+# z = 0.07 m). Barrowman (python/dvsim/design/barrowman.fins) gives, for this set, CNa = 11.70 / rad on the 4 in body area and the fin CP
+# 0.0711 m behind the root leading edge (the airframe device's cn_alpha / x_cp come from there).
+[params]
+fin_count     = { value = 4, unit = "1", fidelity = "estimated", rationale = "Design choice: four fins, the common stable layout." }
+root_chord    = { value = 0.16, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+tip_chord     = { value = 0.08, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+span          = { value = 0.12, unit = "m", fidelity = "estimated", rationale = "Design choice: ~1.2 body diameters, sized so the fins (CP) put the stability margin above one calibre with a battery in the nose." }
+sweep         = { value = 0.09, unit = "m", fidelity = "estimated", rationale = "Design choice: leading-edge offset of the tip chord behind the root chord's leading edge." }
+thickness     = { value = 0.0015, unit = "m", fidelity = "estimated", rationale = "Design choice: 1.5 mm printed plate (floppy at 0.12 m span; flutter is not modelled)." }
+mass = { value = 0.1018, unit = "kg", fidelity = "derived", derivation = "Fin area (0.16 + 0.08) / 2 x 0.12 m = 0.0144 m2, x 1.5 mm = 2.16e-5 m3, x PLA density 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 (estimated in that part) = 0.0254 kg per fin, x 4 = 0.1018 kg." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00075, 0.06, 0.06]
+pos = [0.1108, 0.0, 0.07]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.06, 0.00075, 0.06]
+pos = [0.0, 0.1108, 0.07]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00075, 0.06, 0.06]
+pos = [-0.1108, 0.0, 0.07]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.06, 0.00075, 0.06]
+pos = [0.0, -0.1108, 0.07]
+material = "pla"
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "tube.102"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+fidelity = "estimated"
+rationale = "Root-chord trailing-edge plane on the tube's aft end (the fins are bonded to the tube wall; fillets not modelled)."
+
+[visual]
+rationale = "Design of this repo: swept trapezoidal fins from the part's own root / tip chord, span, sweep and thickness, bonded to a thin printed collar over the tube (the collar is cosmetic, outside the mass model)."
+
+[[visual.elements]]
+gen = "fin_set"
+params = { tube_radius = 0.0508 }
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

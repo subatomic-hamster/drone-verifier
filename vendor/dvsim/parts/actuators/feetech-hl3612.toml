@@ -1,0 +1,119 @@
+id = "feetech-hl3612"
+name = "Feetech HL-3612 7.4V 15kg.cm 1/405 coreless magnetic-encoder serial bus servo (HL-3612-C001)"
+category = "motor.servo"
+vendor = "Feetech (Shenzhen Feite Model Co., Ltd.)"
+part_number = "HL-3612-C001"
+url = "https://openelab.io/products/feetech-hl3612-ttl-servo-motor"
+
+# Frame: origin on the output axis at the horn-side (top) face of the case; +z = output axis out of the case;
+# x = long case dimension (36 mm), y = short (15 mm). Case occupies z in [-0.0292, 0].
+
+[params]
+mass            = { value = 0.0382,  unit = "kg",  src = "S1", fidelity = "datasheet" }
+length          = { value = 0.036,   unit = "m",   src = "S1", fidelity = "datasheet" }
+width           = { value = 0.015,   unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0292,  unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 405,     unit = "1",   src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "metal gears, aluminium case, coreless motor, ball bearings", unit = "-", src = "S1", fidelity = "datasheet" }
+backlash        = { value = 0.0087266, unit = "rad", src = "S1", fidelity = "datasheet" }  # <=0.5 deg
+horn_spline     = { value = "25T, OD 5.95 mm", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }  # 12-bit, ~0.088 deg
+protocol        = { value = "Half-duplex TTL digital packets, 8N1, ID 0-253", unit = "-", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 38400,   unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 1000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+connector       = { value = "5264-3P (GND, VCC, TTL signal)", unit = "-", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -20, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 60,  unit = "degC", src = "S1", fidelity = "datasheet" }
+
+# --- datasheet performance (kg.cm converted with g = 9.80665) ---
+v_nominal           = { value = 7.4,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_min     = { value = 5.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 8.4,    unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_7v4   = { value = 7.1238, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.147 s/60deg (68 RPM)
+no_load_current_7v4 = { value = 0.18,   unit = "A",     src = "S1", fidelity = "datasheet" }
+stall_torque_7v4    = { value = 1.4710, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 15 kg.cm
+stall_current_7v4   = { value = 1.6,    unit = "A",     src = "S1", fidelity = "datasheet" }
+rated_torque_7v4    = { value = 0.3678, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 3.75 kg.cm
+rated_current_7v4   = { value = 0.4,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_6v    = { value = 5.7540, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.182 s/60deg
+stall_torque_6v     = { value = 1.1768, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 12 kg.cm
+rated_torque_6v     = { value = 0.2942, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 3 kg.cm
+
+# --- DC-motor equivalent (motor side), derived from the 7.4 V point ---
+r_effective = { value = 4.625, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 7.4 V / 1.6 A = 4.625 ohm (includes driver and lead resistance at stall)." }
+omega_noload_motor_7v4 = { value = 2885.2, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 405 * (pi/3 rad / 0.147 s = 7.1238 rad/s) = 2885.2 rad/s (27553 RPM)." }
+ke = { value = 0.002276, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (7.4 - 0.18*4.625)/(405*7.1238) = 6.5675/2885.2 = 2.276e-3 V*s/rad. Agrees with HL-3606 (2.225e-3) to 2%, i.e. the same motor family." }
+kt_motor = { value = 0.002276, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency_raw = { value = 1.124, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 1.4710/(405*0.002276*(1.6-0.18)) = 1.124. Above 1 is impossible: published stall torque/current and no-load values are mutually inconsistent. Do NOT use as a physical efficiency." }
+friction_torque_motor_noload = { value = 0.000410, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.002276*0.18 = 4.10e-4 N*m at the motor shaft." }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.feetech-hl3612-base"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0292]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Hole pattern only in Feetech's drawing / STEP, not retrievable as text; opaque family tag."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 25
+note = "25T spline, OD 5.95 mm."
+
+[[ports]]
+name = "power_in"
+pins = ["BUS.1", "BUS.2"]
+kind = "power"
+type = "5264-3p"
+gender = "female"
+role = "sink"
+v_max = { value = 8.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.4, unit = "A", src = "S1", fidelity = "datasheet" }  # rated current at 7.4 V
+i_peak = { value = 1.6, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 7.4 V
+
+[[ports]]
+name = "bus"
+pins = ["BUS.3"]
+kind = "signal"
+type = "feetech-ttl"
+gender = "female"
+
+# Pin level: the 5264-3P bus connector, 'GND, VCC, TTL signal' as listed in S1 (read as pin 1..3 in the listed order).
+[[connectors]]
+id = "BUS"
+name = "bus connector (5264-3P)"
+type = "5264-3p"
+port_type = "5264-3p"
+gender = "female"
+pos = [-0.02, 0.0, -0.012]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+rationale = "S1 lists the connector as '5264-3P; GND, VCC, TTL signal'; the pin order is read from that listing and the 2.54 mm pitch is the 5264 family pitch (not stated in S1)."
+pose_rationale = "Case dimensions are not in the sources, so the connector position is a positional estimate (end of the case, near the base)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VCC", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "io", note = "half-duplex TTL digital packets (S1)" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://openelab.io/products/feetech-hl3612-ttl-servo-motor"
+title = "OpenELAB Feetech HL-3612 product page, Specifications table"
+accessed = "2026-10-07"
+quote = "Model / motor| Feetech HL-3612 / coreless motor| Input voltage| 5-8.4 V| Stall torque| 15 kg·cm at 7.4 V| Rated torque| 3.75 kg·cm at 7.4 V| No-load speed| 0.147 s/60° (68 RPM) at 7.4 V| No-load / stall current| 180 mA / 1.6 A at 7.4 V| Rated current| 400 mA at 7.4 V| Gear ratio| 405:1| Size| 36 × 15 × 29.2 mm| Weight| 38.2 ± 1 g| Case / gears| Aluminum / metal gears| Bearing / output spline| Ball bearings / 25T, OD 5.95 mm| Backlash| ≤0.5°| Encoder / electronic resolution| 12-bit magnetic / approximately 0.088°| Command interface| Half-duplex TTL digital packets; 8 data bits, 1 stop bit, no parity| Baud rate / ID range| 38,400 bps to 1 Mbps / 0-253| Connector| 5264-3P; GND, VCC, TTL signal| Operating temperature| -20 to +60 °C| At 6 V, the datasheet specifies 12 kg·cm stall torque, 3 kg·cm rated torque and 0.182 s/60° no-load speed."

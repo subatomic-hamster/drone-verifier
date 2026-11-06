@@ -1,0 +1,77 @@
+id = "generic-printed-ogive-nose-140"
+name = "3D-printed tangent-ogive nose cone for a 5.5 in (139.7 mm) tube, 0.25 m long, 1.0 mm PLA shell (design of this repo)"
+category = "rocket.nose-cone"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# Part frame: origin on the axis at the base plane (the tube's forward end), +z towards the tip. A design of this repo, not a product: the dimensions are
+# choices, the mass is derived from the PLA datasheet density. The collision / mass shape is four stacked solid cylinders following the ogive radius at each
+# slice's mid-height (as parts/rocket/generic-printed-ogive-nose-102).
+[visual]
+rationale = "Design of this repo: the tangent-ogive profile of the part's derivation (R, L, wall) revolved as a hollow printed shell, white PLA."
+
+[[visual.elements]]
+gen = "ogive_nose"
+
+[params]
+base_diameter  = { value = 0.1397, unit = "m", fidelity = "estimated", rationale = "Design choice: the outside diameter of parts/rocket/generic-fiberglass-tube-140 it caps." }
+length         = { value = 0.25, unit = "m", fidelity = "estimated", rationale = "Design choice: fineness ratio 1.8 (length / base diameter), a blunt model-rocket nose that keeps the printed mass down; the lander is stabilised by thrust vectoring, not by the nose." }
+wall_thickness = { value = 0.001, unit = "m", fidelity = "estimated", rationale = "Design choice: two to three perimeters of a 0.4 mm FDM nozzle." }
+mass = { value = 0.0900, unit = "kg", fidelity = "derived", derivation = "Tangent ogive radius profile r(z) = sqrt(rho^2 - z^2) + R - rho (z from the base), rho = (R^2 + L^2) / (2R) = 0.4823 m, R = 0.06985 m, L = 0.25 m; shell area 2 pi rho [L + (R - rho) asin(L / rho)] = 0.0764 m2 (closed form); mass = area x wall 0.001 m x PLA density 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 0.0900 kg." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.06885, 0.03125]
+pos = [0.0, 0.0, 0.03125]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.06066, 0.03125]
+pos = [0.0, 0.0, 0.09375]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.04384, 0.03125]
+pos = [0.0, 0.0, 0.15625]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.01739, 0.03125]
+pos = [0.0, 0.0, 0.21875]
+material = "pla"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "tube.140"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Base plane on the tube's forward end (shoulder fit not modelled)."
+
+[[ports]]
+name = "ballast_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.10]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "A bulkhead inside the ogive 0.10 m above the base (inside radius ~0.058 m) that carries the lead nose weight."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

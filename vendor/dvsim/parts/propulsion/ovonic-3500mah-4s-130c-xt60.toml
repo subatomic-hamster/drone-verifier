@@ -1,0 +1,67 @@
+id = "ovonic-3500mah-4s-130c-xt60"
+name = "Ovonic 3500mAh 4S 14.8V 130C LiPo pack, XT60"
+category = "battery.lipo"
+vendor = "Ovonic"
+part_number = "O-130C-3500-4S1P-XT60"
+url = "https://www.ovonicshop.com/products/2x-ovonic-4s-3500mah-14-8v-130c-lipo-battery-with-xt60-plug-for-1-10-scale-rc-car-truck-rc-aircraft"
+
+# Part frame: origin at the pack centre, x along length (125 mm), y along width (40 mm), z up (39.5 mm). The listing is a 2-pack; one pack is modelled.
+# Burst rating and resistance not published.
+
+[params]
+capacity_ah     = { value = 3.5, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 12600.0, unit = "C", fidelity = "derived", derivation = "3.5 Ah x 3600 s/h = 12600 C (coulombs)." }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 130, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 455.0, unit = "A", fidelity = "derived", derivation = "130 C x 3.5 Ah = 455 A (rating label only; a marketing figure)." }
+mass            = { value = 0.370, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.125, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0395, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0297, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/3.5 = 7.4 mOhm/cell x 4 cells = 29.7 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.0625, 0.020, 0.01975]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 455.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 130 C x 3.5 Ah = 455 A (S1 label); far above the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.0625, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.ovonicshop.com/products/2x-ovonic-4s-3500mah-14-8v-130c-lipo-battery-with-xt60-plug-for-1-10-scale-rc-car-truck-rc-aircraft"
+title = "Ovonic shop - 2x Ovonic 4S 3500mAh 14.8V 130C LiPo with XT60 plug"
+accessed = "2026-10-07"
+quote = "Capacity: 3500mAh | Voltage: 14.8V (4S) | Discharge Rate: 130C | Configuration: 4S1P | Weight: 370g (0.82lb) per pack | Size: 125 x 40 x 39.5 mm (4.92 x 1.57 x 1.56 inches) | Connector Type: XT60 Plug | Balancer Connector Type: JST-XHR-5P | Wire Gauge: 12 AWG"

@@ -1,0 +1,59 @@
+id = "molicel-inr21700-p42a"
+name = "Molicel INR-21700-P42A 4.2 Ah 21700 Li-ion cell"
+category = "battery.cell"
+vendor = "Molicel (E-One Moli Energy)"
+part_number = "INR-21700-P42A"
+url = "https://www.akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/molicel-inr21700-p42a-4200mah-30a-to-max-45a-li-ion-battery-3-6v-3-7v_100813_3180"
+
+# Part frame: origin at the cell centre, z along the cell axis (positive terminal at +z). Cylinder 21.4 mm x 70.15 mm.
+# Retailer-hosted spec (akkuteile.de) and lygte-info test page; no Molicel datasheet PDF was retrieved for this cell. The two retail sources quote
+# the discharge limit differently (30 A without temperature cut / 45 A with 80 C cut vs. a flat "continuous 45 A"): the conservative 30 A is used for
+# the port i_max, 45 A kept as i_max_peak. Internal impedance: lygte-info quotes "<15mOhm AC 1kHz".
+# No numerical independent discharge table is available in text form (Mooch / lygte publish charts as images).
+
+[params]
+capacity_ah     = { value = 4.2, unit = "Ah", src = "S2", fidelity = "datasheet" }
+capacity_min_ah = { value = 4.0, unit = "Ah", src = "S2", fidelity = "datasheet" }
+capacity        = { value = 15120.0, unit = "C", fidelity = "derived", derivation = "4.2 Ah x 3600 s/h = 15120 C (coulombs)." }
+v_nominal       = { value = 3.6, unit = "V", src = "S2", fidelity = "datasheet" }
+v_full          = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cutoff        = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }           # without temperature cut
+i_max_peak      = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }            # with 80 C temperature cut
+i_charge_std    = { value = 4.2, unit = "A", src = "S2", fidelity = "datasheet" }
+i_charge_max    = { value = 8.4, unit = "A", src = "S2", fidelity = "datasheet" }
+r_ac_1khz_max   = { value = 0.015, unit = "ohm", src = "S2", fidelity = "datasheet" }
+mass            = { value = 0.070, unit = "kg", src = "S1", fidelity = "datasheet" }          # 70 g +- 1 g
+diameter        = { value = 0.0214, unit = "m", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.07015, unit = "m", src = "S1", fidelity = "datasheet" }
+temp_discharge_min = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }       # -40 C
+temp_discharge_max = { value = 333.15, unit = "K", src = "S1", fidelity = "datasheet" }       # 60 C
+
+[geometry]
+shape = "cylinder"
+radius = 0.0107
+length = 0.07015
+
+[[ports]]
+name = "terminal"
+kind = "power"
+type = "cell-terminal"
+gender = "neutral"
+role = "source"
+v_max = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[sources]]
+id = "S1"
+url = "https://www.akkuteile.de/en/lithium-ionen-battery/size-21700/molicel/molicel-inr21700-p42a-4200mah-30a-to-max-45a-li-ion-battery-3-6v-3-7v_100813_3180"
+title = "akkuteile.de - Molicel INR21700-P42A, 4200mAh 30A to max. 45A Li-Ion battery"
+accessed = "2026-10-07"
+quote = "Capacity 4200mAh | Charge Voltage 4.2V ± 0.05V | Discharge Current (Constant) 30A without thermal cutoff; 45A with 80°C cutoff | Cut-off Voltage 2.5V | Weight 70g ± 1g | Diameter 21.40mm ± 0.15mm | Height 70.15mm ± 0.2mm | Discharge Temperature Range -40°C - 60°C"
+
+[[sources]]
+id = "S2"
+url = "https://lygte-info.dk/review/batteries2012/Molicel INR21700-P42A 4200mAh (Gray) UK.html"
+title = "lygte-info.dk - Molicel INR21700-P42A 4200mAh (Gray) test/review"
+accessed = "2026-10-07"
+quote = "Rated typical capacity: 4200mAh | Rated minimum capacity: 4000mAh | Nominal voltage: 3.6V | Standard charge current: 4.2A | Maximum charge current: 8.4A | Continuous discharge current: 45A | End of discharge voltage: 2.5V | Typical impedance: <15mOhm AC 1kHz"

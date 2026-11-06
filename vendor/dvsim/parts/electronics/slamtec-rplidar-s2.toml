@@ -1,0 +1,95 @@
+id = "slamtec-rplidar-s2"
+name = "Slamtec RPLIDAR S2 (30 m, 32 kSa/s, 10 Hz, IP65) 360 degree 2-D lidar"
+category = "sensor.rangefinder"
+vendor = "Slamtec"
+part_number = "S2M1-R2"
+url = "https://www.slamtec.com/en/s2/spec"
+
+# The obstacle sensor of the ASV: a single-plane, 360 degree time-of-flight scanner that is waterproof (IP65) and reaches 30 m on a white target. A marine radar is
+# out of the budget of a 1.2 m boat; this lidar sees buoys, piers and other boats at 10-30 m, i.e. the last seconds, not the horizon. The rangefinder device
+# (projection "spherical", n_v = 1) casts the whole revolution at one instant: the real head turns, so one scan spans 100 ms of platform motion (not modelled).
+# Part frame: origin at the centre of the underside, z up. The device frame is the `optical` port: its +z (the 0 degree azimuth) is the part's +x, the
+# azimuth runs counter-clockwise seen from above, the beam plane is the part's z = scan_height.
+[params]
+range_white    = { value = 30.0, unit = "m", src = "S1", fidelity = "datasheet" }
+range_black    = { value = 10.0, unit = "m", src = "S1", fidelity = "datasheet" }
+min_range      = { value = 0.05, unit = "m", src = "S1", fidelity = "datasheet" }
+sample_rate    = { value = 32000.0, unit = "Hz", src = "S1", fidelity = "datasheet" }
+scan_rate      = { value = 10.0, unit = "Hz", src = "S1", fidelity = "datasheet" }
+angular_resolution = { value = 0.001963, unit = "rad", src = "S1", fidelity = "datasheet" }
+accuracy       = { value = 0.03, unit = "m", src = "S1", fidelity = "datasheet" }
+range_resolution = { value = 0.013, unit = "m", src = "S1", fidelity = "datasheet" }
+mass           = { value = 0.190, unit = "kg", src = "S1", fidelity = "datasheet" }
+size_length    = { value = 0.077, unit = "m", src = "S1", fidelity = "datasheet" }
+size_width     = { value = 0.077, unit = "m", src = "S1", fidelity = "datasheet" }
+size_height    = { value = 0.03885, unit = "m", src = "S1", fidelity = "datasheet" }
+supply_voltage = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+power          = { value = 2.0, unit = "W", src = "S1", fidelity = "datasheet" }
+fov            = { value = 6.283185, unit = "rad", src = "S1", fidelity = "datasheet" }
+scan_height    = { value = 0.025, unit = "m", fidelity = "estimated", rationale = "Height of the beam plane above the underside is not published; the optical window of the rotating head sits about 2/3 of the way up the 38.85 mm housing. Only the position of the sensor site depends on it." }
+sigma0         = { value = 0.015, unit = "m", fidelity = "estimated", rationale = "Range noise (1 sigma, device field sigma0): the datasheet gives an accuracy of +-30 mm without stating its statistic; taken as a 2-sigma bound, so 15 mm. A constant (range-independent) error, as for a time-of-flight scanner at 5-30 m." }
+dropout        = { value = 0.01, unit = "1", fidelity = "estimated", rationale = "Fraction of rays that return nothing although a target is in range. The datasheet figures only the white / black range split (30 m / 10 m, 90 % / 10 % reflection), which the device does not model per surface; 1 % covers specular and wet surfaces. The real unit loses much more on dark and glossy hulls at range, and sees spray and wave crests as clutter (not modelled)." }
+price      = { value = 355.0, unit = "USD", fidelity = "estimated", rationale = "Slamtec publishes no list price on the specification page. US retailer listings in October 2026 showed 355 to 413 USD (the higher including tariffs), some on backorder; the low end is taken." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0385, 0.0385, 0.019425]
+pos = [0.0, 0.0, 0.019425]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside of the housing on a flat mount; the real unit has M2.5 mounting holes in its base whose pattern the specification page does not give."
+
+[[ports]]
+name = "optical"
+kind = "mech"
+type = "optical-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.025]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, -1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Frame of the rangefinder device on the beam plane: z' (0 degree azimuth) along the part's +x, x' (elevation sense) downwards so that the azimuth, from z' towards y', runs counter-clockwise seen from above. Not a physical interface."
+
+[[ports]]
+name = "power_in"
+lead = {}   # the 5 V supply / UART lead ships with the unit (inside the 190 g datasheet weight, to the extent the vendor weighs it)
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "The specification page gives a 5 V system voltage (and lists 12 V for a variant); no absolute maximum is stated, 5.5 V is the usual 10 % tolerance of a 5 V logic-level supply." }
+i_max = { value = 1.0, unit = "A", fidelity = "estimated", rationale = "Power consumption is given as '> 2 W' (about 0.4 A at 5 V); the start-up surge of the motor is unpublished, 1 A allows for it." }
+note = "5 V supply of the lidar head (motor and laser)."
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+note = "UART serial at 1 Mbaud (S1: 'URAT Serial 1M')."
+
+[visual]
+src = "S1"
+note = "Square black base with a round rotating head and a dark optical band (RPLIDAR S2 product photos); generated."
+
+[[visual.elements]]
+gen = "lidar_2d"
+
+[[sources]]
+id = "S1"
+url = "https://www.slamtec.com/en/s2/spec"
+title = "RPLIDAR S2 specification (Slamtec)"
+accessed = "2026-10-08"
+quote = "0.05-30m (90% reflection) ... 0.05-10m (10% reflection) ... Sample rate 32000 times per secord ... Scan rate 10Hz ... Angular resolution 0.1125 ... Accuracy +-30mm ... Distance resolution 13mm ... Blind range 0.05m ... Size: 77 x 77 x 38.85mm ... Weight: 190g ... Power consumption > 2W ... IP65 ... URAT Serial (1M)"

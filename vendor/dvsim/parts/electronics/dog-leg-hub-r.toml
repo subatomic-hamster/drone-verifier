@@ -1,0 +1,234 @@
+id = "dog-leg-hub-r"
+name = "Dog leg hub, right-hand twin of dog-leg-hub (CUSTOM 2 oz PCB, 36 x 50 mm): one XT60 power input and one CAN input fan out to three XT30(2+2) drive outputs, 120 ohm CAN termination"
+category = "pcb.hub"
+vendor = "dvsim dog (own design, fabricated by a PCB house)"
+part_number = "dog-leg-hub-v1 (right)"
+url = "docs/dog/actuator-study.md"
+
+# CUSTOM PART, labelled as such. The reflection of dog-leg-hub in its XZ plane: the same board, with the hip and knee outputs on the -y edge, so that the mirrored (right-hand) legs get
+# them on the side of the drives. (The left-hand board is not its own mirror: its outputs are on the +y edge, and a right leg that reused it had its leads leave the wrong way and
+# cross the board and the deck.) Every value is that of dog-leg-hub.
+
+[mirror]
+opposite = "dog-leg-hub"
+
+[params]
+mass            = { value = 0.030, unit = "kg", fidelity = "estimated", rationale = "As dog-leg-hub (the same board)." }
+length          = { value = 0.036, unit = "m", fidelity = "estimated", rationale = "As dog-leg-hub." }
+width           = { value = 0.050, unit = "m", fidelity = "estimated", rationale = "As dog-leg-hub." }
+height          = { value = 0.012, unit = "m", fidelity = "estimated", rationale = "As dog-leg-hub." }
+can_termination = { value = 120.0, unit = "ohm", fidelity = "estimated", rationale = "As dog-leg-hub (ISO 11898 nominal)." }
+
+[params.r_path]
+value = 0.002
+unit = "ohm"
+fidelity = "derived"
+derivation = "As dog-leg-hub: 2 oz copper (70 um), 8 mm pour, ~50 mm: R = 1.72e-8 ohm*m x 0.05 m / (0.008 m x 70e-6 m) = 1.5 mohm + 0.5 mohm for the solder joints."
+
+[params.price]
+value = 10.75
+unit = "USD"
+fidelity = "estimated"
+rationale = "As dog-leg-hub: board 4.65 USD (OSH Park 2 oz, 36 x 50 mm, 3 copies) + ~6.1 USD of connectors (estimates)."
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.018, 0.025, 0.006]
+pos = [0.0, 0.0, 0.006]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Underside: bolted / taped to the abad mount's hub pad."
+
+[[ports]]
+name = "power_in"
+pins = ["PIN.1", "PIN.2"]
+kind = "power"
+type = "xt60"
+gender = "male"
+role = "sink"
+v_max = { value = 42.0, unit = "V", fidelity = "estimated", rationale = "As the PDB: 33.6 V full pack plus regenerative rise." }
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "XT60 continuous rating, the PDB leg feed rating." }
+
+[[ports]]
+name = "can_in"
+pins = ["CANIN.1", "CANIN.2", "CANIN.3"]
+kind = "signal"
+type = "can"
+gender = "neutral"
+note = "CAN_H, CAN_L, ground from the leg's CANable (JST-GH 4P, the 4th contact unused)."
+
+[[ports]]
+name = "out_a"
+pins = ["OA.1", "OA.2"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "male"
+role = "source"
+v_max = { value = 42.0, unit = "V", fidelity = "estimated", rationale = "As power_in." }
+i_max = { value = 10.0, unit = "A", fidelity = "estimated", rationale = "XT30PW continuous rating ~15 A; the abad drive's peak is 22 A for fractions of a second (the XT30 allows brief overload)." }
+note = "V+ / GND of the abad drive (shares connector OA with can_a)."
+
+[[ports]]
+name = "can_a"
+pins = ["OA.3", "OA.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN_H / CAN_L of the abad drive."
+
+[[ports]]
+name = "out_h"
+pins = ["OH.1", "OH.2"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "male"
+role = "source"
+v_max = { value = 42.0, unit = "V", fidelity = "estimated", rationale = "As power_in." }
+i_max = { value = 10.0, unit = "A", fidelity = "estimated", rationale = "As out_a." }
+note = "V+ / GND of the hip drive."
+
+[[ports]]
+name = "can_h"
+pins = ["OH.3", "OH.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN_H / CAN_L of the hip drive."
+
+[[ports]]
+name = "out_k"
+pins = ["OK.1", "OK.2"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "male"
+role = "source"
+v_max = { value = 42.0, unit = "V", fidelity = "estimated", rationale = "As power_in." }
+i_max = { value = 10.0, unit = "A", fidelity = "estimated", rationale = "As out_a." }
+note = "V+ / GND of the knee drive."
+
+[[ports]]
+name = "can_k"
+pins = ["OK.3", "OK.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN_H / CAN_L of the knee drive (far end of the leg bus: the 120 ohm termination sits across OK.3 / OK.4)."
+
+[[connectors]]
+id = "PIN"
+name = "battery feed input (XT60PW male)"
+type = "xt60"
+gender = "male"
+pos = [-0.018, -0.01, 0.004]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, -1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design: contact order + then - and 7.2 mm XT60 spacing assumed; reflected from dog-leg-hub."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_max = 42.0, i_max = 30.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "CANIN"
+name = "CAN input (JST-GH 4P)"
+type = "jst-gh.4"
+port_type = "can"
+gender = "male"
+joinable = true
+pos = [-0.018, 0.012, 0.003]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, -1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0125
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design: pins CAN_H, CAN_L, GND of a 4-position JST-GH header (the 4th position unused); reflected from dog-leg-hub."
+pins = [
+  { number = 1, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 2, name = "CAN_L", kind = "signal", dir = "io" },
+  { number = 3, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "OA"
+name = "abad drive output (XT30PW(2+2) male)"
+type = "xt30pw-2+2"
+gender = "male"
+pos = [0.018, 0.0, 0.004]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, -1.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design: the pin order of the actuators' XT30PB(2+2)-M (V+, GND, CAN_H, CAN_L), straight through."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 10.0 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "OH"
+name = "hip drive output (XT30PW(2+2) male)"
+type = "xt30pw-2+2"
+gender = "male"
+pos = [-0.0085, -0.025, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "As OA, on the -y edge (the reflection of dog-leg-hub's OH)."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 10.0 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "OK"
+name = "knee drive output (XT30PW(2+2) male)"
+type = "xt30pw-2+2"
+gender = "male"
+pos = [0.0085, -0.025, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "As OA, on the -y edge beside OH (the reflection of dog-leg-hub's OK)."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 10.0 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io" },
+]
+
+[[sources]]
+id = "DESIGN"
+url = "docs/dog/actuator-study.md"
+title = "Own design of this repo (no external source): the dog power / CAN architecture, see the study's power section"
+accessed = "2026-10-16"
+quote = "own design, not yet drawn: every value on this part is an estimate with its rationale"

@@ -1,0 +1,120 @@
+id = "tmotor-mn4110-kv340"
+name = "T-Motor MN4110 KV340 Navigator multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN4110 KV340"
+url = "https://store.tmotor.com/product/mn4110-motor-navigator-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop; body length 36.7 mm along +z (Motor Size 47.4 x 36.7 mm).
+# The product page covers KV300 / KV340 / KV400 with shared geometry; KV340 values used here.
+# S1 "Shaft Diameter IN: 6 mm, OUT: 4" -> output (prop-side) shaft 4 mm, matching the S2 drawing (O4).
+
+[params]
+mass            = { value = 0.152, unit = "kg", src = "S1", fidelity = "datasheet" }          # Motor Weight incl. cable
+kv              = { value = 340, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.112, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 112 mOhm
+i0              = { value = 0.9, unit = "A", src = "S1", fidelity = "datasheet" }             # idle current at 10 V
+i0_voltage      = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }            # 180 s
+p_max           = { value = 700.0, unit = "W", src = "S1", fidelity = "datasheet" }           # 180 s
+cells_min       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0474, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.0367, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }           # "OUT:4"; also drawing O4
+mount_circle    = { value = 0.025, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing "4-M3, O25"
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+lead_length     = { value = 0.15, unit = "m", src = "S1", fidelity = "datasheet" }            # 16AWG x 150 mm
+kt              = { value = 0.028086, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*340) = 0.028086 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR "P18*6.1" prop, ~23 V (per-row voltage as printed), ambient 15 C.
+# Printed table has 2 % steps from 40 to 80 % plus 90 and 100 %; rows 40/50/60/70/80/90/100 % transcribed here. Temperature 102 C.
+# Vendor columns: Current(A), Power(W), RPM, Torque(N*m), Thrust(g), Efficiency(g/W); thrust_N = thrust_g * 0.00980665.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [40, 23.73, 4.07, 97, 3079, 0.23, 10.5814, 1079, 11.15],
+  [50, 23.63, 6.55, 155, 3578, 0.31, 14.4844, 1477, 9.55],
+  [60, 23.51, 9.46, 222, 4030, 0.39, 18.26, 1862, 8.38],
+  [70, 23.35, 13.24, 309, 4442, 0.48, 22.5553, 2300, 7.44],
+  [80, 23.25, 17.85, 415, 4835, 0.58, 26.9193, 2745, 6.62],
+  [90, 23.2, 23.17, 537, 5174, 0.67, 31.2538, 3187, 5.93],
+  [100, 23.04, 30.73, 708, 5509, 0.76, 35.6374, 3634, 5.13],
+]
+prop_label = "T-MOTOR P18*6.1"
+prop = "tmotor-ns18x6"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0237, 0.01835]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.0367]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (rated voltage 6S, S1)." }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 16 AWG phase leads, 150 mm (S1 'Lead Cable|16AWG*150mm'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 16 AWG, 150 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0237, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the lead gauge and length (16AWG*150mm), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 30.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 30.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 30.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn4110-motor-navigator-type.html"
+title = "T-MOTOR store - MN4110 Navigator type motor (specification + test data)"
+accessed = "2026-10-07"
+quote = "Motor Size|Φ47.4*36.7mm|Configuration|12N14P|Shaft Diameter|IN：6mm|OUT：4|Lead Cable|16AWG*150mm|KV|340|Rated Voltage (Lipo)|6S|ldle Current(10V)|0.9A|Peak Current (180s)|30A|Motor Weight (Incl. Cable)|152g|Max.Power (180s)|700W|Internal Resistance|112mΩ. Test: MN4110 KV340|P18*6.1|40%|23.73|1079|0.23|4.07|3079|97|11.15|102 ... 100%|23.04|3634|0.76|30.73|5509|708|5.13"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202606/MN4110-draw-0603-v1.jpg"
+title = "T-MOTOR MN4110 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 36.7, 31.8, 2.8, 1.5, Ø47.4, 4.9, Ø20, Ø4, Ø25, 4-M3, Ø12, 4-M3"

@@ -1,0 +1,154 @@
+id = "matek-pm12s-3"
+name = "Matek Power Module PM12S-3 (9-55 V in; Vx 15 A, 5 V 4 A, 12 V 4 A)"
+category = "pcb.pm"
+vendor = "Matek Systems"
+part_number = "PM12S-3"
+url = "https://www.mateksys.com/?portfolio=pm12s-3"
+
+# Three independent buck regulators. Current-sensor signal is a passthrough pad only (no sensor on this board).
+[params]
+mass                = { value = 0.053, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.061, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.015, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_min   = { value = 9, unit = "V", src = "S1", fidelity = "datasheet" }
+input_voltage_max   = { value = 55, unit = "V", src = "S1", fidelity = "datasheet" }
+vx_current_cont     = { value = 15, unit = "A", src = "S1", fidelity = "datasheet" }
+vx_current_peak     = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_5v_current_cont = { value = 4, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_12v_current_cont = { value = 4, unit = "A", src = "S1", fidelity = "datasheet" }
+vx_efficiency_min   = { value = 0.90, unit = "1", src = "S1", fidelity = "datasheet" }
+vx_efficiency_max   = { value = 0.96, unit = "1", src = "S1", fidelity = "datasheet" }
+vx_standby_current_max = { value = 0.020, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "vin"
+pins = ["VIN.1", "VIN.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 55, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+
+[[ports]]
+name = "vx_out"
+pins = ["VX.1", "VX.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 8, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 15, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+note = "5.25 V / 6 V / 8 V options; 15 A continuous needs input >= 15 V"
+
+[[ports]]
+name = "bec_5v"
+pins = ["B5.1", "B5.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 4, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+
+[[ports]]
+name = "bec_12v"
+pins = ["B12.1", "B12.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 12, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 4, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+
+# Pin level (estimated): four solder-pad pairs (input, Vx, 5 V, 12 V); the page text lists the regulators and the rated currents but not the pad labels, order or positions. A current-sensor passthrough pad exists (page) but is not listed: its name and place are not given.
+[[connectors]]
+id = "VIN"
+name = "input pads"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [-0.025, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "A multi-output buck board has one positive and one negative input pad; order, spacing (8 mm) and board position are not on the page."
+pose_rationale = "Board layout is not published: input at the -x end, outputs along +x (positional estimate)."
+pins = [
+  { number = 1, name = "VIN+", kind = "power", dir = "in", v_max = 55.0 },
+  { number = 2, name = "VIN-", kind = "ground" },
+]
+
+[[connectors]]
+id = "VX"
+name = "Vx output pads"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [-0.008, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "As VIN; Vx is 5.25 V / 6 V / 8 V selectable, 15 A continuous (page)."
+pose_rationale = "As VIN."
+pins = [
+  { number = 1, name = "VX+", kind = "power", dir = "out", v_max = 8.0, i_max = 15.0 },
+  { number = 2, name = "VX-", kind = "ground" },
+]
+
+[[connectors]]
+id = "B5"
+name = "5 V BEC pads"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.008, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "As VIN; fixed 5.2 V, 4 A continuous (page)."
+pose_rationale = "As VIN."
+pins = [
+  { number = 1, name = "5V", kind = "power", dir = "out", v_max = 5.2, i_max = 4.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "B12"
+name = "12 V BEC pads"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.024, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "As VIN; fixed 12 V, 4 A continuous (page)."
+pose_rationale = "As VIN."
+pins = [
+  { number = 1, name = "12V", kind = "power", dir = "out", v_max = 12.0, i_max = 4.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.mateksys.com/?portfolio=pm12s-3"
+title = "Power Module PM12S-3 (Matek Systems product page)"
+accessed = "2026-10-07"
+quote = "Wide 9V to 55V Operating Input Range with TVS protection 3x independent Step-Down Voltage Regulators BEC Vx, 5.2V / 6V / 8V output options. supports typical continuous output current of up to 15A, Peak current of up to 25A. BEC 5V (Fixed), 4A continuous BEC 12V (Fixed), 4A continuous ... Current sensor signal passthrough pad Size & Weight: 61x40x15mm, 53g ... Synchronous switching step-down (or buck) regulator with typical efficiencies of 90% to 96% ... Standby current: 10~20mA ... Output voltage 5.2V, tolerance 1.5% ... Output voltage 12V, tolerance 1.5%"

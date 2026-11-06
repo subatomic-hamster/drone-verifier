@@ -1,0 +1,41 @@
+id = "cf-tube-10x8"
+name = "Carbon fibre tube 10 mm OD x 8 mm ID, woven-finish roll-wrapped (Easy Composites)"
+category = "structure.tube"
+vendor = "Easy Composites"
+part_number = "10mm (8mm) Woven Finish Carbon Fibre Tube"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+
+# Per-metre values; cut-to-length mass = mass_per_m x length. Tensile modulus is lengthways (UD plies dominate).
+# Easy Composites also sells an unglossed roll-wrapped 10x8 tube at 45.0 g/m on a different page (not recorded).
+[params]
+outer_diameter   = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+inner_diameter   = { value = 0.008, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_thickness   = { value = 0.001, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_per_m       = { value = 0.0456, unit = "kg/m", src = "S1", fidelity = "datasheet" }
+youngs_modulus_axial = { value = 64e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+od_tolerance     = { value = 0.00015, unit = "m", src = "S1", fidelity = "datasheet" }
+price_per_m      = { value = 13.64, unit = "USD", fidelity = "derived", derivation = "Easy Composites EU lists EUR 12.40 per metre ex VAT for the 1 m and 2 m tube (page fetched 2026-10-16; 5-19 units EUR 11.20); x 1.1 USD/EUR (assumed, no rate looked up) = 13.64 USD/m, shipping excluded." }
+
+[params.second_moment_area]
+value = 2.8981e-10
+unit = "m^4"
+fidelity = "derived"
+derivation = "Hollow circular section I = pi/64 x (OD^4 - ID^4) with OD = 0.010 m and ID = 0.008 m from S1 (nominal dimensions)."
+
+[[ports]]
+name = "tube"
+kind = "mech"
+type = "tube.10"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Axisymmetric: any rotation about the tube axis fits (360 = discrete stand-in for continuous). A tube has two ends and any clamp can sit anywhere along its length."
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+title = "10mm (8mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table"
+accessed = "2026-10-07"
+quote = "Length | 1000 | mm ... Wall Thickness | 1 | mm ... Outside Diameter (OD) | 10 | mm ... Inside Diameter (ID) | 8 | mm ... Weight per metre | 45.6 | g ... Tensile Modulus (lengthways) | 64 | GPa"

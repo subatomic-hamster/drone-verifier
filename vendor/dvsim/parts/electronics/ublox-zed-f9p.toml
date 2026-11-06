@@ -1,0 +1,28 @@
+id = "ublox-zed-f9p"
+ports_note = "Data-only GNSS receiver chip (the module on a breakout board such as SparkFun GPS-RTK-SMA or Holybro H-RTK F9P); it is never mounted or wired on its own, so it has no ports. Accuracy / rate numbers feed the GNSS model; the breakout and its multi-band antenna are in the harness allowance of the vehicle that uses it."
+name = "u-blox ZED-F9P multi-band RTK GNSS receiver (rover; needs RTCM corrections from a base station or an NTRIP service)"
+category = "sensor.gnss"
+vendor = "u-blox"
+part_number = "ZED-F9P"
+url = "https://content.u-blox.com/sites/default/files/ZED-F9P_ProductSummary_UBX-17005151.pdf"
+
+# RTK, not stand-alone: the 0.01 m figure holds only with corrections from a base within about 20 km (u-blox footnote: it 'depends on atmospheric conditions, baseline length,
+# GNSS antenna, multipath conditions, satellite visibility, and geometry'). The product summary gives no stand-alone (PVT) accuracy and no velocity accuracy.
+
+[params]
+nav_rate_rtk_max          = { value = 20, unit = "Hz", src = "S1", fidelity = "datasheet" }        # "Nav. update rate RTK up to 20 Hz"
+rtk_horizontal_accuracy_cep = { value = 0.01, unit = "m", src = "S1", fidelity = "datasheet" }     # "Position accuracy RTK 0.01 m + 1 ppm CEP"; the 1 ppm term is 0.1 mm at 100 m of baseline
+rtk_convergence_time      = { value = 10, unit = "s", src = "S1", fidelity = "datasheet" }         # "Convergence time RTK < 10 sec" (upper bound)
+supply_voltage_min        = { value = 2.7, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max        = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_cont       = { value = 0.068, unit = "A", src = "S1", fidelity = "datasheet" }      # "Power consumption 68 mA at 3.0 V (continuous)"
+operating_temp_min        = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }     # -40 degC
+operating_temp_max        = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }     # +85 degC
+velocity_accuracy         = { value = 0.05, unit = "m/s", fidelity = "estimated", rationale = "Not in the ZED-F9P product summary. 0.05 m/s is the u-blox NEO-M8N datasheet figure (parts/drone/ublox-neo-m8n); a carrier-phase Doppler velocity of an F9 receiver is at least as good, so this is a conservative stand-in." }
+
+[[sources]]
+id = "S1"
+url = "https://content.u-blox.com/sites/default/files/ZED-F9P_ProductSummary_UBX-17005151.pdf"
+title = "u-blox ZED-F9P series, u-blox F9 high precision GNSS modules, Product summary UBX-17005151-R17"
+accessed = "2026-10-08"
+quote = "Nav. update rate RTK up to 20 Hz | Position accuracy 2 RTK 0.01 m + 1 ppm CEP | Convergence time 2 RTK < 10 sec | Supply voltage 2.7 V to 3.6 V | Power consumption 68 mA at 3.0 V (continuous) | Operating temp. -40 C to +85 C | 2 Depends on atmospheric conditions, baseline length, GNSS antenna, multipath conditions, satellite visibility, and geometry"

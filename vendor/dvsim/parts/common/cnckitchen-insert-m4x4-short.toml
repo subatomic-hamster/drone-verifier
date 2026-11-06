@@ -1,0 +1,39 @@
+id = "cnckitchen-insert-m4x4-short"
+name = "CNC Kitchen M4 heat-set threaded insert, 4.0 mm long (short), brass"
+category = "fastener.insert"
+vendor = "CNC Kitchen"
+part_number = "M4 short (L 4.0)"
+url = "https://www.3djake.com/cnc-kitchen/threaded-inserts-m4-standard"
+
+# Frame: origin at the open (screw-side) face on the axis, +z out of the face; the insert body extends to z = -L.
+[params]
+length          = { value = 4.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter  = { value = 6.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+centre_diameter = { value = 5.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter   = { value = 5.6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+min_wall        = { value = 2.1e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.00079
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Brass tube of the stated outer diameter (6.3 mm) and length, bore = M4 minor diameter 3.2 mm (nominal - 1.082 x 0.7 mm pitch), density 8500 kg/m3 (typical brass, assumed): pi/4*(6.3^2-3.2^2)*4.0 = 92.5 mm3 -> 0.79 g, knurl and flange ignored; about +-30 %."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m4"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.004
+note = "Internal M4 thread over the full 4.0 mm length (assumed through-threaded). Melt it into a 5.6 mm hole (S1 'Hole diameter')."
+
+[[sources]]
+id = "S1"
+url = "https://www.3djake.com/cnc-kitchen/threaded-inserts-m4-standard"
+title = "CNC Kitchen Threaded Inserts M4 Standard (3DJake product page, size comparison table)"
+accessed = "2026-10-07"
+quote = "CNC-Kitchen threaded inserts in comparison: Thread size | Length type | L | Insert diameter | ⌀ D1 | Centre point | ⌀ D2 | Hole diameter | ⌀ D3 | Wall thickness min. | W | M4 short | 4.0 | 6.3 | 5.5 | 5.6 | 2.1"

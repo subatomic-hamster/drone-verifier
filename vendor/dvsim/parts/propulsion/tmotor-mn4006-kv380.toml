@@ -1,0 +1,132 @@
+id = "tmotor-mn4006-kv380"
+name = "T-Motor MN4006 KV380 Antigravity multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN4006 KV380"
+url = "https://store.tmotor.com/product/mn4006-kv380-motor-antigravity-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop; body length 21 mm along +z.
+# Body dimensions/bolt circle/prop-adapter geometry are read off the vendor technical drawing image (S2).
+# NOTE: the S1 text table prints "Shaft Diameter 40mm" for this motor; the S2 drawing shows O4 (4 mm) -> the 40mm is a typo, 4 mm used.
+
+[params]
+mass            = { value = 0.068, unit = "kg", src = "S1", fidelity = "datasheet" }          # 68 g incl. cable
+kv              = { value = 380, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.194, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 194 mOhm
+i0              = { value = 0.3, unit = "A", src = "S1", fidelity = "datasheet" }             # idle current at 22 V
+i0_voltage      = { value = 22.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 16.0, unit = "A", src = "S1", fidelity = "datasheet" }            # 180 s
+p_max           = { value = 380.0, unit = "W", src = "S1", fidelity = "datasheet" }           # 180 s
+cells_min       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "18N24P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.04435, unit = "m", src = "S1", fidelity = "datasheet" }         # Motor Dimensions 44.35 x 21 mm
+length_body     = { value = 0.021, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.004, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing O4
+mount_circle    = { value = 0.025, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing "4-M3, O25" (motor base)
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+prop_adapter_thread = { value = "M6", unit = "thread", src = "S2", fidelity = "datasheet" }   # supplied adapter, 4-M3 on O12 bell circle
+lead_length     = { value = 0.05, unit = "m", src = "S1", fidelity = "datasheet" }
+kt              = { value = 0.025130, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*380) = 0.025130 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR "15*5 CF" prop, 24 V (table header voltage), 1 motor. Rows 50-100 % throttle as printed.
+# Vendor columns: Current(A), Power(W), RPM, Torque(N*m), Thrust(g), Efficiency(g/W); thrust_N = thrust_g * 0.00980665.
+# Operating temperature at 100 % throttle 10 min: 46 C.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [50, 24, 3.1, 74, 3746, 0.15, 7.8944, 805, 10.82],
+  [55, 24, 4.1, 98, 4089, 0.18, 9.4046, 959, 9.75],
+  [60, 24, 4.8, 115, 4358, 0.2, 10.7187, 1093, 9.49],
+  [65, 24, 5.8, 139, 4634, 0.23, 12.121, 1236, 8.88],
+  [75, 24, 8.3, 199, 5215, 0.29, 15.3082, 1561, 7.84],
+  [85, 24, 10.7, 257, 5627, 0.33, 17.8775, 1823, 7.1],
+  [100, 24, 15, 360, 6177, 0.4, 21.8492, 2228, 6.19],
+]
+prop_label = "T-MOTOR 15*5 CF"
+prop = "tmotor-ns15x5"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.022175, 0.0105]
+
+# Ports. Mount holes are in the z=0 plane; the shaft and the supplied M6 prop adapter exit the bell at z = body length.
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.021]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "prop_adapter"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.6"
+gender = "male"
+pos = [0.0, 0.0, 0.021]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (upper end of the 4-6S rated range, S1)." }
+i_max = { value = 16.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 50 mm phase leads (S1 'Lead|50mm'; no gauge or connector stated, so bare / solder ends).
+# Lead exit and phase naming are conventions (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 50 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.022175, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives only the lead length (50mm), not gauge, connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 16.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 16.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 16.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn4006-kv380-motor-antigravity-type.html"
+title = "T-MOTOR store - MN4006 Antigravity type motor (specification + test data)"
+accessed = "2026-10-07"
+quote = "Test Item|KV380|Weight (Incl. Cable)|68g|Motor Dimensions|Φ44.35×21mm|Internal Resistance|194mΩ|Lead|50mm|Configuration|18N24P|Shaft Diameter|40mm|Rated Voltage(Lipo)|4-6S|Idle Current(22V)|0.3A|Peak Current(180s)|16A|Max Power (180S)|380W. Test: MN4006 KV380 24 T-MOTOR 15*5” CF 50%|3.10|74|3746|0.15|805|10.82|46 ... 100%|15.00|360|6177|0.40|2228|6.19"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/271724723285300412.jpg"
+title = "T-MOTOR MN4006 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 4-M3, Ø25, Ø4, 6, Ø4, Ø30, Ø44,35, 21, 2,5, Ø12, 4-M3; accessory M6 prop adapter 26 long, Ø20, 4-Ø3.2 on Ø12"

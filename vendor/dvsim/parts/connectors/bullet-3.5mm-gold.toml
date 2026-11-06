@@ -1,0 +1,114 @@
+id = "bullet-3.5mm-gold"
+name = "3.5 mm gold bullet connector pair (RC ESC-to-motor, male / female)"
+category = "connector"
+vendor = "generic (Vetco VUPN586 listing)"
+part_number = "VUPN586"
+url = "https://vetco.net/products/vupn586_3-5mm_rc_bullet_connector_-_5_pair"
+
+# Generic hobby part, no manufacturer datasheet. Ratings: Oscar Liang's selection rule (3.5 mm up to 40 A, a conservative continuous figure) is used
+# for i_max; Vetco lists 'up to 60 A (depending on wire and installation)', used as i_burst. No mass or contact resistance published.
+[params]
+current_rated       = { value = 40, unit = "A", src = "S2", fidelity = "literature" }
+current_max_vendor  = { value = 60, unit = "A", src = "S1", fidelity = "datasheet" }
+diameter            = { value = 0.0035, unit = "m", src = "S1", fidelity = "datasheet" }
+material            = { value = "gold-plated brass", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["M.1"]
+kind = "power"
+type = "bullet.3.5"
+gender = "male"
+i_max = { value = 40, unit = "A", src = "S2", fidelity = "literature" }
+i_burst = { value = 60, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Pin 3.5 mm. 40 A: Oscar Liang rule of thumb; 60 A: vendor maximum depending on wire and installation."
+
+[[ports]]
+name = "female"
+pins = ["F.1"]
+kind = "power"
+type = "bullet.3.5"
+gender = "female"
+i_max = { value = 40, unit = "A", src = "S2", fidelity = "literature" }
+i_burst = { value = 60, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 40, unit = "A", src = "S2", fidelity = "literature" }
+role = "passthrough"
+note = "Solder cup"
+
+# Pin level (derived): a bullet connector is a single-contact plug and socket; one contact per half, one solder cup.
+[[connectors]]
+id = "M"
+name = "male bullet pin"
+type = "bullet.3.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "A bullet connector pair is one single-conductor contact per half (S1 lists a pin diameter, not a pin count); no other pins exist."
+pose_rationale = "Mating face at the origin (the part has no geometry)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[connectors]]
+id = "F"
+name = "female bullet socket"
+type = "bullet.3.5"
+gender = "female"
+pos = [0.02, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "As M: one contact per half."
+pose_rationale = "Second half placed 20 mm to the side so the two halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cup"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.01]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "One solder cup per contact."
+pose_rationale = "Cable side of the body (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://vetco.net/products/vupn586_3-5mm_rc_bullet_connector_-_5_pair"
+title = "Vetco - 3.5mm RC bullet connector, 5 pair (VUPN586)"
+accessed = "2026-10-07"
+quote = "Connector Type: | 3.5mm bullet-style (male and female) | Material: | Gold-plated brass for corrosion resistance | Rated Current: | Up to 60A (depending on wire and installation) | Package Includes: | 5 pairs (10 connectors total)"
+
+[[sources]]
+id = "S2"
+url = "https://oscarliang.com/choosing-gold-bullet-connectors-motor-esc/"
+title = "Oscar Liang - Choosing gold bullet connectors for motor and ESC"
+accessed = "2026-10-07"
+quote = "make sure the connector meets your electrical rating. I follow these rules. | 2mm connectors - up to 20 Amps 3.5mm connectors - up to 40Amps XT60 connectors - up to 60Amps 4mm connectors - up to 70 Amps 6mm connectors - up to 120 Amps 8mm connectors - up to 200 Amps"

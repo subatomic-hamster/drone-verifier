@@ -1,0 +1,60 @@
+id = "generic-sensor-mast-300"
+name = "Generic 25 mm aluminium sensor mast, 300 mm (illustrative, not a product)"
+category = "structure.mast"
+vendor = "generic"
+part_number = "n/a"
+url = "https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=ma6061t6"
+
+# As generic-sensor-mast-450 but 0.30 m long: carries the GNSS / compass puck below the lidar's beam plane. Part frame: origin at the centre of the underside, z up.
+[params]
+outer_diameter = { value = 0.025, unit = "m", fidelity = "estimated", rationale = "Design choice: a common 25 mm round aluminium tube." }
+wall           = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Design choice: 2 mm wall." }
+length         = { value = 0.30, unit = "m", fidelity = "estimated", rationale = "Design choice: the GNSS puck ends 0.15 m below the lidar's beam plane, so the lidar does not see its own antenna when the boat rolls." }
+density        = { value = 2700.0, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+mass           = { value = 0.1171, unit = "kg", fidelity = "derived", derivation = "pi/4 (0.025^2 - 0.021^2) m2 x 0.30 m = 4.335e-5 m3 x 2700 kg/m3 = 0.1171 kg (end caps and fasteners ignored)." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0125, 0.15]
+pos = [0.0, 0.0, 0.15]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Foot of the tube on the cross-member (a clamp or flange in practice; not modelled)."
+
+[[ports]]
+name = "top"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.30]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Top end of the tube (length 0.30 m); the GNSS puck's flat underside rests on it."
+
+[visual]
+rationale = "Plain anodised aluminium tube."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "alu-extrusion" }
+
+[[sources]]
+id = "S1"
+url = "https://quickparts.com/wp-content/uploads/2024/05/Aluminum-6061.pdf"
+title = "Aluminum 6061-T6; 6061-T651 (MatWeb/ASM data sheet, printed copy hosted by Quickparts)"
+accessed = "2026-10-07"
+quote = "Density 2.7 g/cc 0.0975 lb/in³ AA; Typical"

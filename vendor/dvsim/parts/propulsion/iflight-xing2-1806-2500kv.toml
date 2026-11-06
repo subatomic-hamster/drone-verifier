@@ -1,0 +1,94 @@
+id = "iflight-xing2-1806-2500kv"
+name = "iFlight XING2 1806 2500KV Unibell FPV micro motor (1.5 mm shaft)"
+category = "motor.bldc"
+vendor = "iFlight"
+part_number = "XING2 1806 2500KV"
+url = "https://thingbits.in/products/iflight-xing2-1806-unibell-brushless-motor"
+
+# Part frame: origin at the centre of the mounting face, z up toward the prop; body length 16.3 mm along +z (spec "Dimensions 25.2mm x 16.3mm"
+# read as diameter x length). The page lists KV1600 and KV2500 columns; KV2500 values used here.
+# The listing gives the mounting holes as "12 x 12mm, phi2mm" (2 mm holes); an M2 thread is inferred (not stated).
+# No thrust table in the retailer text -> no [tables.thrust_test].
+
+[params]
+mass            = { value = 0.0202, unit = "kg", src = "S1", fidelity = "datasheet" }         # with wires
+kv              = { value = 2500, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.1245, unit = "ohm", src = "S1", fidelity = "datasheet" }        # interphase 124.5 mOhm
+i_peak          = { value = 25.06, unit = "A", src = "S1", fidelity = "datasheet" }
+p_max           = { value = 601.0, unit = "W", src = "S1", fidelity = "datasheet" }
+v_input         = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }            # "Input Voltage 24V"
+configuration   = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0252, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.0163, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.0015, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_protrusion = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_pattern_a = { value = 0.012, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_pattern_b = { value = 0.012, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+lead_length     = { value = 0.16, unit = "m", src = "S1", fidelity = "datasheet" }            # 22 AWG
+kt              = { value = 0.003820, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*2500) = 0.003820 N*m/A." }
+
+[geometry]
+shape = "cylinder"
+size = [0.0126, 0.00815]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.12x12.m2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.1.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0163]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 25.06, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 22 AWG phase leads, 160 mm (S1 'Lead Length 160mm, 22AWG'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 22 AWG, 160 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0126, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the lead gauge and length (22AWG, 160mm), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 25.06 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 25.06 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 25.06 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://thingbits.in/products/iflight-xing2-1806-unibell-brushless-motor"
+title = "Thingbits - iFlight XING2 1806 Unibell Brushless Motor (iFlight specification table)"
+accessed = "2026-10-07"
+quote = "Model|XING2 1806 Motor|Configuration|12N14P|Input Voltage|24V|1600KV|2500KV|Peak Current|13.99A|25.06A|Max Power|336W|601W|Interphase Resistance|320mΩ|124.5mΩ|Dimensions|25.2mm x 16.3mm|Mounting Holes|12 x 12mm, φ2mm|Shaft Diameter|1.5mm|Shaft Protruding Length|4mm|Lead Length|160mm, 22AWG|Weight (with wires)|20.2g"

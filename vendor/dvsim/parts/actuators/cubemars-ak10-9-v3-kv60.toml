@@ -1,0 +1,187 @@
+id = "cubemars-ak10-9-v3-kv60"
+name = "CubeMars AK10-9 V3.0 KV60 robotic actuator (9:1 QDD-class)"
+category = "actuator.bldc.qdd"
+vendor = "CubeMars"
+part_number = "AK10-9 V3.0 KV60"
+url = "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html"
+
+# Frame: origin on the output axis at the output face; +z = out of the output face (output axis); cylindrical body, diameter 98 mm, length 61.7 mm, occupies z in [-0.0617, 0].
+# Which end carries the output flange, and the flange/mounting hole patterns, are in CubeMars' drawings (not retrieved); ports below are opaque family tags.
+# Efficiency is NOT derivable: "Peak current" is DC bus current (ADC) and no gearbox efficiency is published. No back-drive torque is published for this model.
+
+[params]
+mass               = { value = 0.940,   unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_diameter      = { value = 0.098,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_length        = { value = 0.0617,  unit = "m",      src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 9.0,     unit = "1",      src = "S1", fidelity = "datasheet" }
+v_rated            = { value = 48.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+torque_rated       = { value = 18.0,    unit = "N*m",    src = "S1", fidelity = "datasheet" }
+torque_peak        = { value = 53.0,    unit = "N*m",    src = "S1", fidelity = "datasheet" }
+speed_rated        = { value = 24.609,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 235 rpm
+speed_no_load      = { value = 33.510,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 320 rpm, output side
+current_rated      = { value = 10.7,    unit = "A",      src = "S1", fidelity = "datasheet" }  # ADC
+current_peak       = { value = 31.9,    unit = "A",      src = "S1", fidelity = "datasheet" }  # ADC
+power_rated        = { value = 442.0,   unit = "W",      src = "S2", fidelity = "datasheet" }
+kv                 = { value = 60.0,    unit = "rpm/V",  src = "S1", fidelity = "datasheet" }
+kt_motor_published = { value = 0.16,    unit = "N*m/A",  src = "S1", fidelity = "datasheet" }  # motor side
+ke_published       = { value = 16.7,    unit = "V/krpm", src = "S1", fidelity = "datasheet" }
+r_phase_to_phase   = { value = 0.248,   unit = "ohm",    src = "S1", fidelity = "datasheet" }
+l_phase_to_phase   = { value = 2.13e-4, unit = "H",      src = "S1", fidelity = "datasheet" }
+rotor_inertia      = { value = 1.002e-4, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }  # 1002 g.cm^2, motor-side rotor assumed
+motor_constant_km  = { value = 0.32,    unit = "N*m/sqrt(W)", src = "S1", fidelity = "datasheet" }
+tau_mechanical     = { value = 5.0e-4,  unit = "s",      src = "S1", fidelity = "datasheet" }  # 0.5 ms
+tau_electrical     = { value = 9.3e-4,  unit = "s",      src = "S1", fidelity = "datasheet" }  # 0.93 ms
+pole_pairs         = { value = 21,      unit = "1",      src = "S1", fidelity = "datasheet" }
+slots              = { value = 36,      unit = "1",      src = "S1", fidelity = "datasheet" }
+winding            = { value = "star",  unit = "-",      src = "S1", fidelity = "datasheet" }
+encoder_inner      = { value = "magnetic, 21 bit", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_outer      = { value = "magnetic, 15 bit", unit = "-", src = "S1", fidelity = "datasheet" }
+
+# --- derived electrical model ---
+ke_si = { value = 0.15948, unit = "V*s/rad", fidelity = "derived", derivation = "KE = 16.7 V/krpm = 16.7/104.72 = 0.15948 V*s/rad (line-to-line, motor side). Agrees with KT 0.16 and with 60/(2*pi*KV) = 60/(2*pi*60) = 0.15915." }
+r_phase_equivalent_wye = { value = 0.124, unit = "ohm", fidelity = "derived", derivation = "Equivalent-wye phase resistance = R_phase_to_phase / 2 = 0.248/2 = 0.124 ohm (star winding)." }
+kt_output_ideal = { value = 1.44, unit = "N*m/A", fidelity = "derived", derivation = "KT_motor * N = 0.16 * 9 = 1.44 N*m per A (lossless gearbox). Check: 31.9 A * 1.44 = 45.9 N*m vs published 53 N*m peak (ratio 1.15; DC-bus current is not phase current, so only an approximate cross-check)." }
+j_reflected_output = { value = 8.116e-3, unit = "kg*m^2", fidelity = "estimated", rationale = "J_rotor * N^2 = 1.002e-4 * 81. CubeMars does not state whether the published inertia is rotor-only or reflected; rotor-only is the usual convention for this field." }
+noload_speed_check = { value = 320.0, unit = "rpm", fidelity = "derived", derivation = "48 V * KV 60 / 9 = 320 rpm, matching the published no-load speed." }
+kt_motor = { value = 0.15915, unit = "N*m/A", fidelity = "derived", derivation = "Kt = Ke = 60 / (2 pi KV) = 60 / (2 pi 60) = 0.15915 N*m/A (the published KT 0.16 agrees)." }
+efficiency = { value = 0.855, unit = "1", fidelity = "estimated", rationale = "Not derivable: 53 N*m / (Kt N 31.9 A ADC) = 1.15 > 1, so the published peak current is the DC-bus current, not the winding current (see kt_output_ideal). The sibling AK70-9 (same 9:1 planetary family, same 21 pole pairs) has 0.855 derived from its sheet; taken here (+-0.1)." }
+price = { value = 698.90, unit = "USD", fidelity = "datasheet", src = "S3" }  # CubeMars product page, seen 2026-10-18, USD (US storefront), ex shipping; resellers list 699-1,271
+
+# --- Qdd device params (leg study, docs/dog/leg-study.md; same field names as steadywin-gim8108-8 so a leg's device map reads them) ---
+i_limit_phase = { value = 43.3, unit = "A", fidelity = "estimated", rationale = "Winding current at the published 53 N*m peak: 53 / (Kt 0.15915 x N 9 x eta 0.855) = 43.3 A (the sheet gives only the 31.9 A DC-bus peak, which is smaller because the bus current is the phase current times the duty). Inherits eta's +-0.1." }
+c_th_winding = { value = 80.0, unit = "J/K", fidelity = "estimated", rationale = "Not published. The GIM8108-8 file takes 60 J/K for a 378 g motor; this actuator is 940 g in total with a 98 x 61.7 mm outrunner, so about 1.3 x: 80 J/K (+-50 %)." }
+r_th_winding = { value = 0.85, unit = "K/W", fidelity = "derived", derivation = "current_rated 10.7 A (ADC) is a winding current of 10.7 x 43.3 / 31.9 = 14.5 A; it must settle at 80 degC from 25 degC under the Qdd thermal law (docs/models.md 'Qdd'; same method as the GIM8108-8 file): R(80) = 0.248 x 1.236 = 0.3065 ohm, P = 14.5^2 x 0.3065 = 64.4 W, R_th = 55 K / 64.4 W = 0.85 K/W." }
+encoder_cpr = { value = 65536, unit = "1", fidelity = "estimated", rationale = "The MIT-mode position field is 16 bit; the 21 bit inner / 15 bit outer encoders (S1) are not both reported over the protocol." }
+can_cmd_hz = { value = 1000.0, unit = "Hz", fidelity = "estimated", rationale = "Driver command processing rate; MIT-mode drivers of this class process CAN frames at 1 kHz or more. The dog sends 500 Hz (spec s6)." }
+can_latency = { value = 0.001, unit = "s", fidelity = "estimated", rationale = "One CAN frame at 1 Mbit/s (~0.13 ms) + driver loop; 1 ms (one physics tick) taken." }
+mit_kp_max = { value = 500.0, unit = "N*m/rad", fidelity = "estimated", rationale = "MIT-mode protocol range convention (KP 0..500)." }
+mit_kd_max = { value = 5.0, unit = "N*m*s/rad", fidelity = "estimated", rationale = "MIT-mode protocol range convention (KD 0..5)." }
+mit_tau_ff_max = { value = 53.0, unit = "N*m", fidelity = "derived", derivation = "= torque_peak (output side): a larger feed-forward is saturated by i_limit_phase anyway." }
+can_timeout = { value = 0.1, unit = "s", fidelity = "estimated", rationale = "Command-loss watchdog of the driver; 0.1 s = 50 missed 500 Hz frames." }
+kd_timeout = { value = 1.0, unit = "N*m*s/rad", fidelity = "estimated", rationale = "Damping-mode gain on command loss (timeout_mode 0): soft enough not to slam a falling leg." }
+temp_fault = { value = 100.0, unit = "degC", fidelity = "estimated", rationale = "Driver over-temperature threshold not retrieved; 100 degC as for the GIM8108-8 file." }
+temp_derate_start = { value = 80.0, unit = "degC", fidelity = "estimated", rationale = "20 K below temp_fault (linear current derate, docs/models.md 'Qdd')." }
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.cubemars-ak10-9-v3-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Body mounting pattern is in CubeMars' drawings (not retrieved); opaque family tag. Symmetry 1 is the conservative default."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "flange.cubemars-ak10-9-v3-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Output flange pattern is in CubeMars' drawings (not retrieved); opaque family tag."
+
+[[ports]]
+name = "power"
+pins = ["PWR.1", "PWR.2"]
+kind = "power"
+type = "xt30-2+2"
+gender = "male"
+role = "sink"
+v_max = { value = 48.0, unit = "V", src = "S1", fidelity = "datasheet" }  # rated voltage; absolute maximum not published on the page
+i_max = { value = 10.7, unit = "A", src = "S1", fidelity = "datasheet" }  # rated ADC
+i_peak = { value = 31.9, unit = "A", src = "S1", fidelity = "datasheet" }  # peak ADC
+note = "Black XT30 2+2 connector integrates power and CAN (S2). Minimum operating voltage not published."
+
+[[ports]]
+name = "can"
+pins = ["PWR.3", "PWR.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN is on the same black XT30 2+2 connector as power (S2). Bit rate and logic levels are in the product manual, not retrieved."
+
+[[ports]]
+name = "uart"
+pins = ["UART.1", "UART.2", "UART.3"]
+kind = "signal"
+type = "cjt-3pin-serial"
+gender = "male"
+note = "White CJT-3pin connector for the upper computer and parameter tuning (S2). Levels not retrieved."
+
+# Pin level (literature): pin order and colours are from the CubeMars AK V3 driver-board manual (P1), which lists the same XT30PW(2+2)-M and A1257WR-S-3P onboard connectors as S2; the actuator page itself gives no pin table.
+[[connectors]]
+id = "PWR"
+name = "XT30PW(2+2)-M power + CAN"
+type = "xt30-2+2"
+port_type = "xt30-2+2"
+gender = "male"
+pos = [0.03, 0.0, -0.0617]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+src = "P1"
+fidelity = "literature"
+rows = 1
+cols = 4
+pitch = 0.0025
+rationale = "Pin order is from the AK54 V3 driver-board manual, not this actuator's own sheet; same connector part number. Pin pitch (2.5 mm, in-line) is an estimate; the manual gives no dimensions."
+pose_rationale = "Connector location on the rear cover is not documented in retrieved text: placed on the rear face at z = -body_length, offset 30 mm from the axis (positional estimate)."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_max = 48.0, i_max = 10.7, note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io", note = "white" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io", note = "blue" },
+]
+
+[[connectors]]
+id = "UART"
+name = "A1257WR-S-3P serial"
+type = "cjt-3pin-serial"
+port_type = "cjt-3pin-serial"
+gender = "male"
+pos = [-0.03, 0.0, -0.0617]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+src = "P1"
+fidelity = "literature"
+rows = 1
+cols = 3
+pitch = 0.00125
+rationale = "Pin order is from the AK54 V3 driver-board manual (a second CubeMars manual lists TX and RX swapped); not this actuator's own sheet. Pitch 1.25 mm is inferred from the A1257 series name, not stated."
+pose_rationale = "Rear-face placement is a positional estimate; actual location is not in retrieved text."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "black" },
+  { number = 2, name = "RX", kind = "signal", dir = "in", note = "serial signal input, yellow" },
+  { number = 3, name = "TX", kind = "signal", dir = "out", note = "serial signal output, green" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.cubemars.com/images/file/202511/AK54-4810-1C-A2%20Driver%20Installation%20Instructions.pdf"
+title = "CubeMars AK54-4810-1C-A2 Driver Installation Instructions V1.0.0, 4.2 Driver Interface Pin Definitions"
+accessed = "2026-10-09"
+quote = "Serial Communication: 1 Serial signal ground (GND) Black; 2 Serial signal input (RX) Yellow; 3 Serial signal output (TX) Green. Power input and CAN communication: 1 Positive Pole (+) Red; 2 Negative Pole (-) Black; 3 CAN communication high side (CAN_H) White; 4 CAN communication low side (CAN_L) Blue. Onboard interface model: A1257WR-S-3P (CJT), XT30PW(2+2)-M (AMASS)."
+
+[[sources]]
+id = "S1"
+url = "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html"
+title = "CubeMars AK10-9 V3.0 KV60 product page, Specification table"
+accessed = "2026-10-07"
+quote = "Motor Dimensions| Ф98*61.7mm| Motor Weight| 940g| Peak Torque| 53Nm| No-load Speed| 320rpm || Specification | Application| Foot Robots, Exoskeleton Robots, AGV| Rated Voltage (v)| 48| Control Method| FOC| No-load speed (rpm)| 320| Temperature Range| -20~50℃| Rated Torque (Nm)| 18| Winding Type| star| Rated Speed (rpm)| 235| Insulation Level| C| Rated Current (ADC)| 10.7| Insulation Voltage Withstand| 1000V 5mA/2s| Peak Torque (Nm)| 53| Insulation Resistance| 1000V 10MΩ| Peak Current (ADC)| 31.9| Pole Pairs| 21| KV (rpm/V)| 60| Reduction Ratio| 9∶1| KT (Nm/A)| 0.16| Number of Slots| 36| Temperature Sensor| NTC MF51B 103F3950| KE V/krpm| 16.7| Phase to phase resistance mΩ| 248| Maximum Torque Density(Nm/kg)| 86| Phase to phase Inductance μH| 213| Inner Ring Encoder Type| Magnetic| Rotor Inertia (gcm²)| 1002| Inner Ring Encoder Resolution| 21bit| Motor constant(Nm/√W)| 0.32| Outer Ring Encoder Type| Magnetic| Mechanical Time Constant (ms)| 0.5| Outer Ring Encoder Resolution| 15bit| Electrical Time Constant (ms)| 0.93| Number of Encoder| 2| Motor Weight (g)| 940"
+
+[[sources]]
+id = "S2"
+url = "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html"
+title = "CubeMars AK10-9 V3.0 KV60 product page, interface text and product comparison row"
+accessed = "2026-10-07"
+quote = "Black XT30 2+2 connector integrates power and CAN signals; white CJT-3pin connector for upper computer and parameter tuning and parameter tuning || AK Series Robotic Actuator| AK10-9 V3.0 KV60| 48| 442| 18| 10.7| 235| 53| 31.9| 320| 9:1| 940| Ф98*61.7| Yes| Dual"
+
+[[sources]]
+id = "S3"
+url = "https://www.cubemars.com/product/ak10-9-v3-0-kv60-robotic-actuator.html"
+title = "CubeMars AK10-9 V3.0 KV60 product page, price"
+accessed = "2026-10-18"
+quote = "$698.90 (the only price shown; text from a page-fetch summary, not verbatim). Other listings seen 2026-10-18: store.cubemars.com 798.90 USD, openelab 934.99 USD, aifitlab 698.90 USD (backorder)."

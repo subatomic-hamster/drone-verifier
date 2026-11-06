@@ -1,0 +1,27 @@
+id = "pla"
+name = "PLA (NatureWorks Ingeo 4043D 3D-printing grade)"
+category = "material"
+vendor = "NatureWorks"
+part_number = "Ingeo 4043D"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+[params]
+density         = { value = 1240, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 3.6e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+flexural_modulus = { value = 3.8e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[params.printed_density_factor]
+value = 0.95
+unit = "1"
+fidelity = "estimated"
+rationale = "FDM parts with ~100% perimeters/infill are a few percent below bulk density because of inter-line voids; 0.95 is a typical figure but no source was fetched. Apply only to bulk density when modelling printed parts; infill percentage overrides it."
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.96, 0.46, 0.08, 1.0]  # SO-101 orange
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792 ... Tensile Modulus, psi (MPa) 524,000 (3.6) ... Flexural Modulus, psi (MPa) 555,000 (3.8)  (the MPa column is as printed; 524,000 psi = 3.6 GPa)"

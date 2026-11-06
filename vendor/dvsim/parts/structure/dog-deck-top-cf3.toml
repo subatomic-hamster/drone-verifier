@@ -1,0 +1,113 @@
+id = "dog-deck-top-cf3"
+name = "CUSTOM: dog top deck, 3 mm carbon-fibre sheet, 420 x 230 mm (not a purchased part; cut it from stock)"
+category = "plate"
+vendor = "custom (made to this drawing)"
+part_number = "none: custom part, see assemblies/dog/dog.toml"
+
+# CUSTOM PART, labelled as such. Frame: origin at the centre of the TOP face, +x forward, z up; the sheet spans x in [-0.21, 0.21], y in [-0.115, 0.115], z in [-0.003, 0]. It lies on the
+# bulkhead deck flanges (underside at the flange tops) and on the two side-plate flanges, and carries the compute tray and the head. 0/90 twill sheet as parts/structure/cf-plate-3mm.toml.
+
+[params]
+thickness = { value = 0.003, unit = "m", fidelity = "estimated", rationale = "Design choice: the 3 mm sheet of cf-plate-3mm (actual 2.8 mm); the layout is solved for 3 mm." }
+length    = { value = 0.42, unit = "m", fidelity = "estimated", rationale = "Design choice: the inner length between the two bulkheads (cad/dog/params.py BODY_L)." }
+width     = { value = 0.23, unit = "m", fidelity = "estimated", rationale = "Design choice: the side-plate flanges (centre lines at y = +-0.108) plus 2 x 7 mm edge." }
+
+[params.mass]
+value = 0.397
+unit = "kg"
+fidelity = "derived"
+derivation = "Areal mass 4.11 kg/m2 (cf-plate-3mm, S1 of that part) x 0.42 m x 0.23 m = 0.397 kg; holes and cut-outs neglected (an upper bound by a few percent)."
+
+[params.price]
+value = 94.7
+unit = "USD"
+fidelity = "derived"
+derivation = "Sheet price per area x deck area: Elevated Materials 3 mm twill carbon sheet 300 x 600 mm = 176.54 USD (elevatedmaterials.com product page, seen 2026-10-16) = 980.8 USD/m2; x 0.0966 m2 = 94.7 USD. LOWER BOUND: one deck does not fit the leftover of a 300 x 600 mm sheet after the other (a second sheet would raise the pair to ~353 USD), and the cutting (waterjet) is not priced: the vendor's own cuts are tile-saw rectangles only."
+
+# Four boxes = the 420 x 230 mm sheet with a 21 x 30 mm cable slot at x in [0.052, 0.073], |y| < 0.015 m (between the compute tray and the head mount): the lidar's 12 V lead
+# goes through it to the power module below (without a slot the wire router has to draw it through the sheet). The part mass above is the full sheet (the slot is 0.7 % of it).
+[[geometry.shapes]]
+shape = "box"
+size = [0.131, 0.115, 0.0015]
+pos = [-0.079, 0.0, -0.0015]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0685, 0.115, 0.0015]
+pos = [0.1415, 0.0, -0.0015]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.05, 0.0015]
+pos = [0.0625, 0.065, -0.0015]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.05, 0.0015]
+pos = [0.0625, -0.065, -0.0015]
+
+[[ports]]
+name = "bulk_f"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.21, 0.0, -0.003]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Front edge, underside: seats on the front bulkhead's deck_top port (flange top)."
+
+[[ports]]
+name = "bulk_r"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.21, 0.0, -0.003]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Rear edge, underside: seats on the rear bulkhead's deck_top port (the rear bulkhead is the front one turned 180 deg about z)."
+
+[[ports]]
+name = "side_l"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.108, -0.003]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Underside above the left side plate's inboard flange."
+
+[[ports]]
+name = "side_r"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, -0.108, -0.003]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Underside above the right side plate's inboard flange."
+
+[[ports]]
+name = "head"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.14, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Seat of the head mount (lidar + depth camera), at the nose."
+
+[[ports]]
+name = "compute"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.075, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Seat of the compute tray behind the head."

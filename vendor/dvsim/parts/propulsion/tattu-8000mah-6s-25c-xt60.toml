@@ -1,0 +1,70 @@
+id = "tattu-8000mah-6s-25c-xt60"
+name = "Tattu G-Tech 8000mAh 6S 22.2V 25C LiPo pack, XT60"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA80006S25X6"
+url = "https://rcdrone.top/products/src-taa80006s25x6-tattu-g-tech-6s-8000mah-25c-22-2v-lipo-battery-pack-with-xt60-plug"
+
+# Part frame: origin at the pack centre, x along length (168 mm), y along width (65 mm), z up (51 mm). Pack-side connector gender is a modelling
+# convention (neutral mates either). Internal resistance not published for this model: pack value estimated.
+
+[params]
+capacity_ah     = { value = 8.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 28800.0, unit = "C", fidelity = "derived", derivation = "8.0 Ah x 3600 s/h = 28800 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 25, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 50, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 200.0, unit = "A", fidelity = "derived", derivation = "25 C x 8.0 Ah = 200 A (rating label only)." }
+mass            = { value = 1.160, unit = "kg", src = "S1", fidelity = "datasheet" }          # 1160 g (+-20 g)
+mass_tol        = { value = 0.020, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.168, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.051, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.120, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0195, unit = "ohm", fidelity = "estimated", rationale = "Tattu publishes no internal resistance for this pack. Per-cell DC resistance scaled inversely with capacity, R_cell = 0.026 ohm*Ah / capacity (anchored to the 4-6 mOhm/cell at ~5 Ah used for the 5200 mAh Tattu in parts/drone/tattu-4s-5200mah-35c.toml): 0.026/8.0 = 3.25 mOhm/cell x 6 cells = 19.5 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.084, 0.0325, 0.0255]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 200.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 25 C x 8.0 Ah = 200 A (S1 rating label); exceeds the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.084, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-taa80006s25x6-tattu-g-tech-6s-8000mah-25c-22-2v-lipo-battery-pack-with-xt60-plug"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu G-Tech 6S 8000mAh 25C 22.2V LiPo pack with XT60"
+accessed = "2026-10-07"
+quote = "Minimum Capacity|8000mAh|Voltage|22.2V|Configuration|6S1P (6 Cells)|Discharge Rate|25C|Max Burst Discharge Rate|50C|Main Connector Type|XT60|Dimensions|168mm (L) x 65mm (W) x 51mm (H)|Net Weight|1160g (±20g)|Discharge Wire Length|120mm|Wire Gauge|AWG10#"

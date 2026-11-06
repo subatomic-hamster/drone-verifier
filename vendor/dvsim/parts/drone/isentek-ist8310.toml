@@ -1,0 +1,48 @@
+id = "isentek-ist8310"
+ports_note = "Data-only magnetometer chip that lives inside the Pixhawk 6C and the Holybro M8N GPS module (holybro-pixhawk-6c, holybro-m8n-gps); it is never mounted or wired on its own, so it has no ports."
+name = "iSentek IST8310 3-axis magnetometer (Pixhawk 6C and Holybro GPS compass)"
+category = "sensor.mag"
+vendor = "iSentek"
+part_number = "IST8310"
+url = "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2407090929_iSentek-IST8310_C2683055.pdf"
+
+# 1 uT = 1e-6 T.
+[params]
+range_xy       = { value = 1.6e-3, unit = "T", src = "S1", fidelity = "datasheet" }
+range_z        = { value = 2.5e-3, unit = "T", src = "S1", fidelity = "datasheet" }
+resolution     = { value = 3.0e-7, unit = "T/LSB", src = "S1", fidelity = "datasheet" }
+sensitivity    = { value = 3.3, unit = "LSB/uT", src = "S1", fidelity = "datasheet" }
+zero_gauss_offset_rms = { value = 3.0e-7, unit = "T", src = "S1", fidelity = "datasheet" }
+offset_tempco  = { value = 2.4e-8, unit = "T/K", src = "S1", fidelity = "datasheet" }
+sensitivity_tempco = { value = 0.016, unit = "%/K", src = "S1", fidelity = "datasheet" }
+odr_max        = { value = 200, unit = "Hz", src = "S1", fidelity = "datasheet" }
+odr_min        = { value = 1, unit = "Hz", src = "S1", fidelity = "datasheet" }
+hysteresis     = { value = 0.1, unit = "%FS", src = "S1", fidelity = "datasheet" }
+
+[params.rms_noise]
+value = 3.0e-7
+unit = "T"
+fidelity = "estimated"
+rationale = "IST8310 datasheet v1.2 gives resolution 0.3 uT/LSB and says low noise is obtained by soft averaging but publishes no noise figure. One LSB (0.3 uT) is used as the rms noise per sample at default averaging, which is a conservative upper-ish bound for a 16-bit AMR sensor; replace if a measured noise (e.g. PX4 log of a static 6C) is found."
+
+[visual]                            # cosmetic only: the bare LGA package, size from the datasheet
+src = "V1"
+note = "3.0 x 3.0 x 1.0 mm 16-pin LGA (datasheet)."
+
+[[visual.elements]]
+gen = "sensor_ic"
+params = { size = [0.003, 0.003, 0.001] }
+
+[[sources]]
+id = "V1"
+url = "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2407090929_iSentek-IST8310_C2683055.pdf"
+title = "IST8310 3D Magnetometer Datasheet Version 1.2 (package size)"
+accessed = "2026-10-08"
+quote = "iSentek IST8310 is a 3-axis digital magnetometer with 3.0x3.0x1.0mm3, 16-pin LGA package."
+
+[[sources]]
+id = "S1"
+url = "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2407090929_iSentek-IST8310_C2683055.pdf"
+title = "IST8310 3D Magnetometer Datasheet Version 1.2 (iSentek; LCSC copy)"
+accessed = "2026-10-07"
+quote = "Dynamic Range MDR_XY TA=25 oC ±1600 MDR_Z TA=25 oC ±2500 uT ... Resolution RESO 0.3 uT/LSB ... Sensitivity SEN 3.3 LSB/uT ... Zero Gauss Offset ZGD RMS value ±0.3 uT ... Zero-B Offset Temperature Drift TD_O -40 ~ 85 oC 0.024 uT/ oK ... Output Data Rate ODR 1 200 Hz"

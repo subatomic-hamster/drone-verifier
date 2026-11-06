@@ -1,0 +1,159 @@
+id = "amass-xt60"
+name = "Amass XT60 connector pair (XT60-M / XT60-F)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT60-F / XT60-M"
+url = "https://mrsdprojects.ri.cmu.edu/2025teamb/wp-content/uploads/sites/84/2025/05/xt60.pdf"
+
+# Used on the Tattu 4S pack, the PM02 V3 input/output and the PDB battery input. Datasheet "CR" is listed separately for
+# XT60-F and XT60-M (0.55 mOhm each); whether a mated pair is 0.55 or 1.1 mOhm is not stated, so both are recorded.
+# The PDF is hosted on a CMU course site (copy of the Amass V1.2 datasheet).
+
+[params]
+contact_resistance = { value = 0.00055, unit = "ohm", src = "S1", fidelity = "datasheet" }   # per datasheet "CR 0.55 mOhm"
+contact_resistance_mated_pair = { value = 0.0011, unit = "ohm", fidelity = "derived", derivation = "Two datasheet halves (XT60-F 0.55 mOhm + XT60-M 0.55 mOhm, each listed with the same CR) in series: 2 x 0.00055 = 0.0011 ohm. Upper-bound reading; if Amass's CR already covers a mated pair, use 0.00055." }
+current_rated      = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }        # "RC" rated current
+current_burst      = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }        # "MC" instantaneous current
+voltage_rated      = { value = 500.0, unit = "V", src = "S1", fidelity = "datasheet" }       # DC 500 V
+recommended_wire   = { value = "12 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+temp_max           = { value = 120.0, unit = "degC", src = "S1", fidelity = "datasheet" }
+price          = { value = 2.0, unit = "USD", fidelity = "derived", derivation = "KiwiQuads lists one Amass XT60 pair (male + female) at 3.49 NZD (https://www.kiwiquads.co.nz/product/amass-xt60-pair/, seen in a web search 2026-10-11, page not fetched) x an assumed 0.58 USD/NZD = 2.0 USD; exchange rate assumed, not looked up." }
+mass               = { value = 0.0045, unit = "kg", fidelity = "estimated", rationale = "Mass is not on the Amass datasheet. 4.5 g per mated pair is an unverified order-of-magnitude assumption (small brass/PA connector pair); matters only at the gram level and should be replaced by a weighed value." }
+
+[params.mass_tol]
+value = 0.002
+unit = "kg"
+fidelity = "estimated"
+rationale = "mass (4.5 g per mated pair) is an unverified order-of-magnitude assumption (see mass rationale), so a +-2 g bound (about +-45%) is carried."
+
+# One part = one mated-pair family. 'male' and 'female' are the two halves; each half's solder cup takes a wire-lead end
+# (awg-* parts, type wire-lead) or a board pad. No geometry: the connector envelope is not recorded (instances ride on the host part).
+[[ports]]
+name = "male"
+pins = ["M.1", "M.2"]
+kind = "power"
+type = "xt60"
+gender = "male"
+v_max = { value = 500.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "XT60-M half. i_max = rated current RC 30 A, i_burst = instantaneous current MC 60 A, v_max = DC 500 V (datasheet quote); contact resistance per half in params."
+
+[[ports]]
+name = "female"
+pins = ["F.1", "F.2"]
+kind = "power"
+type = "xt60"
+gender = "female"
+v_max = { value = 500.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "XT60-F half; same ratings as the male half."
+
+[[ports]]
+name = "wire_male"
+pins = ["WM.1", "WM.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+note = "Solder cup of the XT60-M half (recommended wire 12 AWG, params.recommended_wire); joins an awg-* 'end_a'/'end_b' wire-lead port."
+
+[[ports]]
+name = "wire_female"
+pins = ["WF.1", "WF.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+note = "Solder cup of the XT60-F half; as wire_male."
+
+# Pin level (estimated): XT60 is a 2-pole connector pair; contacts numbered 1..2 on each half, solder cup n joins contact n of its half.
+[[connectors]]
+id = "M"
+name = "XT60-M mating contacts (2-pole)"
+type = "xt60"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "Two contacts per half is the XT60 design; S1 gives no contact numbering, polarity marking or pole spacing, so contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "F"
+name = "XT60-F mating contacts (2-pole)"
+type = "xt60"
+gender = "female"
+pos = [0.05, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "As M."
+pose_rationale = "Second half placed 50 mm to the side so the two halves do not overlap (catalogue part with no assembled geometry)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WM"
+name = "XT60-M solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WF"
+name = "XT60-F solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.05, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "As WM."
+pose_rationale = "Below the F half (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://mrsdprojects.ri.cmu.edu/2025teamb/wp-content/uploads/sites/84/2025/05/xt60.pdf"
+title = "AMASS XT60-F / XT60-M datasheet V1.2 (Changzhou Amass Electronics)"
+accessed = "2026-10-06"
+quote = "产品型号 XT60-F 接触电阻 Item No. CR 0.55mΩ 额定电压 DC 500V 额定电流 30A RC 瞬时电流 60A MC 推荐使用次数 1000 TIMES 推荐线规 12AWG 工作温度 -20℃ to 120℃"

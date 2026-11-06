@@ -1,0 +1,146 @@
+id = "hobbywing-platinum-120a-v5-esc"
+name = "Hobbywing Platinum 120A V5 ESC (3-8S, 5-12 V / 10 A switch-mode BEC)"
+category = "esc"
+vendor = "Hobbywing"
+part_number = "HW30203402"
+url = "https://originhobbies.com/shop/esc-speed-controllers/hobbywing-platinum-120a-v5-esc-8s-bec-12v-10a-hw30203402/"
+
+# Single-motor ESC for a ducted fan (the EDF hopper, examples/hopper). A helicopter-class ESC; the retailer lists no resistance, PWM frequency or
+# mounting holes. Part frame: origin at the centre of the underside, x along the 83.2 mm length. The BEC is not modelled by this part (the hopper
+# runs its servos from two Pololu regulators on the pack, so the BEC stays unused).
+
+[params]
+mass               = { value = 0.1504, unit = "kg", src = "S1", fidelity = "datasheet" }   # "150.4g", with wires
+size_length        = { value = 0.0832, unit = "m", src = "S1", fidelity = "datasheet" }
+size_width         = { value = 0.0371, unit = "m", src = "S1", fidelity = "datasheet" }
+size_height        = { value = 0.0225, unit = "m", src = "S1", fidelity = "datasheet" }    # "without fan"
+current_continuous = { value = 120.0, unit = "A", src = "S1", fidelity = "datasheet" }
+current_peak       = { value = 150.0, unit = "A", src = "S1", fidelity = "datasheet" }
+v_cells_min        = { value = 3, unit = "cells", src = "S1", fidelity = "datasheet" }
+v_cells_max        = { value = 8, unit = "cells", src = "S1", fidelity = "datasheet" }
+bec_current_continuous = { value = 10.0, unit = "A", src = "S1", fidelity = "datasheet" }
+r_on_total         = { value = 0.0015, unit = "ohm", fidelity = "estimated", rationale = "ESC FET resistance is unpublished. 1.5 mOhm total series (two conducting FETs of a 120 A stage at ~0.5 mOhm each plus traces, solder and the pack-side wires' share) as typical for 100-150 A hobby ESCs; the loss at 105 A is then 17 W, 0.7 % of the 2.5 kW input. Treat as +-2x." }
+switching_loss_fraction = { value = 0.01, unit = "1", fidelity = "estimated", rationale = "Switching + dead-time loss as a fraction of the motor-side power, unpublished. 1 % (24 kHz class PWM, ~30 ns edges at 100 A: f t_sw V I / 2 ~ 0.4 % plus dead-time conduction). +-2x." }
+quiescent_current  = { value = 0.05, unit = "A", fidelity = "estimated", rationale = "Bus-side current of the MCU, gate drivers and the BEC's switcher at no load, drawn also at zero throttle; unpublished. 50 mA (1.1 W at 22 V) is the usual order for a BEC-equipped 100 A+ ESC. +-3x." }
+
+[geometry]
+shape = "box"
+size = [0.0416, 0.01855, 0.01125]   # half-extents: 83.2 x 37.1 x 22.5 mm / 2
+pos = [0.0, 0.0, 0.01125]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat (double-sided tape / zip ties on a flat deck): the retailer gives no mounting holes."
+
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+lead = {}   # the battery leads ship on the ESC and are inside its 150.4 g (the retailer's weight 'with wires'); gauge and length not published
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V from S1 '3-8S'." }
+i_max = { value = 120.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 150.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Battery leads (connector not stated in S1; the pack's XT60 is not rated for 105 A continuous, a DRC finding the hopper accepts as a short-burst current)."
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_from = "power_in"
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V." }
+i_max = { value = 120.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 150.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "v_from = power_in: the bridge's output swing is the voltage on its input port (up to the 8S maximum), never more, so the design-rule check takes the net's voltage from the pack (6S: 25.2 V) rather than from this port's 8S rating when it checks the motor's v_max."
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1 (retailer table) gives ratings, the BEC and the size only: no lead gauge, connector or throttle-lead pinout. Leads are
+# drawn at the ends (battery in on -x, motor and throttle out on +x); contact counts follow from the port types (2-wire supply, 3 phases, a
+# throttle signal + ground pair). The BEC output (5-12 V, 10 A) is not modelled by this part, so it has no pins here. All of it is estimated.
+[[connectors]]
+id = "IN"
+name = "battery leads"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.0416, 0.0, 0.01125]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.01
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives '120A/150A' and '3-8S' but no lead gauge, length or connector (the port note says the same); two leads (+, -) are implied by a DC supply input, their exit end is assumed."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", v_max = 33.6, i_max = 120.0, fidelity = "derived", derivation = "v_max 8S x 4.2 V (S1 '3-8S'); i_max the 120 A continuous rating (S1)." },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 120.0, fidelity = "derived", derivation = "The 120 A continuous rating (S1)." },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor output leads"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0416, 0.0, 0.01125]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states the 120 A / 150 A rating only; three phase leads A B C by convention (swapping two reverses the motor), exit end and spacing assumed."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 120.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 120.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 120.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "throttle signal lead"
+type = "servo-lead-2"
+gender = "neutral"
+pos = [0.0416, 0.012, 0.01125]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists the PWM-type input only (port 'signal'); a throttle signal + ground pair is the minimum a PWM input needs. Any BEC conductor of the real harness is not modelled (the part leaves the BEC unused)."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://originhobbies.com/shop/esc-speed-controllers/hobbywing-platinum-120a-v5-esc-8s-bec-12v-10a-hw30203402/"
+title = "Origin Hobbies - Hobbywing Platinum 120A v5 ESC 8S, SBEC 12V/10A (HW30203402), specification table"
+accessed = "2026-10-08"
+quote = "Current (cont./peak) 120A/150A | Cells 3-8S | BEC Voltage 5-12V @ 10A (Switch Mode) | BEC Current (cont./peak) 10A/30A | Weight 150.4g | Dimensions 83.2 x 37.1 x 22.5mm (without fan)"

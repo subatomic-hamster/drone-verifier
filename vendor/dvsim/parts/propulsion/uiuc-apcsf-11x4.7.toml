@@ -1,0 +1,85 @@
+id = "uiuc-apcsf-11x4.7"
+name = "APC Slow Flyer 11x4.7 propeller - UIUC wind-tunnel C_T/C_P data (reference)"
+category = "prop.reference"
+vendor = "APC (propeller); data: UIUC Propeller Data Site (Selig et al.)"
+part_number = "apcsf_11x4.7"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+
+# Literature reference for C_T(J)/C_P(J) of a 11 in x 4.7 in APC Slow Flyer prop (pitch/D = 0.43). Tables transcribed from the UIUC .txt files, rounded to 4 decimals (3 for J, eta):
+# static (J = 0, C_T and C_P vs rpm, all 16 rows) and one advancing run at about 4997 rpm (all 13 rows). Shape reference for similar mass-produced props, not a measurement of any specific
+# part. No mass or ports (reference data only).
+
+[params]
+diameter  = { value = 0.2794, unit = "m", src = "S1", fidelity = "literature" }      # 11 in (list value)
+pitch     = { value = 0.11938, unit = "m", src = "S1", fidelity = "literature" }      # 4.7 in per revolution
+rpm_static_min = { value = 1666, unit = "rpm", src = "S2", fidelity = "literature" }
+rpm_static_max = { value = 6021, unit = "rpm", src = "S2", fidelity = "literature" }
+ct_static_at_max_rpm = { value = 0.1259, unit = "1", src = "S2", fidelity = "literature" }
+cp_static_at_max_rpm = { value = 0.0493, unit = "1", src = "S2", fidelity = "literature" }
+eta_max_approx = { value = 0.620, unit = "1", src = "S3", fidelity = "literature" }   # at J = 0.447 in the 4997 rpm run
+
+[tables.static_ct_cp]
+# UIUC file apcsf_11x4.7_static_pg0526.txt
+columns = ["rpm", "C_T", "C_P"]
+rows = [
+  [1666, 0.0986, 0.0392],
+  [2018, 0.1005, 0.0391],
+  [2271, 0.1022, 0.0396],
+  [2556, 0.1042, 0.0401],
+  [2875, 0.1059, 0.0407],
+  [3144, 0.1074, 0.0411],
+  [3423, 0.1091, 0.0418],
+  [3728, 0.1114, 0.0426],
+  [3994, 0.1128, 0.0432],
+  [4290, 0.1151, 0.0442],
+  [4585, 0.1174, 0.0452],
+  [4853, 0.1191, 0.0460],
+  [5175, 0.1209, 0.0468],
+  [5450, 0.1230, 0.0477],
+  [5710, 0.1249, 0.0486],
+  [6021, 0.1259, 0.0493],
+]
+src = "S2"
+fidelity = "literature"
+
+[tables.advancing_4997rpm]
+# UIUC file apcsf_11x4.7_pg0531_4997.txt (constant rpm about 4997)
+columns = ["J", "C_T", "C_P", "eta"]
+rows = [
+  [0.447, 0.0443, 0.0319, 0.620],
+  [0.475, 0.0372, 0.0301, 0.588],
+  [0.497, 0.0316, 0.0287, 0.548],
+  [0.523, 0.0248, 0.0270, 0.480],
+  [0.550, 0.0173, 0.0251, 0.379],
+  [0.580, 0.0087, 0.0228, 0.221],
+  [0.606, 0.0011, 0.0208, 0.032],
+  [0.628, -0.0054, 0.0190, -0.180],
+  [0.659, -0.0151, 0.0164, -0.609],
+  [0.683, -0.0228, 0.0142, -1.094],
+  [0.713, -0.0317, 0.0117, -1.941],
+  [0.737, -0.0397, 0.0093, -3.130],
+  [0.763, -0.0479, 0.0069, -5.325],
+]
+src = "S3"
+fidelity = "literature"
+
+[[sources]]
+id = "S1"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+title = "UIUC Propeller Database - Volume 1, page notes"
+accessed = "2026-10-07"
+quote = "The propeller size is given in inches, e.g. APC 10x4.7 is a 10-inch diameter propeller with a pitch of 4.7 inch/revolution."
+
+[[sources]]
+id = "S2"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apcsf_11x4.7_static_pg0526.txt"
+title = "UIUC data file apcsf_11x4.7_static_pg0526.txt"
+accessed = "2026-10-07"
+quote = "RPM CT CP / 1666 0.0986 0.0392 / 3728 0.1114 0.0426 / 6021 0.1259 0.0493"
+
+[[sources]]
+id = "S3"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apcsf_11x4.7_pg0531_4997.txt"
+title = "UIUC data file apcsf_11x4.7_pg0531_4997.txt"
+accessed = "2026-10-07"
+quote = "J CT CP eta / 0.447 0.0443 0.0319 0.620 / 0.606 0.0011 0.0208 0.032 / 0.763 -0.0479 0.0069 -5.325"

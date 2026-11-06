@@ -1,0 +1,42 @@
+id = "cuas2-hopper"
+name = "cuas2 hopper (3D printed PETG, M4 head-mounted 24-ball hopper, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "hopper"
+url = "cad/cuas2/modules/feeder.py"
+
+# Mesh in the head frame H (interior about 70 x 62 x 71 mm, 229 cm3, outlet at the rear-bottom corner onto the 40 mm throat); bolted pair with the valve housing, identity transform.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/hopper.stl"
+material = "petg"
+bbox_min = [-0.0548, -0.032, 0.02739]
+bbox_max = [0.0192, 0.032, 0.10354]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame, axis +z: 'a' side of the closure mate to the lid."

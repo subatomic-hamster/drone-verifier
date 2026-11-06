@@ -1,0 +1,98 @@
+id = "sts3215-servo-cable-3pin"
+name = "STS3215 3-pin servo bus cable (5264 2.54 mm connector, 15 cm as shipped)"
+category = "wire"
+vendor = "Feetech (Shenzhen Feite Model Co., Ltd.)"
+part_number = "STS3215 included cable, 5264 3P"
+url = "https://core-electronics.com.au/attachments/uploads/sts3215-smart-servo-datasheet-translated.pdf"
+
+# Each STS3215 ships with one cable; SO-101 daisy-chains servos (pin 1 GND, pin 2 Vcc, pin 3 signal), so servo power current flows
+# through every upstream cable segment. The SO-ARM100 BOM does not list cable length or gauge separately.
+
+[params]
+length_default = { value = 0.15, unit = "m", src = "S1", fidelity = "datasheet" }
+conductors     = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+connector      = { value = "5264 2.54 mm pitch 3-pin (PP housing)", unit = "-", src = "S1", fidelity = "datasheet" }
+awg            = { value = 26, unit = "AWG", fidelity = "estimated", rationale ="Gauge not published by Feetech or the SO-ARM100 repo. 26 AWG is a common size for hobby-servo leads with 2.54 mm crimp terminals; chosen on the pessimistic (higher resistance) side of 22-28 AWG." }
+resistance_per_m = { value = 0.1339, unit = "ohm/m", src = "S2", fidelity = "derived", derivation ="Copper resistance of the assumed 26 AWG conductor from the AWG table (133.9 mOhm/m) = 0.1339 ohm/m per conductor; value tracks the awg estimate above and must be updated if the gauge changes." }
+loop_resistance_default = { value = 0.0402, unit = "ohm", fidelity = "derived", derivation ="Supply + return conductors over the 0.15 m default length: 2 * 0.15 m * 0.1339 ohm/m = 0.0402 ohm per cable segment (connector contact resistance not included)." }
+mass_per_m = { value = 0.0055, unit = "kg/m", fidelity = "estimated", rationale ="Not published. 3 x 26 AWG copper (0.129 mm^2 * 8960 kg/m^3 = 1.16 g/m each, 3.5 g/m) plus roughly 60 % insulation mass = ~5.5 g/m." }
+mass_per_connector = { value = 0.0005, unit = "kg", fidelity = "estimated", rationale ="Not published. A 3-pin 2.54 mm housing with crimped terminals is of the order of 0.5 g." }
+connector_resistance = { value = 0.01, unit = "ohm", fidelity = "estimated", rationale ="Not published. Crimped 2.54 mm terminal pair contact resistance is typically a few to ~20 mOhm per mated contact; 10 mOhm per contact taken." }
+
+# Geometry: none. A wire part has no rigid shape; the builder routes it from length_default (or the actual link-to-link distance) and uses mass_per_m / resistance_per_m.
+[geometry]
+shape = "none"
+
+# Both ends carry the same 5264-3P housing (pins 1 GND, 2 Vcc, 3 signal, S1); it plugs into the servo's female port_a / port_b (feetech-sts3215-c001), so the cable end is the male side.
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "5264-3p"
+gender = "male"
+role = "passthrough"
+pins = ["A.1", "A.2", "A.3"]
+note = "Cable end A; passes GND / Vcc / signal straight through to end_b (3 conductors). No connector current rating published."
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "5264-3p"
+gender = "male"
+role = "passthrough"
+pins = ["B.1", "B.2", "B.3"]
+note = "Cable end B, same pinout as end_a."
+
+# Pin level: a straight 3-wire cable with a 5264-3P plug at each end, pin n to pin n (S1: 1 GND, 2 Vcc, 3 Signal/TTL).
+[[connectors]]
+id = "A"
+name = "plug A (5264-3P)"
+type = "5264-3p"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "A cable has no geometry; the wire router places the ends on the mated sockets."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "Vcc", kind = "power", dir = "io" },
+  { number = 3, name = "Signal/TTL", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "B"
+name = "plug B (5264-3P)"
+type = "5264-3p"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "As A."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "Vcc", kind = "power", dir = "io" },
+  { number = 3, name = "Signal/TTL", kind = "signal", dir = "io" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://core-electronics.com.au/attachments/uploads/sts3215-smart-servo-datasheet-translated.pdf"
+title = "Feetech STS3215 product specification A/0, page 4/8, 6-7 Connectors and Cables (image-based PDF)"
+accessed = "2026-10-06"
+quote = "6-7 Connector and Cable | Type 5264-3P | Material PP | line length Length 15CM | pin definition 1 GND, 2 Vcc, 3 Signal/TTL"
+
+[[sources]]
+id = "S2"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia), table of AWG sizes, copper resistance column"
+accessed = "2026-10-06"
+quote = "26 | 0.0159 | 0.405 | 62.7 | 24.7 | 0.254 | 0.129 | 133.9 | 40.81"

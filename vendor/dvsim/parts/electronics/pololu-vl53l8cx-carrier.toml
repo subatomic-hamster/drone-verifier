@@ -1,0 +1,99 @@
+id = "pololu-vl53l8cx-carrier"
+name = "Pololu VL53L8CX time-of-flight 8x8-zone distance sensor carrier (400 cm)"
+category = "sensor.rangefinder"
+vendor = "Pololu (ST VL53L8CX)"
+part_number = "Pololu item 3419"
+url = "https://www.pololu.com/product/3419"
+
+# Frame: origin at the board centre on the component face; +z out of the sensor window (the sensor looks along +z).
+[params]
+length              = { value = 0.023, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.013, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.003, unit = "m", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.0007, unit = "kg", src = "S1", fidelity = "datasheet" }  # without header pins
+supply_voltage_min  = { value = 3.2, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_typ  = { value = 0.100, unit = "A", src = "S1", fidelity = "datasheet" }  # typical active ranging
+supply_current_peak = { value = 0.150, unit = "A", src = "S1", fidelity = "datasheet" }
+range_max           = { value = 4.0, unit = "m", src = "S1", fidelity = "datasheet" }
+range_min           = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+resolution          = { value = 0.001, unit = "m", src = "S1", fidelity = "datasheet" }  # depth resolution
+zones_max           = { value = 64, unit = "1", src = "S1", fidelity = "datasheet" }  # 8x8 (also 4x4)
+fov_diagonal        = { value = 1.1345, unit = "rad", src = "S1", fidelity = "datasheet" }  # 65 deg diagonal (45 deg horizontal/vertical)
+wavelength          = { value = 940e-9, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "board.23x13-header"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Two mounting holes for #2 or M2 screws exist but their spacing is not stated on the page; opaque board-outline tag."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "header-0.1in"
+gender = "neutral"
+role = "sink"
+pins = ["H.VIN", "H.GND"]
+v_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 3.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.150, unit = "A", src = "S1", fidelity = "datasheet" }  # peak current
+note = "VIN through the on-board regulators."
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+pins = ["H.SDA", "H.SCL"]
+note = "The page says the output format is I2C/SPI."
+
+# Pin level: the twelve header pins of S2, in the page's table order. The page text gives no board layout, so the 2 x 6 grid, its edge and its order are estimated.
+[[connectors]]
+id = "H"
+name = "12-pin 0.1 in header (2 x 6 grid, order estimated)"
+type = "header-2x6-2.54mm"
+gender = "neutral"
+pos = [0.0, -0.0065, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 6
+pitch = 0.00254
+layout = "seq"
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin names and functions from the S2 table; the grid shape, edge and order are not stated: estimated."
+pins = [
+  { number = "COREVDD", name = "CORE/IOVDD", kind = "power", dir = "out", v = 1.8, i_max = 0.05, note = "regulated 1.8 V output, around 50 mA" },
+  { number = "AVDD", name = "AVDD", kind = "power", dir = "out", v = 3.3, i_max = 0.2, note = "regulated 3.3 V output, around 200 mA (drops below 3.3 V when VIN is under about 3.4 V)" },
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v_min = 3.2, v_max = 5.5 },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "SDA", name = "SDA/MOSI", kind = "signal", dir = "io", note = "level-shifted I2C data and SPI data in" },
+  { number = "SCL", name = "SCL/MCLK", kind = "signal", dir = "in", note = "level-shifted I2C / SPI clock" },
+  { number = "MISO", name = "MISO", kind = "signal", dir = "out", note = "level-shifted SPI data out" },
+  { number = "CS", name = "CS", kind = "signal", dir = "in", note = "level-shifted SPI chip select, active low, pulled high" },
+  { number = "INT", name = "INT", kind = "signal", dir = "out", note = "level-shifted programmable interrupt output" },
+  { number = "SPI_I2C", name = "SPI/I2C", kind = "signal", dir = "in", note = "mode select, pulled high = SPI; drive low to select I2C" },
+  { number = "LP", name = "LP", kind = "signal", dir = "in", note = "level-shifted I2C disable input (LPn), active low, pulled high" },
+  { number = "SYNC", name = "SYNC", kind = "signal", dir = "in", note = "level-shifted external synchronisation input" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/3419"
+title = "Pololu VL53L8CX time-of-flight multizone distance sensor carrier product page, Connections"
+accessed = "2026-10-09"
+quote = "Pin Description: CORE/IOVDD Regulated 1.8 V output. Up to around 50 mA. AVDD Regulated 3.3 V output. Up to around 200 mA. VIN This is the main 3.2 V to 5.5 V power supply connection. GND SDA/MOSI Level-shifted I2C data line and SPI data in line. SCL/MCLK Level-shifted I2C/SPI clock line. MISO Level-shifted SPI data out line. CS Level-shifted SPI enable (chip select); active low. INT Level-shifted programmable interrupt output. SPI/I2C Level-shifted SPI/I2C mode select pin. Pulled high by default, selecting SPI mode; drive low to select I2C mode. LP Level-shifted I2C disable input (active low). SYNC Level-shifted external synchronization pin."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/3419"
+title = "Pololu item 3419 product page (VL53L8CX Time-of-Flight 8×8-Zone Distance Sensor Carrier with Voltage Regulators, 400cm Max)"
+accessed = "2026-10-07"
+quote = "Dimensions: 0.5″ × 0.9″ × 0.1″ (13 mm × 23 mm × 3 mm) | Weight without header pins: 0.7 g (0.03 oz) | Operating voltage: 3.2 V to 5.5 V | Typical active-ranging supply current: 100 mA | Varies with configuration, target, and environment; peak current can reach 150 mA | Maximum range: 4 m (13 ft) | Resolution: 1 mm depth, 4×4 or 8×8 sensor zones | Minimum range: 20 mm (0.8 in) | Typical full field of view (FoV): 65° diagonal (45° horizontal/vertical) | Output format (I²C/SPI): histogram | The board has two mounting holes that work with #2 and M2 screws (not included)."

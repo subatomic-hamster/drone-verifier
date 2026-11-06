@@ -1,0 +1,151 @@
+id = "pololu-drv8833-carrier"
+name = "Pololu DRV8833 Dual Motor Driver Carrier (item 2130)"
+category = "driver.dc"
+vendor = "Pololu (TI DRV8833 IC)"
+part_number = "Pololu 2130"
+url = "https://www.pololu.com/product/2130"
+
+# Frame: origin at the board centre on the top (component) face; +z = out of the component side; x along the 0.8 in (20.32 mm) length, y along the 0.5 in (12.70 mm) width.
+# Board thickness is not published; z = 0 is taken as the top surface and the mating pins point to -z. Orientation of 0.8 in vs 0.5 in axes is an assumption (convention only).
+
+[params]
+mass               = { value = 0.0010,  unit = "kg",   src = "S1", fidelity = "datasheet" }  # without included hardware
+length             = { value = 0.02032, unit = "m",    src = "S1", fidelity = "datasheet" }  # 0.8 in
+width              = { value = 0.0127,  unit = "m",    src = "S1", fidelity = "datasheet" }  # 0.5 in
+motor_channels     = { value = 2,       unit = "1",    src = "S1", fidelity = "datasheet" }
+v_motor_min        = { value = 2.7,     unit = "V",    src = "S1", fidelity = "datasheet" }
+v_motor_max        = { value = 10.8,    unit = "V",    src = "S1", fidelity = "datasheet" }
+i_continuous_per_channel = { value = 1.2, unit = "A",  src = "S1", fidelity = "datasheet" }  # typical, 100 % duty, room temperature
+i_peak_per_channel = { value = 2.0,     unit = "A",    src = "S1", fidelity = "datasheet" }
+i_continuous_paralleled = { value = 2.4, unit = "A",   src = "S1", fidelity = "datasheet" }  # typical, 100 % duty, room temperature
+reverse_voltage_protection = { value = "yes", unit = "-", src = "S1", fidelity = "datasheet" }
+protections        = { value = "reverse-voltage, under-voltage, over-current, over-temperature", unit = "-", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "pins"
+kind = "mech"
+type = "pinout.pololu-drv8833-carrier"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Header pin count and spacing are not in the retrieved spec text; opaque family tag."
+
+[[ports]]
+name = "vmot"
+pins = ["PWR.2", "PWR.1"]   # VIN, GND
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 10.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 2.7, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.4, unit = "A", src = "S1", fidelity = "datasheet" }  # both channels paralleled, continuous
+i_peak = { value = 4.0, unit = "A", fidelity = "derived", derivation = "2 channels * 2 A peak per channel = 4 A total if both channels peak simultaneously; Pololu does not publish a paralleled peak figure (inference, not tested for thermal limits)." }
+note = "Motor supply input; reverse-voltage protection present (S1)."
+
+[[ports]]
+name = "motor_a"
+pins = ["PWR.6", "PWR.5"]   # AOUT1, AOUT2
+kind = "power"
+type = "dc-motor-2wire"
+gender = "neutral"
+role = "source"
+i_max = { value = 1.2, unit = "A", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Channel A output for one brushed DC motor; channel B (motor_b) is identical."
+
+[[ports]]
+name = "motor_b"
+pins = ["PWR.3", "PWR.4"]   # BOUT1, BOUT2
+kind = "power"
+type = "dc-motor-2wire"
+gender = "neutral"
+role = "source"
+i_max = { value = 1.2, unit = "A", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Channel B output for one brushed DC motor."
+
+[[ports]]
+name = "pwm_in"
+pins = ["CTL.6", "CTL.5", "CTL.3", "CTL.4"]   # AIN1, AIN2, BIN1, BIN2
+kind = "signal"
+type = "pwm"
+gender = "male"
+note = "Four input pins (two per channel); logic-level thresholds are not in the retrieved Pololu text."
+
+# ---- Connectors (pin level): the 16 header holes, two rows of eight on a 0.1 in grid (P1: the labelled top-view photo and the page's Pinout table).
+# CTL is the control row (GND, VMM, BIN1 ... nFAULT), PWR the power/motor row (GND, VIN, BOUT1 ... BISEN). The row spacing (0.4 in = the 0.5 in
+# board width less one 0.1 in margin per side) and the orientation are read off the product photo (estimated). The page gives no logic
+# thresholds, so the inputs carry no voltage.
+[[connectors]]
+id = "CTL"
+name = "control header row (8 holes)"
+type = "header-1x8-2.54mm"
+gender = "male"
+pos = [0.0, -0.00508, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "Pin names and order from P1; the row spacing 0.4 in and which side is 'left' are estimated from the product photo."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "ground for the motor supply and the control reference" },
+  { number = 2, name = "VMM", kind = "power", dir = "out", v_min = 2.7, v_max = 10.8, note = "motor supply after the reverse-voltage protection MOSFET; can supply reverse-protected power to other components (P1)" },
+  { number = 3, name = "BIN1", kind = "signal", dir = "in", note = "logic input for channel B; PWM can be applied" },
+  { number = 4, name = "BIN2", kind = "signal", dir = "in", note = "logic input for channel B; PWM can be applied" },
+  { number = 5, name = "AIN2", kind = "signal", dir = "in", note = "logic input for channel A; PWM can be applied" },
+  { number = 6, name = "AIN1", kind = "signal", dir = "in", note = "logic input for channel A; PWM can be applied" },
+  { number = 7, name = "nSLEEP", kind = "signal", dir = "in", note = "sleep input, pulled high on the board; low = low-power sleep (silkscreen SLP)" },
+  { number = 8, name = "nFAULT", kind = "signal", dir = "out", note = "open-drain fault output, low on over-current / over-temperature / under-voltage, floating otherwise: needs a pull-up (silkscreen FLT)" },
+]
+
+[[connectors]]
+id = "PWR"
+name = "power and motor header row (8 holes)"
+type = "header-1x8-2.54mm"
+gender = "male"
+pos = [0.0, 0.00508, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "Pin names and order from P1; the row spacing 0.4 in and which side is 'right' are estimated from the product photo."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "ground for the motor supply and the control reference" },
+  { number = 2, name = "VIN", kind = "power", dir = "in", v_min = 2.7, v_max = 10.8, i_max = 2.4, note = "reverse-protected motor supply 2.7-10.8 V (P1); operation below 5 V slightly reduces the maximum current; 2.4 A with both channels paralleled (S1)" },
+  { number = 3, name = "BOUT1", kind = "power", dir = "out", i_max = 1.2, note = "motor B half-bridge 1 output; 1.2 A continuous, 2 A peak per channel (S1)" },
+  { number = 4, name = "BOUT2", kind = "power", dir = "out", i_max = 1.2, note = "motor B half-bridge 2 output" },
+  { number = 5, name = "AOUT2", kind = "power", dir = "out", i_max = 1.2, note = "motor A half-bridge 2 output" },
+  { number = 6, name = "AOUT1", kind = "power", dir = "out", i_max = 1.2, note = "motor A half-bridge 1 output" },
+  { number = 7, name = "AISEN", kind = "signal", dir = "io", note = "current sense for motor A; tied to ground by default (current limiting disabled), enabled by a cut + sense resistor" },
+  { number = 8, name = "BISEN", kind = "signal", dir = "io", note = "current sense for motor B; tied to ground by default" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/2130"
+title = "Pololu item 2130 product page, Pinout table and picture 0J3866 (labeled top view): header pin labels transcribed from the image"
+accessed = "2026-10-09"
+quote = "Left row, top to bottom: GND, VMM, BIN1, BIN2, AIN2, AIN1, nSLEEP, nFAULT. Right row, top to bottom: GND, VIN, BOUT1, BOUT2, AOUT2, AOUT1, AISEN, BISEN. VIN Reverse-protected 2.7 V to 10.8 V motor power supply connection. VMM This pin gives access to the motor power supply after the reverse-voltage protection MOSFET. nSLEEP HIGH Sleep input ... (Labeled SLP on the board silkscreen.) nFAULT FLOAT Fault output: driven low in the event of an over-current, over-temperature, or under-voltage condition; floating otherwise."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2130/specs"
+title = "Pololu item 2130 Specs tab (DRV8833 Dual Motor Driver Carrier)"
+accessed = "2026-10-07"
+quote = "Size: | 0.5″ × 0.8″| 1| Weight: | 1.0 g| 1| General specifications| Motor driver: | DRV8833 | Motor channels: | 2 | Minimum operating voltage: | 2.7 V | Maximum operating voltage: | 10.8 V | Continuous output current per channel: | 1.2 A| 2| Peak output current per channel: | 2 A | Continuous paralleled output current: | 2.4 A| 2| Reverse voltage protection?: | Y | Notes:| 1| Without included hardware.| 2| Typical results with 100% duty cycle at room temperature."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/2130"
+title = "Pololu item 2130 product page, description"
+accessed = "2026-10-07"
+quote = "This tiny breakout board for TI’s DRV8833 dual motor driver can deliver 1.2 A per channel continuously (2 A peak) to a pair of DC motors. With an operating voltage range from 2.7 V to 10.8 V and built-in protection against reverse-voltage, under-voltage, over-current, and over-temperature, this driver is a great solution for powering small, low-voltage motors."

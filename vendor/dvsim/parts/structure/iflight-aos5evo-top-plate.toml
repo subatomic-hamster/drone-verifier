@@ -1,0 +1,67 @@
+id = "iflight-aos5evo-top-plate"
+name = "iFlight AOS 5 EVO V1.2 carbon-fibre top plate, 2 mm"
+category = "frame.plate"
+vendor = "iFlight"
+part_number = "AOS 5 EVO V1.2 top plate"
+url = "https://rcdrone.top/products/aos-5-evo-v1-2-fpv-frame"
+
+# Part frame: origin at the plate centre, x forward, y left, z up (top face at z = +0.001). Thickness (2 mm) and stack patterns are published;
+# the outline is ESTIMATED to match the bottom plate (iflight-aos5evo-bottom-plate), which carries the same stack footprint. The top plate sits
+# above the stack on standoffs (stack height set by the 32.5 mm overall frame height, S1); the stack seats are on its underside.
+
+[params]
+thickness = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+length = { value = 0.090, unit = "m", fidelity = "estimated", rationale = "Not published. Same outline as the bottom plate (same stack footprint and arm-root span)." }
+width = { value = 0.065, unit = "m", fidelity = "estimated", rationale = "Not published. Same outline as the bottom plate." }
+mass = { value = 0.0127, unit = "kg", fidelity = "estimated", rationale = "Not published. Outline 0.090 x 0.065 m x 0.002 m thick x 1550 kg/m3 (carbon-fibre twill density used in parts/drone/holybro-x500v2-top-plate.toml) = 18.1 g, x 0.70 fill factor for cut-outs = 12.7 g. Plus-or-minus 50%; replace with a weighed value." }
+
+[geometry]
+shape = "box"
+size = [0.045, 0.0325, 0.001]
+material = "carbon-fibre-twill-plate"
+
+[[ports]]
+name = "stack_30"
+kind = "mech"
+type = "bolt-pattern.30.5x30.5.m3"
+gender = "female"
+pos = [0.0, 0.0, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.002
+fidelity = "estimated"
+rationale = "S1 lists 30.5x30.5 / 25.5x25.5 / 20x20 mm stack mountings 'in the front, centre and rear'; the centre seat on the plate underside is modelled (front/rear offsets not published)."
+
+[[ports]]
+name = "stack_20"
+kind = "mech"
+type = "bolt-pattern.20x20.m3"
+gender = "female"
+pos = [0.0, 0.0, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.002
+fidelity = "estimated"
+rationale = "20x20 mm seat at the plate centre (shares the centre with stack_30; only one stack is fitted at a time)."
+
+[[ports]]
+name = "battery_top"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Top-mounted battery option (top plate takes a battery strap on freestyle builds); strap slots are not published, so a centred flat seat is used."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/aos-5-evo-v1-2-fpv-frame"
+title = "rcdrone.top (iFlight distributor) - iFlight AOS 5 EVO V1.2 220mm 5 Inch FPV Frame Kit"
+accessed = "2026-10-07"
+quote = "30.5x30.5mm, 25.5x25.5 or 20x20 mm stack mountings in the front, centre and rear | Frame Dimension: L175*W135*H32.5 mm | Top Plate Thickness: 2mm | 2 x Battery Strap"

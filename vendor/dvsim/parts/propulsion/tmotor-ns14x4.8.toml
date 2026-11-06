@@ -1,0 +1,54 @@
+id = "tmotor-ns14x4.8"
+name = "T-Motor NS14x4.8 carbon-fibre propeller (14x4.8 in, 2-blade)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "NS14*4.8"
+url = "https://store.tmotor.com/product/ns14x4_8-prop-uav-carbon-fiber.html"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# Mass: the spec table labels the weight "Weight(Single Blade) 10.5g" while the model is "2blades integrated"; it is read here as the
+# weight of one propeller (inference - if it is per blade the true prop mass is double). No C_T/C_P curve is published by T-Motor;
+# T-Motor labels its test props "14*4.8CF"/"14*4.8" (see the motor thrust tables); for J-shape use the uiuc-apce-* reference parts.
+
+[params]
+diameter    = { value = 0.3558, unit = "m", src = "S1", fidelity = "datasheet" }
+pitch       = { value = 0.12192, unit = "m", src = "S1", fidelity = "datasheet" }            # 4.8 in
+blade_count = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }                  # "2blades integrated"
+mass        = { value = 0.0105, unit = "kg", src = "S1", fidelity = "datasheet" }
+material    = { value = "CF+Epoxy", unit = "text", src = "S1", fidelity = "datasheet" }
+bore_diameter = { value = 0.006, unit = "m", src = "S2", fidelity = "datasheet" }            # drawing O6 centre hole
+thrust_rec_min = { value = 6.865, unit = "N", src = "S1", fidelity = "datasheet" }          # 0.7 kg x 9.80665
+thrust_rec_max = { value = 12.749, unit = "N", src = "S1", fidelity = "datasheet" }         # 1.3 kg x 9.80665
+rpm_rec_min = { value = 4500, unit = "rpm", src = "S1", fidelity = "datasheet" }
+rpm_rec_max = { value = 5980, unit = "rpm", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 29.42, unit = "N", src = "S1", fidelity = "datasheet" }            # "Recommended Max Thrust 3kg" x 9.80665
+rpm_limit   = { value = 8900, unit = "rpm", src = "S1", fidelity = "datasheet" }
+j_prop      = { value = 1.108e-4, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.0105*0.3558^2/12 = 1.108e-4 kg*m^2. Mass is concentrated nearer the hub in real blades, so the true J is likely lower; treat as an upper bound." }
+
+[geometry]
+shape = "cylinder"
+size = [0.1779, 0.00565]       # disc envelope: radius D/2, half of the 11.3 mm drawing height
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/ns14x4_8-prop-uav-carbon-fiber.html"
+title = "T-MOTOR store - NS14*4.8 carbon fiber UAV propeller (Specification)"
+accessed = "2026-10-07"
+quote = "Model NO.|14*4.8|T-MOTOR Series|2blades integrated|Weight(Single Blade)|10.5g|Diameter|14inch(355.8mm)|Pitch|4.8inch(121.92mm)|Material|CF+Epoxy|Recommended Thrust/RPM|0.7~1.3kg/4500~5980RPM|Recommended Max Thrust/RPM|3kg/8900RPM"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/271724741067500436.jpg"
+title = "T-MOTOR NS14*4.8 technical drawing image (Technical Drawing block of the S1 page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: Ø12, Ø6, 2-Ø3, 34.4, 355.8, 11.3"

@@ -1,0 +1,63 @@
+id = "amass-xt90s-f"
+name = "Amass XT90S-F anti-spark connector (XT90 family, female)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT90S-F"
+url = "https://www.china-amass.net/xt90s-f-product/"
+
+# Only the XT90S-F page was fetched. The Holybro connector table (S2) gives the XT90 family 45 A continuous / 90 A burst
+# on 10 AWG, matching S1's 45 A. Contact resistance on the Amass page is a maximum (the label cell was lost in the page text).
+[params]
+current_rated       = { value = 45, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 150, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0012, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 100, unit = "1", src = "S1", fidelity = "datasheet" }
+current_burst_family = { value = 90, unit = "A", src = "S2", fidelity = "datasheet" }
+recommended_wire    = { value = "10 AWG", unit = "text", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "xt90"
+gender = "female"
+v_max = { value = 150, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 45, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "45 A on 10 AWG at a temperature rise <= 85 K; 90 A burst is the XT90 family figure from S2"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "xt90"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the family (XT90, 2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/xt90s-f-product/"
+title = "AMASS XT90S-F product page (Amass), electrical SPEC"
+accessed = "2026-10-07"
+quote = "Electrical specifications Current rating 45A (10AWG△≤85K) Rated voltage 150V DC Insulation Resistance ≥2000MΩ ≤1.2mΩ Mechanical characteristics Plug Life. 100 times"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module/connector-and-wire-rating.md"
+title = "Connector & Wire Rating (Holybro docs), genuine AMASS connector rating"
+accessed = "2026-10-07"
+quote = "XT90 10 AWG 45A 90A (columns: plug, wire size, cont. current 4 hours temperature rise < 60 C, burst current 1 minute)"

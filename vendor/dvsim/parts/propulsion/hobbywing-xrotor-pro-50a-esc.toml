@@ -1,0 +1,127 @@
+id = "hobbywing-xrotor-pro-50a-esc"
+name = "Hobbywing XRotor Pro 50A single ESC 4-6S (no BEC)"
+category = "esc"
+vendor = "Hobbywing"
+part_number = "XRotor-Pro-50A"
+url = "https://rcdrone.top/products/2pcs-hobbywing-xrotor-pro-50a-esc"
+
+# Single-motor multirotor ESC. Part frame: origin at the body centre, x along the 48 mm length. The listing is a 2 pcs/box; one ESC is modelled.
+# Wire gauge/connector not published; no mounting holes. The listing says the base has LED turn signals selectable by DIP switch.
+
+[params]
+mass            = { value = 0.056, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.048, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0155, unit = "m", src = "S1", fidelity = "datasheet" }
+cells_min       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+v_max           = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (S1 '4-6S')." }
+i_cont_per_ch   = { value = 50.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst_per_ch  = { value = 70.0, unit = "A", src = "S1", fidelity = "datasheet" }
+burst_duration  = { value = 10.0, unit = "s", src = "S1", fidelity = "datasheet" }
+channels        = { value = 1, unit = "1", fidelity = "derived", derivation = "Single ESC: one motor channel." }
+bec             = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.024, 0.015, 0.00775]
+
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 50.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 70.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Battery leads; wire gauge and connector not stated in S1"
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 50.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 70.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1 gives ratings and the size only ('BEC : No'); no lead gauge, connector or throttle-lead pinout. Leads are drawn at the
+# ends (battery in on -x, motor and throttle out on +x); contact counts follow from the port types. All of it is estimated.
+[[connectors]]
+id = "IN"
+name = "battery leads"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.024, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the 4-6S range and 50 A rating but no lead gauge, length or connector (the port note says the same); two leads (+, -) are implied by a DC supply input."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", v_max = 25.2, i_max = 50.0, fidelity = "derived", derivation = "v_max 6S x 4.2 V (S1 'XRotor Pro 50A 4-6S'); i_max the 50 A continuous rating (S1)." },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 50.0, fidelity = "derived", derivation = "The 50 A continuous rating (S1)." },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor output leads"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.024, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the 50 A / 70 A rating only; three phase leads A B C by convention (swapping two reverses the motor), exit end and spacing assumed."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 50.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 50.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 50.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "throttle signal lead"
+type = "servo-lead-2"
+gender = "neutral"
+pos = [0.024, 0.01, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 describes no throttle lead. A throttle signal + ground pair is the minimum a PWM input needs; with 'BEC : No' (S1) there is no +5 V conductor to list."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/2pcs-hobbywing-xrotor-pro-50a-esc"
+title = "rcdrone.top (Hobbywing distributor) - 2pcs Hobbywing XRotor Pro 50A ESC 4-6S"
+accessed = "2026-10-07"
+quote = "Weight : 56g | Size : 48 x 30 x 15.5 mm | Model Number : XRotor Pro 50A 4-6S ESC | Instant Current(10s) : 70A | Con.Current : 50A | BEC : No"

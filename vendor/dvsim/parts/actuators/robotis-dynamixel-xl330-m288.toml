@@ -1,0 +1,133 @@
+id = "robotis-dynamixel-xl330-m288"
+name = "ROBOTIS DYNAMIXEL XL330-M288-T 5V 288.4:1 smart servo"
+category = "motor.servo"
+vendor = "ROBOTIS"
+part_number = "XL330-M288-T"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/"
+
+# Frame: origin on the output axis at the horn-seat face of the case; +z = output axis out of the case.
+# Case 20.0 x 34.0 x 26.0 mm (W x H x D per ROBOTIS); D is taken as the extent along the output axis (inference), so the case occupies z in [-0.026, 0].
+# Output axis in-plane offset from the case centre is only in the XL330 drawing (PDF/STEP); left at the origin.
+# ROBOTIS publishes no no-load current, so Ke is computed with I0*R neglected (Ke slightly over-estimated, efficiency slightly under-estimated).
+
+[params]
+mass            = { value = 0.018,   unit = "kg",  src = "S1", fidelity = "datasheet" }
+width           = { value = 0.020,   unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.034,   unit = "m",   src = "S1", fidelity = "datasheet" }
+depth           = { value = 0.026,   unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 288.4,   unit = "1",   src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "engineering plastic gears and case; cored motor", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }  # 12-bit contactless absolute, ams AS5601
+protocol        = { value = "DYNAMIXEL TTL half-duplex asynchronous serial, 8N1, 3.3 V logic (5 V compatible), IDs 0-252", unit = "-", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 9600,    unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 4000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+connector       = { value = "JST EHR-03 housing / JST B3B-EH-A header, pins GND-VDD-DATA", unit = "-", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -5, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 70, unit = "degC", src = "S1", fidelity = "datasheet" }
+standby_current = { value = 0.017, unit = "A", src = "S1", fidelity = "datasheet" }
+horn_spline     = { value = "ROBOTIS XL330 horn (spline/bolt circle only in the XL330.pdf/.stp drawing, not retrievable as text)", unit = "-", src = "S1", fidelity = "datasheet" }
+
+# --- datasheet performance at three supply voltages ---
+v_nominal           = { value = 5.0,    unit = "V",     src = "S1", fidelity = "datasheet" }  # "Recommended : 5.0 [V]"
+v_operating_min     = { value = 3.7,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 6.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+stall_torque_5v     = { value = 0.52,   unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_5v    = { value = 1.47,   unit = "A",     src = "S1", fidelity = "datasheet" }
+kt_output_5v        = { value = 0.354,  unit = "N*m/A", src = "S1", fidelity = "datasheet" }
+no_load_speed_5v    = { value = 10.786, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 103 rev/min
+stall_torque_6v     = { value = 0.60,   unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_6v    = { value = 1.74,   unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_6v    = { value = 12.881, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 123 rev/min
+stall_torque_3v7    = { value = 0.42,   unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_3v7   = { value = 1.11,   unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_3v7   = { value = 7.958,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 76 rev/min
+
+# --- DC-motor equivalent (motor side), derived from the 5 V and 6 V points (I0 unpublished, neglected) ---
+r_effective = { value = 3.42, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall: 5 V/1.47 A = 3.401 ohm, 6 V/1.74 A = 3.448 ohm; mean 3.42 ohm (includes driver and lead resistance). Identical to XL330-M077: same motor and drive." }
+ke = { value = 0.001611, unit = "V*s/rad", fidelity = "derived", derivation = "Ke ~ V/(N*omega_out) with I0*R neglected: 5 V/(288.4*10.786 rad/s) = 1.607e-3; 6 V/(288.4*12.881) = 1.615e-3; mean 1.611e-3 V*s/rad (0.3% from XL330-M077, a consistency check on the same motor)." }
+kt_motor = { value = 0.001611, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.752, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Ke*I_stall): 5 V 0.52/(288.4*0.001607*1.47) = 0.763; 6 V 0.60/(288.4*0.001615*1.74) = 0.740; mean 0.752 (a lower bound since I0 is neglected; plastic gear train)." }
+
+[tables.datasheet_points]
+columns = ["voltage_V", "stall_torque_Nm", "stall_current_A", "kt_output_Nm_per_A", "no_load_rpm"]
+rows = [[3.7, 0.42, 1.11, 0.378, 76], [5.0, 0.52, 1.47, 0.354, 103], [6.0, 0.60, 1.74, 0.345, 123]]
+src = "S1"
+fidelity = "datasheet"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-frame"
+gender = "neutral"
+pos = [0.0, 0.0, -0.026]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Frame/side mounting points per ROBOTIS drawing (XL330.pdf/.dwg/.stp, not retrievable as text); opaque family tag."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.dxl-xl330"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "ROBOTIS XL330 output horn interface; spline/bolt circle not published as text."
+
+[[ports]]
+name = "power_in"
+pins = ["TTL.1", "TTL.2"]
+kind = "power"
+type = "jst-eh.3"
+gender = "female"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 3.7, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 1.74, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 6 V; no continuous rating published
+
+[[ports]]
+name = "bus"
+pins = ["TTL.3"]
+kind = "signal"
+type = "dynamixel-ttl"
+gender = "female"
+level = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+
+# Pin level: the TTL connector (JST EHR-03 housing, pinout GND / VDD / DATA) from the e-Manual Connector Information table (P1).
+[[connectors]]
+id = "TTL"
+name = "TTL connector (JST EHR-03)"
+type = "jst-eh-3"
+port_type = "jst-eh.3"
+gender = "female"
+pos = [-0.010, 0.0, -0.008]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "P1"
+fidelity = "datasheet"
+rationale = "P1 gives the housing (JST EHR-03) and the pin functions; the 2.5 mm pitch is the JST EH-series pitch, not stated in P1."
+pose_rationale = "The e-Manual drawing is not machine-readable, so the connector position on the case is a positional estimate (side of the case, near the base)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "in" },
+  { number = 3, name = "DATA", kind = "signal", dir = "io", note = "half-duplex TTL, 3.3 V logic (5 V compatible) on XL330 (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/"
+title = "ROBOTIS e-Manual XL330-M288-T, Connector Information"
+accessed = "2026-10-09"
+quote = "Connector Information | Item | TTL | Pinout | 1 | GND | 2 | VDD | 3 | DATA | Housing | JST EHR-03 | PCB Header | JST B3B-EH-A | Crimp Terminal | JST SEH-001T-P0.6 | Wire Gauge for DYNAMIXEL | 21 AWG"
+
+[[sources]]
+id = "S1"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/"
+title = "ROBOTIS e-Manual XL330-M288-T, Specifications and Connector Information"
+accessed = "2026-10-07"
+quote = "Position Sensor| Contactless absolute encoder (12Bit, 360 [°])| Maker : ams(www.ams.com), Part No : AS5601 || Motor| Cored || Baud Rate| 9,600 [bps] ~ 4 [Mbps] || Resolution| 4096 [pulse/rev] || Weight| 18 [g] || Dimensions (W x H x D)| 20.0 x 34.0 x 26.0 [mm] || Gear Ratio| 288.4 : 1 || Stall Torque| 0.42 [N.m] (at 3.7 [V], 1.11 [A], 0.378 [Nm/A]) | 0.52 [N.m] (at 5.0 [V], 1.47 [A], 0.354 [Nm/A])| 0.60 [N.m] (at 6.0 [V], 1.74 [A], 0.345 [Nm/A]) || No Load Speed| 76 [rev/min] (at 3.7 [V]) | 103 [rev/min] (at 5.0 [V])| 123 [rev/min] (at 6.0 [V]) || Operating Temperature| -5 ~ +70 [°C] || Input Voltage| 3.7 ~ 6.0 [V] (Recommended : 5.0 [V]) || Physical Connection| TTL Multidrop Bus (3.3V Logic, 5V Compatible) | TTL Half Duplex Asynchronous Serial Communication (8bit, 1stop, No Parity) || ID| 253 ID (0 ~ 252) || Case Material| Engineering Plastic || Gear Material| Engineering Plastic || Standby Current| 17 [mA] || Connector Information: Housing| JST EHR-03| PCB Header| JST B3B-EH-A"

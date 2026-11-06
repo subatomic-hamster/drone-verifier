@@ -1,0 +1,138 @@
+id = "generic-180-brushed-motor-6v"
+name = "Generic 180-size brushed DC motor, 3.7-6 V, 2 mm shaft (flywheel motor class of upgraded Nerf Rival blasters)"
+category = "motor.dc"
+vendor = "generic (listing: Noor Electronics via othoba.com)"
+part_number = "180 high speed motor (no manufacturer P/N on the listing)"
+url = "https://othoba.com/180-high-speed-motor-strong-magnetic-carbon-brushed-180-engine-high-torque-180-motor-with-strong-magnetic-force-for-various-applications-noor-electronics-1033075"
+
+# 180-size can (Mabuchi FK-180 / RS-180 style, 15.3 mm x 20 mm flat-sided can). This is a generic, unbranded listing: every figure is the seller's, and the seller contradicts himself on the
+# no-load speed (30000 rpm in the spec list, 24000 RPM in the package description); the larger of the two is recorded and the other noted. No Mabuchi datasheet for this size could be fetched.
+# Whether a stock Rival blaster uses 130- or 180-size motors was not established (a Nerf-modding forum post, S2, says flywheel blasters in general ship 130-size motors and that 180 is the upgrade size).
+# The motor is rated 3.7-6 V. From a 3S / 4S LiPo (11.1-16.8 V) it must be driven by PWM with an average voltage <= 6 V (duty <= 0.5 at 12 V) or from a 6 V regulator: the MOSFET gate sees the PWM,
+# the winding sees the peak battery voltage, which the listing does not rate. This is a design choice for the SPEC worker, not a part property.
+# Frame: origin on the shaft axis at the front (shaft-end) face of the can; +z = shaft direction (out of the motor); body occupies z in [-0.032, 0]; the 20 mm side along x, the 15.3 mm side along y.
+
+[params]
+mass               = { value = 0.032, unit = "kg", src = "S1", fidelity = "datasheet" }
+length             = { value = 0.032, unit = "m", src = "S1", fidelity = "datasheet" }   # can length, without the shaft
+width              = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+height             = { value = 0.0153, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter     = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_length       = { value = 0.015, unit = "m", src = "S1", fidelity = "datasheet" }   # listing: 13-17 mm; midpoint
+v_nominal_max      = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_nominal_min      = { value = 3.7, unit = "V", src = "S1", fidelity = "datasheet" }
+i_no_load          = { value = 0.45, unit = "A", src = "S1", fidelity = "datasheet" }   # at 6 V
+i_stall            = { value = 1.88, unit = "A", src = "S1", fidelity = "datasheet" }   # locked rotor, at 6 V
+no_load_speed      = { value = 3141.6, unit = "rad/s", src = "S1", fidelity = "datasheet" }   # 30000 rpm at 6 V (listing), 24000 rpm in its package description
+price_bdt          = { value = 190.0, unit = "BDT", src = "S1", fidelity = "datasheet" }   # Tk 190 per motor, 2026-10-11
+price          = { value = 1.58, unit = "USD", fidelity = "derived", derivation = "190 BDT (S1) / an assumed 120 BDT per USD = 1.58 USD; the exchange rate is assumed, not looked up. A US source (eBay, Mabuchi FK-180SH-14180 at about 2.95 USD plus shipping, S3) is dearer once shipping is added." }
+r_terminal         = { value = 3.19, unit = "ohm", fidelity = "derived", derivation = "Locked-rotor resistance = 6 V / 1.88 A = 3.19 ohm (includes brush and commutator contact)." }
+ke_equiv           = { value = 1.452e-3, unit = "V*s/rad", fidelity = "derived", derivation = "Back-EMF constant from the no-load point: (6 V - 0.45 A * 3.19 ohm) / 3141.6 rad/s = 4.564 V / 3141.6 rad/s = 1.452e-3 V*s/rad (= torque constant in N*m/A for an ideal DC motor), which is 6574 rpm/V; the plain 30000 rpm / 6 V reading is 5000 rpm/V. With the 24000 rpm figure the constant would be 1.82e-3." }
+kt_equiv           = { value = 1.452e-3, unit = "N*m/A", fidelity = "derived", derivation = "Equal to ke_equiv in SI units for an ideal DC motor. Stall torque would be 1.452e-3 * 1.88 A = 2.7 mN*m at 6 V (the listing gives none)." }
+
+# Envelope (collision, wire clearance): the 20 x 15.3 mm can, z in [-0.032, 0] (shaft not included).
+[[geometry.shapes]]
+shape = "box"
+size = [0.01, 0.00765, 0.016]
+pos = [0.0, 0.0, -0.016]
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Front face of the can; the listing gives no mounting-hole pattern (180 motors are held in a printed cradle or clamp)."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port (shaft-end face centre, +z the shaft), for seating the part by the pose of its frame."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.2"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "2 mm round shaft (S1)."
+
+[[ports]]
+name = "terminals"
+pins = ["T.1", "T.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.88, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Rated 3.7-6 V; stall current at 6 V."
+
+# Pin level: two solder terminals on the rear of the can. The listing states no polarity or lug spacing.
+[[connectors]]
+id = "T"
+name = "solder terminals (2)"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.032]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 does not describe the terminals. A 180 can has two solder lugs on the rear end bell; polarity is not marked in the listing, either order spins the motor (direction only), and the lug spacing is an estimate."
+pose_rationale = "Rear face of the can, centred (positional estimate)."
+pins = [
+  { number = 1, name = "M+", kind = "power", dir = "in", v_max = 6.0, i_max = 1.88, note = "polarity sets the direction of rotation only" },
+  { number = 2, name = "M-", kind = "power", dir = "in", v_max = 6.0, i_max = 1.88 },
+]
+
+[visual]
+src = "V1"
+note = "Silver flat-sided 20 x 15.3 x 32 mm can with a 2 mm shaft, two rear lugs (seller photo); generic box drawing."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://othoba.com/180-high-speed-motor-strong-magnetic-carbon-brushed-180-engine-high-torque-180-motor-with-strong-magnetic-force-for-various-applications-noor-electronics-1033075"
+title = "Othoba (Noor Electronics): 180 High Speed Motor, Strong Magnetic Carbon Brushed"
+accessed = "2026-10-11"
+quote = "Voltage: DC 3.7V-6V | Unload current: 450mA ( 6V ) | Locked-rotor current: 1.88A ( 6V ) | No load speed: 30000RPM | Body size: 32x20x15.3mm | Shaft size: 2×13-17mm | Weight: 32gm | Tk 190 (package description: 24000RPM)"
+
+[[sources]]
+id = "S2"
+url = "https://www.tapatalk.com/groups/britnerf/falcon-130-motors-t1954.html"
+title = "BritNerf forum: falcon 130 motors (post quoted in a web search; the page itself was not fetched)"
+accessed = "2026-10-11"
+quote = "Broadly speaking, the field is divided into 130 form factor, as the stock motors are, and 180 motors. These latter motors have a longer endbell which requires a degree of shell cutting; The best characterised of these motors is the Mabuchi FK-180-3240"
+
+[[sources]]
+id = "S3"
+url = "https://www.ebay.de/itm/324860072663"
+title = "eBay listing: MABUCHI FK-180SH-14180 DC 6V 9V 12V 12000RPM Mini 20mm Electric Motor (title and price as shown in a web search; the page itself was not retrievable)"
+accessed = "2026-10-11"
+quote = "MABUCHI FK-180SH-14180 DC 6V 9V 12V 12000RPM High Speed Mini 20mm Electric Motor ... US $2.95"
+
+[[sources]]
+id = "V1"
+url = "https://othoba.com/180-high-speed-motor-strong-magnetic-carbon-brushed-180-engine-high-torque-180-motor-with-strong-magnetic-force-for-various-applications-noor-electronics-1033075"
+title = "Othoba listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "180 High Speed Motor Strong Magnetic Carbon Brushed 180 Engine"

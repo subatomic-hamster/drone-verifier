@@ -1,0 +1,57 @@
+id = "awg-8-silicone-wire"
+name = "8 AWG silicone-insulated stranded copper wire (high-current RC power lead)"
+category = "wire"
+vendor = "generic (Flying Tech 8 AWG silicone wire chart)"
+part_number = "8 AWG"
+url = "https://www.flyingtech.co.uk/product/silicone-wire-1mtr/"
+
+# Same conventions as awg-10-silicone-wire: resistance is the AWG-table value for solid copper at 20 C (stranded wire is a few percent higher,
+# not modelled). Used with AS150 / XT120 class connectors (Holybro rates 8 AWG for AS150 75 A continuous, XT120 60 A).
+
+[params]
+awg                = { value = 8, unit = "AWG", src = "S1", fidelity = "literature" }
+resistance_per_m   = { value = 0.002061, unit = "ohm/m", src = "S1", fidelity = "literature" }   # 2.061 mOhm/m at 20 C
+conductor_area     = { value = 8.37e-6, unit = "m^2", src = "S1", fidelity = "literature" }
+conductor_diameter = { value = 0.003264, unit = "m", src = "S1", fidelity = "literature" }       # solid-equivalent
+mass_per_m_copper  = { value = 0.07479, unit = "kg/m", fidelity = "derived", derivation = "Conductor area x copper density: 8.37e-6 m^2 x 8935 kg/m^3 (S3) = 0.07479 kg/m." }
+mass_per_m         = { value = 0.1047, unit = "kg/m", fidelity = "estimated", rationale = "Copper 74.8 g/m (derived) x 1.4 for silicone insulation; the 1.4 factor comes from the 12 AWG case (copper 29.6 g/m, ~12.7 g/m insulation from a 4.5 mm OD wire; see awg-12-silicone-wire). Not weighed; +-20%." }
+ampacity_rc_silicone_max_continuous = { value = 95, unit = "A", src = "S2", fidelity = "datasheet" }
+
+# Two end ports of family wire-lead (the family the other wire files use). Per-instance mass = mass_per_m * length, resistance = resistance_per_m * length.
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 95, unit = "A", src = "S2", fidelity = "datasheet" }
+role = "passthrough"
+note = "Flying Tech chart: 8 AWG up to 95 A max continuous; the vendor does not state a temperature rise or bundling."
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 95, unit = "A", src = "S2", fidelity = "datasheet" }
+role = "passthrough"
+
+[[sources]]
+id = "S1"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia) - table, solid copper at 68 F"
+accessed = "2026-10-07"
+quote = "8 || 0.1285 || 3.264 || 7.78 || 3.06 || 16.5 || 8.37 || 2.061 || 0.6282 (columns: in, mm, per in, per cm, kcmil, mm2, mOhm/m, mOhm/ft)"
+
+[[sources]]
+id = "S2"
+url = "https://www.flyingtech.co.uk/product/silicone-wire-1mtr/"
+title = "Flying Tech - Silicone Wire (1mtr), selecting-the-correct-cable chart"
+accessed = "2026-10-07"
+quote = "as a rule of thumb only, the following chart indicates the max continuous amp rating for silicone cable 20 – 8 AWG. Note that the cable is capable of withstanding short surges of several times these values. AWG Area Diameter Current 20 0.52mm² 0.812mm up to 11A 18 0.82mm² 1.02mm up to 16A 16 1.31mm² 1.29mm up to 22A 14 2.08mm² 1.63mm up to 32A 12 3.31mm² 2.05mm up to 45A 10 5.26mm² 2.59mm up to 65A 8 8.37mm² 3.26mm up to 95A"
+
+[[sources]]
+id = "S3"
+url = "https://en.wikipedia.org/wiki/Copper"
+title = "Copper (Wikipedia) - density"
+accessed = "2026-10-07"
+quote = "Density (at 20° C) 8.935 g/cm3"

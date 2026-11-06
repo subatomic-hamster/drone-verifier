@@ -1,0 +1,90 @@
+id = "pololu-altimu-10-v6"
+name = "Pololu AltIMU-10 v6 gyro, accelerometer, compass and altimeter carrier (LSM6DSO + LIS3MDL + LPS22DF)"
+category = "sensor.imu"
+vendor = "Pololu (ST LSM6DSO, LIS3MDL, LPS22DF)"
+part_number = "Pololu item 2863"
+url = "https://www.pololu.com/product/2863"
+
+# Frame: origin at the board centre on the component face; +z out of the component face. The axis orientation of the sensors on the board is not on the page text.
+# Only the sensitivity (full-scale) ranges and supply are on the page; noise, bandwidth and ODR need the ST datasheets, which were not read.
+[params]
+length              = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.013, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.003, unit = "m", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.0008, unit = "kg", src = "S1", fidelity = "datasheet" }  # without header pins
+supply_voltage_min  = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current      = { value = 0.005, unit = "A", src = "S1", fidelity = "datasheet" }
+gyro_range_max      = { value = 34.907, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # +-2000 deg/s, selectable down to +-125 deg/s
+accel_range_max     = { value = 156.93, unit = "m/s^2", src = "S1", fidelity = "datasheet" }  # +-16 g, selectable down to +-2 g
+mag_range_max_gauss = { value = 16, unit = "gauss", src = "S1", fidelity = "datasheet" }  # +-16 gauss, selectable down to +-4 gauss
+baro_range_min      = { value = 26000, unit = "Pa", src = "S1", fidelity = "datasheet" }  # 260 mbar
+baro_range_max      = { value = 126000, unit = "Pa", src = "S1", fidelity = "datasheet" }  # 1260 mbar
+baro_resolution     = { value = 2.44, unit = "Pa", src = "S1", fidelity = "derived", derivation = "24-bit pressure reading with 4096 LSb/mbar: 100 Pa / 4096 = 2.44 Pa per LSb (output scaling, not noise)." }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "board.25x13-header"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Two mounting holes for #2 or M2 screws exist but their spacing is not stated on the page; opaque board-outline tag."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "header-0.1in"
+gender = "neutral"
+role = "sink"
+pins = ["H.VIN", "H.GND"]
+v_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "VIN; supply current 5 mA."
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+pins = ["H.SDA", "H.SCL"]
+
+# Pin level: the six-pin 0.1 in header of S2, in the page's table order (SCL, SDA, GND, VIN, VDD, SA0); the edge it sits on is not stated: estimated.
+[[connectors]]
+id = "H"
+name = "6-pin 0.1 in header"
+type = "header-1x6-2.54mm"
+gender = "neutral"
+pos = [0.0, -0.0065, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00254
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin names and functions from the S2 table; the edge used is not stated: estimated."
+pins = [
+  { number = "SCL", name = "SCL", kind = "signal", dir = "in", note = "level-shifted I2C clock: HIGH is VIN" },
+  { number = "SDA", name = "SDA", kind = "signal", dir = "io", note = "level-shifted I2C data: HIGH is VIN" },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v_min = 2.5, v_max = 5.5 },
+  { number = "VDD", name = "VDD", kind = "power", dir = "out", v = 3.3, i_max = 0.15, note = "3.3 V regulator output (about 150 mA) when VIN is above 3.3 V; may instead be fed 2.5-3.3 V directly with VIN disconnected (never above 3.6 V, never together with VIN)" },
+  { number = "SA0", name = "SA0", kind = "signal", dir = "in", v = 3.3, note = "I2C address select, 10 kohm pull-up to VDD; not level-shifted, not 5 V tolerant" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/2863"
+title = "Pololu AltIMU-10 v6 gyro, accelerometer, compass and altimeter product page, Pinout"
+accessed = "2026-10-09"
+quote = "Pinout PIN Description SCL Level-shifted I2C clock line: HIGH is VIN, LOW is 0 V SDA Level-shifted I2C data line: HIGH is VIN, LOW is 0 V GND The ground (0 V) connection for your power supply. VIN This is the main 2.5 V to 5.5 V power supply connection. VDD 3.3 V regulator output or low-voltage logic power supply, depending on VIN. ... can supply up to approximately 150 mA to external components. SA0 3.3V-logic-level input to determine I2C slave addresses of the three ICs. It is pulled high by default through 10 kohm resistor. This pin is not level-shifted and is not 5V-tolerant."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2863"
+title = "Pololu item 2863 product page (AltIMU-10 v6 Gyro, Accelerometer, Compass, and Altimeter (LSM6DSO, LIS3MDL, and LPS22DF Carrier)), Specifications"
+accessed = "2026-10-07"
+quote = "Dimensions: 1.0″ × 0.5″ × 0.1″ (25 mm × 13 mm × 3 mm) | Weight without header pins: 0.8 g (0.03 oz) | Operating voltage: 2.5 V to 5.5 V | Supply current: 5 mA | Output format (I²C): Gyro: one 16-bit reading per axis | Accelerometer: one 16-bit reading per axis | Magnetometer: one 16-bit reading per axis | Barometer: 24-bit pressure reading (4096 LSb/mbar) | Sensitivity range: Gyro: ±125, ±250, ±500, ±1000, or ±2000°/s | Accelerometer: ±2, ±4, ±8, or ±16 g | Magnetometer: ±4, ±8, ±12, or ±16 gauss | Barometer: 260 mbar to 1260 mbar (26 kPa to 126 kPa) | The board features two mounting holes that work with #2 or M2 screws (not included)."

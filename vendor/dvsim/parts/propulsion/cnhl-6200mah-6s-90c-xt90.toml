@@ -1,0 +1,68 @@
+id = "cnhl-6200mah-6s-90c-xt90"
+name = "CNHL Racing Series 6200mAh 6S 22.2V 90C LiPo pack, XT90"
+category = "battery.lipo"
+vendor = "CNHL (China Hobby Line)"
+part_number = "620906XT90"
+url = "https://chinahobbyline.com/products/cnhl-racing-series-6200mah-22-2v-6s-90c-lipo-battery-with-xt90-plug"
+
+# Part frame: origin at the pack centre, x along length (163 mm), y along width (46 mm), z up (46 mm). Listing: size 46x46x163 mm with 1-5 mm difference,
+# weight approx 879 g (+-5 g). Which 46 is width vs height is not stated: equal here.
+
+[params]
+capacity_ah     = { value = 6.2, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 22320.0, unit = "C", fidelity = "derived", derivation = "6.2 Ah x 3600 s/h = 22320 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 90, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 180, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 558.0, unit = "A", fidelity = "derived", derivation = "90 C x 6.2 Ah = 558 A (rating label only)." }
+mass            = { value = 0.879, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.163, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.046, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.046, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0252, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/6.2 = 4.2 mOhm/cell x 6 cells = 25.2 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.0815, 0.023, 0.023]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 558.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 90 C x 6.2 Ah = 558 A (S1 label); far above the XT90 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90)"
+type = "xt90"
+gender = "neutral"
+pos = [0.0815, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-racing-series-6200mah-22-2v-6s-90c-lipo-battery-with-xt90-plug"
+title = "China Hobby Line - CNHL Racing Series 6200mAh 22.2V 6S 90C LiPo with XT90 plug"
+accessed = "2026-10-07"
+quote = "Capacity: 6200mAh | Voltage: 22.2V / 6-Cell / 6S1P | Discharge Rate: 90C Continual / 180C Burst | Charge Rate: 5C Max | Size(1-5mm difference): 46X46X163mm | Approx Weight(±5g) : 879g | Output Connector: XT90 | Balance Connector: JST / XH | Wire (AWG): 10#"

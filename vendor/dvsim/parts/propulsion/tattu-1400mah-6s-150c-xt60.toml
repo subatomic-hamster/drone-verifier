@@ -1,0 +1,106 @@
+id = "tattu-1400mah-6s-150c-xt60"
+name = "Tattu R-Line V5.0 1400mAh 6S 22.2V 150C LiPo pack, XT60"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA14006S15X6"
+url = "https://rcdrone.top/products/src-taa14006s15x6-tattu-r-line-version-5-0-1400mah-6s-150c-22-2v-lipo-battery-pack-with-xt60-plug"
+
+# Part frame: origin at the pack centre, x along length (78 mm), y along width (39 mm), z up (42 mm). Pack-side connector gender is a modelling
+# convention (neutral mates either). Internal resistance not published for this model: pack value estimated.
+
+[params]
+capacity_ah     = { value = 1.4, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 5040.0, unit = "C", fidelity = "derived", derivation = "1.4 Ah x 3600 s/h = 5040 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 150, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 260, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 210.0, unit = "A", fidelity = "derived", derivation = "150 C x 1.4 Ah = 210 A (rating label only)." }
+mass            = { value = 0.222, unit = "kg", src = "S1", fidelity = "datasheet" }          # 222 g (+-20 g)
+mass_tol        = { value = 0.020, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.078, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.039, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.042, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.111, unit = "ohm", fidelity = "estimated", rationale = "Tattu publishes no internal resistance for this pack. Per-cell DC resistance scaled inversely with capacity, R_cell = 0.026 ohm*Ah / capacity (anchored to the 4-6 mOhm/cell at ~5 Ah used for the 5200 mAh Tattu in parts/drone/tattu-4s-5200mah-35c.toml): 0.026/1.4 = 18.6 mOhm/cell x 6 cells = 111 mOhm. Plus-or-minus 50%; a 150C racing pack almost certainly measures lower, so treat as an upper bound." }
+
+[geometry]
+shape = "box"
+size = [0.039, 0.0195, 0.021]
+
+[[ports]]
+name = "seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.021]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Bottom face of the pack: pack height 42 mm (S1) / 2 = 0.021 m below the origin at the pack centre; strapped flat to a frame plate (strap and pad not modelled). Added so the pack can be mated to a flat-mount seat."
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 210.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 150 C x 1.4 Ah = 210 A (S1 rating label); exceeds the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the XT60 plug on the 65 mm discharge leads (S1: 'Discharge Plug | XT60'), drawn at the pack's front face (+x); the leads are inside
+# the pack mass. Polarity / spacing are the XT60 family's (pin 1 +, 7.2 mm), not stated by Tattu. No balance plug is listed in S1, so none is drawn.
+[[connectors]]
+id = "OUT"
+name = "discharge XT60"
+type = "xt60"
+gender = "male"
+pos = [0.039, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug and the 6S 22.2 V pack but not the pin polarity or contact spacing: + then -, 7.2 mm spacing of the XT60 family."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, i_max = 30.0, note = "v = 6S x 4.2 V full charge; i_max is the XT60 contact rating, below the pack's 150C burst (see the port)" },
+  { number = 2, name = "BAT-", kind = "ground", i_max = 30.0 },
+]
+
+# The 65 mm 12 AWG discharge lead itself (S1 'Discharge Wire Length 65 | Wire Gauge 12#'), the same net as the plug: a second consumer is
+# spliced onto it (the FC feed of assemblies/aos5.toml), so its two conductors may carry several wires.
+[[connectors]]
+id = "LEAD"
+name = "discharge lead splice point (12 AWG, 65 mm)"
+joinable = true
+type = "wire-lead"
+gender = "neutral"
+pos = [0.039, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the lead's length and gauge, not where a tap would go: any point of the bare lead between pack and plug is the same net as OUT; drawn at the plug end, + then -."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "same net as OUT.1" },
+  { number = 2, name = "BAT-", kind = "ground", note = "same net as OUT.2" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-taa14006s15x6-tattu-r-line-version-5-0-1400mah-6s-150c-22-2v-lipo-battery-pack-with-xt60-plug"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu R-Line Version 5.0 1400mAh 6S 22.2V 150C LiPo pack with XT60"
+accessed = "2026-10-07"
+quote = "Minimum Capacity|1400mAh|Configuration|6S / 22.2V / 6 Cells|Configuration (listed)|6S1P|Voltage (V)|22.2|Discharge Rate|150C|Max Burst Discharge Rate|260C|Net Weight (±20g)|222g|Dimensions (L x W x H)|78mm x 39mm x 42mm|Discharge Plug|XT60|Discharge Wire Length (mm)|65|Wire Gauge|12#"

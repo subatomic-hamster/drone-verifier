@@ -1,0 +1,58 @@
+id = "cuas-turret-base-plate"
+name = "Turret base plate, 200 x 200 x 6 mm aluminium 6061 (custom-machined)"
+category = "frame.plate"
+vendor = "custom (machined from stock plate)"
+part_number = "n/a"
+url = "https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=ma6061t6"
+
+# Part frame: origin at the centre of the top face, z up. The pan servo stands on it; the compute board sits beside it.
+[params]
+thickness  = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Design choice: a rigid 6 mm plate for a tripod/bench mount." }
+size_xy    = { value = 0.20, unit = "m", fidelity = "estimated", rationale = "Design choice: 200 mm square footprint." }
+
+[params.mass]
+value = 0.648
+unit = "kg"
+fidelity = "derived"
+derivation = "0.20 x 0.20 x 0.006 m x 2700 kg/m3 (aluminium-6061 density, parts/common) = 0.648 kg; holes not subtracted."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+rationale = "Custom-machined 6061 plate: bare brushed aluminium with the compute-seat bolt holes."
+
+[[visual.elements]]
+gen = "plate_outline"
+colors = { plate = "alu-brushed" }
+
+[geometry]
+shape = "box"
+size = [0.10, 0.10, 0.003]
+pos = [0.0, 0.0, -0.003]
+material = "aluminium-6061"
+
+# Pan servo seat: the XL430 base port is 12 mm off its output axis (frame convention of the Koch part), so the seat is 12 mm off the
+# plate centre and the pan axis passes through the centre.
+[[ports]]
+name = "servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl430-base"
+gender = "neutral"
+pos = [0.012, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.006
+fidelity = "estimated"
+rationale = "Seat for the XL430 base port (frame convention, not a measured hole pattern)."
+
+[[ports]]
+name = "compute_seat"
+kind = "mech"
+type = "bolt-pattern.58x49.m2.5"
+gender = "neutral"
+pos = [-0.062, 0.0, 0.014]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 2
+thickness = 0.006
+fidelity = "estimated"
+rationale = "Raspberry Pi 58 x 49 mm M2.5 pattern behind the pan servo, turned so the 85 mm side runs across the plate (y): the board covers x -0.090 .. -0.034 and y +-0.0425, i.e. 10 mm inside the rear edge and 23 mm clear of the servo. The seat plane is 14 mm above the plate top: the board rests on four M2.5 standoffs (14 mm body, instances pi_so1..4 of assemblies/turret.toml, at the four holes x -0.062 +- 0.0245, y +-0.029)."

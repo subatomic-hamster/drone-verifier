@@ -1,0 +1,52 @@
+id = "cuas-lite-flywheel-35x7"
+name = "Flywheel, rubber/silicone tyre wheel 35 mm x 7 mm, 2 mm bore (bought; cuas-lite launcher)"
+category = "wheel.flywheel"
+vendor = "generic (35 x 7 mm rubber wheel class, e.g. Sigmanortec 35mm x 7mm wheel)"
+part_number = "35 x 7 mm wheel, 2 mm bore"
+url = "https://sigmanortec.ro/en/35mm-x-7mm-wheel-n20-motor"
+
+# The two wheels that squeeze the ball (cad/cuas-lite params WHEEL_D, WHEEL_W, WHEEL_MASS, all marked [est] there). Only the diameter and width are the sizes of a real listing; the
+# listing is a 3 mm-bore wheel for N20 motors, so a 2 mm bore for the 180 motor shaft is an assumption to settle at purchase (a wheel is bored out or a shaft adapter is used).
+# Part frame: origin at the wheel centre, +z along the axis.
+
+[params]
+diameter = { value = 0.035, unit = "m", fidelity = "estimated", rationale = "CAD parameter WHEEL_D = 35 mm and the 35 mm x 7 mm size of the Sigmanortec N20 wheel listing; no datasheet." }
+width    = { value = 0.007, unit = "m", fidelity = "estimated", rationale = "CAD parameter WHEEL_W = 7 mm and the same listing." }
+mass     = { value = 0.006, unit = "kg", fidelity = "estimated", rationale = "CAD parameter WHEEL_MASS = 6 g (not weighed; the listing gives no mass)." }
+price_eur = { value = 0.60, unit = "EUR", fidelity = "estimated", rationale = "0.60 EUR incl. tax per wheel in a web-search snippet of https://sigmanortec.ro/en/35mm-x-7mm-wheel-n20-motor on 2026-10-11 (the page returned 403 to a fetch)." }
+price = { value = 0.69, unit = "USD", fidelity = "derived", derivation = "0.60 EUR x an assumed 1.15 USD/EUR = 0.69 USD; exchange rate assumed, not looked up." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0175, 0.0035]
+pos = [0.0, 0.0, 0.0]
+mass_param = "mass"
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "A 2 mm bore for the 180 motor shaft is an assumption (the listing is for a 3 mm N20 shaft)."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port."
+
+[visual]
+rationale = "Grey rubber tyre, generic cylinder."
+
+[[visual.elements]]
+gen = "shapes"

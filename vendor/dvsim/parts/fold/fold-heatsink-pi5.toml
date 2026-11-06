@@ -1,0 +1,27 @@
+id = "fold-heatsink-pi5"
+name = "Pi 5 clip-on heatsink (25 x 25 x 6 mm class part)"
+category = "frame.heatsink"
+vendor = "generic (Raspberry Pi Active Cooler class, to be chosen)"
+part_number = "Pi 5 clip-on heatsink"
+url = "docs/fold/bom.md"
+
+# Spec 3.1: 4 g, an estimate for a passive clip-on sink (the Pi 5 throttles without one under the planner load). Frame: origin underside centre, +z up.
+
+[params]
+mass = { value = 0.004, unit = "kg", fidelity = "estimated", rationale = "Spec 3.1 heatsink line." }
+price = { value = 5.0, unit = "USD", fidelity = "estimated", rationale = "Not fetched; a passive Pi 5 sink is a few dollars." }
+
+[geometry]
+shape = "box"
+size = [0.0125, 0.0125, 0.003]
+pos = [0.0, 0.0, 0.003]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

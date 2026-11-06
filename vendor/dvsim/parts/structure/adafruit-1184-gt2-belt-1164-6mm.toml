@@ -1,0 +1,67 @@
+id = "adafruit-1184-gt2-belt-1164-6mm"
+name = "GT2 timing belt loop, 2 mm pitch, 6 mm wide, 1164 mm long (Adafruit 1184)"
+category = "structure.belt"
+vendor = "Adafruit"
+part_number = "1184"
+url = "https://www.adafruit.com/product/1184"
+
+# A closed loop with no fixed frame: the two pulley ports sit at the origin and the centre distance is a design variable of the pulley layout.
+[params]
+teeth        = { value = 582, unit = "1", src = "S1", fidelity = "datasheet" }
+pitch        = { value = 2e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width        = { value = 6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+loop_length  = { value = 1164e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+price    = { value = 9.95, unit = "USD", src = "S3", fidelity = "datasheet" }   # quantity 1-9, 2026-10-11; page marks the item 'No longer stocked'
+
+[params.mass]
+value = 0.00908
+unit = "kg"
+fidelity = "derived"
+derivation = "Unit mass 1.3 g per mm of width per metre of length (S2, 2GT) x 6 mm x 1.164 m = 9.08 g. The page gives no belt weight."
+
+[[ports]]
+name = "pulley_a"
+kind = "mech"
+type = "belt.gt2.6"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "A belt loop has no fixed pulley locations; both wrap points are filed at the origin and the pulley layout sets the centre distance."
+note = "Wraps one GT2 pulley; 'It comes in a loop but you can of course cut it down' (S1)."
+
+[[ports]]
+name = "pulley_b"
+kind = "mech"
+type = "belt.gt2.6"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "As pulley_a: loop, no fixed second pulley location."
+note = "Wraps the second GT2 pulley."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1184"
+title = "Adafruit product 1184: Timing Belt GT2 Profile - 2mm pitch - 6mm wide 1164mm long"
+accessed = "2026-10-07"
+quote = "This belt is 1164mm long (582 teeth on a 2mm tooth pitch) and is 6mm wide. It comes in a loop but you can of course cut it down if you need a shorter length."
+
+[[sources]]
+id = "S3"
+url = "https://www.adafruit.com/product/1184"
+title = "Adafruit product 1184, price block (re-read 2026-10-11)"
+accessed = "2026-10-11"
+quote = "$9.95 (quantity 1-9); $8.96 (10-99); $7.96 (100+); No longer stocked"
+
+[[sources]]
+id = "S2"
+url = "https://cdn-shop.adafruit.com/product-files/1184/C1373_dendo_cat-b02-15_P014_087.pdf"
+title = "Gates Unitta Asia POWER GRIP GT catalogue (the datasheet linked on Adafruit 1184), 2GT section"
+accessed = "2026-10-07"
+quote = "◦ベルト単位質量：1.3（g/mm幅×m長）"

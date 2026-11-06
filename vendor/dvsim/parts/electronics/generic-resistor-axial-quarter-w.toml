@@ -1,0 +1,136 @@
+id = "generic-resistor-axial-quarter-w"
+name = "Axial metal-film / carbon resistor, 1/4 W, 5 % (pull-up, pull-down and divider resistors of cuas-lite; value set per instance)"
+category = "passive.resistor"
+vendor = "generic (resistor assortment)"
+part_number = "1/4 W axial resistor"
+url = "https://www.adafruit.com/product/2784"
+
+# One part for every resistor of cuas-lite (10 k pull-ups of the hall sensors, 10 k gate pull-down, the 39 k / 10 k sense dividers); the instance overrides `resistance` with a provenance table.
+# THE TWO LEADS ARE DESCRIBED THREE TIMES: connector UP lists them as (rail side = power, signal side), DN as (signal side, ground side) and SS as (signal, signal). A conductor must join pins of one kind in the pin rules
+# (parts/README.md "Connectors and pins"), so a resistor between a rail and a signal uses UP, and one between a signal and ground uses DN. Wire one lead through UP or DN, never both on one instance.
+# The pinout (two interchangeable leads) is a generic fact; the 1/4 W rating, body size and 0.05 USD price are typical figures, not read from a data sheet.
+# Part frame: origin at the body centre, axis along z, leads leave at +-z.
+
+[params]
+resistance  = { value = 10000.0, unit = "ohm", fidelity = "estimated", rationale = "Default value (10 k); every instance sets its own." }
+power_rating = { value = 0.25, unit = "W", fidelity = "estimated", rationale = "Typical axial through-hole rating (1/4 W); not read from a data sheet." }
+mass        = { value = 0.0002, unit = "kg", fidelity = "estimated", rationale = "A 1/4 W axial resistor weighs a few tenths of a gram (typical); not measured." }
+length      = { value = 0.0063, unit = "m", fidelity = "estimated", rationale = "Typical body length of a 1/4 W axial resistor." }
+width       = { value = 0.0024, unit = "m", fidelity = "estimated", rationale = "Typical body diameter." }
+height      = { value = 0.0024, unit = "m", fidelity = "estimated", rationale = "Typical body diameter." }
+price   = { value = 0.05, unit = "USD", fidelity = "estimated", rationale = "About 0.05 USD each in a 1/4 W assortment kit or a 100-pack from a hobby vendor (https://www.adafruit.com/product/2784 is the 1/4 W 5 % 10 k pack class); the listing was not fetched." }
+
+# All four ports are signal-kind at port level (a resistor draws no modelled supply current: the pull-ups and dividers carry microamps to milliamps): the pin kinds of UP / DN still apply in the pin rules.
+[[ports]]
+name = "rail"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["UP.1"]
+note = "Rail-side lead of a pull-up or of the top resistor of a divider."
+
+[[ports]]
+name = "node_up"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["UP.2"]
+note = "Signal-side lead of a pull-up or divider-top resistor."
+
+[[ports]]
+name = "node_dn"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["DN.1"]
+note = "Signal-side lead of a pull-down or divider-bottom resistor."
+
+[[ports]]
+name = "gnd"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["DN.2"]
+note = "Ground-side lead of a pull-down or divider-bottom resistor."
+
+[[ports]]
+name = "ser_a"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["SS.1"]
+note = "First lead of a series resistor in a signal line."
+
+[[ports]]
+name = "ser_b"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["SS.2"]
+note = "Second lead of a series resistor in a signal line."
+
+[[connectors]]
+id = "UP"
+name = "axial leads, rail-side view (rail, signal)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.0032]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0063
+fidelity = "estimated"
+rationale = "Generic axial part: two leads, interchangeable, one at each body end."
+pose_rationale = "Both leads drawn at the body ends 6.3 mm apart (typical 1/4 W body length)."
+pins = [
+  { number = 1, name = "RAIL", kind = "power", dir = "in" },
+  { number = 2, name = "SIG", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "DN"
+name = "axial leads, ground-side view (signal, ground)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.0032]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0063
+fidelity = "estimated"
+rationale = "The same two leads as UP, named for a resistor that ties a signal to ground."
+pose_rationale = "As UP."
+pins = [
+  { number = 1, name = "SIG", kind = "signal", dir = "io" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "SS"
+name = "axial leads, series view (signal, signal)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.0032]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0063
+fidelity = "estimated"
+rationale = "The same two leads as UP, named for a series resistor in a signal line (the 1 kohm of a single-wire UART)."
+pose_rationale = "As UP."
+pins = [
+  { number = 1, name = "A", kind = "signal", dir = "io" },
+  { number = 2, name = "B", kind = "signal", dir = "io" },
+]
+
+[visual]
+rationale = "Tan axial resistor body drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"

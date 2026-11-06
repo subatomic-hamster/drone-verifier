@@ -1,0 +1,60 @@
+id = "pololu-hub-6mm-4-40-1083"
+name = "Pololu Universal Aluminum Mounting Hub for 6mm Shaft, #4-40 Holes (item 1083 sells 2)"
+category = "shaft-hub"
+vendor = "Pololu"
+part_number = "Pololu 1083 (2-pack)"
+url = "https://www.pololu.com/product/1083"
+
+# Frame: origin at the hub's inner face on the shaft axis, +z along the shaft (away from the motor); the hub occupies z in [0, 0.0092].
+# The bore is a 6 mm round hole clamped by a #4-40 set screw (D-shaft flat not modelled: a hinge joint at the motor's shaft port).
+
+[params]
+mass       = { value = 0.0068, unit = "kg", src = "S1", fidelity = "datasheet" }  # a single hub, without set screws
+diameter   = { value = 0.0254, unit = "m",  src = "S1", fidelity = "datasheet" }
+thickness  = { value = 0.0092, unit = "m",  src = "S1", fidelity = "datasheet" }
+bore       = { value = 0.006,  unit = "m",  src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "cylinder"
+size = [0.0127, 0.0046]
+pos = [0.0, 0.0, 0.0046]
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.6d"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0092
+note = "6 mm bore (S1); mates the gearmotor's 6 mm D-shaft."
+
+[[ports]]
+name = "wheel_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0092]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0
+note = "Outer face, six threaded #4-40 mounting holes for a wheel (S1); hole circle not recorded (see the wheel part)."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "S1"
+note = "Aluminium hub disc with a 6 mm bore (title); the part frame has the disc spanning z = 0 .. thickness."
+
+[[visual.elements]]
+gen = "pulley"
+pos = [0.0, 0.0, 0.0046]
+colors = { body = "alu-brushed", flange = "alu-brushed" }
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1083/specs"
+title = "Pololu item 1083 (Universal Aluminum Mounting Hub for 6mm Shaft, #4-40 Holes, 2-Pack), description and Specs tab"
+accessed = "2026-10-07"
+quote = "These universal aluminum mounting hubs allow you to mount custom wheels and mechanisms to 6 mm diameter motor shafts. The set includes two hubs, four #4-40 set screws for securing the hubs to motor shafts, and one 0.05″ Allen wrench for use with the set screws. Each hub has six threaded mounting holes for #4-40 screws (not included). || Size: 25.4 mm diameter × 9.2 mm thick Weight: 6.8 g|1| Shaft diameter: 6 mm Mounting hole size: #4-40|2| Notes:|1|For a single hub only (without set screws)."

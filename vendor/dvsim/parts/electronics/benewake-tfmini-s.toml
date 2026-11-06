@@ -1,0 +1,95 @@
+id = "benewake-tfmini-s"
+name = "Benewake TFmini-S single-point LiDAR (12 m, UART/I2C)"
+category = "sensor.rangefinder"
+vendor = "Benewake"
+part_number = "TFmini-S"
+url = "https://cdn.sparkfun.com/assets/1/3/a/3/c/TFmini-S_LiDAR_Module_Datasheet.pdf"
+
+# Datasheet SJ-PM-TFmini-S-01 A01 (SparkFun-hosted copy of the Benewake document).
+[params]
+mass                = { value = 0.005, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.042, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.015, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.016, unit = "m", src = "S1", fidelity = "datasheet" }
+cable_length        = { value = 0.10, unit = "m", src = "S1", fidelity = "datasheet" }
+range_max_90pct     = { value = 12, unit = "m", src = "S1", fidelity = "datasheet" }
+range_max_10pct     = { value = 7, unit = "m", src = "S1", fidelity = "datasheet" }
+range_min           = { value = 0.1, unit = "m", src = "S1", fidelity = "datasheet" }
+accuracy_short      = { value = 0.06, unit = "m", src = "S1", fidelity = "datasheet" }
+accuracy_long_pct   = { value = 1, unit = "%", src = "S1", fidelity = "datasheet" }
+resolution          = { value = 0.01, unit = "m", src = "S1", fidelity = "datasheet" }
+frame_rate          = { value = 100, unit = "Hz", src = "S1", fidelity = "datasheet" }
+fov                 = { value = 0.0349, unit = "rad", src = "S1", fidelity = "datasheet" }
+supply_voltage      = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_tolerance = { value = 0.1, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_avg_max = { value = 0.14, unit = "A", src = "S1", fidelity = "datasheet" }
+supply_current_peak = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }
+power_max           = { value = 0.7, unit = "W", src = "S1", fidelity = "datasheet" }
+default_baud        = { value = 115200, unit = "baud", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 273.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 333.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "power_in"
+pins = ["J.1", "J.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+v_max = { value = 5.1, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "Supply voltage 5V±0.1V; i_max is the peak current; connector style not given in the extracted datasheet text"
+
+[[ports]]
+name = "uart"
+pins = ["J.3", "J.4"]
+kind = "signal"
+type = "uart"
+gender = "neutral"
+level = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "i2c"
+pins = ["J.3", "J.4"]
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+level = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+
+# Pin level: Table 5 of the Benewake TFmini-S manual (P1), 4-wire lead with a GH1.25-4P terminal. Pins 3 and 4 are shared by UART (RXD / TXD) and I2C (SDA / SCL) depending on the configured interface, so only the UART port claims them; the I2C port is the same two pins.
+[[connectors]]
+id = "J"
+name = "GH1.25-4P lead terminal"
+type = "jst-gh-4"
+port_type = "tfmini-s-lead"
+gender = "neutral"
+pos = [-0.121, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00125
+src = "P1"
+fidelity = "literature"
+rationale = "Pin table from a reseller copy of the Benewake manual (the manufacturer PDF text has no pin table); pitch 1.25 mm is implied by the GH1.25 name, and gender is not stated."
+pose_rationale = "The datasheet gives a 10 cm cable; the terminal is at the cable end, 10 cm behind the 42 mm body (positional estimate)."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "black" },
+  { number = 2, name = "+5V", kind = "power", dir = "in", v = 5.0, v_max = 5.1, i_max = 0.2, note = "red; power supply" },
+  { number = 3, name = "RXD/SDA", kind = "signal", dir = "in", v = 3.3, note = "white; receiving (UART) / data (I2C)" },
+  { number = 4, name = "TXD/SCL", kind = "signal", dir = "out", v = 3.3, note = "green; transmitting (UART) / clock (I2C)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.worldronemarket.com/benewake-tfmini-s-lidar-module-manual/"
+title = "Benewake TFmini-S LiDAR Module Manual (reseller copy), Table 5 pin functions"
+accessed = "2026-10-09"
+quote = "Table 5: Function and Connection Description of each pin (TFmini-S): 1 Black GND Ground; 2 Red +5V Power supply; 3 White RXD/SDA Receiving/Data; 4 Green TXD/SCL Transmitting/Clock. Type of connecting terminal: GH1.25-4P."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.sparkfun.com/assets/1/3/a/3/c/TFmini-S_LiDAR_Module_Datasheet.pdf"
+title = "TFmini-S LiDAR Module Datasheet SJ-PM-TFmini-S-01 A01 (Benewake; SparkFun-hosted copy)"
+accessed = "2026-10-07"
+quote = "Operating Range 0.1m~12m@90%Reflectivity 0.1~7m@10% Reflectivity ... Accuracy ±6cm@(0.1-6m) ±1%@(6m-12m) Distance resolution 1cm Frame rate 100Hz ... Operating Temperature 0℃~60℃ ... FOV 2° Supply voltage 5V±0.1V Average current ≤140mA Power consumption ≤0.7W Peak current 200mA Communication level LVTTL（3.3V） Communication interface UART / I2C Dimension 42mm*15mm*16mm(L*W*H) ... Weight 5g±0.3g Cable length 10cm ... Default Baud rate 115200"

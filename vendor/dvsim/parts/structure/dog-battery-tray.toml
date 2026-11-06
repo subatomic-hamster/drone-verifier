@@ -1,0 +1,48 @@
+id = "dog-battery-tray"
+name = "Dog battery tray (3D printed PLA): open tray for the 86 x 79 x 43 mm 8S pack"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "battery_tray"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py battery_tray(). Frame: origin at the floor centre underside, z up. Inner pocket 92 x 85 mm (pack 86 x 79 + 6 mm clearance), lead exit on the +x wall. Symmetric about the XZ plane.
+
+[mirror]
+symmetry = "xz"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+mass            = { value = 0.0928, unit = "kg", fidelity = "derived", derivation = "Mesh volume 101.5 cm3 x PLA 1.24 g/cm3, shell + 30 % infill model, by cad/dog/build.py." }
+price           = { value = 1.86, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.0928 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-battery-tray.stl"
+material = "pla"
+bbox_min = [-0.05, -0.0465, 0.0]
+bbox_max = [0.05, 0.0465, 0.05]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Underside of the floor: mounts to the chassis."
+
+[[ports]]
+name = "pocket"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.004]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Floor of the pack pocket (4 mm above the underside): the pack's base port lies here."

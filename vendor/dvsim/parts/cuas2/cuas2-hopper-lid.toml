@@ -1,0 +1,31 @@
+id = "cuas2-hopper-lid"
+name = "cuas2 hopper_lid (3D printed PLA, M4, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "hopper_lid"
+url = "cad/cuas2/modules/feeder.py"
+
+# Mesh in the head frame H; screwed onto the hopper, identity transform. The refill opening is the whole top (24 balls dropped in by hand).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/hopper_lid.stl"
+material = "pla"
+bbox_min = [-0.0548, -0.032, 0.10154]
+bbox_max = [0.0192, 0.032, 0.10554]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

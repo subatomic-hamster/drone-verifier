@@ -1,0 +1,36 @@
+id = "cuas-lite-magnet-disc-6x2"
+name = "Neodymium disc magnet 6 mm x 2 mm (hall homing target, bought)"
+category = "magnet"
+vendor = "generic"
+part_number = "N35 disc 6 x 2 mm"
+url = "https://www.adafruit.com/search?q=neodymium+magnet"
+
+# The magnet in the rotor plate (pan) and in the tilt hub (tilt) that switches the A3144 hall sensors at the home angle. Its size is NOT in the CAD parameters (the pockets are sized by the CAD
+# worker; the manifest gives only the positions). 6 x 2 mm is an assumption to settle against the pocket at purchase.
+# Part frame: origin at the centre of the disc's underside, +z the magnet axis. No collision shape (a 0.4 g placeholder body, drawn as a small box).
+
+[params]
+diameter  = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Typical small neodymium disc for an A3144 (operate point 70-350 G); the CAD pocket size was not read." }
+thickness = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "As diameter." }
+length    = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Drawing envelope = the disc diameter." }
+width     = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Drawing envelope = the disc diameter." }
+height    = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope = the disc thickness." }
+mass      = { value = 0.0004, unit = "kg", fidelity = "derived", derivation = "Nd-Fe-B 7500 kg/m3 x pi (3 mm)^2 x 2 mm = 0.42 g." }
+price = { value = 0.5, unit = "USD", fidelity = "estimated", rationale = "About 0.50 USD per disc in small packs from US hobby vendors; no listing was fetched for this part." }
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port."
+
+[visual]
+rationale = "Dark grey disc drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"

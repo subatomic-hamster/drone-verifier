@@ -1,0 +1,42 @@
+id = "bosch-bmp388"
+name = "Bosch Sensortec BMP388 barometric pressure sensor"
+category = "sensor.baro"
+vendor = "Bosch Sensortec"
+part_number = "BMP388"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp388-ds001.pdf"
+
+# Pixhawk 6X Rev8 lists BMP388/580/581 as barometer options. Conversions: 1 hPa = 100 Pa.
+[params]
+pressure_min         = { value = 30000, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_max         = { value = 125000, unit = "Pa", src = "S1", fidelity = "datasheet" }
+relative_accuracy    = { value = 8, unit = "Pa", src = "S1", fidelity = "datasheet" }
+absolute_accuracy    = { value = 50, unit = "Pa", src = "S1", fidelity = "datasheet" }
+temp_coefficient_offset = { value = 0.75, unit = "Pa/K", src = "S1", fidelity = "datasheet" }
+resolution_highest   = { value = 0.016, unit = "Pa", src = "S1", fidelity = "datasheet" }
+supply_voltage_min   = { value = 1.65, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max   = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_1hz   = { value = 3.4e-6, unit = "A", src = "S1", fidelity = "datasheet" }
+package_length       = { value = 2.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+package_width        = { value = 2.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+package_height       = { value = 0.75e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+note = "I2C up to 3.4 MHz"
+
+[[ports]]
+name = "spi"
+kind = "signal"
+type = "spi"
+gender = "neutral"
+note = "SPI 3 and 4 wire, up to 10 MHz"
+
+[[sources]]
+id = "S1"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp388-ds001.pdf"
+title = "BMP388 Datasheet (Bosch Sensortec), Table 1 Key Features and electrical tables"
+accessed = "2026-10-07"
+quote = "Package 2.0 mm x 2.0 mm x 0.75 mm metal lid LGA ... VDD main supply voltage range: 1.65 V to 3.6 V ... Relative accuracy typ. ± 8 Pa, equiv. to ± 0.66 m (900 … 1100 hPa, 25 . . . 40 °C ) Absolute accuracy typ. ± 50 Pa (300 ...1100 hPa, -20 ...+65 °C) Temperature coefficient offset typ. ± 0.75 Pa/K ... 3.4 µA at 1 Hz pressure and temperature ... Operating range -40 ‒ +85 °C, 300‒1250 hPa ... highest resolution RP Pressure 0.016 Pa"

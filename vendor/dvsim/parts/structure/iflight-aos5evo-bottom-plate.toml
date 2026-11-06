@@ -1,0 +1,120 @@
+id = "iflight-aos5evo-bottom-plate"
+name = "iFlight AOS 5 EVO V1.2 carbon-fibre bottom plate, 2.5 mm"
+category = "frame.plate"
+vendor = "iFlight"
+part_number = "AOS 5 EVO V1.2 bottom plate"
+url = "https://rcdrone.top/products/aos-5-evo-v1-2-fpv-frame"
+
+# Part frame: origin at the plate centre, x forward, y left, z up (top face at z = +0.00125). Thickness (2.5 mm) and stack patterns are published;
+# the outline and arm-root positions are ESTIMATED (no CAD or drawing in the listing). Arm roots follow the stretched-X motor layout derived from
+# L175 x W135 mm: motor centres at (+-0.0875, +-0.0675) m, arm direction atan2(0.0675, 0.0875) = 37.6 deg, root radius 0.040 m
+# -> (+-0.0318, +-0.0245) m.
+
+[params]
+thickness = { value = 0.0025, unit = "m", src = "S1", fidelity = "datasheet" }
+length = { value = 0.090, unit = "m", fidelity = "estimated", rationale = "Not published. Chosen to contain the four arm roots (|x| 0.0318 m) plus the 30.5 mm stack footprint with ~12 mm margin at each end; resolve from CAD." }
+width = { value = 0.065, unit = "m", fidelity = "estimated", rationale = "Not published. Chosen to contain the four arm roots (|y| 0.0245 m) plus margin; resolve from CAD." }
+mass = { value = 0.0159, unit = "kg", fidelity = "estimated", rationale = "Not published (only 'approx. 120 g with all hardware' for the whole kit). Estimate: outline 0.090 x 0.065 m x 0.0025 m thick x 1550 kg/m3 (carbon-fibre twill density used in parts/drone/holybro-x500v2-top-plate.toml) = 22.7 g, x 0.70 fill factor for cut-outs = 15.9 g. Plus-or-minus 50%; replace with a weighed value." }
+
+[geometry]
+shape = "box"
+size = [0.045, 0.0325, 0.00125]
+material = "carbon-fibre-twill-plate"
+
+[[ports]]
+name = "arm1"
+kind = "mech"
+type = "bolt-pattern.aos5evo-arm-root.m3"
+gender = "neutral"
+pos = [0.0318, 0.0245, 0.00125]
+axis = [0.0, 0.0, 1.0]
+ref = [0.7917823, 0.6108035, 0.0]
+symmetry = 1
+thickness = 0.0025
+fidelity = "estimated"
+rationale = "Arm root seat on the plate top face; position from the derived stretched-X layout (see header). Hole layout unpublished."
+
+[[ports]]
+name = "arm2"
+kind = "mech"
+type = "bolt-pattern.aos5evo-arm-root.m3"
+gender = "neutral"
+pos = [-0.0318, 0.0245, 0.00125]
+axis = [0.0, 0.0, 1.0]
+ref = [-0.7917823, 0.6108035, 0.0]
+symmetry = 1
+thickness = 0.0025
+fidelity = "estimated"
+rationale = "Mirror of arm1 about the x = 0 plane."
+
+[[ports]]
+name = "arm3"
+kind = "mech"
+type = "bolt-pattern.aos5evo-arm-root.m3"
+gender = "neutral"
+pos = [-0.0318, -0.0245, 0.00125]
+axis = [0.0, 0.0, 1.0]
+ref = [-0.7917823, -0.6108035, 0.0]
+symmetry = 1
+thickness = 0.0025
+fidelity = "estimated"
+rationale = "arm1 rotated 180 deg about z."
+
+[[ports]]
+name = "arm4"
+kind = "mech"
+type = "bolt-pattern.aos5evo-arm-root.m3"
+gender = "neutral"
+pos = [0.0318, -0.0245, 0.00125]
+axis = [0.0, 0.0, 1.0]
+ref = [0.7917823, -0.6108035, 0.0]
+symmetry = 1
+thickness = 0.0025
+fidelity = "estimated"
+rationale = "Mirror of arm1 about the y = 0 plane."
+
+[[ports]]
+name = "stack_30"
+kind = "mech"
+type = "bolt-pattern.30.5x30.5.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.00125]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.0025
+fidelity = "estimated"
+rationale = "S1 lists 30.5x30.5 / 25.5x25.5 / 20x20 mm stack mountings 'in the front, centre and rear'; the centre position is modelled (front/rear offsets not published)."
+
+[[ports]]
+name = "stack_20"
+kind = "mech"
+type = "bolt-pattern.20x20.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.00125]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.0025
+fidelity = "estimated"
+rationale = "20x20 mm stack seat at the plate centre (same note as stack_30; shares the centre with stack_30 - only one stack is fitted at a time)."
+
+[[ports]]
+name = "battery"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.00125]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Battery rides under the bottom plate on the two straps listed in S1 ('2 x Battery Strap'); strap slot positions are not published, so a centred flat seat is used."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/aos-5-evo-v1-2-fpv-frame"
+title = "rcdrone.top (iFlight distributor) - iFlight AOS 5 EVO V1.2 220mm 5 Inch FPV Frame Kit"
+accessed = "2026-10-07"
+quote = "30.5x30.5mm, 25.5x25.5 or 20x20 mm stack mountings in the front, centre and rear | Frame Dimension: L175*W135*H32.5 mm | Bottom Plate Thickness: 2.5mm | 2 x Battery Strap"

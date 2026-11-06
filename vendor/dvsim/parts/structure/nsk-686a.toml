@@ -1,0 +1,45 @@
+id = "nsk-686a"
+name = "NSK 686 A deep-groove ball bearing, open, 6x13x3.5 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "686 A"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.006, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.013, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.0035, unit = "m", src = "S1", fidelity = "datasheet" }
+chamfer_min        = { value = 0.00015, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 1190, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 440, unit = "N", src = "S1", fidelity = "datasheet" }
+limiting_speed_grease = { value = 40000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, grease lubrication
+mass               = { value = 0.00191, unit = "kg", src = "S1", fidelity = "datasheet" }  # open type, catalog mass in g
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.13"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, extra small and miniature ball bearings table (metric series, bore 6 mm group; open type; mass in g)"
+accessed = "2026-10-07"
+quote = "13 3.5 5.0 0.15 0.15 1 190 440 40 000 38 000 50 000 686 A 686 AZZ1 VV DD 07.2 07.4 11.8 11.7 0.15 0.15 01.91 02.69 (columns: d D B B1 r r1 Cr C0r grease-open grease-ZZ oil-open, designations, abutment dims, mass open/shielded; bore d = 6 from the grouped first column)"

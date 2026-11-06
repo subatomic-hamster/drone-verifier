@@ -1,0 +1,154 @@
+id = "livox-mid-360"
+name = "Livox Mid-360 3D lidar (360 x 59 deg, non-repetitive scan, 200 kpts/s, IP67)"
+category = "sensor.lidar"
+vendor = "Livox (DJI)"
+part_number = "Mid-360"
+url = "https://www.livoxtech.com/mid-360"
+
+# Mapping lidar of the dog head. Part frame: origin at the centre of the underside (the mounting face with the 4 x M3 holes), +z up through the optical window, +x toward the side that carries the M12 connector (positional estimate).
+# The scan is a FOV window about the horizontal: vertical -7 deg .. +52 deg (the window is NOT symmetric: the lower edge reaches farther, 40 m on 10 % targets). Blind zone: 0.1 m radius around the sensor.
+# Ground visibility therefore depends on the mount tilt: see docs/dog/actuator-study.md (head geometry).
+
+[mirror]
+symmetry = "xz"  # the body is axisymmetric about z apart from the connector (on the x axis, y = 0)
+
+[params]
+mass               = { value = 0.265,   unit = "kg",    src = "S1", fidelity = "datasheet" }
+size_width         = { value = 0.065,   unit = "m",     src = "S1", fidelity = "datasheet" }
+size_length        = { value = 0.065,   unit = "m",     src = "S1", fidelity = "datasheet" }
+size_height        = { value = 0.060,   unit = "m",     src = "S1", fidelity = "datasheet" }
+fov_horizontal     = { value = 6.283185307, unit = "rad", src = "S1", fidelity = "datasheet" }  # 360 deg; the kernel needs fov_h <= 2 pi, so the 4-digit 6.2832 fails its check
+fov_vertical_min   = { value = -0.12217, unit = "rad",  src = "S2", fidelity = "datasheet" }  # -7 deg, below the horizon of the sensor frame
+fov_vertical_max   = { value = 0.90757, unit = "rad",   src = "S2", fidelity = "datasheet" }  # +52 deg
+point_rate         = { value = 200000.0, unit = "Hz",   src = "S2", fidelity = "datasheet" }  # first return
+frame_rate         = { value = 10.0,    unit = "Hz",    src = "S2", fidelity = "datasheet" }  # typical
+range_10pct        = { value = 40.0,    unit = "m",     src = "S2", fidelity = "datasheet" }  # 10 % reflectivity, 100 klx, at the lowest FOV border
+range_80pct        = { value = 70.0,    unit = "m",     src = "S2", fidelity = "datasheet" }
+min_range          = { value = 0.1,     unit = "m",     src = "S1", fidelity = "datasheet" }  # objects at 0.1-0.2 m are detected, precision not guaranteed
+range_precision_10m = { value = 0.02,   unit = "m",     src = "S2", fidelity = "datasheet" }  # 1 sigma, 80 % reflectivity
+range_precision_02m = { value = 0.03,   unit = "m",     src = "S2", fidelity = "datasheet" }
+angular_precision  = { value = 2.618e-3, unit = "rad",  src = "S2", fidelity = "datasheet" }  # < 0.15 deg, 1 sigma
+supply_voltage_min = { value = 9.0,     unit = "V",     src = "S1", fidelity = "datasheet" }
+supply_voltage_max = { value = 27.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+supply_voltage_rec = { value = 12.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+power              = { value = 6.5,     unit = "W",     src = "S1", fidelity = "datasheet" }
+power_startup      = { value = 18.0,    unit = "W",     src = "S1", fidelity = "datasheet" }  # below 35 degC ambient, lasts about 8 s
+power_selfheat     = { value = 14.0,    unit = "W",     src = "S1", fidelity = "datasheet" }  # -20..0 degC, at most 10 min
+operating_temp_min = { value = 253.15,  unit = "K",     src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 328.15,  unit = "K",     src = "S1", fidelity = "datasheet" }
+protection         = { value = "IP67 (excluding cables)", unit = "-", src = "S1", fidelity = "datasheet" }
+imu                = { value = "ICM40609 (3-axis accel + 3-axis gyro)", unit = "-", src = "S2", fidelity = "datasheet" }
+interface          = { value = "100BASE-TX Ethernet, UDP; static IP 192.168.1.1XX default", unit = "-", src = "S1", fidelity = "datasheet" }
+
+[params.price]
+value = 749.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "Livox's own product page states 'the price of the MID-360 is only $749' (S3, seen 2026-10-16, US). A reseller (rcdrone.top, sold out) listed 1091.80 USD the same day, so the street price may be higher; 749 is the vendor figure and marked estimated for the BOM share."
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0325, 0.0325, 0.030]
+pos = [0.0, 0.0, 0.030]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.livox-mid360-base.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.005
+note = "4 x M3 holes, 5 mm deep, in the underside (S1 Dimensions figure). The hole coordinates could not be read unambiguously from the extracted drawing text; opaque family tag. The manual recommends a flat metal base of >= 3 mm and >= 10000 mm2 exposed for heat dissipation."
+
+[[ports]]
+name = "optical"
+kind = "mech"
+type = "optical-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Scan frame placeholder: the horizontal ring of the FOV through the sensor origin (z' = +x is azimuth 0, x' = up). The real optical centre height above the base is not published in the retrieved text."
+
+[[ports]]
+name = "power"
+pins = ["M12.1", "M12.9", "M12.2", "M12.3"]
+kind = "power"
+type = "m12-a-12p"
+gender = "male"
+role = "sink"
+v_max = { value = 27.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "derived", derivation = "Startup power 18 W at the 9 V minimum supply = 2.0 A (the worst case); steady state 6.5 W / 12 V = 0.54 A." }
+note = "Power+ on pins 1 and 9, ground on pins 2 and 3 (S1)."
+
+[[ports]]
+name = "eth"
+pins = ["M12.4", "M12.5", "M12.6", "M12.7"]
+kind = "signal"
+type = "ethernet"
+gender = "male"
+note = "100BASE-TX: TX+ 4, TX- 5, RX+ 6, RX- 7 (S1)."
+
+[[connectors]]
+id = "M12"
+name = "M12 A-code 12-pin aviation connector (male)"
+type = "m12-a-12p"
+port_type = "m12-a-12p"
+gender = "male"
+pos = [0.0325, 0.0, 0.015]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+src = "S1"
+fidelity = "datasheet"
+rows = 1
+cols = 12
+pitch = 0.0015
+pose_rationale = "Which side and how high the connector sits is not in the retrieved text: placed on the +x side wall at z = 15 mm (positional estimate). The pin table is the manual's."
+note = "Recommended mate: Finecables MA12FAHD12STXXXB14 (S1). Pin numbers are the M12 contact numbers; pin 11 and 12 reserved outputs."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_min = 9.0, v_max = 27.0, note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "GND", kind = "ground", note = "black (pins 2 and 3 are tied)" },
+  { number = 4, name = "ETH_TX+", kind = "signal", dir = "out", note = "orange/white" },
+  { number = 5, name = "ETH_TX-", kind = "signal", dir = "out", note = "orange" },
+  { number = 6, name = "ETH_RX+", kind = "signal", dir = "in", note = "green/white" },
+  { number = 7, name = "ETH_RX-", kind = "signal", dir = "in", note = "green" },
+  { number = 8, name = "PPS_IN", kind = "signal", dir = "in", v = 3.3, note = "LVTTL pulse-per-second input, purple/white" },
+  { number = 9, name = "V+", kind = "power", dir = "in", v_min = 9.0, v_max = 27.0, note = "red (tied to pin 1)" },
+  { number = 10, name = "GPS_IN", kind = "signal", dir = "in", v = 3.3, note = "LVTTL GPS serial input (9600 8N1), gray/white" },
+  { number = 11, name = "IO_OUT1", kind = "signal", dir = "out", v = 3.3, note = "reserved LVTTL output, gray" },
+  { number = 12, name = "IO_OUT2", kind = "signal", dir = "out", v = 3.3, note = "reserved LVTTL output, purple" },
+]
+
+[visual]
+src = "S2"
+note = "Black cylindrical-ish body with a clear optical band, tennis-ball size (product photos)."
+
+[[visual.elements]]
+gen = "box_device"
+colors = { body = "plastic-black", label = "plastic-black", conn = "steel" }
+
+[[sources]]
+id = "S1"
+url = "https://terra-1-g.djicdn.com/851d20f7b9f64838a34cd02351370894/Livox/Livox_Mid-360_User_Manual_EN.pdf"
+title = "Livox Mid-360 User Manual (EN, 2024), Product Profile, Connectors, Dimensions, External Power Supply"
+accessed = "2026-10-16"
+quote = "Livox Mid-360 can detect objects as close as 0.1 meters away ... The FOV of Mid-360 is 360° horizontally and 59° at maximum vertically ... Weight Approx. 265 g Dimensions 65 (width) × 65 (depth) × 60 (height) mm ... The working voltage range of Livox Mid-360 is from 9 V to 27 V, the recommended working voltage is 12 V ... working power of 6.5 W ... startup power is 18 W (which lasts for about 8 seconds) ... 1 Power+ DC 9V-27V Red (positive); 9 Power+; 2 Ground Black (negative); 3 Ground; 4 Ethernet-TX+ Orange/white; 5 Ethernet-TX- Orange; 6 Ethernet-RX+ Green/white; 7 Ethernet-RX- Green; 8 LVTTL_IN Pulse per second Purple/white; 10 LVTTL_IN GPS input Gray/white; 11 LVTTL_OUT Reserved output IO Gray; 12 LVTTL_OUT Purple"
+
+[[sources]]
+id = "S2"
+url = "https://www.livoxtech.com/mid-360/specs"
+title = "Livox Mid-360 Specs page (page-fetch summary, values as listed)"
+accessed = "2026-10-16"
+quote = "FOV 360° horizontal, -7° to 52° vertical; 200,000 points/s (first return); 40 m at 10% reflectivity, 70 m at 80% reflectivity (100 klx); range precision (1σ) <= 2 cm at 10 m, <= 3 cm at 0.2 m (80% reflectivity); angular precision (1σ) < 0.15°; 10 Hz typical frame rate; built-in ICM40609 IMU; 100BASE-TX Ethernet; IP67"
+
+[[sources]]
+id = "S3"
+url = "https://www.livoxtech.com/mid-360"
+title = "Livox Mid-360 product page, price statement"
+accessed = "2026-10-16"
+quote = "Compared to traditional mechanical LiDAR systems that can easily cost tens of thousands, the price of the MID-360 is only $749"

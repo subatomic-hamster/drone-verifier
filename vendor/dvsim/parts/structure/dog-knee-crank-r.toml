@@ -1,0 +1,38 @@
+id = "dog-knee-crank-r"
+name = "Dog knee crank, right (3D printed PLA): 7 mm plate on the knee actuator output, arm to the 20 mm rod-end pin"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "knee_crank (right)"
+url = "cad/dog/parts.py"
+
+# Mirror image (XZ plane) of dog-knee-crank-l: the plate lies at y in [0, 7] mm.
+
+[mirror]
+opposite = "dog-knee-crank-l"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+crank_radius    = { value = 0.02, unit = "m", fidelity = "estimated", rationale = "Design value KNEE_R1 (cad/dog/params.py): rod force = 22 N*m / 0.020 m = 1.1 kN at the actuator's stall torque." }
+mass            = { value = 0.0148, unit = "kg", fidelity = "derived", derivation = "Mesh volume 19.2 cm3 x PLA 1.24 g/cm3, shell + 30 % infill model, by cad/dog/build.py; identical to the left twin." }
+price           = { value = 0.3, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.0148 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-knee-crank-r.stl"
+material = "pla"
+bbox_min = [-0.03, 0.0, -0.03]
+bbox_max = [0.03, 0.007, 0.03]
+
+[[ports]]
+name = "motor"
+kind = "mech"
+type = "flange.steadywin-gim8108-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee actuator output flange; the plate lies on the +y side of this face."

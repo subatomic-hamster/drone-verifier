@@ -1,0 +1,109 @@
+id = "holybro-pm02d"
+name = "Holybro PM02D digital power module (LV 2-6S / HV 2-12S)"
+category = "pcb.pm"
+vendor = "Holybro"
+part_number = "PM02D"
+url = "https://holybro.com/collections/power-modules-pdbs/products/pm02d-power-module"
+
+# Digital (SMBus) module for Pixhawk 5X/6X. Gender of the XT60 pigtail on the battery side is a modelling convention
+# (loads carry the male plug, batteries the female); Holybro does not state it on the comparison page.
+[params]
+mass                = { value = 0.020, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+input_cells_max_lv  = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+input_cells_max_hv  = { value = 12, unit = "S", src = "S1", fidelity = "datasheet" }
+pcb_current_cont    = { value = 60, unit = "A", src = "S1", fidelity = "datasheet" }
+pcb_current_burst   = { value = 100, unit = "A", src = "S1", fidelity = "datasheet" }
+current_sense_max_lv = { value = 164, unit = "A", src = "S1", fidelity = "datasheet" }
+current_sense_max_hv = { value = 327, unit = "A", src = "S1", fidelity = "datasheet" }
+output_voltage      = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+output_current_max  = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "battery_in"
+kind = "power"
+type = "xt60"
+gender = "male"
+v_max = { value = 50.4, unit = "V", fidelity = "derived", derivation = "HV variant 2~12S per S1: 12 cells x 4.2 V full charge = 50.4 V (LV variant: 6 x 4.2 = 25.2 V)." }
+i_max = { value = 60, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+pins = ["BAT.1", "BAT.2"]
+note = "PCB 60 A continuous / 100 A burst; the XT60 plug and 12 AWG lead are rated 30 A continuous / 60 A burst (S2)"
+
+[[ports]]
+name = "fc_out"
+kind = "power"
+type = "molex-clik-mate.6"
+gender = "female"
+v_max = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+pins = ["FC.1", "FC.2", "FC.3", "FC.4", "FC.5", "FC.6"]
+note = "6Pin Molex 2.0mm digital (SMBus) power cable to the FC"
+
+# Pin level. BAT: the XT60 pigtail named in S1; polarity and 7.2 mm spacing are the XT60 family's (pin 1 +), which Holybro does not print: estimated.
+# FC: the 6-pin Molex CLIK-Mate 2.0 mm cable named in S1. The page prints no module-side table; the pins are derived from the FC side (S3): the
+# digital module plugs into POWER1/2 of a Pixhawk 5X/6X, whose pins 1-2 are the 5 V supply, 3 SCL, 4 SDA, 5-6 GND, so the module drives 5 V and shares the I2C.
+[[connectors]]
+id = "BAT"
+name = "battery XT60"
+type = "xt60"
+gender = "male"
+pos = [-0.0125, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists an XT60 port but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. Board position estimated."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "in", i_max = 30.0, note = "XT60 contact rating (S2); the PCB is rated 60 A" },
+  { number = 2, name = "BAT-", kind = "ground", i_max = 30.0 },
+]
+
+[[connectors]]
+id = "FC"
+name = "FC power cable (6-pin Molex CLIK-Mate 2.0 mm)"
+type = "molex-clik-mate-6"
+gender = "female"
+pos = [0.0125, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.002
+fidelity = "derived"
+derivation = "The module-side pin table is not published as text. Derived from the Pixhawk 5X/6X POWER1/2 port table (S3: 1-2 VDD5V_BRICK 5 V, 3 SCL, 4 SDA, 5-6 GND): a straight cable, so the module sources the 5 V and shares the two I2C lines. The 5.2 V / 3 A limits are the S1 output ratings."
+pins = [
+  { number = 1, name = "VDD5V_BRICK", kind = "power", dir = "out", v = 5.2, i_max = 3.0 },
+  { number = 2, name = "VDD5V_BRICK", kind = "power", dir = "out", v = 5.2, i_max = 3.0 },
+  { number = 3, name = "SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 4, name = "SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 5, name = "GND", kind = "ground" },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S3"
+url = "https://docs.holybro.com/llms-full.txt"
+title = "Holybro docs, 'Pixhawk Baseboard v1 Ports' - Power1 (Main) & Power2 Port (Backup), 2.00mm Pitch CLIK-Mate (Holybro llms-full.txt text export)"
+accessed = "2026-10-09"
+quote = "Power1 (Main) & Power2 Port (Backup) (2.00mm Pitch CLIK-Mate) | 1(red) VDD5V_BRICK1/2 +5V | 2(black) VDD5V_BRICK1/2 +5V | 3(black) SCL1/2 +3.3V | 4(black) SDA1/2 +3.3V | 5(black) GND | 6(black) GND"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module-comparison.md"
+title = "Power Module Comparison (Holybro docs), Digital Power Modules table"
+accessed = "2026-10-07"
+quote = "Model PM02D PM03D PM06D ... Input Voltage LV: 2~6S HV: 2~12S ... PCB Cont./Burst Current Rating 60A/100A ... Max Current Sensing LV: 164A HV:327A ... Output Voltage 5.2V/3A Max ... Ports XT60 6Pin Molex 2.0mm ... Built-in Power Distribution No ... Dimensions 25 x 25 x10 mm ... Weight 20g ... Mounting Hole N/A ... Applicable Products Pixhawk 5X & 6X"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module/connector-and-wire-rating.md"
+title = "Connector & Wire Rating (Holybro docs)"
+accessed = "2026-10-07"
+quote = "The XT60 plug and 12AWG wire that are pre-soldered on Holybro Power module are rated for 30A continuous current and 60A instantaneous current (<1 minute)."

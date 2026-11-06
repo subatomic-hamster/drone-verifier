@@ -1,0 +1,61 @@
+id = "generic-lander-leg-skid"
+name = "Splayed lander leg: 10 mm carbon tube, 0.25 m, 20 deg from the axis, low-friction printed PETG foot pad (design of this repo)"
+category = "rocket.landing-leg"
+vendor = "custom (cut carbon tube + FDM printed foot)"
+part_number = "n/a"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+
+# Same leg as parts/rocket/generic-rocket-landing-leg (geometry, masses, contact softness) with a hard, SLIDING foot instead of the grippy TPU ball. Why: a tall
+# lander on a narrow track trips over a foot that grips. Standing on feet at radius R from the axis with the centre of gravity h above the ground, a sliding vehicle
+# overturns when the foot friction coefficient exceeds R / h (friction at the ground x h > weight x R). Here R = 0.0699 + 0.0855 = 0.155 m and h = 0.399 m (dvsim design check
+# mass report): R / h = 0.39. The TPU foot (0.8) therefore trips the vehicle whenever it is still moving sideways at the end of the landing burn (docs/lander.md); a hard
+# printed pad with mu ~ 0.3 slides it out. Part frame: origin at the hinge point, the airframe axis is +z, the foot is at (0.0855, 0, -0.2349). Mount four 90 deg apart.
+[params]
+length = { value = 0.25, unit = "m", fidelity = "estimated", rationale = "Design choice, as generic-rocket-landing-leg: 0.0855 m radial reach on each side." }
+splay  = { value = 0.349, unit = "rad", fidelity = "estimated", rationale = "Design choice: 20 deg from the airframe axis." }
+rod_mass = { value = 0.0114, unit = "kg", fidelity = "derived", derivation = "0.0456 kg/m (parts/structure/cf-tube-10x8, datasheet) x 0.25 m = 0.0114 kg." }
+foot_mass = { value = 0.0088, unit = "kg", fidelity = "estimated", rationale = "A 12 mm radius printed PETG ball with a thin shell and infill is about as heavy as the solid TPU ball of the standard leg (4/3 pi 0.012^3 m3 x 1220 kg/m3 = 0.0088 kg); kept equal so the vehicle's mass budget does not change." }
+mass = { value = 0.0202, unit = "kg", fidelity = "derived", derivation = "rod_mass + foot_mass = 0.0114 + 0.0088 kg." }
+foot_friction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Design choice: must be below R / h = 0.39 (see above). Hard plastic on dry concrete or asphalt is in the 0.2-0.5 range (Engineering ToolBox lists metal on stone 0.30-0.70, rubber on concrete 0.60-0.90, so a hard polymer sits below the metal figure); 0.3 is an estimate, not a measurement, and a rougher surface (grass, wet asphalt) would bring the tripping back. Replaces the floor's friction (geom priority 1)." }
+contact_timeconst = { value = 0.02, unit = "s", fidelity = "estimated", rationale = "MuJoCo solref time constant of the foot contact, as the standard leg: a pad on a flexing leg, stiffness ~1.4e3 N/m per leg at damping ratio 1; a non-bouncing landing. A stiffer foot is a smaller value (min 2 x the 1 ms step)." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.005, 0.125]
+pos = [0.04275, 0.0, -0.11745]
+zaxis = [0.342020143, 0.0, -0.939692621]
+mass_param = "rod_mass"
+
+[[geometry.shapes]]
+shape = "sphere"
+size = [0.012]
+pos = [0.0855, 0.0, -0.2349]
+friction = [0.3, 0.005, 0.0001]
+solref = [0.02, 1.0]
+mass_param = "foot_mass"
+
+[[ports]]
+name = "hinge"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Fixed to a bracket on the airframe's outer wall (no hinge DOF, the leg is rigid); a placeholder interface family."
+
+[visual]
+rationale = "Design of this repo: 10 x 8 mm carbon tube at the part's splay, ball foot, small aluminium hinge block on the tube side (same generator as the standard leg)."
+
+[[visual.elements]]
+gen = "landing_leg"
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+title = "10mm (8mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table (via parts/structure/cf-tube-10x8)"
+accessed = "2026-10-07"
+quote = "Outside Diameter (OD) | 10 | mm ... Weight per metre | 45.6 | g"

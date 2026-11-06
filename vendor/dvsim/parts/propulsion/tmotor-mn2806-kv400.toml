@@ -1,0 +1,132 @@
+id = "tmotor-mn2806-kv400"
+name = "T-Motor MN2806 KV400 Antigravity multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN2806 KV400"
+url = "https://store.tmotor.com/product/mn2806-motor-antigravity-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop. Body length 18.4 mm is the top dimension of the
+# S2 drawing (S1 "Motor Size" is O35 x 26 mm, which includes the 5.5 mm shaft stub and the 2.1 mm base flange: 18.4 + 5.5 + 2.1 = 26.0).
+# The page covers KV400 and KV650; KV400 values used here.
+# Bolt pattern: the S2 drawing gives 4-M3 with an O25 circle and also a "19" dimension; the O25 circle is used (inference - the 19 mm
+# dimension is not unambiguous in the drawing).
+
+[params]
+mass            = { value = 0.046, unit = "kg", src = "S1", fidelity = "datasheet" }          # 46 g incl. cables
+kv              = { value = 400, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.645, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 645 mOhm
+i0              = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }             # idle current at 18 V
+i0_voltage      = { value = 18.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 9.4, unit = "A", src = "S1", fidelity = "datasheet" }             # continuous 180 s
+p_max           = { value = 216.0, unit = "W", src = "S1", fidelity = "datasheet" }           # continuous 180 s
+cells_min       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.0184, unit = "m", src = "S2", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }           # "IN:4 OUT:4"
+mount_circle    = { value = 0.025, unit = "m", src = "S2", fidelity = "datasheet" }
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+prop_adapter_thread = { value = "M6", unit = "thread", src = "S2", fidelity = "datasheet" }
+lead_length     = { value = 0.05, unit = "m", src = "S1", fidelity = "datasheet" }            # enamelled wire 50 mm
+kt              = { value = 0.023873, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*400) = 0.023873 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR "P12*4" prop, ~23 V (per-row voltage as printed). Printed table has 5 % steps 40-100 %;
+# rows 40/50/60/70/80/90/100 % transcribed. Operating temperature 45 C (after 10 min at 80 %).
+# Vendor columns: Voltage(V), Thrust(g), Torque(N*m), Current(A), RPM, Input power(W), Efficiency(g/W); thrust_N = thrust_g * 0.00980665.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [40, 23.59, 0.76, 17.85, 3080, 0.04, 2.2555, 230, 12.91],
+  [50, 23.46, 1.32, 30.94, 3755, 0.06, 3.3735, 344, 11.11],
+  [60, 23.28, 2, 46.61, 4319, 0.08, 4.4914, 458, 9.83],
+  [70, 23.12, 2.83, 65.34, 4837, 0.09, 5.5702, 568, 8.7],
+  [80, 23.01, 3.84, 88.41, 5337, 0.11, 6.9137, 705, 7.97],
+  [90, 22.91, 5.1, 116.77, 5838, 0.14, 8.2866, 845, 7.24],
+  [100, 22.86, 6.3, 144.03, 6235, 0.15, 9.3948, 958, 6.65],
+]
+prop_label = "T-MOTOR P12*4"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0175, 0.0092]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.0184]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "prop_adapter"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.6"
+gender = "male"
+pos = [0.0, 0.0, 0.0184]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (upper end of the 4-6S range for KV400, S1)." }
+i_max = { value = 9.4, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three enamelled-wire phase leads, 50 mm (S1 'Lead(mm)|Enameled Wire 50mm': bare enamelled ends, solder after stripping).
+# Lead exit and phase naming are conventions (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x enamelled wire, 50 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0175, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the lead type and length (Enameled Wire 50mm), not lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 9.4 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 9.4 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 9.4 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn2806-motor-antigravity-type.html"
+title = "T-MOTOR store - MN2806 Antigravity type motor (specification + test data)"
+accessed = "2026-10-07"
+quote = "Model No./ Kv|MN2806 KV400/650|Motor Size(mm)|Φ35*26|Configuration|12N14P|Shaft Diameter(mm)|IN:4 OUT:4|Lead(mm)|Enameled Wire 50mm|KV Value|KV400|Battery (lipo)/Voltage Recommendation|4-6S（4.2V/Sl）/16.8-25.2V|Idle Current（18V）|0.2A|Peak Current（A）|9.4A/Continuous 180s|Max. Power（W）|216W/Continuous 180s|Motor Weight（g）|46g Weight (incl. cables)|Internal Resistance（mΩ）|645. Test: MN2806 KV400 T-MOTOR P12*4 40%|23.59|230|0.04|0.76|3080|17.85|12.91|45℃ ... 100%|22.86|958|0.15|6.30|6235|144.03|6.65"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/271724720959397065.jpg"
+title = "T-MOTOR MN2806 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 18.4, 5.5, Ø4, Ø35, Ø30, 2.1, Ø4, 4-M3, 19, 25, Ø12, 4-M3; accessory M6 prop adapter 26 long, Ø20, 4-Ø3.2 on Ø12"

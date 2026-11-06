@@ -1,0 +1,67 @@
+id = "cnhl-12700mah-6s2p-liion-xt90"
+name = "CNHL Long Range 12700mAh 6S2P 21.6V 21700 Li-ion pack (BAK 65E), XT90"
+category = "battery.liion"
+vendor = "CNHL (China Hobby Line)"
+part_number = "LI1270106S70XT90"
+url = "https://chinahobbyline.com/products/cnhl-12700mah-21-6v-6s-21700-li-ion-battery-xt90"
+
+# Part frame: origin at the pack centre, x along length (150 mm), y along width (44 mm), z up (65 mm).
+# CNHL publishes no continuous-discharge rating for this pack ("Energy First / Maximum Endurance"); the port i_max is an ESTIMATED conservative floor.
+
+[params]
+capacity_ah     = { value = 12.7, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 45720.0, unit = "C", fidelity = "derived", derivation = "12.7 Ah x 3600 s/h = 45720 C (coulombs)." }
+energy_wh       = { value = 274.32, unit = "Wh", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 21.6, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell Li-ion charge limit (CNHL's 4S sibling page states 'Maximum Charge Voltage 16.8V (4.20V per cell)') = 25.2 V." }
+mass            = { value = 0.946, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.150, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.044, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 12.7, unit = "A", fidelity = "estimated", rationale = "CNHL gives no discharge rating. 1 C (12.7 A) is used as a conservative floor for an energy-optimised cell pack; the cell datasheet (BAK 65E) was not retrieved. Treat DRC overcurrent findings against this port as advisory." }
+r_internal_pack = { value = 0.045, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. Cell AC impedance of 21700 energy cells is ~10-15 mOhm (cf. Molicel P42A <15 mOhm, Samsung 40T <=12 mOhm); 6 series groups x (12 mOhm / 2 parallel) = 36 mOhm plus ~25% for welds, BMS-less leads and connector = 45 mOhm. Plus-or-minus 40%." }
+
+[geometry]
+shape = "box"
+size = [0.075, 0.022, 0.0325]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 12.7, unit = "A", fidelity = "estimated", rationale = "1 C floor, no published discharge rating (see i_max_continuous)." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90)"
+type = "xt90"
+gender = "neutral"
+pos = [0.075, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-12700mah-21-6v-6s-21700-li-ion-battery-xt90"
+title = "China Hobby Line - CNHL Long Range Series 12700mAh 21.6V 6S 21700 Li-ion Battery with XT90 Plug"
+accessed = "2026-10-07"
+quote = "Cell Platform | BAK 65E | Configuration | 6S2P / 12 cells | Capacity | 12700mAh | Nominal Voltage | 21.6V | Nominal Pack Energy | 274.32Wh | Approx. Weight | Approx. 946g | Main Connector | XT90 | Power Wire | 12AWG | Approx. Dimensions | 150 × 44 × 65mm"

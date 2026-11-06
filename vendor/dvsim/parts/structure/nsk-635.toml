@@ -1,0 +1,45 @@
+id = "nsk-635"
+name = "NSK 635 deep-groove ball bearing, open, 5x19x6 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "635"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.006, unit = "m", src = "S1", fidelity = "datasheet" }
+chamfer_min        = { value = 0.0003, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 2570, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 885, unit = "N", src = "S1", fidelity = "datasheet" }
+limiting_speed_grease = { value = 32000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, grease lubrication
+mass               = { value = 0.00856, unit = "kg", src = "S1", fidelity = "datasheet" }  # open type, catalog mass in g
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.19"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, extra small and miniature ball bearings table (metric series, bore 5 mm group; open type; mass in g)"
+accessed = "2026-10-07"
+quote = "19 6.0 6.0 0.30 0.30 2 570 885 32 000 30 000 40 000 635 635 ZZ1 VV DD 07.0 08.5 17.0 16.5 0.30 0.30 08.56 08.34 (columns: d D B B1 r r1 Cr C0r grease-open grease-ZZ oil-open, designations, abutment dims, mass open/shielded; bore d = 5 from the grouped first column)"

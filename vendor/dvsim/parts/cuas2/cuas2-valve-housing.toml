@@ -1,0 +1,42 @@
+id = "cuas2-valve-housing"
+name = "cuas2 valve_housing (3D printed PETG, M4 feeder housing: throat, plug bore, breech spigot, servo pads, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "valve_housing"
+url = "cad/cuas2/modules/feeder.py"
+
+# Mesh in the head frame H; bolted to the cartridge rear face by the F1 flange (4 x M3 on 50 x 40, ring lip), identity transform. Supports: yes (plug bore, throat).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/valve_housing.stl"
+material = "petg"
+bbox_min = [-0.1012, -0.032, -0.07]
+bbox_max = [-0.0208, 0.032, 0.0305]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame, axis +z: 'a' side of the mates to the hopper, the plug and the rod (modelled in the same frame)."

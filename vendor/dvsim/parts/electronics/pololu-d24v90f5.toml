@@ -1,0 +1,90 @@
+id = "pololu-d24v90f5"
+name = "Pololu 5 V, 9 A step-down regulator D24V90F5"
+category = "pcb.bec"
+vendor = "Pololu"
+part_number = "D24V90F5 (item 2866)"
+url = "https://www.pololu.com/product/2866"
+
+# Efficiency, dropout and max current versus load are published as graphs only (images), so only the headline numbers are recorded.
+# output_current_typ_max is the title figure (9 A); the Features line gives a typical maximum continuous current between 4 A and 8 A depending on conditions.
+[params]
+length = { value = 0.0406, unit = "m", src = "S1", fidelity = "datasheet" }
+width = { value = 0.0203, unit = "m", src = "S1", fidelity = "datasheet" }
+height = { value = 0.0076, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_min = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }  # effective lower limit is Vout + dropout
+input_voltage_max = { value = 38, unit = "V", src = "S1", fidelity = "datasheet" }
+output_voltage = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+output_current_typ_max = { value = 9.0, unit = "A", src = "S1", fidelity = "datasheet" }
+efficiency_min = { value = 0.8, unit = "1", src = "S1", fidelity = "datasheet" }
+efficiency_max = { value = 0.95, unit = "1", src = "S1", fidelity = "datasheet" }
+quiescent_current = { value = 0.0008, unit = "A", src = "S1", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.00218, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.35.56x15.24.m2"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Four corner holes for #2 or M2 screws, 35.56 mm horizontally by 15.24 mm vertically (1.4 in x 0.6 in)"
+
+[[ports]]
+name = "vin"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 38, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+pins = ["IO.VIN", "IO.GND"]
+
+[[ports]]
+name = "vout"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 9.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+pins = ["IO.VOUT", "IO.GND"]
+note = "Title figure; the Features range is 4 A to 8 A typical maximum continuous, thermally limited"
+
+# Pin level: S2 lists six connections (VIN, GND, VOUT, FB, ENABLE, PG); the order along the board edge is not in the page text, so it is estimated.
+[[connectors]]
+id = "IO"
+name = "6 solder pads / header holes"
+type = "pad-1x6-2.54mm"
+gender = "neutral"
+pos = [0.0, -0.01015, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00254
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "S2 gives the six connections ('input voltage (VIN), ground (GND), output voltage (VOUT), feedback (FB), ENABLE, and power good (PG)'); the order along the board edge is not in the page text: estimated."
+pins = [
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v_max = 38.0 },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "VOUT", name = "VOUT", kind = "power", dir = "out", v = 5.0, i_max = 9.0 },
+  { number = "FB", name = "FB", kind = "signal", dir = "in", note = "optional: a resistor between FB and VOUT lowers the output voltage" },
+  { number = "ENABLE", name = "ENABLE", kind = "signal", dir = "in", note = "driven low (under 0.6 V) to put the board into a low-power state; 100 kohm pull-up to VIN, so it may be left open" },
+  { number = "PG", name = "PG", kind = "signal", dir = "out", note = "power-good indicator" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/2866"
+title = "Pololu D24V90F5 step-down regulator product page, Connections"
+accessed = "2026-10-09"
+quote = "This buck regulator has six connections: input voltage (VIN), ground (GND), output voltage (VOUT), feedback (FB), ENABLE, and power good (PG). ... The regulator is enabled by default: a 100 kohm pull-up resistor on the board connects the ENABLE pin to reverse-protected VIN. The ENABLE pin can be driven low (under 0.6 V) to put the board into a low-power state."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2866"
+title = "Pololu 5V, 9A Step-Down Voltage Regulator D24V90F5 (Pololu product page)"
+accessed = "2026-10-07"
+quote = "Input voltage: 5 to 38 V (see below for more details on the regulator’s dropout voltage, which affects the low end of the operating range) | Fixed 5 V output (with 4% accuracy); this can be lowered by adding an external resistor between FB and VOUT | Typical maximum continuous output current between 4 A and 8 A | Integrated reverse-voltage protection, over-current and short-circuit protection, over-temperature shutoff, soft-start, and under-voltage lockout | Typical efficiency of 80% to 95%, depending on input voltage and load; the switching frequency automatically changes at light loads to maintain high efficiencies | 800 μA typical no-load quiescent current; can be reduced to 10 µA to 20 µA per volt on VIN by disabling the board | Power-good indicator can be used to tell when the regulator has reached and is maintaining its target output voltage | Compact size:  1.6″ × 0.8″ × 0.3″ (40.6 × 20.3 × 7.6 mm) | Four 0.086″ mounting holes for #2 or M2 | screws | Smaller holes for 0.1″ header pins and larger holes for terminal blocks offer several options for connecting to the board ... .  The mounting holes are in the four corners of the board and are separated by 1.4″ horizontally and 0.6″ vertically."

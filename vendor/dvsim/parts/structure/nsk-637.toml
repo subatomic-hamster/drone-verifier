@@ -1,0 +1,45 @@
+id = "nsk-637"
+name = "NSK 637 deep-groove ball bearing, open, 7x26x9 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "637"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.007, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.026, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.009, unit = "m", src = "S1", fidelity = "datasheet" }
+chamfer_min        = { value = 0.0003, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 5050, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 1970, unit = "N", src = "S1", fidelity = "datasheet" }
+limiting_speed_grease = { value = 28000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, grease lubrication
+mass               = { value = 0.024, unit = "kg", src = "S1", fidelity = "datasheet" }  # open type, catalog mass in g
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.7"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.26"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, extra small and miniature ball bearings table (metric series, bore 7 mm group; open type; mass in g)"
+accessed = "2026-10-07"
+quote = "26 9.0 9.0 0.30 0.30 5 050 1 970 28 000 22 000 34 000 637 637 ZZ1 VV DD 09.0 12.8 24.0 22.8 0.30 0.30 24.00 25.00 (columns: d D B B1 r r1 Cr C0r grease-open grease-ZZ oil-open, designations, abutment dims, mass open/shielded; bore d = 7 from the grouped first column)"

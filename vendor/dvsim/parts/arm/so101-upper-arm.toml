@@ -1,0 +1,84 @@
+id = "so101-upper-arm"
+name = "SO-101 upper arm (3D printed, upper_arm_link)"
+category = "frame.printed"
+vendor = "TheRobotStudio (open design, Apache-2.0)"
+part_number = "Upper_arm_SO101.stl (sim mesh upper_arm_so101_v1.stl)"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/STL/SO101/Individual/Upper_arm_SO101.stl"
+
+[params]
+volume_solid = { value = 1.174e-4, unit = "m^3", fidelity = "derived", derivation ="Signed-volume integral over the 26068 triangles of meshes/so101/upper_arm_so101_v1.stl (binary STL, metres) = 117.40 cm^3. Solid." }
+infill_fraction = { value = 0.15, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale ="Repo README gives only material, nozzle/layer height and 15% infill, no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile)." }
+shoulder_lift_range = { value = [-1.74533, 1.74533], unit = "rad", src = "S3", fidelity = "datasheet" }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/so101/upper_arm_so101_v1.stl"
+material = "pla"
+urdf_link = "upper_arm_link"
+origin_xyz = [-0.065085, 0.012, 0.0182]
+origin_rpy = [3.14159, 0.0, 0.0]
+bbox_min = [-0.0651, 0.0, -0.0356]
+bbox_max = [0.0771, 0.0245, 0.0317]
+
+# Ports derived by tools/so101_ports.py (closure check: python tools/so101_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame.
+# horn_seat: mate with feetech-sts3215-c001 `output` (k = 0, no reverse needed) to reproduce the URDF; q = 0 is the URDF zero of joint shoulder_lift, limits in shoulder_lift_range.
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "female"
+pos = [0.065084977742, 0.012000098362, -0.018200009156]
+axis = [6.115e-07, -2.011601e-06, 0.999999999998]
+ref = [-0.999999999973, 7.346409e-06, 6.11514e-07]
+symmetry = 25
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): F = inv(T_part) @ inv(J_shoulder_lift) @ T_servo_shoulder_lift @ P_out @ Rx(pi); mating servo.output (k=0) reproduces the URDF; absorbs the 179.999579 deg rotation about z of joint shoulder_lift relative to the canonical output frame"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin). Estimated."
+joint = "shoulder_lift"
+joint_reverse = false
+
+[[ports]]
+name = "servo_seat"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3215-base"
+gender = "neutral"
+pos = [-0.047484957808, 0.027499959135, 0.015400072974]
+axis = [-2.65359e-06, 2.65358e-06, -0.999999999993]
+ref = [-3.673205e-06, 0.99999999999, 2.65359e-06]
+symmetry = 2
+thread = "m2"
+hole_pos = [[0.0196, 0.00935], [-0.0196, 0.00935], [-0.0196, -0.00935], [0.0196, -0.00935]]
+hole_pos_rationale = "Estimated placeholder (not a measured pattern): 4 holes at the corners of the 45.2 x 24.7 mm servo case footprint (datasheet size) inset 3 mm; screws are the 'PA2.0 self-tapping' M2 of the servo kit. Only places the 0.28 g screw masses of the builder's fastener model (CoM shift well under 1 mm); no kinematic role."
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): F = inv(T_part) @ T_servo_elbow_flex @ P_base @ Rx(pi); the servo holding part is chosen by mesh contact (tools/so101_ports.py --evidence)"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin). Estimated."
+servo_joint = "elbow_flex"
+
+[[sources]]
+id = "S1"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "SO-ARM100 README, Printing the Parts, Step 1 (commit a758567)"
+accessed = "2026-10-06"
+quote = "Material: PLA+ || Nozzle Diameter and Precision: 0.4mm nozzle diameter at 0.2mm layer height or 0.6mm nozzle at 0.4mm layer height. || Infill Density: 15%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), part placement in link upper_arm_link"
+accessed = "2026-10-06"
+quote = "<!-- Part upper_arm_so101_v1 --> <visual> <origin xyz=\"-0.065085 0.012 0.0182\" rpy=\"3.14159 -0 -1.30911e-30\"/>"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), joint shoulder_lift (parent shoulder_link, child upper_arm_link)"
+accessed = "2026-10-07"
+quote = "<joint name=\"shoulder_lift\" type=\"revolute\"> || <limit effort=\"10\" velocity=\"10\" lower=\"-1.74533\" upper=\"1.74533\"/>"
+license = "Apache-2.0"

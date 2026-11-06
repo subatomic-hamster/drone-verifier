@@ -1,0 +1,51 @@
+id = "ruland-fhd-mcl-12-f"
+name = "Ruland FHD-MCL-12-F face-mount clamp shaft collar, drilled holes, 12 mm bore, 28 mm OD, 11 mm wide"
+category = "structure.shaft-collar"
+vendor = "Ruland Manufacturing"
+part_number = "FHD-MCL-12-F"
+url = "https://docs.rs-online.com/6d59/A700000013979746.pdf"
+
+# Frame: origin on the bore axis at the bore-end face, +z along the axis through the width. The two drilled face holes lie on a line
+# through the bore centre, 10 mm each side (Hole to Center 10.00, Hole to Hole 20.00); their face (+z or -z) and angular position
+# relative to the clamp screw are not stated in the text, so +x is assumed to be the hole line.
+[params]
+bore_diameter    = { value = 12e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter   = { value = 28e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width            = { value = 11e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_to_hole     = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter    = { value = 4.31e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+clamp_screw      = { value = "M4 x 12", unit = "-", src = "S1", fidelity = "datasheet" }
+seating_torque   = { value = 4.6, unit = "N*m", src = "S1", fidelity = "datasheet" }
+mass             = { value = 0.037421, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.12"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.011
+note = "12 mm clamped bore (+0.050 / +0.012 mm)."
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.20x0.m4"
+gender = "neutral"
+pos = [0.0, 0.0, 0.011]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+fidelity = "estimated"
+rationale = "S1 gives Hole to Hole 20.00 mm and hole diameter 4.31 mm (an M4 clearance hole); which end face carries them is not in the text, so the +z face is assumed. Two holes: symmetry 2 about the axis."
+note = "Two drilled 4.31 mm holes for M4 screws, 20 mm apart, through which the collar is bolted to a part."
+
+[[sources]]
+id = "S1"
+url = "https://docs.rs-online.com/6d59/A700000013979746.pdf"
+title = "Ruland FHD-MCL-12-F datasheet (RS Components mirror of the Ruland sheet)"
+accessed = "2026-10-07"
+quote = "Ruland FHD-MCL-12-F, 12mm Face Mount Shaft Collar with Drilled Hole, Black Oxide Steel, One-Piece Clamp Style, 28mm OD, 11mm Width ... Bore (B1) 12 mm ... Outer Diameter (OD) 28 mm Clearance Diameter (C) MAX 32.0 mm Width (W) 11 mm ... Hole to Center (HC) 10.00 mm Hole to Hole (HH) 20.00 mm Hole Diameter (H) 4.31 mm ... Forged Clamp Screw M4 x 12 ... Seating Torque 4.6 Nm ... Weight (lbs) 0.082499"

@@ -1,0 +1,159 @@
+id = "uiuc-apc-sf-10x4.7"
+ports_note = "Data-only wind-tunnel reference (UIUC APC Slow Flyer 10x4.7); it is not the kit propeller and is never mounted. Its J-shape is scaled into holybro-1045-prop [tables.ct_cq_j]; no ports."
+name = "APC Slow Flyer 10x4.7 propeller - UIUC wind-tunnel C_T/C_P data (reference for X500 V2 1045 prop J-shape)"
+category = "prop.reference"
+vendor = "APC (propeller); data: UIUC Propeller Data Site (Selig et al.)"
+part_number = "apcsf_10x4.7"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+
+# Closest published prop data to the Holybro 1045 (10x4.5 plastic 2-blade). Wind-tunnel and static measurements of the
+# off-the-shelf APC SF 10x4.7 (UIUC Propeller Database Volume 1). Tables transcribed from the .txt data files.
+# Static: C_T, C_P vs RPM (J = 0). Advancing: C_T, C_P, eta vs J at constant rpm (two runs, about 4014 and 6020 rpm).
+# The Holybro prop derives lower static C_T (about 0.095) than this APC SF (about 0.12-0.13 at 4000-6500 rpm); use only the
+# SHAPE C_T(J)/C_T(0), C_P(J)/C_P(0) from here, and scale by the 1045's own static values (see holybro-1045-prop).
+
+[params]
+diameter  = { value = 0.254, unit = "m", src = "S1", fidelity = "literature" }      # 10 in
+pitch     = { value = 0.11938, unit = "m", src = "S1", fidelity = "literature" }    # 4.7 in per revolution
+rpm_static_min = { value = 2377, unit = "rpm", src = "S2", fidelity = "literature" }
+rpm_static_max = { value = 6528, unit = "rpm", src = "S2", fidelity = "literature" }
+ct_static_at_4029rpm = { value = 0.1158, unit = "1", src = "S2", fidelity = "literature" }
+cp_static_at_4029rpm = { value = 0.0466, unit = "1", src = "S2", fidelity = "literature" }
+ct_static_at_6528rpm = { value = 0.1299, unit = "1", src = "S2", fidelity = "literature" }
+cp_static_at_6528rpm = { value = 0.0531, unit = "1", src = "S2", fidelity = "literature" }
+j_ct_zero_approx = { value = 0.65, unit = "1", src = "S3", fidelity = "literature" }   # C_T crosses 0 near J=0.647 (4014 rpm) / 0.652 (6020 rpm)
+eta_max_approx = { value = 0.65, unit = "1", src = "S4", fidelity = "literature" }     # 0.650 at J=0.458, 6020 rpm run
+
+[tables.static_ct_cp]
+# Static (J = 0) coefficients vs rpm. UIUC file apcsf_10x4.7_static_kt0835.txt
+columns = ["rpm", "C_T", "C_P"]
+rows = [
+  [2377, 0.1059, 0.0431],
+  [2676, 0.1079, 0.0437],
+  [2947, 0.1079, 0.0437],
+  [3234, 0.1104, 0.0444],
+  [3494, 0.1117, 0.0450],
+  [3762, 0.1143, 0.0460],
+  [4029, 0.1158, 0.0466],
+  [4319, 0.1177, 0.0474],
+  [4590, 0.1200, 0.0484],
+  [4880, 0.1223, 0.0494],
+  [5147, 0.1237, 0.0500],
+  [5417, 0.1252, 0.0508],
+  [5715, 0.1263, 0.0513],
+  [5960, 0.1278, 0.0520],
+  [6226, 0.1286, 0.0524],
+  [6528, 0.1299, 0.0531],
+]
+src = "S2"
+fidelity = "literature"
+
+[tables.advancing_4014rpm]
+# UIUC file apcsf_10x4.7_kt0836_4014.txt (constant rpm about 4014)
+columns = ["J", "C_T", "C_P", "eta"]
+rows = [
+  [0.142, 0.0994, 0.0451, 0.312],
+  [0.177, 0.0944, 0.0446, 0.375],
+  [0.216, 0.0885, 0.0436, 0.438],
+  [0.255, 0.0829, 0.0427, 0.495],
+  [0.289, 0.0770, 0.0414, 0.537],
+  [0.325, 0.0719, 0.0407, 0.574],
+  [0.361, 0.0652, 0.0392, 0.600],
+  [0.399, 0.0582, 0.0375, 0.620],
+  [0.438, 0.0502, 0.0352, 0.624],
+  [0.468, 0.0441, 0.0335, 0.615],
+  [0.510, 0.0343, 0.0308, 0.567],
+  [0.534, 0.0288, 0.0292, 0.526],
+  [0.577, 0.0178, 0.0258, 0.398],
+  [0.612, 0.0083, 0.0228, 0.222],
+  [0.647, -0.0011, 0.0199, -0.036],
+  [0.685, -0.0122, 0.0162, -0.513],
+  [0.719, -0.0218, 0.0130, -1.204],
+]
+src = "S3"
+fidelity = "literature"
+
+[tables.advancing_6020rpm]
+# UIUC file apcsf_10x4.7_rd0840_6020.txt (constant rpm about 6020)
+columns = ["J", "C_T", "C_P", "eta"]
+rows = [
+  [0.408, 0.0624, 0.0397, 0.641],
+  [0.432, 0.0576, 0.0383, 0.649],
+  [0.458, 0.0519, 0.0366, 0.650],
+  [0.480, 0.0471, 0.0351, 0.645],
+  [0.507, 0.0405, 0.0331, 0.622],
+  [0.528, 0.0354, 0.0315, 0.594],
+  [0.551, 0.0296, 0.0297, 0.549],
+  [0.574, 0.0235, 0.0279, 0.484],
+  [0.601, 0.0160, 0.0254, 0.378],
+  [0.623, 0.0100, 0.0234, 0.265],
+  [0.652, 0.0017, 0.0207, 0.052],
+  [0.671, -0.0039, 0.0189, -0.139],
+  [0.700, -0.0123, 0.0160, -0.540],
+  [0.719, -0.0178, 0.0141, -0.906],
+  [0.747, -0.0265, 0.0112, -1.773],
+  [0.774, -0.0347, 0.0085, -3.171],
+]
+src = "S4"
+fidelity = "literature"
+
+[tables.blade_geometry]
+# UIUC file apcsf_10x4.7_geom.txt: r/R, chord c/R, twist beta (degrees)
+columns = ["r_over_R", "c_over_R", "beta_deg"]
+rows = [
+  [0.15, 0.109, 21.11],
+  [0.20, 0.132, 23.90],
+  [0.25, 0.156, 24.65],
+  [0.30, 0.176, 24.11],
+  [0.35, 0.193, 22.78],
+  [0.40, 0.206, 21.01],
+  [0.45, 0.216, 19.00],
+  [0.50, 0.223, 17.06],
+  [0.55, 0.226, 15.33],
+  [0.60, 0.225, 13.82],
+  [0.65, 0.219, 12.51],
+  [0.70, 0.210, 11.36],
+  [0.75, 0.197, 10.27],
+  [0.80, 0.179, 9.32],
+  [0.85, 0.157, 8.36],
+  [0.90, 0.130, 7.27],
+  [0.95, 0.087, 6.15],
+  [1.00, 0.042, 5.04],
+]
+src = "S5"
+fidelity = "literature"
+
+[[sources]]
+id = "S1"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+title = "UIUC Propeller Database - Volume 1 (Ananda, Selig), page notes"
+accessed = "2026-10-06"
+quote = "The propeller size is given in inches, e.g. APC 10x4.7 is a 10-inch diameter propeller with a pitch of 4.7 inch/revolution."
+
+[[sources]]
+id = "S2"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apcsf_10x4.7_static_kt0835.txt"
+title = "UIUC data file apcsf_10x4.7_static_kt0835.txt"
+accessed = "2026-10-06"
+quote = "RPM    CT       CP / 2377   0.1059   0.0431 / 4029   0.1158   0.0466 / 6528   0.1299   0.0531"
+
+[[sources]]
+id = "S3"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apcsf_10x4.7_kt0836_4014.txt"
+title = "UIUC data file apcsf_10x4.7_kt0836_4014.txt"
+accessed = "2026-10-06"
+quote = "J       CT       CP       eta / 0.142   0.0994   0.0451   0.312 / 0.647   -0.0011   0.0199   -0.036"
+
+[[sources]]
+id = "S4"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apcsf_10x4.7_rd0840_6020.txt"
+title = "UIUC data file apcsf_10x4.7_rd0840_6020.txt"
+accessed = "2026-10-06"
+quote = "J       CT       CP       eta / 0.458   0.0519   0.0366   0.650"
+
+[[sources]]
+id = "S5"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apcsf_10x4.7_geom.txt"
+title = "UIUC data file apcsf_10x4.7_geom.txt"
+accessed = "2026-10-06"
+quote = "r/R   c/R     beta / 0.15   0.109   21.11 / 0.75   0.197   10.27 / 1.00   0.042   5.04"

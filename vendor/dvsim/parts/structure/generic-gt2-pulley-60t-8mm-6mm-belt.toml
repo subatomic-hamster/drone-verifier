@@ -1,0 +1,62 @@
+id = "generic-gt2-pulley-60t-8mm-6mm-belt"
+name = "Aluminium GT2 timing pulley, 60 teeth, 8 mm bore, for 6 mm belt (generic, Othoba listing)"
+category = "structure.pulley"
+vendor = "generic (listing: Othoba, Bangladesh)"
+part_number = "60T 8 mm bore GT2 pulley, 6 mm belt"
+url = "https://othoba.com/60-teeths-8mm-shaft-hole-aluminum-gt2-timing-8mm-bore-shaft-pulley-60-tooth-6mm-belt-for-cnc-machine-3d-printer-dc-gear-motor-parts-puli-electronics-parts-bd-1016243"
+
+# Large pulley of the 3:1 reduction (20T on the motor, 60T on the axis; the 8 mm bore fits a 608ZZ-carried 8 mm shaft). Mass, dimensions and price only (briefing item 12).
+# The listing's 'Total Size 43x16mm' does not say which figure is diameter and which length: 43 mm is taken as the flange diameter and 16 mm as the length (inference; a 60T GT2 pulley has a 38.2 mm pitch
+# diameter, so 43 mm can only be a diameter). The 70 g mass is the listing's, not a weighed value.
+# Price is a derived conversion of the Bangladesh listing; a second source (RobotShop, Phidgets GT2 pulley 60T 8 mm bore) showed about 4.34 USD in a web search (page returned 403, not fetched).
+
+[params]
+teeth           = { value = 60, unit = "1", src = "S1", fidelity = "datasheet" }
+bore_diameter   = { value = 0.008, unit = "m", src = "S1", fidelity = "datasheet" }
+belt_width_max  = { value = 0.006, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 0.070, unit = "kg", src = "S1", fidelity = "datasheet" }
+flange_diameter = { value = 0.043, unit = "m", src = "S1", fidelity = "datasheet" }   # inference: 43 of '43x16' is the diameter
+length          = { value = 0.016, unit = "m", src = "S1", fidelity = "datasheet" }
+belt_pitch      = { value = 0.002, unit = "m", fidelity = "derived", derivation = "GT2 profile: 2 mm pitch (as in parts/structure/adafruit-1184-gt2-belt-1164-6mm.toml, S1 there)." }
+pitch_diameter  = { value = 0.0382, unit = "m", fidelity = "derived", derivation = "60 teeth x 2 mm / pi = 38.20 mm; the Unitta 2GT table prints 38.20 mm for 60 teeth (S2 of parts/structure/adafruit-1251-gt2-pulley-20t-5mm.toml)." }
+price_bdt       = { value = 445.0, unit = "BDT", src = "S1", fidelity = "datasheet" }   # sale price, 2026-10-11 (regular Tk 925)
+price       = { value = 3.71, unit = "USD", fidelity = "derived", derivation = "445 BDT (S1) / an assumed 120 BDT per USD = 3.71 USD; exchange rate assumed, not looked up." }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.016
+note = "8 mm bore with two set screws (S1)."
+
+[[ports]]
+name = "belt"
+kind = "mech"
+type = "belt.gt2.6"
+gender = "neutral"
+pos = [0.0, 0.0, 0.008]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Axial position of the belt seat taken as mid-length; the listing gives no tooth-section offset."
+note = "GT2 6 mm belt only (S1)."
+
+[[sources]]
+id = "S1"
+url = "https://othoba.com/60-teeths-8mm-shaft-hole-aluminum-gt2-timing-8mm-bore-shaft-pulley-60-tooth-6mm-belt-for-cnc-machine-3d-printer-dc-gear-motor-parts-puli-electronics-parts-bd-1016243"
+title = "Othoba: 60 Teeth 8mm Shaft Hole Aluminum GT2 Timing Pulley, 6mm belt"
+accessed = "2026-10-11"
+quote = "Tk 445 ... Material: Aluminum ... Inner Diameter: 8 mm ... Total Size: 43x16mm ... Weight: 70gm ... meant for use with GT2 6mm wide belts only ... 60 teeth"
+
+[[sources]]
+id = "V1"
+url = "https://othoba.com/60-teeths-8mm-shaft-hole-aluminum-gt2-timing-8mm-bore-shaft-pulley-60-tooth-6mm-belt-for-cnc-machine-3d-printer-dc-gear-motor-parts-puli-electronics-parts-bd-1016243"
+title = "Othoba listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "60 Teeths 8mm Shaft Hole Aluminum GT2 Timing Pulley"

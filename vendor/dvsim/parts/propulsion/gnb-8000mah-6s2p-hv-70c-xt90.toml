@@ -1,0 +1,66 @@
+id = "gnb-8000mah-6s2p-hv-70c-xt90"
+name = "GAONENG GNB 8000mAh 6S2P LiHV 22.8V 70C pack, XT90"
+category = "battery.lipo"
+vendor = "GAONENG (GNB)"
+part_number = "GNB80006S70AHV"
+url = "https://rcdrone.top/products/gaoneng-gnb8000-6s-battery"
+
+# Part frame: origin at the pack centre, x along length (144 mm), y along width (45 mm), z up (68 mm). Listing prints "Pack Dimension (H*W*L)" = 68*45*144 mm.
+# 6S2P: two parallel cell groups; capacity 8000 mAh is the pack figure. LiHV: 4.35 V/cell full charge. No burst rating or wire gauge published.
+
+[params]
+capacity_ah     = { value = 8.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 28800.0, unit = "C", fidelity = "derived", derivation = "8.0 Ah x 3600 s/h = 28800 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 26.1, unit = "V", fidelity = "derived", derivation = "6S x 4.35 V/cell LiHV full-charge limit (S1 'LiHV (HV LiPo)') = 26.1 V." }
+c_rating_cont   = { value = 70, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 560.0, unit = "A", fidelity = "derived", derivation = "70 C x 8.0 Ah = 560 A (rating label only)." }
+mass            = { value = 0.914, unit = "kg", src = "S1", fidelity = "datasheet" }          # 914 g (+-25 g)
+length          = { value = 0.144, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.068, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0195, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R scaled inversely with pack capacity, 0.026 ohm*Ah / 8.0 Ah = 3.25 mOhm per series group x 6 groups = 19.5 mOhm (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml, applied to the parallel group as a whole). Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.072, 0.0225, 0.034]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 26.1, unit = "V", fidelity = "derived", derivation = "6S x 4.35 V/cell LiHV = 26.1 V." }
+i_max = { value = 560.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 70 C x 8.0 Ah = 560 A (S1 label); exceeds the XT90 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90)"
+type = "xt90"
+gender = "neutral"
+pos = [0.072, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 26.1, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/gaoneng-gnb8000-6s-battery"
+title = "rcdrone.top (GNB distributor) - GAONENG GNB HV 6S 22.8V 8000mAh 70C LiHV, XT90"
+accessed = "2026-10-07"
+quote = "Model No. | GNB80006S70AHV | Battery Type | LiHV (HV LiPo) | Voltage | 22.8V | Capacity | 8000mAh | Cells Configuration | 6S2P | Discharge Rate | 70C | Discharge Connector | XT90 | Pack Dimension (H*W*L) | 68*45*144mm | Net Weight | 914g (+/-25g)"

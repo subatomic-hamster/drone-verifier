@@ -1,0 +1,59 @@
+id = "iso10642-m2.5x6"
+name = "Countersunk (sunk) hex socket screw M2.5x6, steel"
+category = "fastener"
+vendor = "generic (ISO 10642 / DIN 7991)"
+part_number = "ISO 10642 M2.5x6"
+url = "https://fasten.it/norms/norm/din_7991"
+
+[params]
+thread_diameter = { value = 2.5e-3, unit = "m", src = "S3", fidelity = "datasheet" }
+length          = { value = 6e-3, unit = "m", src = "S3", fidelity = "datasheet" }
+steel_density   = { value = 7850, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+thread_pitch    = { value = 0.45e-3, unit = "m", src = "S4", fidelity = "datasheet" }   # M2.5 coarse pitch (ISO 261), same for every M2.5 screw
+
+[params.mass]
+value = 2.34e-4
+unit = "kg"
+fidelity = "derived"
+derivation = "DIN 7991 table (S1) has no M2.5 column; M3x6 = 0.41 kg/1000 pcs. Scaled by the ISO 4762 M2.5x6 / M3x6 mass ratio 0.405 / 0.71 = 0.570 (both from the same ISO 4762 table, see iso4762-m2.5x6 and iso4762-m3x6): 0.41 * 0.570 = 0.234 g."
+
+[params.mass_tol]
+value = 4.0e-5
+unit = "kg"
+fidelity = "estimated"
+rationale = "mass (0.234 g) is the DIN 7991 M3x6 table value scaled by an ISO 4762 M2.5/M3 mass ratio (no M2.5 column in the DIN 7991 table), so about +-17% (0.04 g) is carried; negligible against any assembly."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m2.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.006
+fidelity = "datasheet"
+src = "S3"
+note = "Shank thread of the countersunk screw; pos at the underside of the (flat) head, axis points out of the shank tip (library screw convention); length 6 mm = params.length (S3, PX4 guide 'Sunk Screw M2.5*6'); pitch in params.thread_pitch (S4)."
+
+[[sources]]
+id = "S4"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 key dimensions table (fasten.it), column P: M2.5 coarse pitch (the pitch is the same for every ISO metric M2.5 screw; the DIN 7991 page recorded here has only a mass table)"
+accessed = "2026-10-07"
+quote = "M 2.5 0.45 4.5 4.68 4.32 2.5 2.66 2 1.1 0.85 17  (d, P, dk max plain, dk max knurled, dk min, k max, k min, s nom, t min, w min, b)"
+
+[[sources]]
+id = "S1"
+url = "https://fasten.it/norms/norm/din_7991"
+title = "DIN 7991 countersunk hex socket screws (fasten.it), approximate mass table"
+accessed = "2026-10-07"
+quote = "DIN 7991- ≈ mass in kg x1000 pcs, (ρ=7,85 kg/dm 3 ) - commercial sizes d thread size M 3 M 4 M 5 M 6 ... nominal length l 6 0.41 0.77 8 0.47 0.92"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/PX4/PX4-Autopilot/blob/v1.17.0/docs/en/frames_multicopter/holybro_x500v2_pixhawk6c.md"
+title = "Holybro X500 V2 + Pixhawk 6C build (PX4 v1.17.0 docs): screw list"
+accessed = "2026-10-07"
+quote = "Take the battery mounting board and screw it with the slide bar clip using the Sunk Screw M2.5*6."

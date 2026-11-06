@@ -1,0 +1,34 @@
+id = "generic-avionics-harness"
+name = "Avionics harness allowance: IMU + baro breakouts, pyro FET board, wiring, standoffs (illustrative, not a product)"
+category = "pcb.harness"
+vendor = "generic"
+part_number = "n/a"
+url = "https://www.pjrc.com/store/teensy40.html"
+
+# NOT a catalogue part: the mass of everything on the avionics sled that the library has no separate part for (the two sensor breakouts that carry the ICM-42688-P and
+# the MS5611, a logic-level pyro FET board, ~1 m of 24-28 AWG wire, solder, four standoffs and the sled rods). Part frame: origin at the centre of the board, +z up.
+[visual]
+rationale = "An allowance, not a product: its collision box (breakout boards and wiring bundle) in black."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "plastic-black" }
+
+[params]
+mass = { value = 0.030, unit = "kg", fidelity = "estimated", rationale = "Allowance, not weighed: two small breakout boards 2 x 1.5 g, FET board 2 g, GNSS module 8 g (Matek M10Q-5883 datasheet mass, parts/electronics/matek-m10q-5883; the receiver's accuracy figures in the sim are the NEO-M8N's), 1 m of 26 AWG wire 3 g (copper alone is 1.15 g/m, parts/connectors/awg-26-silicone-wire; the silicone insulation roughly doubles it), solder and connectors 3 g, four M3 standoffs 4 g, rods and nuts 7 g. Hobby builds of this size land within +-10 g of such a sum." }
+
+[geometry]
+shape = "box"
+size = [0.02, 0.015, 0.004]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.004]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "Underside of the board on a deck."

@@ -1,0 +1,123 @@
+id = "feetech-sts3250"
+name = "Feetech STS3250 12V 50kg.cm 1/345 magnetic-encoder serial bus servo (ST-3250-C001 / STS3250-C002)"
+category = "motor.servo"
+vendor = "Feetech (Shenzhen Feite Model Co., Ltd.)"
+part_number = "STS3250-C001 (spec sheet lists ST-3250-C001; OpenELAB sells STS3250-C002)"
+url = "https://aifitlab.com/products/feetech-sts3250-servo-motor"
+
+# Frame: origin on the output axis at the horn-side (top) face of the case; +z = output axis out of the case;
+# x = long case dimension (45.22 mm), y = short (24.72 mm). Case occupies z in [-0.035, 0].
+# Aluminium-case, coreless-motor upgrade of the STS3215 footprint. C001/C002 differ only in shaft type (C001 spec sheet: double shaft).
+# The 345:1 ratio comes from the OpenELAB C002 listing (S2); the AIFITLAB spec table (S1) does not state a ratio.
+
+[params]
+mass            = { value = 0.0745,  unit = "kg",  src = "S1", fidelity = "datasheet" }
+length          = { value = 0.04522, unit = "m",   src = "S1", fidelity = "datasheet" }
+width           = { value = 0.02472, unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.035,   unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 345,     unit = "1",   src = "S2", fidelity = "datasheet" }
+gear_material   = { value = "steel gears, aluminium case, coreless motor, ball bearings", unit = "-", src = "S1", fidelity = "datasheet" }
+horn_spline     = { value = "25T, OD 5.9 mm", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }  # "Running degree 360 deg (when 0~4096)"
+protocol        = { value = "Half-duplex asynchronous serial, ID 0-253", unit = "-", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 38400,   unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 1000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -20, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 60,  unit = "degC", src = "S1", fidelity = "datasheet" }
+
+# --- datasheet performance at 12 V (kg.cm converted with g = 9.80665) ---
+v_nominal           = { value = 12.0,   unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_min     = { value = 6.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 12.0,   unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_12v   = { value = 7.8737, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.133 s/60deg
+no_load_current_12v = { value = 0.28,   unit = "A",     src = "S1", fidelity = "datasheet" }
+stall_torque_12v    = { value = 4.9033, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 50 kg.cm
+stall_current_12v   = { value = 4.2,    unit = "A",     src = "S1", fidelity = "datasheet" }
+rated_torque_12v    = { value = 1.5691, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 16 kg.cm
+
+# --- DC-motor equivalent (motor side), derived from the 12 V point ---
+r_effective = { value = 2.857, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 12 V / 4.2 A = 2.857 ohm (includes H-bridge and lead resistance at stall)." }
+omega_noload_motor_12v = { value = 2716.4, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 345 * (pi/3 rad / 0.133 s = 7.8737 rad/s) = 2716.4 rad/s (25940 RPM)." }
+ke = { value = 0.004123, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (12 - 0.28*2.857)/(345*7.8737) = 11.200/2716.4 = 4.123e-3 V*s/rad." }
+kt_motor = { value = 0.004123, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.879, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 4.9033/(345*0.004123*(4.2-0.28)) = 0.879 (single 12 V point; high for a 345:1 train, so treat as upper bound)." }
+friction_torque_motor_noload = { value = 0.001154, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.004123*0.28 = 1.154e-3 N*m at the motor shaft." }
+rotor_inertia_motor = { value = 3.0e-7, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published. Order-of-magnitude scaled from the STS3215-C001 estimate (2.35e-7, parts/arm/feetech-sts3215-c001.toml) for a coreless motor of similar frame; unverified." }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3250-base"
+gender = "neutral"
+pos = [0.0, 0.0, -0.035]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Same outer envelope as STS3215 but hole pattern not verified identical, so a separate opaque family tag is used."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 25
+note = "25T spline, OD 5.9 mm."
+
+[[ports]]
+name = "power_in"
+pins = ["BUS.1", "BUS.2"]
+kind = "power"
+type = "5264-3p"
+gender = "female"
+role = "sink"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 4.2, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 12 V; no rated current published
+note = "Connector type '5264-3P' is published for the STS3215/HL families; STS3250 sources only say '3-pin connector' (S2), so the housing is inferred."
+
+[[ports]]
+name = "bus"
+pins = ["BUS.3"]
+kind = "signal"
+type = "feetech-ttl"
+gender = "female"
+
+# Pin level: the 3-pin TTL bus connector. The sources only say '3-pin connector'; the 5264-3P housing and the GND / VCC / signal order are taken from the sister STS3215 / HL servos.
+[[connectors]]
+id = "BUS"
+name = "bus connector (3-pin, 5264-3P assumed)"
+type = "5264-3p"
+port_type = "5264-3p"
+gender = "female"
+pos = [-0.02, 0.0, -0.012]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "estimated"
+rationale = "The sources give 'TTL serial bus, 3-pin connector' only; housing (5264-3P), pin order (GND, VCC, signal) and 2.54 mm pitch are inferred from the STS3215 / HL3606 pages of the same vendor."
+pose_rationale = "Case dimensions are not in the sources, so the connector position is a positional estimate (end of the case, near the base)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VCC", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "io", note = "TTL serial bus" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://aifitlab.com/products/feetech-sts3250-servo-motor"
+title = "AIFITLAB Feetech STS3250 product page, Technical Specifications (model ST-3250-C001)"
+accessed = "2026-10-07"
+quote = "Model| ST-3250-C001| Product Name| 12V 50KG Magnetic Encoder Double Shaft TTL Servo| Operating Temperature Range| -20℃～60℃| Dimensions| A：45.22mm B：24.72mm C：35mm| Weight| 74.5± 1g| Gear type| Steel Gear| Bearing| Ball bearings| Horn gear spline| 25T/OD5.9mm| Case| Aluminium| Motor| Coreless Motor| Operating Voltage Range| 6-12V| No load speed| 0.133sec/60°@12V| Runnig current(at no load) | 280mA@12V| Peak stall torque| 50kg.cm@12V| Rated torque| 16kg.cm@12V| Stall current| 4.2A@12V| Protocol Type| Half Duplex Asynchronous Serial Communication| ID Range| 0-253| Communication speed| 38400bps ~ 1 Mbps| Running degree| 360° (when 0~4096)"
+
+[[sources]]
+id = "S2"
+url = "https://openelab.io/products/feetech-sts3250-c002-servo-12v"
+title = "OpenELAB Feetech STS3250-C002 product page, Specifications table"
+accessed = "2026-10-07"
+quote = "Model| Feetech STS3250-C002| Listed operating voltage| 6-12 V| Listed stall torque| 50 kg·cm at 12 V| Listed gear ratio| 345:1| Interface| TTL serial bus, 3-pin connector| Feedback architecture| Magnetic encoder servo feedback| Gear train| Metal gears"

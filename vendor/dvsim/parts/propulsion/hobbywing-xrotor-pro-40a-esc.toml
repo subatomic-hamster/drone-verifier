@@ -1,0 +1,130 @@
+id = "hobbywing-xrotor-pro-40a-esc"
+name = "Hobbywing XRotor PRO 40A single ESC 3-6S (Version A, long wires)"
+category = "esc"
+vendor = "Hobbywing"
+part_number = "XRotor-PRO-40A-ESC (Version A)"
+url = "https://rcdrone.top/products/hobbywing-xrotor-pro-40a-esc"
+
+# Single-motor multirotor ESC for 550-class frames, designed to sit inside a 23 mm ID carbon tube. Version A (66.0 x 21.8 x 11.0 mm, 50 g,
+# pre-wired outputs 75 mm); Version B (73.5 x 21.8 x 11.0 mm, 45 g, no output wires) shares the electrical ratings. Part frame: origin at the body centre,
+# x along length. No mounting holes (tube-fit), so no mech port. Burst duration not stated.
+
+[params]
+mass            = { value = 0.050, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.066, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0218, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.011, unit = "m", src = "S1", fidelity = "datasheet" }
+cells_min       = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+v_max           = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (S1 '3-6S LiPo')." }
+i_cont_per_ch   = { value = 40.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst_per_ch  = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+channels        = { value = 1, unit = "1", fidelity = "derived", derivation = "Single ESC: one motor channel." }
+bec             = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+input_wire_awg  = { value = 16, unit = "AWG", src = "S1", fidelity = "datasheet" }
+output_wire_awg = { value = 16, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.033, 0.0109, 0.0055]
+
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 40.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "16 AWG red/black leads, 500 mm, no connector (S1)"
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 40.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "3 x 16 AWG black wires, 75 mm (Version A)"
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1: 'Input Wires: Red-16AWG-500mm 1 / Black-16AWG-500mm 1', 'Output Wires: Black-16AWG-75mm*3', 'Input Connectors: No',
+# 'BEC: No'. The throttle lead is not described. Leads are drawn at the ends (battery in on -x, motor and throttle out on +x).
+[[connectors]]
+id = "IN"
+name = "battery leads (16 AWG x 500 mm)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.033, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "S1 gives the two leads (red, black), gauge and length and 'Input Connectors: No'; the exit end and spacing are estimated."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", v_max = 25.2, i_max = 40.0, fidelity = "derived", derivation = "v_max 6S x 4.2 V (S1 '3-6S LiPo'); i_max the 40 A continuous rating (S1)." },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 40.0, fidelity = "derived", derivation = "The 40 A continuous rating (S1)." },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor output wires (3 x 16 AWG x 75 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.033, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "S1 gives three identical black output wires (so phase labels A B C are a convention: swapping two reverses the motor); exit end and spacing are estimated."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 40.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 40.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 40.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "throttle signal lead"
+type = "servo-lead-2"
+gender = "neutral"
+pos = [0.033, 0.007, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 describes no throttle lead. A throttle signal + ground pair is the minimum a PWM input needs; with 'BEC: No' (S1) there is no +5 V conductor to list."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/hobbywing-xrotor-pro-40a-esc"
+title = "rcdrone.top (Hobbywing distributor) - Hobbywing XRotor PRO 40A ESC, 3-6S, 40A/60A, Version A/B"
+accessed = "2026-10-07"
+quote = "Cont./Peak Current | 40A/60A | LiPo Cells | 3-6S LiPo | BEC Output | No | Input Wires | Red-16AWG-500mm 1/Black-16AWG-500mm 1 | Output Wires | Black-16AWG-75mm*3 | Input Connectors | No | Size | 66.0x21.8x11.0mm | Weight | 50g"

@@ -1,0 +1,45 @@
+id = "cuas-lite-base-stator-plate"
+name = "cuas-lite base_stator_plate (3D printed PETG, group static)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "base_stator_plate"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (153.2 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in its group frame (B static/pan, head frame H tilt): the part frame IS that frame.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/base_stator_plate.stl"
+material = "petg"
+bbox_min = [-0.1, -0.1, -0.008]
+bbox_max = [0.1, 0.1, 0.018]
+
+[[ports]]
+name = "seat_pan_hall_mount"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "pan_hall_mount is modelled in frame B (the stator's own frame): identity pose. Mating it (instead of free placement) makes the hall mount a bolted part of the stator for the interference rule."
+
+[[ports]]
+name = "seat_rotor"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Pan axis on the stator-plate top face, frame B (cad/cuas-lite manifest.json interface.frames.pan_joint origin_B_mm = 0). The pose of the pan group's frame; the rotor plate's origin port mates here (pan joint)."

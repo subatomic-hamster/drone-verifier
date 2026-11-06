@@ -1,0 +1,100 @@
+id = "brushless-2205-2300kv"
+name = "2205 2300KV brushless outrunner, 5 mm shaft, 16x16 M3 (cuas2 flywheel motor, generic 2205 class)"
+category = "motor.bldc"
+vendor = "generic 2205 FPV class (priced from the Racerstar BR2205S 2300KV listing)"
+part_number = "2205 2300KV"
+url = "https://www.getfpv.com/racerstar-br2205s-2300kv-brushless-motor.html"
+
+# Part frame: origin at the centre of the stator mounting face, +z towards the shaft tip (body z 0..0.020, shaft to 0.035). Same frame as iflight-xing2-2207-1855kv.
+# cuas2 uses it as a 12 V (3S) flywheel motor with a 40 mm printed wheel on the shaft (BOM lever: replaces the 2207 1800 KV; same envelope kept as the CAD figure, real 2205 bodies are shorter). Every electrical figure here is a class value, not a data sheet.
+# At 12 V the model reaches the 18144 rpm cap (38 m/s surface) at u = 0.73 and rpm_max 17500 at u = 0.70 (kv 2300, droop 0.10), below throttle_max 0.90. No-load runaway is 2300 x 12.6 = 29.0k rpm (spec 1 failure table row 17).
+
+[params]
+mass            = { value = 0.033, unit = "kg", fidelity = "estimated", rationale = "2205 motors weigh about 30 g with leads (thingbits RS2205: 30 g); 33 g kept as the CAD figure (conservative)." }
+kv              = { value = 2300, unit = "rpm/V", fidelity = "estimated", rationale = "Listing text: Racerstar BR2205S 2300KV (GetFPV search snippet) and RS2205 2300KV (thingbits)." }
+r_winding       = { value = 0.070, unit = "ohm", fidelity = "estimated", rationale = "Class value, no data sheet fetched: XING2 2207 1855KV is 0.050 ohm; a 2205 2300 KV winding is higher, 0.07 is a guess." }
+i0              = { value = 1.6, unit = "A", fidelity = "estimated", rationale = "Class value at 10 V no load (XING2 2207: <= 2.1 A); a 2300 KV 2205 is similar." }
+i_peak          = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "Class value; the cuas2 wheel at 12 V draws far less (a 40 mm TPU wheel, 18000 rpm cap, spec 4.2)." }
+cells_min       = { value = 3, unit = "S", fidelity = "estimated", rationale = "3-6S class motor; cuas2 runs it on a 12 V bus." }
+cells_max       = { value = 4, unit = "S", fidelity = "estimated", rationale = "2-4S per the BR2205S / thingbits listings." }
+diameter        = { value = 0.0279, unit = "m", fidelity = "estimated", rationale = "CAD params MOT_R 13.95 mm; RS2205 body 27.9 mm (robu snippet)." }
+length_body     = { value = 0.020, unit = "m", fidelity = "estimated", rationale = "CAD params MOT_H: body 19-20 mm above the mounting face." }
+shaft_diameter  = { value = 0.005, unit = "m", fidelity = "estimated", rationale = "2205 class: 5 mm shaft (thingbits)." }
+shaft_protrusion = { value = 0.015, unit = "m", fidelity = "estimated", rationale = "CAD params MOT_SHAFT_PROT; the wheel hub grips 14 mm of it." }
+mount_pattern_a = { value = 0.016, unit = "m", fidelity = "estimated", rationale = "CAD figure 16 x 16 mm, M3. thingbits lists RS2205 as 16 x 19 mm: check against the real motor before printing (CAD MOT_HOLES)." }
+mount_pattern_b = { value = 0.016, unit = "m", fidelity = "estimated", rationale = "As mount_pattern_a." }
+lead_length     = { value = 0.10, unit = "m", fidelity = "estimated", rationale = "Typical 3 x 20 AWG leads; shortened to the ESC on the plate behind." }
+price           = { value = 9.99, unit = "USD", src = "S1", fidelity = "estimated", rationale = "Racerstar BR2205S 2300KV, USD 9.99 in a search snippet 2026-10-27; page returned 403 to the fetch and the snippet said out of stock. A 4-pack of RS2205 2300KV was USD 28.59 (7.15 each, eBay snippet) as a cheaper fallback." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.01395, 0.010]
+pos = [0.0, 0.0, 0.010]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port (stator mounting-face centre, +z the shaft)."
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.16x16.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.5"
+gender = "male"
+pos = [0.0, 0.0, 0.020]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+
+[[ports]]
+name = "phase"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 16.8, unit = "V", fidelity = "estimated", rationale = "4S limit (16.8 V); cuas2 runs it at 12 V." }
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "As i_peak." }
+pins = ["PH.1", "PH.2", "PH.3"]
+
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 20 AWG)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.0, -0.0135, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+fidelity = "estimated"
+rationale = "No listing names lead positions or phase letters; A B C by convention, as for the other outrunners in the library."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 30.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 30.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 30.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.getfpv.com/racerstar-br2205s-2300kv-brushless-motor.html"
+title = "GetFPV Racerstar BR2205S 2300KV (search snippet, page not fetchable: USD 9.99, out of stock, M5 shaft, M3 mount, 2-4S); thingbits RS2205 2300KV page fetched: 5 mm shaft, 16x19 mount, 30 g, 2-4S"
+accessed = "2026-10-27"
+quote = "Racerstar BR2205S 2300kv Brushless Motor - $9.99"

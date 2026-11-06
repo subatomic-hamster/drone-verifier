@@ -1,0 +1,31 @@
+id = "cuas2-lower-deck"
+name = "cuas2 lower_deck (3D printed PETG, M1, group static): Jetson, fuse and XT60 inlet plate under the base"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "lower_deck"
+url = "cad/cuas2/modules/base_pan.py"
+
+# Mesh in frame B (200 x 200 plate 4 mm thick at z -128..-124 with 6 mm Jetson standoffs to -118, bolted up into the four legs); identity free placement.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/lower_deck.stl"
+material = "petg"
+bbox_min = [-0.1, -0.1, -0.128]
+bbox_max = [0.1, 0.1, -0.118]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

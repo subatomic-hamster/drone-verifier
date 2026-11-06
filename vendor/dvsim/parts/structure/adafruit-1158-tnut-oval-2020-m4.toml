@@ -1,0 +1,37 @@
+id = "adafruit-1158-tnut-oval-2020-m4"
+name = "Oval T-nut for 20x20 extrusion, M4 (Adafruit 1158, per nut; sold in packs of 50)"
+category = "structure.tnut"
+vendor = "Adafruit"
+part_number = "1158"
+url = "https://www.adafruit.com/product/1158"
+
+# Frame: origin at the centre of the screw face, +z out of that face. The page gives no nut dimensions.
+[params]
+thread_diameter = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+pack_quantity   = { value = 50, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0012
+unit = "kg"
+fidelity = "estimated"
+rationale = "No dimensions or mass on the page. Taken equal to the 1.2 g estimate of the same-class electrokit M4 drop-in T-nut (6 x 10.3 x 4.4 mm steel envelope, see parts/structure/electrokit-tnut-dropin-2020-m4.toml): +-40 %."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m4"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+fidelity = "estimated"
+rationale = "Tapped hole through the nut, centred; symmetry 2 as for the electrokit nut. Page gives no thread length."
+note = "End-insertion nut: 'these slim metal nuts slide into the ends of the extrusion' (S1); not for 15x15 OpenBeam."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1158"
+title = "Adafruit product 1158: Aluminum Extrusion Oval T-Nut for 20x20 - M4 Thread - pack of 50"
+accessed = "2026-10-07"
+quote = "these slim metal nuts slide into the ends of the extrusion. The oval shape means that as they screwed-into the nut jams against the slot. This is for our 20x20mm slotted extrusion, not \"OpenBeam\" 15x15mm. This product comes as a bag of 50 T-nuts, with M4 threads."

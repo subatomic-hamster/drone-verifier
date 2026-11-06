@@ -1,0 +1,114 @@
+id = "hitec-hs-7950th"
+name = "Hitec HS-7950TH standard-size hobby servo"
+category = "motor.servo"
+vendor = "Hitec RCD (via ServoCity)"
+part_number = "HS-7950TH"
+url = "https://www.servocity.com/hs-7950th-servo/"
+
+# Frame: origin on the output axis at the horn-seat face of the case; +z = output axis out of the case.
+# The ServoCity Specs tab gives no case dimensions, so no height param; the base port sits at z=0 and is positional only.
+
+[params]
+mass = { value = 0.0680, unit = "kg", src = "S1", fidelity = "datasheet" }  # 2.40oz (68g)
+servo_size_class = { value = "Standard", unit = "-", src = "S1", fidelity = "datasheet" }
+horn_spline = { value = "C24T Spline", unit = "-", src = "S1", fidelity = "datasheet" }
+gear_material = { value = "Titanium Gears", unit = "-", src = "S1", fidelity = "datasheet" }
+motor_type = { value = "Coreless Carbon Brush", unit = "-", src = "S1", fidelity = "datasheet" }
+output_shaft_support = { value = "Dual Ball Bearing MR106", unit = "-", src = "S1", fidelity = "datasheet" }
+protocol = { value = "PWM 750-2250us, pulse amplitude 3-5V, deadband 1us", unit = "-", src = "S1", fidelity = "datasheet" }
+position_range = { value = 2.0944, unit = "rad", src = "S1", fidelity = "datasheet" }  # 120°
+position_range_reprogrammed = { value = 3.4558, unit = "rad", src = "S1", fidelity = "datasheet" }  # 198°
+v_operating_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }  # lowest tabulated voltage; page Voltage Range: 6.0V - 7.4V
+v_operating_max = { value = 7.4, unit = "V", src = "S1", fidelity = "datasheet" }  # highest tabulated voltage; page Voltage Range: 6.0V - 7.4V
+no_load_speed_7v4 = { value = 8.055, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.13 sec/60°
+no_load_speed_4v8 = { value = 5.818, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.18 sec/60°
+no_load_speed_6v0 = { value = 6.981, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.15 sec/60°
+stall_torque_4v8 = { value = 2.4292, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 344oz-in. (22kg.cm)
+stall_torque_6v0 = { value = 2.8387, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 402oz-in. (29kg.cm)
+stall_torque_7v4 = { value = 3.4319, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 486oz-in. (35kg.cm)
+idle_current_4v8 = { value = 0.0090, unit = "A", src = "S1", fidelity = "datasheet" }  # 9mA
+idle_current_6v0 = { value = 0.0090, unit = "A", src = "S1", fidelity = "datasheet" }  # 9mA
+no_load_current_4v8 = { value = 0.2200, unit = "A", src = "S1", fidelity = "datasheet" }  # 220mA
+no_load_current_6v0 = { value = 0.3000, unit = "A", src = "S1", fidelity = "datasheet" }  # 300mA
+stall_current_4v8 = { value = 3.8000, unit = "A", src = "S1", fidelity = "datasheet" }  # 3.8A
+stall_current_6v0 = { value = 4.8000, unit = "A", src = "S1", fidelity = "datasheet" }  # 4.8A
+operating_temp_min = { value = -20, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 60, unit = "degC", src = "S1", fidelity = "datasheet" }
+feedback = { value = "5KΩ Potentiometer", unit = "-", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.servo-standard-ears"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Standard-size hobby servo mounting ears; hole spacing and case height not on the page, opaque family tag; z is positional only."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.c24t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 24
+note = "Hitec C24T output spline (24 teeth); horns are not interchangeable across spline families."
+
+[[ports]]
+name = "power_in"
+pins = ["SRV.1", "SRV.2"]
+kind = "power"
+type = "servo-3pin"
+gender = "female"
+role = "sink"
+v_max = { value = 7.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "Power shares the 3-pin servo connector with the signal; i_max not stated unless a stall current is tabulated."
+
+[[ports]]
+name = "signal"
+pins = ["SRV.3"]
+kind = "signal"
+type = "pwm"
+gender = "female"
+level = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }  # lower end of the 3-5V pulse amplitude
+
+# Pin level: the 3-pin servo lead. Wire colours and order from P1 (a Hitec retailer's description covering all Hitec servos); S1 does not describe the lead.
+[[connectors]]
+id = "SRV"
+name = "servo lead (3-pin Hitec/JR plug)"
+type = "servo-lead-3"
+port_type = "servo-3pin"
+gender = "female"
+pos = [-0.02, 0.0, -0.02]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "P1"
+fidelity = "literature"
+pose_rationale = "Servo case dimensions are not in the sources, so the lead exit is a positional estimate: at the -x end of a standard-size case, lead pointing out along -x."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "black wire (P1)" },
+  { number = 2, name = "V+", kind = "power", dir = "in", note = "red, centre wire (P1)" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "in", note = "yellow, third wire (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.superdroidrobots.com/shop/item.aspx/hs-422-servo/184"
+title = "SuperDroid Robots - HS-422 Servo (Hitec), product description"
+accessed = "2026-10-09"
+quote = "On all Hitec servos the Black wire is 'ground', the Red wire (center wire) is 'power', and the yellow (third) wire is 'signal'. This servo has a Hitec/JR connector which mates directly with a 0.1\" 3-pin header."
+
+[[sources]]
+id = "S1"
+url = "https://www.servocity.com/hs-7950th-servo/"
+title = "ServoCity HS-7950TH Servo, Specs tab"
+accessed = "2026-10-07"
+quote = "Output Shaft Style| C24T Spline| Voltage Range| 6.0V - 7.4V| No-Load Speed (7.4V)| 0.13 sec/60°| No-Load Speed (4.8V)| 0.18 sec/60°| No-Load Speed (6.0V)| 0.15 sec/60°| Stall Torque (4.8V)| 344oz-in. (22kg.cm)| Stall Torque (6.0V)| 402oz-in. (29kg.cm)| Stall Torque (7.4V)| 486oz-in. (35kg.cm)| Max PWM Signal Range| 750-2250μsec| Travel per µs (Stock)| .080°/μsec| Travel per µs (Reprogrammed)| .132°/μsec| Max Rotation (Stock)| 120°| Max Rotation (Reprogrammed)| 198°| Pulse Amplitude| 3-5V| Operating Temperature| -20°C to +60°C| Current Drain - idle (4.8V)| 9mA| Current Drain - idle (6.0V)| 9mA| Current Drain - no-load (4.8V)| 220mA| Current Drain - no-load (6V)| 300mA| Current Drain - stall (4.8V)| 3.8A| Current Drain - stall (6V)| 4.8A| Continuous Rotation Modifiable| Yes| Direction w/ Increasing PWM Signal| Clockwise| Deadband Width| 1µs| Motor Type| Coreless Carbon Brush| Feedback Style| 5KΩ Potentiometer| Output Shaft Support| Dual Ball Bearing MR106| Gear Material| Titanium Gears| Wire Length| 11.81\" (300mm)| Weight| 2.40oz (68g)| Wire Gauge| 22AWG| Servo Size| Standard"

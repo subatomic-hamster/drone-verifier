@@ -1,0 +1,113 @@
+id = "pololu-25d-99-1-mp-12v-3231"
+name = "Pololu 99:1 Metal Gearmotor 25Dx54L mm MP 12V (item 3231)"
+category = "motor.dc.gearmotor"
+vendor = "Pololu"
+part_number = "Pololu 3231"
+url = "https://www.pololu.com/product/3231"
+
+# Frame: origin on the output-shaft axis at the gearbox face plate; +z = shaft direction (out of the face plate); cylindrical body (diameter just under 25 mm) occupies z in [-0.054, 0];
+# the 4 mm D-shaft extends 12.5 mm to z = +0.0125. Length is measured from the face plate to the back of the motor (excludes shaft and terminals).
+# Full DC-motor model derivable at 12 V. NOTE: stall torque 11 kg.cm exceeds Pololu's recommended limits (4 kg.cm continuous, 8 kg.cm intermittent).
+
+[params]
+mass               = { value = 0.091,   unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_diameter      = { value = 0.025,   unit = "m",      src = "S1", fidelity = "datasheet" }  # nominal 25D; case is "just under 25 mm" (S2)
+body_length        = { value = 0.054,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_diameter     = { value = 0.004,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_length       = { value = 0.0125,  unit = "m",      src = "S2", fidelity = "datasheet" }
+shaft_type         = { value = "4 mm D-shaft", unit = "-", src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 98.78,   unit = "1",      src = "S1", fidelity = "datasheet" }
+v_nominal          = { value = 12.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+no_load_speed_12v  = { value = 8.2729,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 79 rpm
+no_load_current_12v = { value = 0.080,  unit = "A",      src = "S1", fidelity = "datasheet" }  # typical, +/-50 %
+stall_torque_12v   = { value = 1.0787,  unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 11 kg.cm, extrapolated
+stall_current_12v  = { value = 1.8,     unit = "A",      src = "S1", fidelity = "datasheet" }  # extrapolated
+no_load_speed_6v   = { value = 4.1888,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 40 rpm
+stall_torque_6v    = { value = 0.53937, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 5.5 kg.cm
+stall_current_6v   = { value = 0.90,    unit = "A",      src = "S1", fidelity = "datasheet" }
+max_output_power_12v = { value = 2.3,   unit = "W",      src = "S1", fidelity = "datasheet" }
+max_efficiency_12v = { value = 0.34,    unit = "1",      src = "S1", fidelity = "datasheet" }
+speed_at_max_eff   = { value = 7.1209,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 68 rpm
+torque_at_max_eff  = { value = 0.15691, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 1.6 kg.cm
+current_at_max_eff = { value = 0.28,    unit = "A",      src = "S1", fidelity = "datasheet" }
+torque_limit_continuous = { value = 0.3923, unit = "N*m", src = "S2", fidelity = "datasheet" }  # 4 kg.cm (25D family limit, read from item 3204 page)
+torque_limit_intermittent = { value = 0.7845, unit = "N*m", src = "S2", fidelity = "datasheet" }  # 8 kg.cm
+mount_screw_max_engagement = { value = 0.006, unit = "m", src = "S2", fidelity = "datasheet" }
+
+# --- DC-motor equivalent (motor side), derived at 12 V ---
+r_effective = { value = 6.667, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 12 V / 1.8 A = 6.667 ohm (Pololu stall values are theoretical extrapolations). Cross-check at 6 V: 6/0.90 = 6.667 ohm." }
+omega_noload_motor_12v = { value = 817.2, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 98.78 * 8.2729 rad/s = 817.2 rad/s (7804 RPM)." }
+ke = { value = 0.014032, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (12 - 0.080*6.667)/(98.78*8.2729) = 11.467/817.2 = 1.4032e-2 V*s/rad." }
+kt_motor = { value = 0.014032, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.452, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 1.0787/(98.78*0.014032*(1.8-0.080)) = 1.0787/2.3840 = 0.452. (Pololu's separate 'max efficiency' of 34 % is the overall motor+gearbox peak.)" }
+friction_torque_motor_noload = { value = 0.001123, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.014032*0.080 = 1.12e-3 N*m at the motor shaft (no-load current is typical +/-50 %)." }
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.pololu-25d-2hole.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Two M3-threaded holes in the face plate, max 6 mm screw engagement (S2). Hole spacing is in Pololu's dimension diagram, not in the retrieved text; the pattern is an opaque family tag. Symmetry 2 is an assumption of two symmetric holes about the shaft axis (inference)."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.4d"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "4 mm D-shaft extending 12.5 mm from the face plate."
+
+[[ports]]
+name = "motor_power"
+pins = ["MOT.1", "MOT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }  # rated (nominal) voltage
+i_peak = { value = 1.8, unit = "A", src = "S1", fidelity = "datasheet" }  # extrapolated stall current
+i_max = { value = 0.45, unit = "A", fidelity = "derived", derivation = "Pololu's general recommendation for brushed DC motors is 25 % or less of the stall current: 0.25 * 1.8 A = 0.45 A." }
+note = "Two motor terminals; terminal style not stated in the retrieved text."
+
+# Pin level: two motor terminals on the rear end cap (estimated: the product page text gives no terminal geometry).
+[[connectors]]
+id = "MOT"
+name = "motor terminals (2)"
+type = "solder-pad-1x2"
+port_type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.054]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states two motor terminals (the port above) but no terminal geometry; position at the rear face z = -body_length, 5 mm spacing, is an estimate. Polarity unmarked (swap to reverse)."
+pins = [
+  { number = 1, name = "M1", kind = "power", dir = "in", v_max = 12.0, i_max = 0.45 },
+  { number = 2, name = "M2", kind = "power", dir = "in", v_max = 12.0, i_max = 0.45 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/3231/specs"
+title = "Pololu item 3231 Specs tab (99:1 Metal Gearmotor 25Dx54L mm MP 12V)"
+accessed = "2026-10-07"
+quote = "Size: | 25D x 54L mm| 1| Weight: | 91 g | Shaft diameter: | 4 mm| 2| General specifications| Gear ratio: | 98.78:1 | No-load speed @ 12V: | 79 rpm| 3| No-load current @ 12V: | 0.080 A| 4| Stall current @ 12V: | 1.8 A| 5| Stall torque @ 12V: | 11 kg·cm| 5| Max output power @ 12V: | 2.3 W | No-load speed @ 6V: | 40 rpm| 6| Stall current @ 6V: | 0.90 A| 6| Stall torque @ 6V: | 5.5 kg·cm| 6| Motor type: | 12V, 1.8A stall (MP 12V) | Performance at maximum efficiency| Max efficiency @ 12V: | 34 % | Speed at max efficiency: | 68 rpm | Torque at max efficiency: | 1.6 kg·cm | Current at max efficiency: | 0.28 A | Output power at max efficiency: | 1.1 W | General specifications| Encoders?: | N | Notes:| 1| Length measurement is from gearbox face plate to back of motor (it does not include the output shaft or motor terminals). See dimension diagram for details.| 2| D shaft.| 3| Typical; ±20%.| 4| Typical, ±50%; no-load current depends on internal friction, which is affected by many factors, including ambient temperature and duration of motor operation."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/3204"
+title = "Pololu item 3204 product page (25D family description, mounting, load limits; same family as item 3231, whose own page repeats the shaft sentence)"
+accessed = "2026-10-07"
+quote = "The gearmotor is cylindrical, with a diameter just under 25 mm, and the D-shaped output shaft is 4 mm in diameter and extends 12.5 mm from the face plate of the gearbox. || The face plate has two mounting holes threaded for M3 screws. || We recommend screwing no further than 6 mm (0.24″) into the screw hole. || The recommended upper limit for continuously applied loads is 4 kg⋅cm (55 oz⋅in), and the recommended upper limit for intermittently permissible torque is 8 kg⋅cm (110 oz⋅in). || a general recommendation for brushed DC motor operation is 25% or less of the stall current."

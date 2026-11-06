@@ -1,0 +1,94 @@
+id = "cuas-lite-xt60-inlet-pair"
+name = "Amass XT60 pair as the supply inlet of cuas-lite (polarity-marked solder cups: + power, - ground)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT60-F / XT60-M"
+url = "https://mrsdprojects.ri.cmu.edu/2025teamb/wp-content/uploads/sites/84/2025/05/xt60.pdf"
+
+# The same connector pair as parts/drone/amass-xt60.toml, listed again with pin KINDS (+ = power, - = ground) because the pin rules refuse a conductor between a ground pin (the brick's DC-, the Jetson's DC-) and
+# a power-kind pin. Electrically one two-conductor pass-through: the brick's cable ends in the F half (cups WF), the robot's inlet is the M half (cups WM); mated, WF.n and WM.n are the same conductor.
+# Polarity: XT60 marks the + contact (the housing is keyed, the + side is the one with the symbol on the housing; not in the Amass datasheet text, so contact 1 = + is a convention of this file).
+# Part frame: origin at the M half's mating face centre, +z out of the mating face (as amass-xt60).
+
+[params]
+current_rated = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }   # "RC" rated current
+voltage_rated = { value = 500.0, unit = "V", src = "S1", fidelity = "datasheet" }  # DC 500 V
+mass          = { value = 0.0045, unit = "kg", fidelity = "estimated", rationale = "As parts/drone/amass-xt60.toml: 4.5 g per mated pair, an unverified order-of-magnitude assumption." }
+price     = { value = 2.0, unit = "USD", fidelity = "derived", derivation = "KiwiQuads lists one Amass XT60 pair (male + female) at 3.49 NZD (https://www.kiwiquads.co.nz/product/amass-xt60-pair/, seen in a web search 2026-10-11, page not fetched) x an assumed 0.58 USD/NZD = 2.0 USD; exchange rate assumed, not looked up." }
+
+[[ports]]
+name = "wire_female"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+pins = ["WF.1", "WF.2"]
+v_max = { value = 500.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Solder cups of the F half (the brick's cable side)."
+
+[[ports]]
+name = "wire_male"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+pins = ["WM.1", "WM.2"]
+v_max = { value = 500.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Solder cups of the M half (the robot's inlet side)."
+
+[[connectors]]
+id = "WM"
+name = "XT60-M solder cups (+, -)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact (the XT60 design); spacing and polarity numbering are not in S1."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate, as amass-xt60)."
+pins = [
+  { number = 1, name = "+", kind = "power", dir = "io", i_max = 30.0, v_max = 500.0 },
+  { number = 2, name = "-", kind = "ground" },
+]
+
+[[connectors]]
+id = "WF"
+name = "XT60-F solder cups (+, -)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.05, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "As WM."
+pose_rationale = "Below the F half, 50 mm to the side (positional estimate, as amass-xt60)."
+pins = [
+  { number = 1, name = "+", kind = "power", dir = "io", i_max = 30.0, v_max = 500.0 },
+  { number = 2, name = "-", kind = "ground" },
+]
+
+[visual]
+rationale = "Yellow XT60 housings drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://mrsdprojects.ri.cmu.edu/2025teamb/wp-content/uploads/sites/84/2025/05/xt60.pdf"
+title = "AMASS XT60-F / XT60-M datasheet V1.2 (Changzhou Amass Electronics)"
+accessed = "2026-10-06"
+quote = "产品型号 XT60-F 接触电阻 Item No. CR 0.55mΩ 额定电压 DC 500V 额定电流 30A RC 瞬时电流 60A MC 推荐使用次数 1000 TIMES 推荐线规 12AWG 工作温度 -20℃ to 120℃"

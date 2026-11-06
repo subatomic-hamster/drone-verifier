@@ -1,0 +1,43 @@
+id = "adafruit-1219-t-plate-5h-2020"
+name = "T-plate, 5 holes, 60x60 mm, for 20x20 aluminium extrusion (Adafruit 1219)"
+category = "structure.bracket"
+vendor = "Adafruit"
+part_number = "1219"
+url = "https://www.adafruit.com/product/1219"
+
+# Frame: origin at the centre of the T's top bar on the face that sits against the extrusion, +z out of the other face. The hole map and
+# arm width are not published: only the envelope, thickness and hole size are filed, and no hole-pattern port.
+[params]
+length         = { value = 60e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width          = { value = 60e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness      = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter  = { value = 5.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_count     = { value = 5, unit = "1", src = "S1", fidelity = "datasheet" }
+hole_spacing   = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0186
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Aluminium (2700 kg/m3, assumed; alloy not stated), T of a 60 mm bar and a 42 mm stem both 18 mm wide (the width of the sibling coupling plates, an assumption) = 1836 mm2 x 4 mm = 7344 mm3 less five 5.3 mm holes (441 mm3) = 6903 mm3 -> 18.6 g. The arm width is the weak point: +-25 %."
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Plate lies flat on the extrusion faces; the five hole positions are not in the published text, so no bolt pattern is invented."
+note = "Fastens with M4 or M5 screws and T-nuts, 10 mm screws (S1)."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1219"
+title = "Adafruit product 1219: T-Plate for 2020 Aluminum Extrusion"
+accessed = "2026-10-07"
+quote = "Attach various pieces of 20mm slotted aluminum extrusion together with this 5-hole T-shaped plate. Measures 60mm long x 60mm wide, 4mm thick. 5.3m drill holes 20mm apart so you can use M4 or M5 screws. You'll want to use 10mm long screws to attach this to 20mm extrusion."

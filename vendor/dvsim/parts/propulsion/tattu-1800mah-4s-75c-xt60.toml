@@ -1,0 +1,71 @@
+id = "tattu-1800mah-4s-75c-xt60"
+name = "Tattu 1800mAh 4S 14.8V 75C LiPo pack, XT60"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA18004S75X6"
+url = "https://rcdrone.top/products/src-taa18004s75x6-tattu-1800mah-4s-75c-lipo-battery-pack-with-xt60-plug"
+
+# Part frame: origin at the pack centre, x along length (106 mm), y along width (36 mm), z up (25 mm). Pack-side connector gender is a modelling
+# convention (neutral mates either). Internal resistance not published for this model: pack value estimated.
+
+[params]
+capacity_ah     = { value = 1.8, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 6480.0, unit = "C", fidelity = "derived", derivation = "1.8 Ah x 3600 s/h = 6480 C (coulombs)." }
+energy_wh       = { value = 26.6, unit = "Wh", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 75, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 150, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 135.0, unit = "A", fidelity = "derived", derivation = "75 C x 1.8 Ah = 135 A (rating label only)." }
+mass            = { value = 0.202, unit = "kg", src = "S1", fidelity = "datasheet" }          # 202 g (+-20 g)
+mass_tol        = { value = 0.020, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.106, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.036, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.100, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.058, unit = "ohm", fidelity = "estimated", rationale = "Tattu publishes no internal resistance for this pack. Per-cell DC resistance scaled inversely with capacity, R_cell = 0.026 ohm*Ah / capacity (anchored to the 4-6 mOhm/cell at ~5 Ah used for the 5200 mAh Tattu in parts/drone/tattu-4s-5200mah-35c.toml): 0.026/1.8 = 14.4 mOhm/cell x 4 cells = 58 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.053, 0.018, 0.0125]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 135.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 75 C x 1.8 Ah = 135 A (S1 rating label); exceeds the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.053, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-taa18004s75x6-tattu-1800mah-4s-75c-lipo-battery-pack-with-xt60-plug"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu 1800mAh 4S 75C LiPo pack with XT60 plug"
+accessed = "2026-10-07"
+quote = "Capacity|1800mAh|Voltage|14.8V|Cell Count / Configuration|4S / 4 Cell / 4S1P|Energy|26.6Wh|Discharge Rate|75C|Max Burst Discharge Rate|150C|Main Connector Type|XT60|Wire Gauge|AWG12#|Discharge Wire Length|100mm|Size (L x W x H)|106mm x 36mm x 25mm|Weight|202g|Net Weight Tolerance|±20g"

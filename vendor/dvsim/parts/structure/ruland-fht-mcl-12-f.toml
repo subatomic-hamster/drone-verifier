@@ -1,0 +1,50 @@
+id = "ruland-fht-mcl-12-f"
+name = "Ruland FHT-MCL-12-F face-mount clamp shaft collar, tapped M4 holes, 12 mm bore, 28 mm OD, 11 mm wide"
+category = "structure.shaft-collar"
+vendor = "Ruland Manufacturing"
+part_number = "FHT-MCL-12-F"
+url = "https://docs.rs-online.com/c528/A700000013998739.pdf"
+
+# Frame: origin on the bore axis at the bore-end face, +z along the axis through the width. Two tapped M4 face holes on a line through the
+# bore centre, 10 mm each side (Hole to Center 10.00, Hole to Hole 20.00); face and angular position vs the clamp screw are not in the
+# text, so +z face and +x hole line are assumed.
+[params]
+bore_diameter    = { value = 12e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter   = { value = 28e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width            = { value = 11e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_to_hole     = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+clamp_screw      = { value = "M4 x 12", unit = "-", src = "S1", fidelity = "datasheet" }
+seating_torque   = { value = 4.6, unit = "N*m", src = "S1", fidelity = "datasheet" }
+mass             = { value = 0.038421, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.12"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.011
+note = "12 mm clamped bore (+0.050 / +0.012 mm)."
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.20x0.m4"
+gender = "neutral"
+pos = [0.0, 0.0, 0.011]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+fidelity = "estimated"
+rationale = "S1 gives Hole to Hole 20.00 mm and 'Threaded Mounting Hole M4'; which end face carries them is not in the text, so the +z face is assumed. Two holes: symmetry 2 about the axis."
+note = "Two tapped M4 holes, 20 mm apart (thread depth not published)."
+
+[[sources]]
+id = "S1"
+url = "https://docs.rs-online.com/c528/A700000013998739.pdf"
+title = "Ruland FHT-MCL-12-F datasheet (RS Components mirror of the Ruland sheet)"
+accessed = "2026-10-07"
+quote = "Ruland FHT-MCL-12-F, 12mm Face Mount Shaft Collar with Tapped Hole, Black Oxide Steel, One-Piece Clamp Style, 28mm OD, 11mm Width ... Bore (B1) 12 mm ... Outer Diameter (OD) 28 mm ... Width (W) 11 mm ... Hole to Center (HC) 10.00 mm Hole to Hole (HH) 20.00 mm Threaded Mounting Hole M4 ... Forged Clamp Screw M4 x 12 ... Seating Torque 4.6 Nm ... Weight (lbs) 0.084705"

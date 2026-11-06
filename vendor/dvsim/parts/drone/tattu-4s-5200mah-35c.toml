@@ -1,0 +1,127 @@
+id = "tattu-4s-5200mah-35c"
+name = "Tattu 14.8V 4S 5200mAh 35C LiPo battery pack, XT60"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA52004S35X6"
+url = "https://rcdrone.top/products/src-taa52004s35x6-tattu-g-tech-5200mah-4s-35c-14-8v-lipo-battery-pack-with-xt60-plug"
+
+# Chosen because (a) Holybro recommends "4S 3000-5000mAh 20C+ with XT60" for the X500 V2 and (b) the PX4 X500 v2 + Pixhawk 6C
+# guide states the power module "is supplied by a battery (4S 16.8V 5200 mAh)", i.e. a 5.2 Ah 4S pack is the documented build.
+# Pack internal resistance is NOT published by Tattu for this model.
+
+[params]
+capacity        = { value = 18720.0, unit = "C", src = "S1", fidelity = "datasheet" }        # 5200 mAh = 5.2 Ah x 3600 s/h
+capacity_ah     = { value = 5.2, unit = "Ah", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }               # 4S1P
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", src = "S2", fidelity = "literature" }          # PX4 guide: "4S 16.8V"
+c_rating_cont   = { value = 35, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 70, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 182.0, unit = "A", fidelity = "derived", derivation = "35 C x 5.2 Ah = 182 A (rating label only; X500 V2 peak draw is ~65 A for four motors at 16.4 A each)." }
+mass            = { value = 0.4365, unit = "kg", src = "S1", fidelity = "datasheet" }         # 436.5 g (+-20 g)
+mass_tol        = { value = 0.020, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.133, unit = "m", src = "S1", fidelity = "datasheet" }           # +-5 mm
+width           = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }           # +-2 mm
+height          = { value = 0.0335, unit = "m", src = "S1", fidelity = "datasheet" }          # +-2 mm
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }         # "Wire Gauge 10#"
+discharge_wire_length = { value = 0.120, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.020, unit = "ohm", fidelity = "estimated", rationale = "Tattu publishes no internal resistance for this 35C pack. Typical 4S 5 Ah 25-35C packs are ~4-6 mOhm per cell (pack ~16-24 mOhm) at full charge; 20 mOhm assumed (+-40%). Rises as SoC falls and when cold. Same order as R_min = 4.5 mOhm fitted by Bauersfeld & Scaramuzza (arXiv 2109.04741, Table I, cell-capacity-normalized)." }
+thevenin_r1     = { value = 0.008, unit = "ohm", fidelity = "estimated", rationale = "Polarization resistance of the one-RC Thevenin pack model; no Tattu data. Order-of-magnitude assumption ~40% of the DC resistance; with tau_RC = 3.3 s (Bauersfeld, below) C1 = tau/R1 ~ 410 F." }
+thevenin_tau    = { value = 3.3, unit = "s", src = "S3", fidelity = "literature" }
+
+[geometry]
+# Part frame: origin at the body centre, x along the 133 mm length (vehicle forward), y width, z up (top face z = +0.01675).
+shape = "box"
+size = [0.0665, 0.0225, 0.01675]     # half-extents length/width/height
+
+[[ports]]
+name = "power_out"
+lead = { length = "discharge_wire_length", awg = "discharge_wire_awg" }   # the 120 mm 10 AWG leads are inside the pack mass (see note)
+kind = "power"
+type = "xt60"
+gender = "male"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", src = "S2", fidelity = "literature" }
+i_max = { value = 30.0, unit = "A", fidelity = "derived", derivation = "min(pack 35 C x 5.2 Ah = 182 A, XT60 rated continuous 30 A from amass-xt60 current_rated, Amass datasheet RC): the connector at the lead ends limits the port. Burst 60 A (amass-xt60 current_burst)." }
+note = "Main XT60 on the 120 mm 10 AWG discharge leads (S1: 'Main Connector Type XT60', 'Discharge Wire Length 120mm', 'Wire Gauge 10#'); the leads are inside the pack mass. Male plug mates the PM02 power_in (female): the Amass XT60-M/XT60-F gender assignment of the Tattu plug is not stated by Tattu, the male battery plug is the RC convention."
+
+# Rail seats: the pack hangs under the plates on the two rails, below the battery mount (holybro-x500v2-battery-mount: slide-bar clips,
+# board, pad). Positions are the rod axes in the pack frame: rods 60 mm apart (y = +-0.030, STEP), axis 0.0355 m above the pack top
+# face (STEP: rod axis y = -13.0 mm, pack top = pad bottom y = -48.5 mm), at x = 0 (the board slides along x; centre assumed).
+[[ports]]
+name = "rail_l"
+kind = "mech"
+type = "tube.10"
+gender = "female"
+pos = [0.0, 0.030, 0.05225]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "derived"
+derivation = "z = 0.01675 (pack top, half of the 33.5 mm height) + 0.0355 = 0.05225 m. STEP (x500v2-frame.step, OpenCascade): the rail rod axis is y = -13.0 mm, the clips end at -44.5, the board is -44.5..-46.5, the pad -46.5..-48.5, so the pack top is 35.5 mm below the rod axis (was an estimated 8 mm: 0.003 board + 0.005 rod radius, with no clips, board or pad). Mates 'slide' of holybro-x500v2-rail-rod; rods run along pack x."
+
+[[ports]]
+name = "rail_r"
+kind = "mech"
+type = "tube.10"
+gender = "female"
+pos = [0.0, -0.030, 0.05225]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "derived"
+derivation = "Mirror of rail_l (see there)."
+
+# Pin level: the XT60 plug on the discharge leads (S1: 'Main Connector Type XT60'). The 120 mm leads are inside the pack mass, so the plug is
+# drawn at the pack's front face (+x). Polarity / spacing: the XT60 family's (pin 1 +, 7.2 mm), not stated by Tattu: estimated.
+[[connectors]]
+id = "OUT"
+name = "discharge XT60"
+type = "xt60"
+gender = "male"
+pos = [0.0665, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug and the 4S 14.8 V pack but not the pin polarity or contact spacing: + then - in the usual order, 7.2 mm spacing of the XT60 family."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, i_max = 30.0 },
+  { number = 2, name = "BAT-", kind = "ground", i_max = 30.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-taa52004s35x6-tattu-g-tech-5200mah-4s-35c-14-8v-lipo-battery-pack-with-xt60-plug"
+title = "Tattu G-Tech 5200mAh 4S 35C 14.8V LiPo pack with XT60 (authorized distributor listing of Tattu spec)"
+accessed = "2026-10-06"
+quote = "Capacity|5200mAh|Voltage|14.8V (4S)|Configuration|4S1P|Discharge Rate|35C|Max Burst Discharge Rate|70C|Main Connector Type|XT60|Discharge Wire Length|120mm|Wire Gauge|10#|Dimensions (L x W x H)|133 x 45 x 33.5mm (Length ±5mm, Width ±2mm, Height ±2mm)|Net Weight|436.5g (±20g)"
+
+[[sources]]
+id = "S2"
+url = "https://raw.githubusercontent.com/PX4/PX4-user_guide/main/en/frames_multicopter/holybro_x500v2_pixhawk6c.md"
+title = "PX4 User Guide - Holybro X500 v2 + Pixhawk 6C assembly (source markdown)"
+accessed = "2026-10-06"
+quote = "This power module is supplied by a battery (4S 16.8V 5200 mAh)"
+
+[[sources]]
+id = "S3"
+url = "https://arxiv.org/pdf/2109.04741"
+title = "Bauersfeld & Scaramuzza, Range, Endurance, and Optimal Speed Estimates for Multicopters, IEEE RA-L 2022 (arXiv 2109.04741), Table I battery coefficients"
+accessed = "2026-10-06"
+quote = "Rmin 4.5 mΩ b0 0.0015778 b1 -7.7608e-5 b2 0.0069498 τRC 3.3 s k 0.00104846"
+
+[[sources]]
+id = "S4"
+url = "https://holybro.com/products/x500-v2-kits"
+title = "Holybro X500 V2 Kits product page"
+accessed = "2026-10-06"
+quote = "Battery Recommendation: 4S 3000-5000mAh 20C+ with XT60 Lipo Battery (Not Included)"

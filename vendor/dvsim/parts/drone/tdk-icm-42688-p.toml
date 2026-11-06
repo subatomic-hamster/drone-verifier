@@ -1,0 +1,54 @@
+id = "tdk-icm-42688-p"
+ports_note = "Data-only sensor chip that lives inside the Pixhawk 6C (holybro-pixhawk-6c); it is never mounted or wired on its own, so it has no ports. Noise/bias numbers feed the IMU model of the flight controller."
+name = "TDK InvenSense ICM-42688-P 6-axis IMU (Pixhawk 6C primary IMU)"
+category = "sensor.imu"
+vendor = "TDK InvenSense"
+part_number = "ICM-42688-P"
+url = "https://pcbsync.com/wp-content/uploads/2026/07/ICM-42688-P-Datasheet-TDK.pdf"
+
+# Conversions from datasheet units: 1 deg/s = 0.0174533 rad/s; 1 g = 9.80665 m/s2; 1 ug = 9.80665e-6 m/s2.
+[params]
+gyro_noise_density     = { value = 4.887e-5, unit = "rad/s/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+gyro_rms_noise_100hz   = { value = 4.887e-4, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_zro_initial       = { value = 8.727e-3, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_zro_tempco        = { value = 8.727e-5, unit = "rad/s/K", src = "S1", fidelity = "datasheet" }
+gyro_fs_max            = { value = 34.907, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_fs_min            = { value = 0.27272, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_sensitivity_at_2000dps = { value = 16.4, unit = "LSB/(deg/s)", src = "S1", fidelity = "datasheet" }
+gyro_odr_max           = { value = 32000, unit = "Hz", src = "S1", fidelity = "datasheet" }
+gyro_odr_min           = { value = 12.5, unit = "Hz", src = "S1", fidelity = "datasheet" }
+gyro_adc_bits          = { value = 16, unit = "bit", src = "S1", fidelity = "datasheet" }
+gyro_scale_factor_tolerance = { value = 0.5, unit = "%", src = "S1", fidelity = "datasheet" }
+accel_noise_density_xy = { value = 6.374e-4, unit = "m/s2/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+accel_noise_density_z  = { value = 6.865e-4, unit = "m/s2/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+accel_zero_g_initial   = { value = 0.19613, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+accel_zero_g_tempco    = { value = 1.471e-3, unit = "m/s2/K", src = "S1", fidelity = "datasheet" }
+accel_fs_max           = { value = 156.906, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+accel_fs_min           = { value = 19.613, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+accel_sensitivity_at_16g = { value = 2048, unit = "LSB/g", src = "S1", fidelity = "datasheet" }
+accel_odr_max          = { value = 32000, unit = "Hz", src = "S1", fidelity = "datasheet" }
+accel_odr_min          = { value = 1.5625, unit = "Hz", src = "S1", fidelity = "datasheet" }
+accel_adc_bits         = { value = 16, unit = "bit", src = "S1", fidelity = "datasheet" }
+accel_scale_factor_tolerance = { value = 0.5, unit = "%", src = "S1", fidelity = "datasheet" }
+
+[visual]                            # cosmetic only: the bare LGA package, size from the datasheet
+src = "V1"
+note = "2.5 x 3 x 0.91 mm 14-pin LGA (datasheet)."
+
+[[visual.elements]]
+gen = "sensor_ic"
+params = { size = [0.003, 0.0025, 0.00091] }
+
+[[sources]]
+id = "V1"
+url = "https://pcbsync.com/wp-content/uploads/2026/07/ICM-42688-P-Datasheet-TDK.pdf"
+title = "ICM-42688-P Datasheet DS-000347 Revision 1.6 (package size)"
+accessed = "2026-10-08"
+quote = "The device is housed in a small 2.5x3x0.91 mm 14-pin LGA package."
+
+[[sources]]
+id = "S1"
+url = "https://pcbsync.com/wp-content/uploads/2026/07/ICM-42688-P-Datasheet-TDK.pdf"
+title = "ICM-42688-P Datasheet DS-000347 Revision 1.6 (TDK InvenSense; third-party mirror)"
+accessed = "2026-10-07"
+quote = "Rate Noise Spectral Density @ 10 Hz 0.0028 º/s /√Hz ... Initial ZRO Tolerance Board-level, 25°C ±0.5 º/s ... X and Y-axis 65 µg/√Hz ... Z-axis 70 µg/√Hz ... Initial Tolerance Board-level, all axes ±20 mg ... Output Data Rate 12.5 32000 Hz ... ACCEL_FS_SEL =0 ±16 g ... GYRO_FS_SEL =0 ±2000 º/s"

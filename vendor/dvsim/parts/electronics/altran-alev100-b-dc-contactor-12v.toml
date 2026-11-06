@@ -1,0 +1,167 @@
+id = "altran-alev100-b-dc-contactor-12v"
+name = "Altran ALEV100-B high-voltage DC contactor, 100 A carry, 12 V coil, SPST-NO, polarity-free"
+category = "switch.contactor"
+vendor = "Altran Magnetics"
+part_number = "ALEV100-B (12 VDC coil)"
+url = "https://www.chiefenterprises.com/alev100-b"
+
+# Replaces the plan's generic ZJW100A-class contactor: that listing has no datasheet and a 12 V DC88-class coil draws 13-18 W (over 1 A); this one has a full datasheet (Rev K, 05-Feb-2025).
+# Why it exists: the e-stop must never carry motor current. The 22 mm NC e-stop sits in the 12 V COIL loop (0.46 A); the contactor's normally-open main contact switches the 8S battery bus
+# (up to the study's 87 A simultaneous peak). Open e-stop, broken wire or a dead 12 V rail drops the contactor and cuts the legs; the compute / lidar DC-DCs hang on the LINE side and stay up.
+# Part frame: origin at the centre of the mounting base, z up. The body outline (about 58 x 52.5 mm, 46 mm high) is taken from the product drawing text; the terminal positions are estimates.
+# Coil leads are two white non-polar wires (390 mm, part of the datasheet mass); the two main terminals are M5x0.8 studs.
+
+[params]
+i_rated_continuous = { value = 100.0, unit = "A", src = "S1", fidelity = "datasheet" }   # "Continuous (Carry) Current 100A"
+i_overload_3min    = { value = 200.0, unit = "A", src = "S1", fidelity = "datasheet" }   # "Short Time Over current 200A (3 minutes)"
+v_rated_contact    = { value = 900.0, unit = "V", src = "S1", fidelity = "datasheet" }   # "Rated Operating Voltage 12-900 VDC" (900 V switching option)
+voltage_drop_100a  = { value = 0.08, unit = "V", src = "S1", fidelity = "datasheet" }   # "Voltage Drop (@100A) <=80mV"
+coil_voltage       = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+coil_current       = { value = 0.461, unit = "A", src = "S1", fidelity = "datasheet" }   # "Coil current (20 C, voltage rating, nominal) 461mA"
+coil_power         = { value = 5.5, unit = "W", src = "S1", fidelity = "datasheet" }
+pickup_voltage     = { value = 9.6, unit = "V", src = "S1", fidelity = "datasheet" }
+dropout_voltage    = { value = 0.8, unit = "V", src = "S1", fidelity = "datasheet" }
+operate_time       = { value = 0.025, unit = "s", src = "S1", fidelity = "datasheet" }   # "Close (includes bounce) 25ms, Max."
+release_time      = { value = 0.010, unit = "s", src = "S1", fidelity = "datasheet" }
+mass               = { value = 0.19, unit = "kg", src = "S1", fidelity = "datasheet" }   # "Weight 0.42Lb (0.19kg)"
+length             = { value = 0.058, unit = "m", fidelity = "estimated", rationale = "Body outline from the product drawing text of the data sheet, read from extracted text without dimension lines: about 58 mm." }
+width              = { value = 0.0525, unit = "m", fidelity = "estimated", rationale = "As length: about 52.5 mm." }
+height             = { value = 0.0462, unit = "m", fidelity = "estimated", rationale = "As length: 46.2 mm over the terminals is the larger of the two heights in the drawing text." }
+
+[params.r_contact]
+value = 0.0008
+unit = "ohm"
+fidelity = "derived"
+derivation = "Voltage drop <= 80 mV at 100 A (S1) gives R <= 0.08 / 100 = 0.8 mohm (an upper bound: the new part is below its limit)."
+
+[params.coil_resistance]
+value = 26.0
+unit = "ohm"
+fidelity = "derived"
+derivation = "12 V / 461 mA (S1) = 26.0 ohm."
+
+[params.price]
+value = 49.56
+unit = "USD"
+src = "S2"
+fidelity = "datasheet"
+rationale = "Chief Enterprises list price for quantity 1 (tier 1-49) of ALEV100-B, DC contactor 100 A 12 VDC coil, seen 2026-10-16, ex shipping."
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.029, 0.02625, 0.0231]
+pos = [0.0, 0.0, 0.0231]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Mounting base (bolt feet not located in the extracted text): lies flat on the deck."
+
+[[ports]]
+name = "line"
+kind = "power"
+type = "m5-stud"
+gender = "neutral"
+role = "passthrough"
+pins = ["LINE.1"]
+v_max = { value = 900.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 100.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Main terminal 1 (M5x0.8 stud, non-polar): battery side. Several lugs may stack on the stud."
+
+[[ports]]
+name = "load"
+kind = "power"
+type = "m5-stud"
+gender = "neutral"
+role = "passthrough"
+pins = ["LOAD.1"]
+v_max = { value = 900.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 100.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Main terminal 2 (M5x0.8 stud, non-polar): bus side (the PDB)."
+
+[[ports]]
+name = "coil"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["COIL.1", "COIL.2"]
+v_max = { value = 16.0, unit = "V", fidelity = "estimated", rationale = "12 V nominal coil; the data sheet lists nominal voltage and pickup / dropout only: about 130 % of nominal assumed as the continuous limit." }
+i_max = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Coil: two white non-polar leads, 390 mm (S1). Pin 1 to the e-stop side, pin 2 to the 12 V return."
+
+[[connectors]]
+id = "LINE"
+name = "main terminal 1 (M5 stud)"
+type = "m5-stud"
+gender = "neutral"
+joinable = true
+pos = [-0.015, 0.0, 0.0462]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+pitch = 0.01
+fidelity = "estimated"
+rationale = "Stud positions are not in the extracted text: two studs on the top face 30 mm apart."
+pins = [
+  { number = 1, name = "T1", kind = "power", dir = "io", v_max = 900.0, i_max = 100.0 },
+]
+
+[[connectors]]
+id = "LOAD"
+name = "main terminal 2 (M5 stud)"
+type = "m5-stud"
+gender = "neutral"
+joinable = true
+pos = [0.015, 0.0, 0.0462]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+pitch = 0.01
+fidelity = "estimated"
+rationale = "As LINE."
+pins = [
+  { number = 1, name = "T2", kind = "power", dir = "io", v_max = 900.0, i_max = 100.0 },
+]
+
+[[connectors]]
+id = "COIL"
+name = "coil leads (two white non-polar wires)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.02, 0.0231]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+fidelity = "estimated"
+rationale = "Lead exit side is not in the extracted text: +y face assumed."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", v_max = 16.0 },
+  { number = 2, name = "A2", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7158/ALEV100_DataSheet_05-Feb-2025.pdf"
+title = "Altran ALEV100 Series 100A+/1000VDC High Voltage DC Contactor, Product Data Sheet Rev K (05-Feb-2025), performance data for the 900 V switching option and coil data"
+accessed = "2026-10-16"
+quote = "Rated Operating Voltage 12-900 VDC | Continuous (Carry) Current 100A | Short Time Over current 200A (3 minutes) | Voltage Drop (@100A) <=80mV | Weight 0.42Lb (0.19kg) | Nominal Voltage 12VDC | Pickup voltage (20 C) 9.6VDC | Dropout voltage (20 C) 0.8VDC | Coil current (20 C, voltage rating, nominal) 461mA | Coil wattage 5.5W | Close (includes bounce) 25ms, Max. | Release Time 10ms, Max."
+
+[[sources]]
+id = "S2"
+url = "https://www.chiefenterprises.com/alev100-b"
+title = "Chief Enterprises ALEV100-B listing: DC Contactor, 100A, 12VDC Coil"
+accessed = "2026-10-16"
+quote = "DC Contactor, 100A, 12VDC Coil ... Voltage: 12V ... Weight 0.19 kg ... Quantity 1-49: $49.56"

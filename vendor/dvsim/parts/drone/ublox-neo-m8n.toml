@@ -1,0 +1,31 @@
+id = "ublox-neo-m8n"
+ports_note = "Data-only GNSS receiver chip that lives inside the Holybro M8N GPS module (holybro-m8n-gps); it is never mounted or wired on its own, so it has no ports. Accuracy/rate numbers feed the GPS model."
+name = "u-blox NEO-M8N GNSS receiver (kit GPS module chip; M9N and M10 variants are drop-in)"
+category = "sensor.gnss"
+vendor = "u-blox"
+part_number = "NEO-M8N"
+url = "https://content.u-blox.com/sites/default/files/NEO-M8-FW3_DataSheet_UBX-15031086.pdf"
+
+[params]
+horizontal_accuracy_cep_gps     = { value = 2.5, unit = "m", src = "S1", fidelity = "datasheet" }
+horizontal_accuracy_cep_gps_sbas = { value = 2.0, unit = "m", src = "S1", fidelity = "datasheet" }
+horizontal_accuracy_cep_gps_glonass = { value = 2.5, unit = "m", src = "S1", fidelity = "datasheet" }
+velocity_accuracy               = { value = 0.05, unit = "m/s", src = "S1", fidelity = "datasheet" }
+heading_accuracy                = { value = 5.236e-3, unit = "rad", src = "S1", fidelity = "datasheet" }
+max_nav_rate_gps_only           = { value = 10, unit = "Hz", src = "S1", fidelity = "datasheet" }
+max_nav_rate_gps_glonass        = { value = 5, unit = "Hz", src = "S1", fidelity = "datasheet" }
+max_velocity                    = { value = 500, unit = "m/s", src = "S1", fidelity = "datasheet" }
+max_dynamics                    = { value = 39.2266, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+
+[params.vertical_accuracy_cep]
+value = 3.75
+unit = "m"
+fidelity = "estimated"
+rationale = "u-blox NEO-M8 datasheet publishes horizontal (CEP) and velocity accuracy only, no vertical figure. Using 1.5x horizontal CEP (2.5 m) which is the usual GNSS VDOP/HDOP ratio of roughly 1.5-2; PX4 SITL also treats epv separately from eph, so this is only a seed for the sensor model."
+
+[[sources]]
+id = "S1"
+url = "https://content.u-blox.com/sites/default/files/NEO-M8-FW3_DataSheet_UBX-15031086.pdf"
+title = "NEO-M8 u-blox M8 concurrent GNSS modules Data sheet (UBX-15031086)"
+accessed = "2026-10-07"
+quote = "Velocity accuracy 2 0.05 m/s Heading accuracy 2 0.3 degrees ... Horizontal position 2.5 m 2.5 m 4m 3m 3m accuracy 3 With SBAS 2.0 m 2.0 m ... Max navigation NEO-M8N 5 Hz 10 Hz 10 Hz 10 Hz 10 Hz ... CEP, 50%, 24 hours static, -130 dBm, > 6 SVs ... Dynamics ≤4g ... Velocity 500 m/s"

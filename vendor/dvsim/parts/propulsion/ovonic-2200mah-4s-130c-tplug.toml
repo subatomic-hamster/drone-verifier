@@ -1,0 +1,66 @@
+id = "ovonic-2200mah-4s-130c-tplug"
+name = "Ovonic 2200mAh 4S 14.8V 130C shorty LiPo pack, Deans T-plug"
+category = "battery.lipo"
+vendor = "Ovonic"
+part_number = "OVONIC 4S 2200mAh 130C shorty T"
+url = "https://www.ovonicshop.com/products/ovonic-4s-2200mah-14-8v-130c-short-lipo-battery-with-t-plug-for-1-10-scale-rc-car-truck-airplane"
+
+# Part frame: origin at the pack centre, x along length (80 mm), y along width (35 mm), z up (35 mm). The listing is a 2-pack; one pack is modelled.
+# No burst rating, wire gauge or resistance published.
+
+[params]
+capacity_ah     = { value = 2.2, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 7920.0, unit = "C", fidelity = "derived", derivation = "2.2 Ah x 3600 s/h = 7920 C (coulombs)." }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 130, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 286.0, unit = "A", fidelity = "derived", derivation = "130 C x 2.2 Ah = 286 A (rating label only; a marketing figure)." }
+mass            = { value = 0.200, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.080, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "Deans (T)", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0473, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/2.2 = 11.8 mOhm/cell x 4 cells = 47.3 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.040, 0.0175, 0.0175]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "deans"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 286.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 130 C x 2.2 Ah = 286 A (S1 label); far above a Deans plug's rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the Deans (T) plug but not its polarity or contact spacing: + then -, an assumed 8 mm spacing for the T-plug family (no source read). The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (Deans T)"
+type = "deans"
+gender = "neutral"
+pos = [0.040, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the Deans (T) plug but not its polarity or contact spacing: + then -, an assumed 8 mm centre distance (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.ovonicshop.com/products/ovonic-4s-2200mah-14-8v-130c-short-lipo-battery-with-t-plug-for-1-10-scale-rc-car-truck-airplane"
+title = "Ovonic shop - 2x OVONIC 4S 2200mAh 14.8V 130C Shorty LiPo with T plug"
+accessed = "2026-10-07"
+quote = "Capacity: 2200mAh | Voltage: 14.8V (4S) | Discharge Rate: 130C | Configuration: 4S1P | Net Weight: 200g (0.44lb) per pack | Size: 80 x 35 x 35 mm (3.15 x 1.38 x 1.38 inches) | Connector Type: Dean (T) Plug | Balancer Connector Type: JST-XHR-5P"

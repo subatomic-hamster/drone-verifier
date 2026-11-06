@@ -1,0 +1,78 @@
+id = "irf9540n-p-mosfet"
+name = "IRF9540N P-channel power MOSFET, -100 V, -23 A, TO-220 (cuas2 pusher-servo supply switch of the shot limiter)"
+category = "semiconductor.mosfet"
+vendor = "Infineon / International Rectifier"
+part_number = "IRF9540NPbF"
+url = "https://www.taydaelectronics.com/transistors-semiconductors/fets-mosfets/irf9540-irf9540n-power-mosfet-p-channel-23a-100v.html"
+
+# High-side switch in the 5 V line to the pusher servo: source on the buck output, drain to the servo V+, gate pulled to the source by 100 k (off), pulled down by the limiter's Q-bar (on, -5 V gate-source).
+# VGS(th) is -2..-4 V, so -5 V is a modest enhancement: the load is the servo (about 0.7 A stall), well inside the part. A logic-level P-FET is a drop-in if the bench shows more drop than wanted.
+# Part frame: origin at the centre of the body mounting face, z up, leads towards -y (G, D, S = pins 1, 2, 3), as the IRLB8721 in this library.
+
+[params]
+mass       = { value = 0.002, unit = "kg", fidelity = "estimated", rationale = "TO-220 package, about 2 g." }
+v_ds_max   = { value = -100.0, unit = "V", fidelity = "estimated", rationale = "IRF9540N: VDSS -100 V (retailer / IR data sheet class)." }
+i_d_cont   = { value = -23.0, unit = "A", fidelity = "estimated", rationale = "IRF9540N: ID -23 A at 25 C (retailer listing title '23A 100V')." }
+v_gs_th    = { value = -4.0, unit = "V", fidelity = "estimated", rationale = "IRF9540N threshold -2 to -4 V (IR data sheet class)." }
+price      = { value = 0.73, unit = "USD", src = "S1", fidelity = "datasheet" }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0078, 0.005, 0.00225]
+pos = [0.0, 0.0, 0.00225]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "switch"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "passthrough"
+pins = ["Q.2", "Q.3"]
+v_max = { value = 100.0, unit = "V", fidelity = "estimated", rationale = "VDSS magnitude." }
+i_max = { value = 23.0, unit = "A", fidelity = "estimated", rationale = "ID magnitude." }
+note = "Drain and source, the switched path."
+
+[[ports]]
+name = "gate"
+kind = "signal"
+type = "gate"
+gender = "neutral"
+pins = ["Q.1"]
+level_max = { value = 20.0, unit = "V", fidelity = "estimated", rationale = "VGS +-20 V (IR data sheet class)." }
+
+[[connectors]]
+id = "Q"
+name = "TO-220 leads (G, D, S)"
+type = "to-220-3"
+gender = "male"
+joinable = true
+pos = [0.0, -0.005, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+fidelity = "estimated"
+rationale = "IRF9540N pin-out (not fetched; standard TO-220 order):1 gate, 2 drain, 3 source; lead pitch is the TO-220 standard."
+pins = [
+  { number = 1, name = "G", kind = "signal", dir = "in", v_max = 20.0 },
+  { number = 2, name = "D", kind = "power", dir = "io", v_max = 100.0, i_max = 23.0 },
+  { number = 3, name = "S", kind = "power", dir = "io", v_max = 100.0, i_max = 23.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.taydaelectronics.com/transistors-semiconductors/fets-mosfets/irf9540-irf9540n-power-mosfet-p-channel-23a-100v.html"
+title = "Tayda Electronics: IRF9540 / IRF9540N power MOSFET, P-channel 23 A 100 V (search snippet: USD 0.73)"
+accessed = "2026-10-27"
+quote = "irf9540 irf9540n power mosfet p channel 23a 100v ... $0.73"

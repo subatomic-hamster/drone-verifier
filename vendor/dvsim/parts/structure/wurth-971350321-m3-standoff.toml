@@ -1,0 +1,54 @@
+id = "wurth-971350321-m3-standoff"
+name = "Wurth Elektronik 971350321 hex standoff M3 male-female, steel, 35 mm body / 41 mm overall"
+category = "structure.standoff"
+vendor = "Wurth Elektronik"
+part_number = "971350321"
+url = "https://www.element14.cn/en-CN/wurth-elektronik/971350321/standoff-hex-male-female-35mm/dp/2884454"
+
+# WA-SSTIE series, gloss-zinc steel. Frame: origin on the axis at the female (bottom) face, +z toward the stud.
+[params]
+thread_diameter = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 35e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+overall_length  = { value = 41e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 5.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 6.616e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+inner_thread_length = { value = 7e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+outer_thread_length = { value = 6e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread_female"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.007
+note = "Internal M3 thread, depth 7 mm (S2 'Inner Thread Length Tli'), bottom face."
+
+[[ports]]
+name = "thread_male"
+kind = "mech"
+type = "thread.m3"
+gender = "male"
+pos = [0.0, 0.0, 0.041]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.006
+note = "External M3 stud, 6 mm (S2 'Outer Thread Length Tlo'), top face."
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/wurth-elektronik/971350321/standoff-hex-male-female-35mm/dp/2884454"
+title = "Wurth Elektronik 971350321 WA-SSTIE standoff (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Steel Thread Size - Metric M3 Standoff Type Hex Male-Female Body Length 35mm Overall Length 41mm External Width 5.5mm Product Range WA-SSTIE ... Weight (kg): .006616"
+
+[[sources]]
+id = "S2"
+url = "https://www.we-online.com/katalog/datasheet/971350321.pdf"
+title = "Wurth Elektronik datasheet 971350321 WA-SSTIE Steel Spacer Stud"
+accessed = "2026-10-07"
+quote = "Material Steel; Length L 35 mm; Inner Thread Length Tli 7 mm; Outer Thread Length Tlo 6 mm; Wrench SW 5.5"

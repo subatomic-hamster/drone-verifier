@@ -1,0 +1,135 @@
+id = "feetech-scs0009"
+name = "Feetech SCS0009 6V 2.3kg.cm 1/416 micro serial bus servo (SC-0090-C001)"
+category = "motor.servo"
+vendor = "Feetech (Shenzhen Feite Model Co., Ltd.)"
+part_number = "SCS0009 / SC-0090-C001"
+url = "https://aifitlab.com/products/feetech-scs0009-servo-motor"
+
+# Frame: origin on the output axis at the horn-side (top) face of the case; +z = output axis out of the case;
+# x = long case dimension (23.2 mm), y = short (12.1 mm). Case occupies z in [-0.02525, 0].
+# Micro servo used in Pollen Robotics' Amazing Hand (S2). Potentiometer-free 10-bit magnetic sensing, 300 deg travel.
+
+[params]
+mass            = { value = 0.0132,  unit = "kg",  src = "S1", fidelity = "datasheet" }
+price           = { value = 9.0,     unit = "USD", fidelity = "estimated", rationale = "Spec 3.5 estimate (4 x $9); no listing fetched." }
+length          = { value = 0.0232,  unit = "m",   src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0121,  unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.02525, unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 416,     unit = "1",   src = "S2", fidelity = "datasheet" }
+gear_material   = { value = "copper + steel gears, PC case, core motor", unit = "-", src = "S1", fidelity = "datasheet" }
+horn_spline     = { value = "20T, OD 3.95 mm (POM horn)", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 1024, unit = "counts/300deg", src = "S1", fidelity = "datasheet" }  # "300 deg (when 0~1024)"
+position_range  = { value = 5.236, unit = "rad", src = "S1", fidelity = "datasheet" }  # 300 deg
+protocol        = { value = "Half-duplex asynchronous serial, ID 0-253", unit = "-", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 38400,   unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 1000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -15, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 70,  unit = "degC", src = "S1", fidelity = "datasheet" }
+
+# --- datasheet performance at 6 V (kg.cm converted with g = 9.80665) ---
+v_operating_min     = { value = 4.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 7.4,    unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_6v    = { value = 10.472, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.1 s/60deg
+no_load_current_6v  = { value = 0.15,   unit = "A",     src = "S1", fidelity = "datasheet" }
+stall_torque_6v     = { value = 0.2255, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 2.3 kg.cm
+stall_current_6v    = { value = 1.0,    unit = "A",     src = "S1", fidelity = "datasheet" }
+rated_torque_6v     = { value = 0.0687, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 0.7 kg.cm (S2 says 0.75 kg.cm)
+
+# --- DC-motor equivalent (motor side), derived from the 6 V point ---
+r_effective = { value = 6.0, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 6 V / 1.0 A = 6.0 ohm (includes driver and lead resistance at stall)." }
+omega_noload_motor_6v = { value = 4356.4, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 416 * (pi/3 rad / 0.1 s = 10.472 rad/s) = 4356.4 rad/s (41600 RPM)." }
+ke = { value = 0.001171, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (6 - 0.15*6.0)/(416*10.472) = 5.1/4356.4 = 1.171e-3 V*s/rad." }
+kt_motor = { value = 0.001171, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.545, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 0.2255/(416*0.001171*(1.0-0.15)) = 0.545 (plausible for a 416:1 multi-stage micro train)." }
+friction_torque_motor_noload = { value = 0.000176, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.001171*0.15 = 1.76e-4 N*m at the motor shaft." }
+
+# --- device-model inputs (added for the fold drone, P14) ---
+kv_equivalent = { value = 8155.0, unit = "rpm/V", fidelity = "derived", derivation = "kv = 60 / (2 pi Ke) = 9.5493 / 1.171e-3 = 8155 rpm/V (Ke from the 6 V point above)." }
+rotor_inertia_motor = { value = 3.0e-9, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published. A 4 mm coreless rotor, about 1 g at 2.5 mm radius: m r^2 / 2 = 3.1e-9. Bounded by the datasheet speed: the mechanical time constant J R / Kt^2 = 3e-9 * 6 / 0.001171^2 = 13 ms keeps a no-load 60 deg move near the listed 0.1 s; the earlier 5e-8 (reflected 8.7e-3 kg m^2 at 416:1) gave 0.22 s and a 60 deg move of ~0.35 s, 3.5x the datasheet (P14 INTEG: the tilt pods lagged the SLOW yaw loop)." }
+backlash = { value = 0.007, unit = "rad", fidelity = "estimated", rationale = "Not published for the SCS0009; 0.4 deg output backlash assumed (spec 6.3) for a 416:1 plastic-case micro train." }
+firmware_hz = { value = 1000, unit = "Hz", fidelity = "estimated", rationale = "Feetech does not publish the position-loop rate; 1 kHz assumed (spec 6.3)." }
+baud_default = { value = 1000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.0116, 0.00605, 0.012625]   # half-extents of the 23.2 x 12.1 x 25.25 mm case (S1)
+pos = [0.0057, 0.0, -0.012625]       # the output axis sits 5.9 mm from the -x end (cad/fold/params.py SCS off, [est])
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.feetech-micro-scs0009-base"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02525]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Hole pattern only in Feetech's drawing / STEP, not retrievable as text; opaque family tag."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.20t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 20
+note = "20T spline, OD 3.95 mm."
+
+[[ports]]
+name = "power_in"
+pins = ["BUS.1", "BUS.2"]
+kind = "power"
+type = "servo-bus-3pin"
+gender = "female"
+role = "sink"
+v_max = { value = 7.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 6 V
+note = "Ships with a JST wire + 3-pin cable (S2 parts list); exact housing not stated."
+
+[[ports]]
+name = "bus"
+pins = ["BUS.3"]
+kind = "signal"
+type = "feetech-ttl"
+gender = "female"
+
+# Pin level: the 3-pin TTL bus lead. S2 only lists a 'JST wire + 3-pin cable'; housing, pitch and pin order are not given, GND / VCC / signal is the Feetech bus-servo order seen on the STS3215 page.
+[[connectors]]
+id = "BUS"
+name = "bus lead (3-pin)"
+type = "servo-bus-3pin"
+port_type = "servo-bus-3pin"
+gender = "female"
+joinable = true   # the case has two sockets (daisy chain); the fold harness uses both
+pos = [-0.011, 0.0, -0.008]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "estimated"
+rationale = "The sources give no housing, pitch or pin order for the 3-pin bus lead: GND, VCC, signal at 2.54 mm is assumed from the STS3215 listing of the same vendor."
+pose_rationale = "Case dimensions are not in the sources, so the connector position is a positional estimate (end of the case, near the base)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VCC", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "io", note = "TTL serial bus" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://aifitlab.com/products/feetech-scs0009-servo-motor"
+title = "AIFITLAB Feetech SCS0009 product page, Technical Specifications (SC-0090-C001 column)"
+accessed = "2026-10-07"
+quote = "Model| SC-0090-C001| Product Name| 6V 2. 3kg. cm Serial Control BUS Servo| Operating Temperature Range| -15℃～70℃| Dimensions| A：23.2mm B：12.1mm C：25.25mm| Weight| 13.2± 1g| Gear type| Copper+Steel| Horn gear spline| 20T/OD3.95mm| Horn type| Plastic,POM| Case| PC| Motor| Core Motor| Operating Voltage Range| 4-7.4V| No load speed| 0.1sec/60°@6V| Runnig current| 150 mA@6V| Peak stall torque| 2.3kg.cm@6V| Rated torque| 0.7kg.cm@6V| Stall current| 1.0A@6V| Protocol Type| Half duplex Asynchronous Serial Communication| ID Range| 0-253| Communication speed| 38400bps ~ 1 Mbps| Running degree| 300°(when 0～1024)"
+
+[[sources]]
+id = "S2"
+url = "https://www.pakronics.com.au/products/feetech-scs0009-ultra-compact-servo-6v-2-3kg-for-amazing-hand-ss100067882"
+title = "Pakronics Feetech SCS0009 product page (gear ratio, rated torque, Amazing Hand use)"
+accessed = "2026-10-07"
+quote = "SCS0009 is 6V 2.3kg serial bus ultra-compact smart servo, with plastic case, core motor, 1:416 metal gearbox and 10 bit high precision magnetic coding sensor. The stall torque is 2.3 kg. cm and the rated torque is 0.75kg. cm. Because of its compact size, SCS0009 can be used as actuators in dexterous hand or microrobotics, such as Amazing Hand."

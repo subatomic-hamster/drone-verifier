@@ -1,0 +1,298 @@
+# Hardware prices, USD 2026, single unit retail, before tax and shipping. All estimated from product class knowledge (no web lookup).
+[prices]
+"cuas-lite-foam-launcher" = { not_for_sale = true, rationale = "device marker, not a physical part; the launcher's mass and cost are in its printed and bought parts" }
+"cuas2-foam-launcher" = { not_for_sale = true, rationale = "device marker, not a physical part; the launcher's mass and cost are in its printed and bought parts" }
+
+# ---- materials (per kg of raw stock / one filament spool) ----
+"abs" = { price_per_kg = 45, fidelity = "estimated", rationale = "1 kg ABS filament spool, branded engineering grade" }
+"pla" = { price_per_kg = 25, fidelity = "estimated", rationale = "1 kg PLA spool, mid-range brand" }
+"petg" = { price_per_kg = 30, fidelity = "estimated", rationale = "1 kg PETG spool, premium brand" }
+"tpu-95a" = { price_per_kg = 45, fidelity = "estimated", rationale = "1 kg TPU 95A spool, branded" }
+"nylon-pa66" = { price_per_kg = 55, fidelity = "estimated", rationale = "1 kg PA66 filament spool; bar stock would differ" }
+"nylon-cf-pa12" = { price_per_kg = 85, fidelity = "estimated", rationale = "1 kg PA12-CF filament spool (service-bureau FDM material priced as the filament)" }
+"aluminium-6061" = { price_per_kg = 12, fidelity = "estimated", rationale = "small-quantity 6061 bar/plate from a metals retailer, not mill price" }
+"aluminium-7075" = { price_per_kg = 22, fidelity = "estimated", rationale = "small-quantity 7075-T6 stock, roughly 2x 6061" }
+"stainless-304" = { price_per_kg = 12, fidelity = "estimated", rationale = "small-quantity 304 bar/sheet from a metals retailer" }
+"carbon-fibre-epoxy-ud" = { price_per_kg = 60, fidelity = "estimated", rationale = "roll-wrapped CF tube stock class, about 22 USD/m at ~75 g/m scaled to low end" }
+"carbon-fibre-twill-plate" = { price_per_kg = 100, fidelity = "estimated", rationale = "twill CF sheet from a composites retailer, per kg of laminate" }
+
+# ---- carbon sheet (per kg of sheet: areal mass 1.5-6 kg/m2; thicker is cheaper per kg) ----
+"cf-plate-1mm" = { price_per_kg = 130, fidelity = "estimated", rationale = "1 mm twill sheet ~190 USD/m2 over ~1.5 kg/m2; price_per_kg of the sheet, cut to size" }
+"cf-plate-2mm" = { price_per_kg = 100, fidelity = "estimated", rationale = "2 mm twill sheet ~280 USD/m2 over 2.8 kg/m2" }
+"cf-plate-3mm" = { price_per_kg = 90, fidelity = "estimated", rationale = "3 mm twill sheet ~380 USD/m2 over ~4.3 kg/m2" }
+"cf-plate-4mm" = { price_per_kg = 85, fidelity = "estimated", rationale = "4 mm twill sheet ~480 USD/m2 over ~5.6 kg/m2" }
+
+# ---- carbon tubes (per metre of tube) ----
+"cf-tube-10x8" = { price_per_m = 12, fidelity = "estimated", rationale = "roll-wrapped woven CF tube, 1 m stock" }
+"cf-tube-12x10" = { price_per_m = 15, fidelity = "estimated", rationale = "roll-wrapped woven CF tube, 1 m stock" }
+"cf-tube-16x14" = { price_per_m = 22, fidelity = "estimated", rationale = "roll-wrapped woven CF tube, 1 m stock; common arm size" }
+"cf-tube-20x18" = { price_per_m = 28, fidelity = "estimated", rationale = "roll-wrapped woven CF tube, 1 m stock" }
+"cf-tube-25x23" = { price_per_m = 38, fidelity = "estimated", rationale = "roll-wrapped woven CF tube, 1 m stock" }
+"cf-tube-30x27" = { price_per_m = 48, fidelity = "estimated", rationale = "roll-wrapped woven CF tube, 1 m stock" }
+
+# ---- extrusions ----
+"haluminium-2020-s6" = { price_per_m = 7, fidelity = "estimated", rationale = "20x20 T-slot extrusion, cut lengths from a profile supplier, per metre" }
+"haluminium-2040-s6" = { price_per_m = 12, fidelity = "estimated", rationale = "20x40 T-slot extrusion, per metre" }
+"adafruit-1221-extrusion-2020-610" = { value = 12, fidelity = "estimated", rationale = "one 610 mm 20x20 extrusion from a maker retailer, retail markup over bulk" }
+"adafruit-1302-extrusion-2040-610" = { value = 20, fidelity = "estimated", rationale = "one 610 mm 20x40 extrusion from a maker retailer" }
+
+# ---- extrusion hardware ----
+"adafruit-1155-corner-brace-2020" = { value = 1.5, fidelity = "estimated", rationale = "one cast corner brace, maker retail" }
+"adafruit-1259-double-corner-brace-2020" = { value = 2.0, fidelity = "estimated", rationale = "one cast double corner brace" }
+"adafruit-1157-tnut-slim-2020-m4" = { value = 0.25, fidelity = "estimated", rationale = "one nut from a 50-pack at ~12" }
+"adafruit-1158-tnut-oval-2020-m4" = { value = 0.25, fidelity = "estimated", rationale = "one nut from a 50-pack at ~12" }
+"adafruit-1216-coupling-plate-3h-2020" = { value = 1.5, fidelity = "estimated", rationale = "one plate, maker retail" }
+"adafruit-1217-coupling-plate-2h-2020" = { value = 1.2, fidelity = "estimated", rationale = "one plate, maker retail" }
+"adafruit-1218-l-plate-5h-2020" = { value = 2.5, fidelity = "estimated", rationale = "one plate, maker retail" }
+"adafruit-1219-t-plate-5h-2020" = { value = 2.5, fidelity = "estimated", rationale = "one plate, maker retail" }
+"adafruit-1220-cross-plate-7h-2020" = { value = 3.5, fidelity = "estimated", rationale = "one plate, maker retail" }
+"electrokit-tnut-dropin-2020-m3" = { value = 0.2, fidelity = "estimated", rationale = "one drop-in nut from a pack" }
+"electrokit-tnut-dropin-2020-m4" = { value = 0.2, fidelity = "estimated", rationale = "one drop-in nut from a pack" }
+"electrokit-tnut-dropin-2020-m5" = { value = 0.25, fidelity = "estimated", rationale = "one drop-in nut from a pack" }
+
+# ---- bearings (genuine NSK, single, open; scaled by size class) ----
+"nsk-mr85" = { value = 2.3, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr95" = { value = 2.4, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr105" = { value = 2.5, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr106" = { value = 2.4, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr117" = { value = 2.4, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr126" = { value = 2.5, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr128" = { value = 2.4, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr137" = { value = 2.6, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-mr148" = { value = 2.6, fidelity = "estimated", rationale = "genuine NSK miniature open bearing, size class" }
+"nsk-623" = { value = 2.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-625" = { value = 3.0, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-626" = { value = 3.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-627" = { value = 3.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-628" = { value = 3.9, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-629" = { value = 4.1, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-635" = { value = 3.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-636" = { value = 3.7, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-637" = { value = 4.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-638" = { value = 4.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-639" = { value = 5.0, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-605" = { value = 2.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-606" = { value = 3.1, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-607" = { value = 3.2, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-608" = { value = 3.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-609" = { value = 3.7, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-685" = { value = 2.5, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-686a" = { value = 2.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-687" = { value = 2.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-688a" = { value = 2.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-689" = { value = 2.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-695" = { value = 2.7, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-696" = { value = 2.9, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-697" = { value = 3.0, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-698" = { value = 3.2, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-699" = { value = 3.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6000" = { value = 4.0, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6001" = { value = 4.2, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6002" = { value = 4.7, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6003" = { value = 5.2, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6004" = { value = 6.4, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6005" = { value = 6.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6006" = { value = 8.1, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6200" = { value = 4.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6201" = { value = 5.0, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6202" = { value = 5.4, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6203" = { value = 6.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6204" = { value = 7.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6205" = { value = 8.5, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6206" = { value = 10.6, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6800" = { value = 3.0, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6801" = { value = 3.1, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6802" = { value = 3.2, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6803" = { value = 3.2, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6804" = { value = 3.9, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6805" = { value = 4.1, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6806" = { value = 4.3, fidelity = "estimated", rationale = "genuine NSK thin-section open bearing, size class" }
+"nsk-6900" = { value = 3.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6901" = { value = 3.4, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6902" = { value = 3.8, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6903" = { value = 3.9, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6904" = { value = 5.0, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6905" = { value = 5.3, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+"nsk-6906" = { value = 5.7, fidelity = "estimated", rationale = "genuine NSK open bearing, size class" }
+
+# ---- screws, nuts, per piece from a typical 100-pack ----
+"iso4762-m2x6" = { value = 0.06, fidelity = "estimated", rationale = "M2x6 SHCS from a 100-pack at ~6" }
+"iso4762-m2x8" = { value = 0.07, fidelity = "estimated", rationale = "M2x8 SHCS from a 100-pack" }
+"iso4762-m2x10" = { value = 0.08, fidelity = "estimated", rationale = "M2x10 SHCS from a 100-pack" }
+"iso4762-m2.5x6" = { value = 0.06, fidelity = "estimated", rationale = "M2.5x6 SHCS from a 100-pack" }
+"iso4762-m2.5x8" = { value = 0.07, fidelity = "estimated", rationale = "M2.5x8 SHCS from a 100-pack" }
+"iso4762-m2.5x10" = { value = 0.08, fidelity = "estimated", rationale = "M2.5x10 SHCS from a 100-pack" }
+"iso4762-m2.5x12" = { value = 0.09, fidelity = "estimated", rationale = "M2.5x12 SHCS from a 100-pack" }
+"iso4762-m3x6" = { value = 0.05, fidelity = "estimated", rationale = "M3x6 SHCS from a 100-pack at ~5" }
+"iso4762-m3x8" = { value = 0.06, fidelity = "estimated", rationale = "M3x8 SHCS from a 100-pack at ~6" }
+"iso4762-m3x10" = { value = 0.07, fidelity = "estimated", rationale = "M3x10 SHCS from a 100-pack" }
+"iso4762-m3x12" = { value = 0.08, fidelity = "estimated", rationale = "M3x12 SHCS from a 100-pack at ~8" }
+"iso4762-m3x16" = { value = 0.10, fidelity = "estimated", rationale = "M3x16 SHCS from a 100-pack" }
+"iso4762-m3x20" = { value = 0.12, fidelity = "estimated", rationale = "M3x20 SHCS from a 100-pack" }
+"iso4762-m3x38" = { value = 0.22, fidelity = "estimated", rationale = "M3x38 SHCS, non-table length, small pack" }
+"iso4762-m4x10" = { value = 0.10, fidelity = "estimated", rationale = "M4x10 SHCS from a 100-pack" }
+"iso4762-m4x12" = { value = 0.11, fidelity = "estimated", rationale = "M4x12 SHCS from a 100-pack" }
+"iso4762-m4x16" = { value = 0.14, fidelity = "estimated", rationale = "M4x16 SHCS from a 100-pack" }
+"iso4762-m5x10" = { value = 0.14, fidelity = "estimated", rationale = "M5x10 SHCS from a 100-pack" }
+"iso4762-m5x16" = { value = 0.20, fidelity = "estimated", rationale = "M5x16 SHCS from a 100-pack" }
+"iso10642-m2.5x6" = { value = 0.08, fidelity = "estimated", rationale = "M2.5x6 countersunk hex from a 100-pack" }
+"iso7045-m3x10" = { value = 0.06, fidelity = "estimated", rationale = "M3x10 pan head from a 100-pack" }
+"iso7045-m3x14" = { value = 0.08, fidelity = "estimated", rationale = "M3x14 pan head from a 100-pack" }
+"iso7380-m3x8" = { value = 0.07, fidelity = "estimated", rationale = "M3x8 button head from a 100-pack" }
+"iso7380-m3x10" = { value = 0.08, fidelity = "estimated", rationale = "M3x10 button head from a 100-pack" }
+"iso7380-m4x10" = { value = 0.12, fidelity = "estimated", rationale = "M4x10 button head from a 100-pack" }
+"iso7380-m5x10" = { value = 0.17, fidelity = "estimated", rationale = "M5x10 button head from a 100-pack" }
+"iso4032-m2-nut" = { value = 0.03, fidelity = "estimated", rationale = "M2 hex nut from a 100-pack" }
+"iso4032-m2.5-nut" = { value = 0.04, fidelity = "estimated", rationale = "M2.5 hex nut from a 100-pack" }
+"iso4032-m3-nut" = { value = 0.04, fidelity = "estimated", rationale = "M3 hex nut from a 100-pack at ~4" }
+"iso4032-m4-nut" = { value = 0.06, fidelity = "estimated", rationale = "M4 hex nut from a 100-pack" }
+"iso4032-m5-nut" = { value = 0.08, fidelity = "estimated", rationale = "M5 hex nut from a 100-pack" }
+"din985-m3-locknut" = { value = 0.08, fidelity = "estimated", rationale = "M3 nyloc nut from a 100-pack at ~8" }
+"m3-flange-locknut" = { value = 0.10, fidelity = "estimated", rationale = "M3 flange lock nut from a 100-pack" }
+"nylon-standoff-m3x5" = { value = 0.08, fidelity = "estimated", rationale = "M3x5 nylon spacer from a 100-pack" }
+
+# ---- heat-set inserts, per piece from a 100-pack ----
+"cnckitchen-insert-m2x3" = { value = 0.15, fidelity = "estimated", rationale = "M2 insert from a 100-pack at ~15" }
+"cnckitchen-insert-m2.5x4" = { value = 0.15, fidelity = "estimated", rationale = "M2.5 insert from a 100-pack" }
+"cnckitchen-insert-m3x3-short" = { value = 0.12, fidelity = "estimated", rationale = "M3 short insert from a 100-pack at ~12" }
+"cnckitchen-insert-m3x4-voron" = { value = 0.12, fidelity = "estimated", rationale = "M3 Voron insert from a 100-pack" }
+"cnckitchen-insert-m3x5.7" = { value = 0.14, fidelity = "estimated", rationale = "M3 standard insert from a 100-pack" }
+"cnckitchen-insert-m4x4-short" = { value = 0.18, fidelity = "estimated", rationale = "M4 short insert from a 100-pack" }
+"cnckitchen-insert-m4x8.1" = { value = 0.22, fidelity = "estimated", rationale = "M4 standard insert from a 100-pack" }
+"cnckitchen-insert-m5x5.8-short" = { value = 0.25, fidelity = "estimated", rationale = "M5 short insert from a 100-pack" }
+"cnckitchen-insert-m5x9.5" = { value = 0.30, fidelity = "estimated", rationale = "M5 standard insert from a 100-pack" }
+"cnckitchen-insert-m6x12.7" = { value = 0.50, fidelity = "estimated", rationale = "M6 insert, small pack" }
+"cnckitchen-insert-m8x12.7" = { value = 0.70, fidelity = "estimated", rationale = "M8 insert, small pack" }
+"ruthex-insert-m2x4" = { value = 0.12, fidelity = "estimated", rationale = "M2 insert from a 100-pack at ~12" }
+"ruthex-insert-m3x5.7" = { value = 0.10, fidelity = "estimated", rationale = "M3 insert from a 100-pack at ~10" }
+"ruthex-insert-m4x8.1" = { value = 0.18, fidelity = "estimated", rationale = "M4 insert from a 100-pack" }
+"ruthex-insert-m5x9.5" = { value = 0.25, fidelity = "estimated", rationale = "M5 insert from a 100-pack" }
+
+# ---- standoffs (Ettinger and Wurth, single, premium catalogue prices) ----
+"ettinger-05-01-103-m2-standoff" = { value = 0.45, fidelity = "estimated", rationale = "M2 FF brass 10 mm, catalogue single" }
+"ettinger-05-03-103-m3-standoff" = { value = 0.40, fidelity = "estimated", rationale = "M3 FF brass 10 mm, catalogue single" }
+"ettinger-05-12-143-m2.5-standoff" = { value = 0.50, fidelity = "estimated", rationale = "M2.5 MF brass 14 mm, catalogue single" }
+"ettinger-05-13-103-m3-standoff" = { value = 0.50, fidelity = "estimated", rationale = "M3 MF brass 10 mm, catalogue single" }
+"ettinger-05-14-101-m4-standoff" = { value = 0.60, fidelity = "estimated", rationale = "M4 MF steel 10 mm, catalogue single" }
+"ettinger-05-14-203-m4-standoff" = { value = 0.90, fidelity = "estimated", rationale = "M4 MF brass 20 mm, catalogue single" }
+"wurth-970100144-m25-standoff-ff" = { value = 0.35, fidelity = "estimated", rationale = "M2.5 FF 10 mm, catalogue single" }
+"wurth-970100154-m25-standoff-ff" = { value = 0.40, fidelity = "estimated", rationale = "M2.5 FF 10 mm 5 mm hex, catalogue single" }
+"wurth-970120144-m25-standoff-ff" = { value = 0.38, fidelity = "estimated", rationale = "M2.5 FF 12 mm, catalogue single" }
+"wurth-970140144-m25-standoff-ff" = { value = 0.40, fidelity = "estimated", rationale = "M2.5 FF 14 mm, catalogue single" }
+"wurth-970200144-m25-standoff-ff" = { value = 0.50, fidelity = "estimated", rationale = "M2.5 FF 20 mm, catalogue single" }
+"wurth-970120321-m3-standoff-ff" = { value = 0.40, fidelity = "estimated", rationale = "M3 FF steel 12 mm, catalogue single" }
+"wurth-970120361-m3-standoff-ff" = { value = 0.45, fidelity = "estimated", rationale = "M3 FF steel 12 mm 6 mm hex, catalogue single" }
+"wurth-970170321-m3-standoff-ff" = { value = 0.50, fidelity = "estimated", rationale = "M3 FF steel 17 mm, catalogue single" }
+"wurth-970200321-m3-standoff-ff" = { value = 0.55, fidelity = "estimated", rationale = "M3 FF steel 20 mm, catalogue single" }
+"wurth-970220321-m3-standoff-ff" = { value = 0.60, fidelity = "estimated", rationale = "M3 FF steel 22 mm, catalogue single" }
+"wurth-970270361-m3-standoff-ff" = { value = 0.75, fidelity = "estimated", rationale = "M3 FF steel 27 mm, catalogue single" }
+"wurth-970350321-m3-standoff-ff" = { value = 0.80, fidelity = "estimated", rationale = "M3 FF steel 35 mm, catalogue single" }
+"wurth-970380361-m3-standoff-ff" = { value = 1.00, fidelity = "estimated", rationale = "M3 FF steel 38 mm, catalogue single" }
+"wurth-971100321-m3-standoff" = { value = 0.50, fidelity = "estimated", rationale = "M3 MF steel 10 mm body, catalogue single" }
+"wurth-971160321-m3-standoff" = { value = 0.60, fidelity = "estimated", rationale = "M3 MF steel 16 mm body, catalogue single" }
+"wurth-971270321-m3-standoff" = { value = 0.85, fidelity = "estimated", rationale = "M3 MF steel 27 mm body, catalogue single" }
+"wurth-971350321-m3-standoff" = { value = 1.00, fidelity = "estimated", rationale = "M3 MF steel 35 mm body, catalogue single" }
+"wurth-971450321-m3-standoff" = { value = 1.30, fidelity = "estimated", rationale = "M3 MF steel 45 mm body, catalogue single" }
+"wurth-971500321-m3-standoff" = { value = 1.50, fidelity = "estimated", rationale = "M3 MF steel 50 mm body, catalogue single" }
+"wurth-971550321-m3-standoff" = { value = 1.70, fidelity = "estimated", rationale = "M3 MF steel 55 mm body, catalogue single" }
+"wurth-971600321-m3-standoff" = { value = 1.90, fidelity = "estimated", rationale = "M3 MF steel 60 mm body, catalogue single" }
+"wurth-971700321-m3-standoff" = { value = 2.30, fidelity = "estimated", rationale = "M3 MF steel 70 mm body, catalogue single" }
+
+# ---- power connectors, per one housing/plug as used (solder cup, no contacts to crimp) ----
+"amass-xt30apw-m" = { value = 0.50, fidelity = "estimated", rationale = "one XT30 PCB plug, bulk-ish retail" }
+"amass-xt30aw-m" = { value = 0.50, fidelity = "estimated", rationale = "one XT30 angled PCB plug" }
+"amass-xt30pw-f" = { value = 0.50, fidelity = "estimated", rationale = "one XT30 PCB socket" }
+"amass-xt30pw-m" = { value = 0.50, fidelity = "estimated", rationale = "one XT30 PCB plug" }
+"amass-xt30u-f" = { value = 0.50, fidelity = "estimated", rationale = "one XT30 female wire-solder" }
+"amass-xt30uw-f" = { value = 0.50, fidelity = "estimated", rationale = "one XT30 female wire-solder" }
+"amass-xt60e-m" = { value = 1.20, fidelity = "estimated", rationale = "one XT60E chassis plug" }
+"amass-xt60h-f" = { value = 1.10, fidelity = "estimated", rationale = "one XT60H female" }
+"amass-xt60h-m" = { value = 1.10, fidelity = "estimated", rationale = "one XT60H male" }
+"amass-xt60pw-f" = { value = 1.00, fidelity = "estimated", rationale = "one XT60 PCB socket" }
+"amass-xt60pw-m" = { value = 1.00, fidelity = "estimated", rationale = "one XT60 PCB plug" }
+"amass-xt90e-m" = { value = 2.50, fidelity = "estimated", rationale = "one XT90E chassis plug" }
+"amass-xt90h-f" = { value = 2.20, fidelity = "estimated", rationale = "one XT90H female" }
+"amass-xt90h-m" = { value = 2.20, fidelity = "estimated", rationale = "one XT90H male" }
+"amass-xt90s-f" = { value = 3.50, fidelity = "estimated", rationale = "one XT90S anti-spark female" }
+"amass-xt150-f" = { value = 3.50, fidelity = "estimated", rationale = "one XT150 female" }
+"amass-ec5-f" = { value = 1.20, fidelity = "estimated", rationale = "one EC5 female" }
+"amass-ec5-m" = { value = 1.20, fidelity = "estimated", rationale = "one EC5 male" }
+"amass-mr30pw-m" = { value = 1.00, fidelity = "estimated", rationale = "one MR30 PCB plug" }
+"amass-mr60-f" = { value = 1.20, fidelity = "estimated", rationale = "one MR60 female" }
+"amass-mr60-m" = { value = 1.20, fidelity = "estimated", rationale = "one MR60 male" }
+"amass-mr60pw-m" = { value = 1.30, fidelity = "estimated", rationale = "one MR60 PCB plug" }
+"amass-deans-t-plug-f" = { value = 0.90, fidelity = "estimated", rationale = "one Deans-type female" }
+"amass-deans-t-plug-m" = { value = 0.90, fidelity = "estimated", rationale = "one Deans-type male" }
+"amass-as150-fm" = { value = 6.00, fidelity = "estimated", rationale = "one AS150 F+M pair (the part is a pair)" }
+"amass-as150u24-f" = { value = 5.00, fidelity = "estimated", rationale = "one AS150U female with signal pins" }
+"bullet-3.5mm-gold" = { value = 0.35, fidelity = "estimated", rationale = "one M/F pair from a 10-pair pack" }
+"bullet-4mm-gold" = { value = 0.50, fidelity = "estimated", rationale = "one M/F pair from a 10-pair pack" }
+"bullet-5.5mm-gold" = { value = 0.80, fidelity = "estimated", rationale = "one M/F pair from a pack" }
+
+# ---- signal connectors (housing + board header, crimp contacts included) ----
+"jst-gh-10p" = { value = 1.60, fidelity = "estimated", rationale = "10-pos GH housing + header + contacts, catalogue singles" }
+"jst-gh-6p" = { value = 1.00, fidelity = "estimated", rationale = "6-pos GH housing + header + contacts, catalogue singles" }
+"jst-ph-2p" = { value = 0.30, fidelity = "estimated", rationale = "2-pos PH housing + header + contacts" }
+"jst-sh-8p" = { value = 1.20, fidelity = "estimated", rationale = "8-pos SH housing + header + contacts" }
+"jst-xh-3p" = { value = 0.20, fidelity = "estimated", rationale = "3-pos XH housing + header + contacts" }
+"jst-xh-4p" = { value = 0.25, fidelity = "estimated", rationale = "4-pos XH housing + header + contacts" }
+"jst-xh-5p" = { value = 0.30, fidelity = "estimated", rationale = "5-pos XH housing + header + contacts" }
+"jst-xh-7p" = { value = 0.40, fidelity = "estimated", rationale = "7-pos XH housing + header + contacts" }
+"same-sky-pj-102ah" = { value = 1.50, fidelity = "estimated", rationale = "one PJ-102AH DC jack, distributor single" }
+"wurth-wr-phd-pin-header-3p" = { value = 0.30, fidelity = "estimated", rationale = "one 3-pin 2.54 mm header, distributor single" }
+"wurth-wr-phd-socket-header-3p" = { value = 0.35, fidelity = "estimated", rationale = "one 3-pos 2.54 mm socket, distributor single" }
+
+# ---- wire (per metre of one conductor) and cables ----
+"awg-20-silicone-wire" = { price_per_m = 0.90, fidelity = "estimated", rationale = "single conductor, 20 AWG silicone, from a 5-10 m spool; per metre of one conductor" }
+"awg-22-silicone-wire" = { price_per_m = 0.70, fidelity = "estimated", rationale = "single conductor, 22 AWG silicone; per metre of one conductor" }
+"awg-24-silicone-wire" = { price_per_m = 0.55, fidelity = "estimated", rationale = "single conductor, 24 AWG silicone; per metre of one conductor" }
+"awg-26-silicone-wire" = { price_per_m = 0.45, fidelity = "estimated", rationale = "single conductor, 26 AWG silicone; per metre of one conductor" }
+"awg-28-silicone-wire" = { price_per_m = 0.40, fidelity = "estimated", rationale = "single conductor, 28 AWG silicone; per metre of one conductor" }
+"awg-30-silicone-wire" = { price_per_m = 0.35, fidelity = "estimated", rationale = "single conductor, 30 AWG silicone; per metre of one conductor" }
+"servo-extension-22awg-30cm" = { value = 1.50, fidelity = "estimated", rationale = "ready-made 30 cm 3-wire servo extension, fixed length, unit price" }
+"fold-harness-4wire-p20" = { price_per_m = 2.60, fidelity = "estimated", rationale = "whole 4-conductor cable per metre: 2x20 AWG + 2x28 AWG conductors summed, hand-made" }
+"fold-harness-4wire-p22" = { price_per_m = 2.20, fidelity = "estimated", rationale = "whole 4-conductor cable per metre: 2x22 AWG + 2x28 AWG summed" }
+"fold-harness-4wire" = { price_per_m = 1.90, fidelity = "estimated", rationale = "whole 4-conductor cable per metre: 2x24 AWG + 2x28 AWG summed" }
+"fold-harness-4wire-p26" = { price_per_m = 1.70, fidelity = "estimated", rationale = "whole 4-conductor cable per metre: 2x26 AWG + 2x28 AWG summed" }
+"fold-harness-4wire-p28" = { price_per_m = 1.60, fidelity = "estimated", rationale = "whole 4-conductor cable per metre: 4x28 AWG summed" }
+
+# ---- belts ----
+"unitta-400-2gt-6" = { value = 2.50, fidelity = "estimated", rationale = "closed-loop 2GT 6 mm, 400 mm, single belt" }
+"unitta-600-2gt-6" = { value = 3.00, fidelity = "estimated", rationale = "closed-loop 2GT 6 mm, 600 mm, single belt" }
+"unitta-800-2gt-6" = { value = 3.50, fidelity = "estimated", rationale = "closed-loop 2GT 6 mm, 800 mm, single belt" }
+"unitta-1004-2gt-6" = { value = 4.00, fidelity = "estimated", rationale = "closed-loop 2GT 6 mm, 1004 mm, single belt" }
+"unitta-800-2gt-9" = { value = 4.50, fidelity = "estimated", rationale = "closed-loop 2GT 9 mm, 800 mm, single belt" }
+
+# ---- Pololu, shaft collars, rods, brackets ----
+"pololu-1203-universal-hub-5mm-4-40" = { value = 4.00, fidelity = "estimated", rationale = "one hub, taken from a 2-pack at ~8" }
+"pololu-1998-universal-hub-5mm-m3" = { value = 4.00, fidelity = "estimated", rationale = "one hub, taken from a 2-pack at ~8" }
+"pololu-hub-6mm-4-40-1083" = { value = 4.50, fidelity = "estimated", rationale = "one hub, taken from a 2-pack at ~9" }
+"pololu-2266-nema17-l-bracket" = { value = 4.00, fidelity = "estimated", rationale = "one stamped bracket, maker retail" }
+"pololu-2688-traveling-nut-tr8x8" = { value = 5.00, fidelity = "estimated", rationale = "one traveling nut, maker retail" }
+"pololu-37d-bracket-machined-1995" = { value = 5.00, fidelity = "estimated", rationale = "one machined bracket, taken from a pair at ~10" }
+"pololu-ball-caster-3-4in-metal-955" = { value = 5.00, fidelity = "estimated", rationale = "one metal ball caster kit, maker retail" }
+"pololu-wheel-90x10mm-1436" = { value = 5.00, fidelity = "estimated", rationale = "one wheel, taken from a pair at ~10" }
+"ruland-mcl-6-f" = { value = 7.00, fidelity = "estimated", rationale = "one 6 mm one-piece clamp collar, catalogue single" }
+"ruland-mcl-8-f" = { value = 7.00, fidelity = "estimated", rationale = "one 8 mm one-piece clamp collar, catalogue single" }
+"ruland-fhd-mcl-12-f" = { value = 22.00, fidelity = "estimated", rationale = "one 12 mm face-mount clamp collar, catalogue single" }
+"ruland-fht-mcl-12-f" = { value = 24.00, fidelity = "estimated", rationale = "one 12 mm face-mount tapped collar, catalogue single" }
+"ruland-lv-mcl-8e-f" = { value = 18.00, fidelity = "estimated", rationale = "one lever-clamp collar 1/2 in, catalogue single" }
+"ruland-lv-of-mcl-12-f" = { value = 20.00, fidelity = "estimated", rationale = "one lever-clamp collar 12 mm, catalogue single" }
+"cuas-lite-rod-8mm-left" = { value = 2.00, fidelity = "estimated", rationale = "half of a 100 mm 8 mm stainless stock rod (~4); one rod yields both pieces" }
+"cuas-lite-rod-8mm-right" = { value = 2.00, fidelity = "estimated", rationale = "half of a 100 mm 8 mm stainless stock rod (~4); one rod yields both pieces" }
+
+# ---- iFlight frame parts ----
+"iflight-aos5evo-arm" = { value = 4.00, fidelity = "estimated", rationale = "one 6 mm CF arm as a spare, 4 per kit" }
+"iflight-aos5evo-bottom-plate" = { value = 6.00, fidelity = "estimated", rationale = "one 2.5 mm CF plate as a spare" }
+"iflight-aos5evo-top-plate" = { value = 5.00, fidelity = "estimated", rationale = "one 2 mm CF plate as a spare" }
+"iflight-aos5evo-upper-plate" = { value = 2.50, fidelity = "estimated", rationale = "one small 2 mm CF plate as a spare" }
+"iflight-aos5evo-frame-kit" = { not_for_sale = true, rationale = "aggregate record, not instantiated; vehicle is built from its priced parts (kit retail would be ~35-40 if wanted)" }
+
+# ---- launcher, ammo ----
+"generic-pcp-pellet-launcher-177" = { value = 350, fidelity = "estimated", rationale = "placeholder: compact .177 PCP air-rifle class, barrel and action only" }
+"hn-field-target-trophy-177" = { value = 0.02, fidelity = "estimated", rationale = "one pellet from a 500-tin at ~10" }
+
+# ---- not purchasable (data records) ----
+"liion-cell-ocv-chen2020-lgm50" = { not_for_sale = true, rationale = "OCV curve data record, not a part" }
+"lipo-cell-ocv-bauersfeld2022" = { not_for_sale = true, rationale = "OCV curve data record, not a part" }
+"lipo-cell-ocv-chen2006" = { not_for_sale = true, rationale = "OCV curve data record, not a part" }

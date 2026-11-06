@@ -1,0 +1,43 @@
+id = "cuas-lite-rod-8mm-right"
+name = "8 mm stainless rod, 33 mm piece (tilt axle, right side), cut from the same 100 mm stock rod as the left piece"
+category = "structure.rod"
+vendor = "goBilda (8 mm stainless shaft, 100 mm stock); cut to length"
+part_number = "8 mm x 100 mm stainless round shaft (cut)"
+url = "https://www.gobilda.com/stainless-steel-round-shafting/"
+
+# Right piece of the tilt axle (cad/cuas-lite manifest mounts.rods_8mm: y_H -39..-72 mm = 33 mm). See cuas-lite-rod-8mm-left for the stock rod and the mass rate.
+# Part frame: origin at the rod centre, +z along the rod.
+
+[params]
+diameter = { value = 0.008, unit = "m", src = "S1", fidelity = "datasheet" }
+length   = { value = 0.033, unit = "m", fidelity = "derived", derivation = "CAD manifest mounts.rods_8mm right piece: y_H from -39 to -72 mm = 33 mm." }
+mass     = { value = 0.01287, unit = "kg", fidelity = "derived", derivation = "0.39 g/mm (the CAD's value for an 8 mm steel rod) x 33 mm = 12.9 g." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.004, 0.0165]
+pos = [0.0, 0.0, 0.0]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port."
+
+[visual]
+rationale = "Bright stainless rod, generic cylinder."
+
+[[visual.elements]]
+gen = "shapes"
+
+[[sources]]
+id = "S1"
+url = "https://www.gobilda.com/stainless-steel-round-shafting/"
+title = "goBilda stainless steel round shafting (8 mm x 100 mm; found in a web search snippet, page not fetched)"
+accessed = "2026-10-11"
+quote = "8mm x 100mm stainless steel shaft"

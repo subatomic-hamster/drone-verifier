@@ -1,0 +1,67 @@
+id = "ovonic-4000mah-6s-60c-ec5"
+name = "Ovonic 4000mAh 6S 22.2V 60C LiPo pack, EC5"
+category = "battery.lipo"
+vendor = "Ovonic"
+part_number = "O-60C-4000-6S1P-EC5"
+url = "https://www.ovonicshop.com/products/ovonic-60c-6s-4000mah-22-2v-lipo-battery-with-ec5-plug-for-arrma-rc-car-aircraft"
+
+# Part frame: origin at the pack centre, x along length (134 mm), y along width (43 mm), z up (46 mm). Cell count / 6S1P inferred from the title "6S 4000mAh 22.2V".
+# Resistance not published.
+
+[params]
+capacity_ah     = { value = 4.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 14400.0, unit = "C", fidelity = "derived", derivation = "4.0 Ah x 3600 s/h = 14400 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", fidelity = "derived", derivation = "Listing title '6S 4000mAh 22.2V' = 6 cells in series (6 x 3.7 V = 22.2 V)." }
+cells_parallel  = { value = 1, unit = "1", fidelity = "estimated", rationale = "Title says '6S' only; 1P assumed from the 6S nominal-voltage format." }
+v_nominal       = { value = 22.2, unit = "V", fidelity = "derived", derivation = "Listing title gives 22.2 V (6S); the spec list quoted in S1 omits voltage." }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 60, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 120, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 240.0, unit = "A", fidelity = "derived", derivation = "60 C x 4.0 Ah = 240 A (rating label only)." }
+mass            = { value = 0.548, unit = "kg", src = "S1", fidelity = "datasheet" }          # 548 g (+-20 g)
+length          = { value = 0.134, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.043, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.046, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "EC5", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.039, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/4.0 = 6.5 mOhm/cell x 6 cells = 39 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.067, 0.0215, 0.023]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "ec5"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 240.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 60 C x 4.0 Ah = 240 A (S1 label); exceeds the EC5 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the EC5 plug but not its polarity or contact spacing: + then -, an assumed 12 mm spacing for the EC5 family (no source read). The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (EC5)"
+type = "ec5"
+gender = "neutral"
+pos = [0.067, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.012
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the EC5 plug but not its polarity or contact spacing: + then -, an assumed 12 mm centre distance for the EC5 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.ovonicshop.com/products/ovonic-60c-6s-4000mah-22-2v-lipo-battery-with-ec5-plug-for-arrma-rc-car-aircraft"
+title = "Ovonic shop - Ovonic 60C 6S 4000mAh 22.2V LiPo with EC5 plug"
+accessed = "2026-10-07"
+quote = "Spec of Ovonic 60C 6s 4000mah lipo: - Discharge Rate: 60C - Max Burst Discharge Rate: 120C - Length(dev.5mm) : 134mm - Width(dev.2mm) : 43mm - Height(dev.2mm) : 46mm - Net Weight(dev.20g): 548g - Connector Type: EC5 Plug - Balance Connector Type : JST-XH"

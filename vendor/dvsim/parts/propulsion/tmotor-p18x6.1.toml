@@ -1,0 +1,47 @@
+id = "tmotor-p18x6.1"
+name = "T-Motor P18*6.1 polished carbon-fibre propeller (18x6.1 in, 2-blade)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "P18*6.1"
+url = "https://store.tmotor.com/product/polish-carbon-fiber-18x6_1-prop.html"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# This is the prop used in the T-Motor MN4110-KV340 bench test (prop_label "T-MOTOR P18*6.1", parts/propulsion/tmotor-mn4110-kv340.toml); the
+# MN5008-KV340 table uses "P18*6.1 CF" (same size, probably the same prop). Mass: the spec table labels the weight "Weight (Single Blade)
+# 31.5 +-1.5 g" while the series is "2blades-integrated": read as one propeller (inference; if per blade the prop is 63 g).
+# No C_T/C_P curve is published by T-Motor; for J-shape use the uiuc-apce-* reference parts. Hub bore size is not published (see port).
+
+[params]
+diameter    = { value = 0.4572, unit = "m", src = "S1", fidelity = "datasheet" }
+pitch       = { value = 0.1549, unit = "m", src = "S1", fidelity = "datasheet" }
+blade_count = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }                  # "2blades-integrated"
+mass        = { value = 0.0315, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass_tol    = { value = 0.0015, unit = "kg", src = "S1", fidelity = "datasheet" }
+material    = { value = "CF+Epoxy", unit = "text", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 80.4, unit = "N", fidelity = "derived", derivation = "'Thrust Limitation 8.2kg' (S1) x 9.80665 m/s^2 = 80.4 N." }
+rpm_opt_min = { value = 3000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+rpm_opt_max = { value = 6000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+j_prop      = { value = 5.49e-4, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.0315*0.4572^2/12 = 5.49e-4 kg*m^2. Mass is concentrated nearer the hub in real blades, so the true J is likely lower; treat as an upper bound." }
+
+[geometry]
+shape = "cylinder"
+size = [0.2286, 0.0060]       # disc envelope: radius D/2, half-height 6 mm (blade thickness envelope, estimated)
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+fidelity = "estimated"
+rationale = "Hub bore is not published for the P-series (the pair ships with aluminium mounting plates). 6 mm taken from the sibling NS15*5 drawing (O6 centre hole, parts/propulsion/tmotor-ns15x5.toml S2) and from the M6 prop-adapter thread of the MN4004/MN4006 motors (tmotor-mn4004-kv300)."
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/polish-carbon-fiber-18x6_1-prop.html"
+title = "T-MOTOR store - P18*6.1 UAV CF Polish Propellers (Specification)"
+accessed = "2026-10-07"
+quote = "Model No. | 18*6.1 (457.2*154.9mm) | Series | 2blades-integrated | Weight (Single Blade) | 31.5±1.5g | Material | CF+Epoxy | Thrust Limitation | 8.2kg | Optimum RPM | 3000~6000 RPM/min | Ambient Temp | -40℃~65℃ | Surface Treatment | Polished"

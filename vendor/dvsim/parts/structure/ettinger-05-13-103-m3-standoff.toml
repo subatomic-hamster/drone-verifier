@@ -1,0 +1,50 @@
+id = "ettinger-05-13-103-m3-standoff"
+name = "Ettinger 05.13.103 hex standoff M3 male-female, brass, 10 mm body / 16 mm overall"
+category = "structure.standoff"
+vendor = "Ettinger"
+part_number = "05.13.103"
+url = "https://www.element14.cn/en-CN/ettinger/05-13-103/spacer-m3x10-ni/dp/1466826"
+
+[params]
+thread_diameter = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 10e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+overall_length  = { value = 16e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 5.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 2.0e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[params.stud_length]
+value = 6e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Overall length 16 mm minus body length 10 mm (both from S1)."
+
+[[ports]]
+name = "thread_female"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.010
+note = "Threaded bore in the hex body, opening on the bottom face; depth assumed equal to the body length"
+
+[[ports]]
+name = "thread_male"
+kind = "mech"
+type = "thread.m3"
+gender = "male"
+pos = [0.0, 0.0, 0.016]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.006
+note = "Stud on top, length = overall minus body length"
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/ettinger/05-13-103/spacer-m3x10-ni/dp/1466826"
+title = "Ettinger 05.13.103 Standoff, Brass, M3, Hex Male-Female, 10 mm, 16 mm (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Brass; Standoff Type Hex Male-Female; Thread Size - Metric M3; Body Length 10mm; Overall Length 16mm; External Width 5.5mm; Product Range 05.13 Series; Weight (kg): .002"

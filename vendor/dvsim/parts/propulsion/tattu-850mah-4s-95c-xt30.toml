@@ -1,0 +1,70 @@
+id = "tattu-850mah-4s-95c-xt30"
+name = "Tattu R-Line 850mAh 4S 14.8V 95C LiPo pack, XT30"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA8504S95XT3"
+url = "https://rcdrone.top/products/src-taa8504s95xt3-tattu-850mah-4s-95c-14-8v-r-line-lipo-battery-pack-with-xt30-plug"
+
+# Part frame: origin at the pack centre, x along length (59 mm), y along width (30 mm), z up (30 mm). Pack-side connector gender is a modelling
+# convention (neutral mates either). Internal resistance not published for this model: pack value estimated (rationale on r_internal_pack).
+
+[params]
+capacity_ah     = { value = 0.85, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 3060.0, unit = "C", fidelity = "derived", derivation = "0.85 Ah x 3600 s/h = 3060 C (coulombs)." }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 95, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 190, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 80.75, unit = "A", fidelity = "derived", derivation = "95 C x 0.85 Ah = 80.75 A (rating label only)." }
+mass            = { value = 0.104, unit = "kg", src = "S1", fidelity = "datasheet" }          # 104 g (+-20 g)
+mass_tol        = { value = 0.020, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.059, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT30", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 16, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.122, unit = "ohm", fidelity = "estimated", rationale = "Tattu publishes no internal resistance for this pack (the page only says R-Line has 'lower internal resistance'). Per-cell DC resistance scaled inversely with capacity, R_cell = 0.026 ohm*Ah / capacity (anchored to the 4-6 mOhm/cell at ~5 Ah used for the 5200 mAh Tattu in parts/drone/tattu-4s-5200mah-35c.toml): 0.026/0.85 = 30.6 mOhm/cell x 4 cells = 122 mOhm. Plus-or-minus 50%; racing-grade 95C cells probably sit below this." }
+
+[geometry]
+shape = "box"
+size = [0.0295, 0.015, 0.015]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt30"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 80.75, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 95 C x 0.85 Ah = 80.75 A (S1 rating label); exceeds the XT30 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT30 plug but not its polarity or contact spacing: + then -, 5.0 mm of the XT30 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT30)"
+type = "xt30"
+gender = "neutral"
+pos = [0.0295, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT30 plug but not its polarity or contact spacing: + then -, 5.0 mm of the XT30 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-taa8504s95xt3-tattu-850mah-4s-95c-14-8v-r-line-lipo-battery-pack-with-xt30-plug"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu R-Line 850mAh 4S 14.8V 95C LiPo pack with XT30 plug"
+accessed = "2026-10-07"
+quote = "Minimum Capacity|850mAh|Configuration|4S / 14.8V / 4Cells|Pack Configuration|4S1P|Voltage|14.8V|Discharge Rate|95C|Max Burst Discharge Rate|190C|Net Weight (±20g)|104g|Dimensions|59mm (L) x 30mm (W) x 30mm (H)|Discharge Plug|XT30|Discharge Wire Length|45mm|Wire Gauge|16#"

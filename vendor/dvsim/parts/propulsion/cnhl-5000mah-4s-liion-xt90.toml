@@ -1,0 +1,67 @@
+id = "cnhl-5000mah-4s-liion-xt90"
+name = "CNHL Long Range 5000mAh 4S1P 14.4V 21700 Li-ion pack (BAK 50D), XT90"
+category = "battery.liion"
+vendor = "CNHL (China Hobby Line)"
+part_number = "LI500104S70XT90"
+url = "https://chinahobbyline.com/products/cnhl-5000mah-14-4v-4s-21700-li-ion-battery-xt90"
+
+# Part frame: origin at the pack centre, x along length (73.5 mm), y along width (43 mm), z up (43 mm).
+# CNHL publishes no continuous-discharge rating for this pack ("Power + Energy Balance"); the port i_max is an ESTIMATED conservative floor.
+
+[params]
+capacity_ah     = { value = 5.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 18000.0, unit = "C", fidelity = "derived", derivation = "5.0 Ah x 3600 s/h = 18000 C (coulombs)." }
+energy_wh       = { value = 72.0, unit = "Wh", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", src = "S1", fidelity = "datasheet" }
+mass            = { value = 0.2965, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0735, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.043, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.043, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "CNHL gives no discharge rating. 1 C (5 A) is used as a conservative floor; the BAK 50D cell datasheet was not retrieved (the 50D is described as 'Power + Energy Balance', so true capability is higher). Treat DRC overcurrent findings against this port as advisory." }
+r_internal_pack = { value = 0.060, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. Cell AC impedance of 21700 cells is ~10-15 mOhm (cf. Molicel P42A <15 mOhm, Samsung 40T <=12 mOhm); 4 cells x 12 mOhm = 48 mOhm plus ~25% for welds and leads = 60 mOhm. Plus-or-minus 40%." }
+
+[geometry]
+shape = "box"
+size = [0.03675, 0.0215, 0.0215]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "1 C floor, no published discharge rating (see i_max_continuous)." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90)"
+type = "xt90"
+gender = "neutral"
+pos = [0.03675, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-5000mah-14-4v-4s-21700-li-ion-battery-xt90"
+title = "China Hobby Line - CNHL Long Range Series 5000mAh 14.4V 4S 21700 Li-ion Battery with XT90 Plug"
+accessed = "2026-10-07"
+quote = "Cell Model | BAK INR2170-50D | Configuration | 4S1P / 4 cells | Capacity | 5000mAh | Nominal Voltage | 14.4V | Maximum Charge Voltage | 16.8V (4.20V per cell) | Nominal Energy | 72Wh | Main Connector | XT90 | Main Power Wire | 12AWG | Approx. Dimensions | 73.5 × 43 × 43mm | Approx. Weight | 296.5g"

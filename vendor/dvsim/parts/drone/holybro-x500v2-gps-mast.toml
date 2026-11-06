@@ -1,0 +1,161 @@
+id = "holybro-x500v2-gps-mast"
+name = "Holybro X500 V2 GPS mount: base, nut, adapter, 4 mm pole and tray (STEP GPSV5-ZHIJIA assembly)"
+category = "frame.mount"
+vendor = "Holybro"
+part_number = ""
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+
+# GPS mast from the STEP assembly GPSV5-ZHIJIA (OpenCascade, x500v2-frame.step): base ZUO, nut LUOMAO, adapter ZHUANJIETOU, pole
+# GAN, tray TUOPAN. It stands on the platform board (centre x_STEP = +99 mm, z_STEP = 0: aft of the plates, which end at +-71.9 mm).
+# Geometry only in this file; the guide's GPS-mount hardware ('Screw M3*10 4pcs' + 'Locknut M3 4pcs') is counted in
+# holybro-x500v2-hardware-kit. No mass is published; materials are not stated (a plastic base/tray and a carbon pole are assumed).
+# Part frame: origin = base seat on the platform board top face (y_STEP = -26.0 mm), z up: z = y_STEP + 0.026 m.
+[params.plastic_cad_volume]
+value = 5.8514e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volumes: base ZUO 1995.3 + nut LUOMAO 1963.4 + adapter ZHUANJIETOU 500.0 + tray TUOPAN 1392.7 = 5851.4 mm3 (bboxes 39.0 x 18.7 x 39.0, 15.3 x 27.5 x 15.3, 8.0 x 16.5 x 8.0, 29.0 x 9.5 x 29.0 mm)."
+
+[params.pole_cad_volume]
+value = 1.2779e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of GAN-GPSV5-ZHIJIA: bbox 4.0 x 108.0 x 4.0 mm, y_STEP -2.5..105.5."
+
+[params.plastic_density]
+value = 1300
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Material not stated; plastic assumed, same 1300 kg/m3 estimate as the fibre-reinforced nylon arm connectors (holybro-x500v2-arm-connectors density)."
+
+[params.pole_density]
+value = 1550
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Pole material not stated; carbon-fibre-epoxy-ud estimated density 1550 kg/m3 (parts/common) assumed. (The STEP pole is 1278 mm3 in a 4 mm x 108 mm envelope of 1357 mm3, i.e. nearly solid.)"
+
+[params.mass_base]
+value = 0.002594
+unit = "kg"
+fidelity = "derived"
+derivation = "1.9953e-6 m3 * 1300 kg/m3 = 2.594 g (base ZUO)."
+
+[params.mass_nut]
+value = 0.002552
+unit = "kg"
+fidelity = "derived"
+derivation = "1.9634e-6 m3 * 1300 kg/m3 = 2.552 g (nut LUOMAO)."
+
+[params.mass_adapter]
+value = 0.00065
+unit = "kg"
+fidelity = "derived"
+derivation = "5.0e-7 m3 * 1300 kg/m3 = 0.65 g (adapter ZHUANJIETOU)."
+
+[params.mass_tray]
+value = 0.001811
+unit = "kg"
+fidelity = "derived"
+derivation = "1.3927e-6 m3 * 1300 kg/m3 = 1.811 g (tray TUOPAN)."
+
+[params.mass_pole]
+value = 0.001981
+unit = "kg"
+fidelity = "derived"
+derivation = "pole_cad_volume 1.2779e-6 m3 * pole_density 1550 kg/m3 (estimated) = 1.981 g."
+
+[params.mass]
+value = 0.009588
+unit = "kg"
+fidelity = "derived"
+derivation = "mass_base 0.002594 + mass_nut 0.002552 + mass_adapter 0.00065 + mass_tray 0.001811 + mass_pole 0.001981 = 0.009588 kg."
+
+[params.mass_tol]
+value = 0.0015
+unit = "kg"
+fidelity = "estimated"
+rationale = "+-15 % of 9.6 g: materials unknown (plastic grade, and the pole could be aluminium: 2700 kg/m3 would add 1.5 g)."
+
+[params.tray_height]
+value = 0.133
+unit = "m"
+fidelity = "derived"
+derivation = "STEP tray TUOPAN top face y_STEP = +107.0 mm minus the platform board top face y_STEP = -26.0 mm = 133 mm above the base seat."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+rationale = "Black plastic base and top tray with a thin carbon-look pole; the [geometry] shapes with softened edges."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "plastic-dark", s3 = "carbon-fibre" }
+
+[geometry]
+material = "nylon-pa66"   # nominal; masses are set per shape by mass_param
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0149, 0.0149, 0.00935]
+pos = [0.0, 0.0, 0.00935]
+mass_param = "mass_base"
+note = "base ZUO on the platform board (z 0..18.7 mm; y_STEP -26.0..-7.3)"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.00765, 0.01375]
+pos = [0.0, 0.0, 0.01675]
+mass_param = "mass_nut"
+note = "nut LUOMAO (z 3.0..30.5 mm)"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.004, 0.00825]
+pos = [0.0, 0.0, 0.02025]
+mass_param = "mass_adapter"
+note = "adapter ZHUANJIETOU (z 12.0..28.5 mm)"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.002, 0.054]
+pos = [0.0, 0.0, 0.0775]
+mass_param = "mass_pole"
+note = "pole GAN, 4 mm x 108 mm (z 23.5..131.5 mm)"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0145, 0.0145, 0.00475]
+pos = [0.0, 0.0, 0.12825]
+mass_param = "mass_tray"
+note = "GPS tray TUOPAN (z 123.5..133.0 mm)"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Underside of the base on the platform board top face (mates 'mast' of holybro-x500v2-platform-board)."
+
+[[ports]]
+name = "tray"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.133]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Top face of the GPS tray (tray_height 0.133 m above the base seat); the GPS module's underside seat (holybro-m8n-gps 'base') mates here. The tray is 29 mm square against the 50 mm GPS puck: the real module rests on / is held by the tray and its mount bracket, not recorded."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+title = "X500 v2 Assembly Guide (Holybro PDF), 'GPS Mount Location Suggestion'"
+accessed = "2026-10-07"
+quote = "GPS Mount Location Suggestion ... Locknut M3 4pcs ... Screw M3*10 4pcs"

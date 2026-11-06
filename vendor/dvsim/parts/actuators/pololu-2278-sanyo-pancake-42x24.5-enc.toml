@@ -1,0 +1,103 @@
+id = "pololu-2278-sanyo-pancake-42x24.5-enc"
+name = "Sanyo Denki SS2421-50XE100 pancake stepper with 4000 CPR encoder, NEMA 17 flange, 42x24.5 mm (Pololu 2278)"
+category = "motor.stepper"
+vendor = "Pololu / Sanyo Denki"
+part_number = "SS2421-50XE100"
+url = "https://www.pololu.com/product/2278"
+
+# Frame: origin on the shaft axis at the front flange face, +z = shaft direction, body in z in [-0.0245, 0] (encoder included in the length).
+[params]
+mass             = { value = 0.105, unit = "kg", src = "S1", fidelity = "datasheet" }
+flange_size      = { value = 0.042, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length      = { value = 0.0245, unit = "m", src = "S1", fidelity = "datasheet" }
+steps_per_rev    = { value = 200, unit = "1", src = "S1", fidelity = "datasheet" }
+phases           = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+leads            = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+rated_current    = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+rated_voltage    = { value = 3.5, unit = "V", src = "S1", fidelity = "datasheet" }
+phase_resistance = { value = 3.5, unit = "ohm", src = "S1", fidelity = "datasheet" }
+phase_inductance = { value = 0.0012, unit = "H", src = "S1", fidelity = "datasheet" }
+holding_torque   = { value = 0.0833, unit = "N*m", src = "S1", fidelity = "datasheet" }
+shaft_diameter   = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+lead_length      = { value = 0.30, unit = "m", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4000, unit = "counts/rev", src = "S1", fidelity = "datasheet" }
+encoder_cable_length = { value = 0.15, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.31x31.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+fidelity = "estimated"
+rationale = "Pololu labels the motor NEMA 17 but gives no hole drawing; the NEMA 17 31 mm square M3 pattern of the other 42 mm Pololu steppers (soyo-sy42sth38-1684a-nema17, manufacturer drawing) is assumed. Tapped depth unknown."
+note = "NEMA 17 front face."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "5 mm output shaft (S1); no D-flat stated, treated as round."
+
+[[ports]]
+name = "phases"
+pins = ["PH.1", "PH.2", "PH.3", "PH.4"]
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "sink"
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Four 30 cm bare leads; current is per coil."
+
+[[ports]]
+name = "encoder"
+kind = "signal"
+type = "quadrature-encoder"
+gender = "neutral"
+note = "Removable 15 cm encoder cable (S1); 4000 counts per output-shaft revolution counting both edges of both channels."
+
+# Pin level: four colour-coded bare leads, 30 cm (P1: red + yellow = one coil, orange + blue = the other). P1 does not give the polarity within a coil. The encoder cable is not pinned (its pin table is only in the vendor images).
+[[connectors]]
+id = "PH"
+name = "phase leads (4, bare, 300 mm)"
+type = "wire-lead"
+port_type = "stepper-bipolar-4wire"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.0245]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.003
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "P1 does not say where the leads leave the body: drawn at the centre of the rear face, 3 mm apart (positional estimate)."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", i_max = 1.0, note = "red wire, coil A (P1)" },
+  { number = 2, name = "A2", kind = "power", dir = "in", i_max = 1.0, note = "yellow wire, coil A (P1)" },
+  { number = 3, name = "B1", kind = "power", dir = "in", i_max = 1.0, note = "orange wire, coil B (P1)" },
+  { number = 4, name = "B2", kind = "power", dir = "in", i_max = 1.0, note = "blue wire, coil B (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/2278"
+title = "Pololu item 2278 product page, Overview"
+accessed = "2026-10-09"
+quote = "The motor has four color-coded wires terminated with bare leads: red and yellow connect to one coil; orange and blue connect to the other."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2278/specs"
+title = "Pololu item 2278 specs (Sanyo Pancake Stepper Motor with Encoder: 42x24.5mm, 3.5V, 1 A/Phase, 4000 CPR)"
+accessed = "2026-10-07"
+quote = "Size: | 42 mm square × 24.5 mm| (NEMA 17)| 1| NEMA size: | 17 | Weight: | 105 g | Shaft diameter: | 5 mm | Current rating: | 1000 mA| 2| Voltage rating: | 3.5 V | Model: | SS2421-50XE100 | Holding torque: | 11.8 oz·in | Steps per revolution: | 200 | Resistance: | 3.5 Ohm| 2| Inductance per phase: | 1.2 mH | Number of leads: | 4 | Lead length: | 30 cm| 3| Encoders?: | Y | Encoder resolution: | 4000 CPR| 4| Notes: ... The included removable encoder cable is 15 cm (6″) long."

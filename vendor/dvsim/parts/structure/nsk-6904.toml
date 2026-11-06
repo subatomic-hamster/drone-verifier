@@ -1,0 +1,47 @@
+id = "nsk-6904"
+name = "NSK 6904 deep-groove ball bearing, open, 20x37x9 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "6904"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.02, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.037, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.009, unit = "m", src = "S1", fidelity = "datasheet" }
+chamfer_min        = { value = 0.0003, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 7000, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 3700, unit = "N", src = "S1", fidelity = "datasheet" }
+calc_factor_f0     = { value = 14.7, unit = "1", src = "S1", fidelity = "datasheet" }  # f0 for the axial-load factor
+limiting_speed_grease = { value = 19000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, grease lubrication
+limiting_speed_oil = { value = 22000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, oil lubrication
+mass               = { value = 0.037, unit = "kg", src = "S1", fidelity = "datasheet" }  # catalog mass (kg, approx.)
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.20"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.37"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, deep groove ball bearings table (open type; Cr, C0r in N; mass in kg)"
+accessed = "2026-10-07"
+quote = "37 9 0.3 7 000 3 700 14.7 19 000 12 000 22 000 6904 ZZ VV DDU N NR 1.70 0.95 35.7 0.25 0.3 39.8 0.85 22 24 35 0.3 40.5 2.3 0.037 (columns: d D B r Cr C0r f0 grease-open grease-ZZ oil-open, designations, snap-ring and abutment dims, mass; bore d = 20 from the grouped first column)"

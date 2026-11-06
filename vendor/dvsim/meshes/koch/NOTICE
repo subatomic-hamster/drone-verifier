@@ -1,0 +1,62 @@
+Koch v1.1 follower arm meshes and URDF
+======================================
+
+Origin:   https://github.com/s1lent4gnt/koch-v1-1   (fork of https://github.com/jess-moss/koch-v1-1, "Koch v1.1", Hugging Face)
+Commit:   cc1a4eb9b27978b6bc3bb34f12fa5a7d229f1fde  (2025-02-25, "separate arm parts to links and motor links")
+Source:   simulation/follower.urdf and simulation/meshes/*.STL  (the link-frame meshes referenced by the URDF; units: metres, binary STL)
+          The same link meshes (link_1 .. link_6, base_link, *_motor) are byte-identical to the ones in
+          https://github.com/perezjln/gym-lowcostrobot  (a1a2286bcaa45ee2844a695f339fd48d9055da83,
+          gym_lowcostrobot/assets/low_cost_robot_6dof/follower_meshes/, Apache-2.0, "Copyright 2024 Julien Perez"); verified with cmp.
+Geometry: Koch v1.1, NOT the original v1.0. Checked by signed volume against the v1.1 printable STLs in
+          https://github.com/jess-moss/koch-v1-1  commit 1a553e1fa7d5404b51bbd83b99b0f7eba54888e0 (hardware/follower/STL, mm):
+          base 24888.1 vs 24888.1 mm^3, shoulder rotation 6893.4 vs 6894.3, shoulder-to-elbow 34356.3 vs 34360.8,
+          elbow-to-wrist extension 47962 vs 47982.5, elbow-to-wrist 4543.4 vs 4543.0, gripper static 13418.8 vs 13420.7,
+          gripper moving 12843.1 vs 12840.6 (upstream STL vs URDF mesh, all within 0.1 %, the URDF meshes are re-tessellated).
+          The v1.0 meshes of https://github.com/AlexanderKoch-Koch/low_cost_robot (e.g. base_link 63729 mm^3) are different parts.
+License:  Apache License 2.0, full text in ./LICENSE (copied unmodified from the repository root at the commit above; byte-identical
+          to the LICENSE of jess-moss/koch-v1-1 at 1a553e1). It starts "Copyright 2024 The Hugging Face team. All rights reserved."
+          and is the stock Apache License Version 2.0, January 2004 text. The repository ships no separate NOTICE file.
+          Koch v1.1 is derived from Alexander Koch's low_cost_robot (MIT, "Copyright (c) 2024 Alexander Koch"), whose notice is kept here:
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation
+            files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy,
+            modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+            Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice
+            shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY
+            OF ANY KIND [full MIT text: https://github.com/AlexanderKoch-Koch/low_cost_robot/blob/0602b0c1e6a67d8f6ab96f81d1378639018d98af/LICENSE].
+          The *_motor.STL meshes show the ROBOTIS Dynamixel servos (ROBOTIS CAD, shipped as STEP files in the Koch repository under
+          the same Apache-2.0 LICENSE); ROBOTIS' own terms for that CAD were not checked.
+
+Files copied unmodified (byte-identical to the upstream files at the commit above; verified with cmp):
+  LICENSE
+  follower.urdf        simulation/follower.urdf (joints joint_1 .. joint_6, link-frame visuals with identity origins, placeholder limits)
+  base_link.STL        printed base (Follower_Base)
+  link_1.STL           printed shoulder rotation bracket (Follower_Shoulder_Rotation)
+  link_2.STL           printed shoulder-to-elbow arm (Follower_Shoulder_To_Elbow)
+  link_3.STL           printed elbow-to-wrist extension (Follower_Elbow_To_Wrist_Extension)
+  link_4.STL           printed elbow-to-wrist link (Follower_Elbow_To_Wrist)
+  link_5.STL           printed gripper static part (Follower_Gripper_Static_Part)
+  link_6.STL           printed gripper moving part (Follower_Gripper_Moving_Part)
+  base_link_motor.STL, link_1_motor.STL, link_2_motor.STL, link_3_motor.STL, link_4_motor.STL, link_5_motor.STL
+                       the servos (and their screws, idler frames, hubs) of each link, one merged mesh per link; the source of the
+                       two servo bodies below and read by tools/koch_ports.py. Not referenced by any part file. Not manifold
+                       (touching shells): MuJoCo rejects them with inertia = exact, use them as visuals only.
+
+Files derived (modified), written by `python tools/koch_ports.py --write-servo-meshes` (numpy + scipy ConvexHull / qhull; scipy 1.18 from a
+on the laptop; the hull is deterministic for the same input):
+  xl430_w250_t.stl     Dynamixel XL430-W250-T body, 192 triangles (convex hull of the body cut out of base_link_motor.STL: its largest
+                       connected component, 3897 triangles). Servo frame: origin on the horn axis at the outer face of the horn hub,
+                       z = outward horn normal, x along the long body axis towards the body centre. bbox x [-0.01125, 0.03525]
+                       y [-0.01425, 0.01425] z [-0.0379, 0] m (46.5 x 28.5 x 37.9 mm; the 3.9 mm above the 34 mm datasheet height is the hub).
+  xl330_m288_t.stl     Dynamixel XL330-M288-T body, 136 triangles (convex hull of the body + cover shell, two connected components, cut
+                       out of link_2_motor.STL), same servo frame convention. bbox x [-0.0095, 0.0245] y [-0.01, 0.01] z [-0.0259, -0.0029] m
+                       (34 x 20 x 23 mm; the output hub plane is 2.9 mm above the body face and is not part of the mesh).
+  Modifications: (1) triangles of one servo cut out of the merged *_motor mesh by connected component (vertices merged at 0.1 um);
+  (2) coordinates transformed from the link frame to the servo frame (rigid, metres); (3) replaced by the convex hull, because the cut-out
+  bodies are not manifold (133 / 50 unmatched or non-manifold edges: MuJoCo 'faces of mesh have inconsistent orientation' with inertia =
+  exact); the hull keeps the bounding box exactly. Both hulls load in MuJoCo with inertia exact and convex (checked on hfbox, mujoco wheel).
+  The four XL330 bodies and the two XL430 bodies agree in the servo frame to 0.1 mm (bbox) / 0.42 mm (centroid, joint 5 and 6 servos
+  sit 0.1 mm further from the horn plane of their joint origin: 3.0 mm vs 2.9 mm hub gap); the two XL430 shells differ by 3 % in volume (internal detail).
+
+Not copied: leader-arm parts (hardware/leader), the gripper/camera collision meshes of the Menagerie / gym-lowcostrobot variants, the
+STEP / SolidWorks files, the electrical wiring diagram. Joint limits are NOT taken from follower.urdf (placeholder -3.14 .. 3.14, effort 0.5):
+the part files use the 'approximate joint limits' of MuJoCo Menagerie low_cost_robot_arm (f054586, Apache-2.0, not copied), see docs/research/koch-v1.1.md.

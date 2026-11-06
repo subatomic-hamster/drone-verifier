@@ -1,0 +1,67 @@
+id = "cnhl-6700mah-6s-lihv-120c-xt90"
+name = "CNHL Lightning LiHV 6700mAh 6S 22.8V 120C LiPo pack, XT90"
+category = "battery.lipo"
+vendor = "CNHL (China Hobby Line)"
+part_number = "HV6701206XT90"
+url = "https://chinahobbyline.com/products/cnhl-lightning-lihv-6700mah-22-8v-6s-120c-hv-lipo-battery-with-xt90-plug"
+
+# Part frame: origin at the pack centre, x along length (150 mm), y along width (50 mm), z up (51 mm). LiHV: 4.35 V/cell full charge (S1 'LiHV').
+
+[params]
+capacity_ah     = { value = 6.7, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 24120.0, unit = "C", fidelity = "derived", derivation = "6.7 Ah x 3600 s/h = 24120 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", fidelity = "estimated", rationale = "Listing gives '6S LiHV' only; 1P assumed from the 6S nominal-voltage format." }
+v_nominal       = { value = 22.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 26.1, unit = "V", fidelity = "derived", derivation = "6S x 4.35 V/cell LiHV full-charge limit = 26.1 V." }
+c_rating_cont   = { value = 120, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 240, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 804.0, unit = "A", fidelity = "derived", derivation = "120 C x 6.7 Ah = 804 A (rating label only)." }
+mass            = { value = 0.765, unit = "kg", src = "S1", fidelity = "datasheet" }          # "Approx. 765 g"
+length          = { value = 0.150, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.050, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.051, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0233, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/6.7 = 3.9 mOhm/cell x 6 cells = 23.3 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.075, 0.025, 0.0255]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 26.1, unit = "V", fidelity = "derived", derivation = "6S x 4.35 V/cell LiHV = 26.1 V." }
+i_max = { value = 804.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 120 C x 6.7 Ah = 804 A (S1 label); far above the XT90 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90)"
+type = "xt90"
+gender = "neutral"
+pos = [0.075, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90 plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 26.1, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-lightning-lihv-6700mah-22-8v-6s-120c-hv-lipo-battery-with-xt90-plug"
+title = "China Hobby Line - CNHL Lightning LiHV 6700mAh 22.8V 6S 120C HV LiPo with XT90 plug"
+accessed = "2026-10-07"
+quote = "Capacity | 6700mAh | Voltage | 22.8V / 6S LiHV | Discharge Rate | 120C Continuous / 240C Burst | Output Connector | XT90 Plug | Dimensions (L×W×H) | 150 × 50 × 51 mm | Weight | Approx. 765 g | Charge Rate | 5C Max | Balance Connector | JST-XH-7P | Wire Gauge | 10 AWG"

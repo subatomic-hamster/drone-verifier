@@ -1,0 +1,97 @@
+id = "74hct4017"
+name = "74HCT4017 decade counter with 10 decoded outputs, DIP-16 (cuas2 hardware shot counter, two cascaded)"
+category = "ic.logic"
+vendor = "Texas Instruments / Nexperia (CD74HCT4017E class)"
+part_number = "CD74HCT4017E"
+url = "https://www.digikey.com/en/products/detail/texas-instruments/CD74HC4017E/480317"
+
+# Part frame: origin at the centre of the DIP-16 body underside, z up, body 19.2 x 6.4 x 3.3 mm.
+# Use in cuas2 (spec 14 Q6): a CD4017-class decade counter counts rising edges of the muzzle-beam signal (CLK, pin 14). One 4017 stops at 9 because Q0..Q9 repeat, so two are cascaded:
+# the units counter's carry-out (pin 12, high for counts 0-4, rises on the wrap 9 -> 0) clocks the tens counter; tens Q1 (pin 2) goes high at the 10th ball and is the TRIP line
+# (it inhibits the tens counter through /CE (pin 13) and turns on the NPN that holds the relay driver off). Tens Q2 (pin 4) = 20 balls, Q3 (pin 7) = 30: the DIP/jumper picks N.
+# RESET (pin 15) of both is held high for about 0.1 s at power-up by one capacitor / resistor pair (key power cycle is the only reset).
+
+[params]
+mass       = { value = 0.001, unit = "kg", fidelity = "estimated", rationale = "A DIP-16 plastic package weighs about 1 g (package standard)." }
+length     = { value = 0.0192, unit = "m", fidelity = "estimated", rationale = "DIP-16 body length (package standard)." }
+width      = { value = 0.0064, unit = "m", fidelity = "estimated", rationale = "DIP-16 body width (package standard)." }
+height     = { value = 0.0033, unit = "m", fidelity = "estimated", rationale = "DIP-16 body height (package standard)." }
+vcc_min    = { value = 4.5, unit = "V", fidelity = "estimated", rationale = "HCT family supply range 4.5-5.5 V." }
+vcc_max    = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "As vcc_min." }
+vih_min    = { value = 2.0, unit = "V", fidelity = "estimated", rationale = "HCT inputs are TTL-compatible: VIH 2.0 V (a 3.3 V sensor node drives CLK directly)." }
+price      = { value = 1.03, unit = "USD", src = "S1", fidelity = "estimated", rationale = "Digi-Key CD74HC4017E (the HC part; the HCT variant was not found), single piece USD 1.03, falling to 0.74 at 10 (search snippet)." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0096, 0.0032, 0.00165]
+pos = [0.0, 0.0, 0.00165]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power"
+kind = "power"
+type = "dip-pin"
+gender = "neutral"
+role = "sink"
+pins = ["U.16", "U.8"]
+v_max = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "HCT supply maximum." }
+v_min = { value = 4.5, unit = "V", fidelity = "estimated", rationale = "HCT supply minimum." }
+i_max = { value = 0.02, unit = "A", fidelity = "estimated", rationale = "Quiescent plus output loads; well under 20 mA." }
+note = "VCC (pin 16) and GND (pin 8)."
+
+[[ports]]
+name = "io"
+kind = "signal"
+type = "dip-pin"
+gender = "neutral"
+pins = ["U.1", "U.2", "U.3", "U.4", "U.5", "U.6", "U.7", "U.9", "U.10", "U.11", "U.12", "U.13", "U.14", "U.15"]
+note = "CLK, /CE, RESET, CARRY-OUT and the decoded outputs Q0..Q9."
+
+[[connectors]]
+id = "U"
+name = "DIP-16 pins (2 rows of 8, 2.54 mm pitch, 7.62 mm apart)"
+type = "dip-16"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 8
+pitch = 0.00254
+fidelity = "estimated"
+rationale = "DIP-16 pin-out of the 4017 family (TI CD74HC4017 / CD74HCT4017 pin diagram, from memory of the sheet, not fetched: verify against the part in hand);package geometry is standard."
+pins = [
+  { number = 1, name = "Q5", kind = "signal", dir = "out", v = 5.0 },
+  { number = 2, name = "Q1", kind = "signal", dir = "out", v = 5.0 },
+  { number = 3, name = "Q0", kind = "signal", dir = "out", v = 5.0 },
+  { number = 4, name = "Q2", kind = "signal", dir = "out", v = 5.0 },
+  { number = 5, name = "Q6", kind = "signal", dir = "out", v = 5.0 },
+  { number = 6, name = "Q7", kind = "signal", dir = "out", v = 5.0 },
+  { number = 7, name = "Q3", kind = "signal", dir = "out", v = 5.0 },
+  { number = 8, name = "GND", kind = "ground" },
+  { number = 9, name = "Q8", kind = "signal", dir = "out", v = 5.0 },
+  { number = 10, name = "Q4", kind = "signal", dir = "out", v = 5.0 },
+  { number = 11, name = "Q9", kind = "signal", dir = "out", v = 5.0 },
+  { number = 12, name = "CARRY", kind = "signal", dir = "out", v = 5.0 },
+  { number = 13, name = "CE_N", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 14, name = "CLK", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 15, name = "RESET", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 16, name = "VCC", kind = "power", dir = "in", v_min = 4.5, v_max = 5.5 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.digikey.com/en/products/detail/texas-instruments/CD74HC4017E/480317"
+title = "Digi-Key: Texas Instruments CD74HC4017E decade counter, 16-PDIP (search snippet)"
+accessed = "2026-10-27"
+quote = "CD74HC4017E ... unit price about $1.03 for a single piece, falling to roughly $0.74 at 10 pieces"

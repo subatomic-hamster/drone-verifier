@@ -1,0 +1,110 @@
+id = "makerbase-mks-canable-v2-pro"
+name = "Makerbase MKS CANable V2.0 Pro (isolated USB-C to CAN adapter, candleLight / slcan)"
+category = "pcb.interface"
+vendor = "Makerbase (MKS)"
+part_number = "MKS CANable V2.0 Pro (Pro V1.0 isolated board)"
+url = "https://github.com/makerbase-mks/CANable-MKS"
+
+# Host-side CAN adapter of the dog: one USB port of the Jetson to the 1 Mbit/s CAN chain of the 12 actuators (a Jetson-carrier CAN header is only a 3.3 V logic footprint and needs a transceiver; the dog uses this adapter instead).
+# The vendor page covers three MKS variants (V1.0, V2.0, Pro V1.0); only the Pro V1.0 has isolation. Mass, size and the CAN terminal pin order are not on the page and are estimates.
+# Part frame: origin at the board centre, z up.
+
+[params]
+can_bitrate_max     = { value = 1.0e6, unit = "bit/s", src = "S1", fidelity = "datasheet" }  # CAN 2.0A/B up to 1 Mbps; CAN FD (2M/5M tested) with the slcan firmware
+isolation_voltage   = { value = 2500.0, unit = "V", src = "S1", fidelity = "datasheet" }  # "2.5KV rms signal and power isolation", Pro V1.0, ADM3053 transceiver
+mcu                 = { value = "STM32G431C8T6 (Cortex-M4, 170 MHz)", unit = "-", src = "S1", fidelity = "datasheet" }
+firmware            = { value = "candleLight (gs_usb, SocketCAN native) or slcan", unit = "-", src = "S1", fidelity = "datasheet" }
+termination         = { value = "120 ohm, enabled by a solder-jumper cap", unit = "-", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.010, unit = "kg", fidelity = "estimated", rationale = "Not published. A bare 2-layer board about 45 x 22 mm with a USB-C and a screw/header terminal weighs about 10 g (cf. other CANable boards); +-50 %." }
+length              = { value = 0.045, unit = "m", fidelity = "estimated", rationale = "Board size not on the page (it points to a hardware folder); typical CANable Pro size." }
+width               = { value = 0.022, unit = "m", fidelity = "estimated", rationale = "As length." }
+height              = { value = 0.010, unit = "m", fidelity = "estimated", rationale = "As length (USB-C receptacle height plus board)." }
+
+[params.price]
+value = 45.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "No MKS list price retrieved. Comparable isolated CANable-Pro-class boards seen 2026-10-16: EYOU CANable PRO 42.00 USD (RobotShop search snippet), Jhoinrch RH-02 PRO (CANable 2.0 based, isolated) 58.99 USD (Newegg, out of stock). 45 USD taken."
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0225, 0.011, 0.005]
+pos = [0.0, 0.0, 0.005]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Underside of the board (the geometry sits on z >= 0): taped / standoff-mounted on a tray."
+
+[[ports]]
+name = "usb"
+pins = ["USB.A4", "USB.A1", "USB.A6", "USB.A7"]
+kind = "signal"
+type = "usb"
+gender = "female"
+note = "USB Type-C receptacle, USB 2.0 data (S1: Type-C)."
+
+[[ports]]
+name = "can"
+pins = ["CAN.1", "CAN.2", "CAN.3"]
+kind = "signal"
+type = "can"
+gender = "neutral"
+note = "Isolated CAN terminal: CAN_H, CAN_L and the isolated-side ground."
+
+[[connectors]]
+id = "USB"
+name = "USB Type-C (USB 2.0 contacts only)"
+type = "usb-c"
+port_type = "usb"
+gender = "female"
+pos = [-0.0225, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states only 'Type-C'. Only the USB 2.0 contacts the board must use are listed (VBUS A4, GND A1, D+ A6, D- A7 of the Type-C standard); the CC pins are not shown by the source and are left out."
+pins = [
+  { number = "A4", name = "VBUS", kind = "power", dir = "in", v_min = 4.75, v_max = 5.25 },
+  { number = "A1", name = "GND", kind = "ground" },
+  { number = "A6", name = "D+", kind = "signal", dir = "io" },
+  { number = "A7", name = "D-", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "CAN"
+name = "isolated CAN terminal"
+type = "screw-terminal"
+port_type = "can"
+gender = "neutral"
+pos = [0.0225, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+joinable = true
+src = "S1"
+fidelity = "estimated"
+rationale = "The page does not give the CAN connector type or pin order (it points to the hardware folder). Three contacts (CAN_H, CAN_L, isolated GND) in that order are ASSUMED; check the board silkscreen before wiring."
+pins = [
+  { number = 1, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 2, name = "CAN_L", kind = "signal", dir = "io" },
+  { number = 3, name = "GND_ISO", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://github.com/makerbase-mks/CANable-MKS"
+title = "makerbase-mks/CANable-MKS repository README (V1.0, V2.0, Pro V1.0; page-fetch summary)"
+accessed = "2026-10-16"
+quote = "STM32G431C8T6; ADM3053BRWZ transceiver on Pro V1.0 with 2.5KV rms signal and power isolation; CAN 2.0A and 2.0B up to 1 Mbps, slcan firmware supports CAN-FD (2M/5M tested); Type-C USB; termination enabled or disabled with a short-circuit cap; candleLight and slcan firmware (page-fetch summary, not verbatim)"

@@ -1,0 +1,58 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "dev",
+      "displayName": "dev default (CMake-detected compiler; shares build/ with the pip build)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "DVSIM_PYTHON": "OFF"
+      }
+    },
+    {
+      "name": "gcc",
+      "inherits": "dev",
+      "binaryDir": "${sourceDir}/build/gcc",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "clang",
+      "inherits": "dev",
+      "binaryDir": "${sourceDir}/build/clang",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "ci",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ci",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "dev", "configurePreset": "dev" },
+    { "name": "gcc", "configurePreset": "gcc" },
+    { "name": "clang", "configurePreset": "clang" },
+    { "name": "ci", "configurePreset": "ci" }
+  ],
+  "testPresets": [
+    { "name": "dev", "configurePreset": "dev", "output": { "outputOnFailure": true },
+      "filter": { "exclude": { "label": "gpu" } } },
+    { "name": "gcc", "configurePreset": "gcc", "output": { "outputOnFailure": true },
+      "filter": { "exclude": { "label": "gpu" } } },
+    { "name": "clang", "configurePreset": "clang", "output": { "outputOnFailure": true },
+      "filter": { "exclude": { "label": "gpu" } } },
+    { "name": "ci", "configurePreset": "ci", "output": { "outputOnFailure": true },
+      "filter": { "exclude": { "label": "gpu" } } },
+    { "name": "gpu", "configurePreset": "dev", "output": { "outputOnFailure": true },
+      "filter": { "include": { "label": "gpu" } } }
+  ]
+}

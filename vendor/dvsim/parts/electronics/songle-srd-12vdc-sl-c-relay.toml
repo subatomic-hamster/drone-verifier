@@ -1,0 +1,117 @@
+id = "songle-srd-12vdc-sl-c-relay"
+name = "Songle SRD-12VDC-SL-C power relay, 12 V coil, SPDT, 10 A contacts (the weapon-rail contactor of cuas-lite)"
+category = "switch.relay"
+vendor = "Ningbo Songle Relay (listing: LCSC C30431)"
+part_number = "SRD-12VDC-SL-C"
+url = "https://www.lcsc.com/product-detail/C30431.html"
+
+# Why it exists: the arm key switch is rated only 1 A (parts/electronics/e-switch-ko106a102-keylock-spst.toml), so the key and the NC E-stop cannot carry the flywheel current (two 180 motors, 1.88 A stall each,
+# plus the servo buck). They sit in series in the 12 V COIL loop of this relay (about 30 mA); the relay's normally-open contact switches the weapon rail. Open key, pressed E-stop or a broken wire de-energise the
+# coil and cut the rail whatever the Pico does. Use the normally-open pair (COM / NO); NC is not wired. A flyback diode goes across the coil.
+# Part frame: origin at the centre of the underside, z up. Pin positions are NOT in the pages read (only the 19.2 x 15.6 x 15.8 mm outline): the connectors sit on the underside at estimated positions.
+
+[params]
+coil_voltage    = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+coil_resistance = { value = 400.0, unit = "ohm", src = "S1", fidelity = "datasheet" }
+coil_power      = { value = 0.36, unit = "W", src = "S1", fidelity = "datasheet" }
+coil_current    = { value = 0.03, unit = "A", fidelity = "derived", derivation = "12 V / 400 ohm (S1) = 30 mA." }
+contact_current = { value = 10.0, unit = "A", src = "S2", fidelity = "literature" }   # 10 A 28 VDC / 10 A 30 VDC on a Makers Electronics listing of the same type; LCSC shows 15 A maximum switching current and no DC rating
+length          = { value = 0.0192, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0156, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0158, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 0.010, unit = "kg", fidelity = "estimated", rationale = "Not on the LCSC page; sealed 10 A PCB relays of this size weigh about 10 g (typical)." }
+price       = { value = 0.4421, unit = "USD", src = "S1", fidelity = "datasheet" }   # LCSC quantity 1, 2026-10-11; 177,407 in stock; shipping not included
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0096, 0.0078, 0.0079]
+pos = [0.0, 0.0, 0.0079]
+
+[[ports]]
+name = "coil"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["COIL.1", "COIL.2"]
+v_max = { value = 16.0, unit = "V", fidelity = "estimated", rationale = "Nominal 12 V coil; relays of this type tolerate about 130 % of nominal continuously (typical, not on the pages read)." }
+i_max = { value = 0.1, unit = "A", fidelity = "estimated", rationale = "30 mA coil current with margin." }
+note = "Coil: pin 1 to the E-stop side of the key / E-stop chain, pin 2 to ground."
+
+[[ports]]
+name = "contact"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+pins = ["SW.1", "SW.2"]
+i_max = { value = 10.0, unit = "A", src = "S2", fidelity = "literature" }
+note = "Normally-open pair: COM (pin 1) and NO (pin 2)."
+
+[[connectors]]
+id = "COIL"
+name = "coil pins"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.005, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0075
+fidelity = "estimated"
+rationale = "The pin pattern of SRD relays (coil pair on one side, COM / NO / NC on the other) is a generic fact; the LCSC page gives no pin drawing as text."
+pose_rationale = "Positional estimate on the underside."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", v_max = 16.0 },
+  { number = 2, name = "A2", kind = "ground" },
+]
+
+[[connectors]]
+id = "SW"
+name = "contact pins (COM, NO)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.005, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0075
+fidelity = "estimated"
+rationale = "As COIL; the NC pin is not wired and not listed."
+pose_rationale = "Positional estimate on the underside."
+pins = [
+  { number = 1, name = "COM", kind = "power", dir = "io", i_max = 10.0 },
+  { number = 2, name = "NO", kind = "power", dir = "io", i_max = 10.0 },
+]
+
+[visual]
+src = "V1"
+note = "Blue sealed cube relay (product photo class); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.lcsc.com/product-detail/C30431.html"
+title = "LCSC: SRD-12VDC-SL-C, Songle Relay"
+accessed = "2026-10-11"
+quote = "SRD-12VDC-SL-C | Power Relays, Over 2 Amps | Songle Relay ... Unit price (qty 1) $0.4421 ... In-Stock: 177,407 ... Coil voltage 12V ... Coil resistance 400 ohm ... Coil rated power 360mW ... One set of changeover: 1C (SPDT-changeover) ... Switching Current (Max) 15A ... Length 19.2mm, Width 15.6mm, Height 15.8mm"
+
+[[sources]]
+id = "S2"
+url = "https://makerselectronics.com/?p=551690"
+title = "Makers Electronics: Songle SRD-12VDC-SL-C relay (contact ratings as shown in a web search snippet; the page itself was not fetched)"
+accessed = "2026-10-11"
+quote = "10 A 250 VAC, 10 A 125 VAC, 10 A 30 VDC and 10 A 28 VDC"
+
+[[sources]]
+id = "V1"
+url = "https://www.lcsc.com/product-detail/C30431.html"
+title = "LCSC listing (appearance only)"
+accessed = "2026-10-11"
+quote = "SRD-12VDC-SL-C"

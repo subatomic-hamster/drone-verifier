@@ -1,0 +1,71 @@
+id = "nylon-standoff-m3x5"
+name = "Nylon standoff M3x5 (X500 V2 bottom plate / XT60 holder spacers)"
+category = "fastener"
+vendor = "generic"
+part_number = "Nylon Standoff M3*5"
+url = "https://shop.holybro.com/x500-v2-kit_p1288.html"
+
+[params]
+length   = { value = 5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+material_density = { value = 1140, unit = "kg/m3", src = "S2", fidelity = "datasheet" }
+
+[params.mass]
+value = 7.0e-5
+unit = "kg"
+fidelity = "estimated"
+rationale = "Holybro gives only 'Nylon Standoff M3*5 4pcs' (assembly guide). Assumed round body OD 5.5 mm / ID 3.2 mm / length 5 mm in PA66 (1140 kg/m3, S2): pi/4*(5.5^2-3.2^2)*5 = 98 mm3 -> 0.11 g for a full tube; 0.07 g used to allow for a hex/chamfered body. Negligible against the 610 g kit weight."
+
+[params.mass_tol]
+value = 4.0e-5
+unit = "kg"
+fidelity = "estimated"
+rationale = "mass (0.07 g) is estimated between a hex/chamfered and a full-tube body (0.11 g full tube, see mass rationale); +-0.04 g covers it. Negligible for the vehicle."
+
+# Modelled as a through-tapped M3 spacer (female thread at both ends): Holybro lists only 'Nylon Standoff M3*5' and does not say whether
+# one end carries a stud, so the male-female variant is not assumed. Frame: origin at the bottom face centre, z up.
+[[ports]]
+name = "thread_bottom"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.005
+fidelity = "estimated"
+rationale = "Bore at the bottom end; length = the full 5 mm body length (S1 'Nylon Standoff M3*5', a through-tapped bore is assumed, the tapped depth is not published). Axis -z = outward normal of the bottom face."
+
+[[ports]]
+name = "thread_top"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.005]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.005
+fidelity = "estimated"
+rationale = "Bore at the top end (z = 0.005 = standoff length, S1), same assumption as thread_bottom."
+
+[visual]                            # cosmetic only: a hex spacer of the stated length; hex size and colour are not published
+rationale = "Holybro lists only 'Nylon Standoff M3*5'; drawn as a natural-nylon hex spacer, 5 mm long (generator default 5 mm across flats)."
+
+[[visual.elements]]
+gen = "standoff"
+colors = { body = "plastic-white" }
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+title = "Holybro X500 v2 Assembly Guide PDF (parts list on page 1)"
+accessed = "2026-10-07"
+quote = "16. Nylon Standoff M3*5 4pcs"
+
+[[sources]]
+id = "S2"
+url = "https://quickparts.com/wp-content/uploads/2023/04/zytel®-101l-nc010-gb.pdf"
+title = "Zytel 101L NC010 datasheet (Celanese)"
+accessed = "2026-10-07"
+quote = "Density 1140 / - kg/m³ ISO 1183"

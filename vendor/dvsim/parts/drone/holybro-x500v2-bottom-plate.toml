@@ -1,0 +1,355 @@
+id = "holybro-x500v2-bottom-plate"
+name = "Holybro X500 V2 carbon fibre bottom plate (#510180)"
+category = "frame.plate"
+vendor = "Holybro"
+part_number = "510180"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+
+[params]
+size_xy   = { value = 0.144, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.cad_bbox_xy]
+value = 0.14372
+unit = "m"
+fidelity = "derived"
+derivation = "Bounding box 143.72 x 2.00 x 143.72 mm of the bottom-plate solid (centre of mass at height y = +1.0 mm, volume 34549 mm3) in Holybro's x500v2-frame.step, via OpenCascade BRepBndLib."
+
+[params.cad_volume]
+value = 3.4549e-5
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade BRepGProp::VolumeProperties on the bottom-plate solid of x500v2-frame.step (includes all holes and cut-outs)."
+
+[params.mass]
+value = 0.05355
+unit = "kg"
+fidelity = "derived"
+derivation = "cad_volume 3.4549e-5 m3 * carbon-fibre-twill-plate estimated density 1550 kg/m3 = 53.6 g. Not weighed."
+
+[params.mass_tol]
+value = 0.0054
+unit = "kg"
+fidelity = "estimated"
+rationale = "Mass comes from CAD volume times an estimated density (carbon-fibre-twill-plate 1550 kg/m3, itself estimated; typical twill laminates are 1.5-1.6 g/cc per that file), so +-10% of 53.6 g is carried; the plate has not been weighed."
+
+[geometry]
+# Part frame: origin at the plate centre, z up when installed (the STEP is Y-up, size [0.07186, 0.001, 0.07186] converted to z-up).
+# This is the ROOT of the X500 assembly: the bottom face of the plate is z = -0.001.
+shape = "box"
+size = [0.07186, 0.07186, 0.001]
+material = "carbon-fibre-twill-plate"
+
+# Four arm-connector seats (body clamp lower half sits on the top face), 45 deg X-frame diagonals. ref = radial outward, so a
+# connector whose 'plate_lo' port has ref +x (connector x = outward along the arm) mates with k = 0.
+[[ports]]
+name = "arm1"
+# hole_pos (all four arm seats, here and on holybro-x500v2-top-plate / -arm-connectors): ESTIMATED, not published. The four M3x38
+# bolts per clamp (airframe doc step 5) are placed in the port frame (x along the arm, y across it) straddling the 16 mm arm
+# tube: x = +-8 mm, y = +-10 mm (the tube radius is 8 mm, an M3 hole 1.7 mm, so |y| >= 9.7 mm; the estimated 24.09 mm square
+# footprint half-width is 12.0 mm). Needed so the builder can place the fastener mass geoms; only their inertia depends on it.
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [0.05501, 0.05501, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [0.7071067812, 0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Radius 77.8 mm = centre of the body-side clamp halves from the frame centre (STEP-derived, docs/research/x500v2-airframe.md and holybro-x500v2-arm-connectors); X frame so the diagonal is 45 deg: 0.0778 * cos45 = 0.05501 m. z = +0.001 is the plate top face (half of the 2 mm thickness, S1). thickness 0.002 = plate thickness (S1). holes = 4 inferred from the guide's M3x38 x16 + flange locknut x16 = 4 arms x 4 bolts (airframe doc, step 5); the hole positions within the clamp footprint are not recorded."
+
+[[ports]]
+name = "arm2"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [-0.05501, 0.05501, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [-0.7071067812, 0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Same as arm1 rotated 90 deg about z (X-frame diagonal at 135 deg)."
+
+[[ports]]
+name = "arm3"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [-0.05501, -0.05501, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [-0.7071067812, -0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Same as arm1 rotated 180 deg about z (diagonal at 225 deg)."
+
+[[ports]]
+name = "arm4"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [0.05501, -0.05501, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [0.7071067812, -0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Same as arm1 rotated 270 deg about z (diagonal at 315 deg)."
+
+[[ports]]
+name = "pdb"
+kind = "mech"
+type = "bolt-pattern.45x45.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.006]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.0
+holes = 4
+thread = "m3"
+fidelity = "estimated"
+rationale = "The PDB has 45x45 mm mounting holes (holybro-pdb-60a S1) but no document says where on the bottom plate it sits or what thread; plate centre is assumed (it has to be central to reach all four arms) and M3 from the standoff/screw family. z = 0.006 = plate top face 0.001 + 0.005 for the 4 nylon standoffs M3x5 (parts/common/nylon-standoff-m3x5; their guide step is 'XT60 holder / bottom-plate spacers', so carrying the PDB is assumed, not verified). The standoffs are not mated explicitly; their 5 mm is folded into this port's z. Resolve with the assembly guide photo or the STEP."
+
+[[ports]]
+name = "pm02"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, -0.045, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "No hole pattern for the PM02 V3 is published, so it is a flat tape/strap mount (family 'flat-mount': board lying on a face, no hole pattern). Position beside the PDB between the plates, 45 mm off-centre in -y so a 45x30 mm board (estimated size, see holybro-pm02-v3) clears the PDB (+-25 mm) and the arm clamps (>= 43 mm from centre in x). Resolve with the assembly photos."
+
+# Landing-gear leg seats under the plate (leg frame origin = pole top). ref +x on the front seat and -x on the rear seat so that
+# the leg's +y lean points outward on both (see mate-math check in the report).
+[[ports]]
+name = "leg_front"
+kind = "mech"
+type = "mount.x500v2-landing-gear"
+gender = "neutral"
+pos = [0.0, 0.057, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+hole_pos = [[0.0135, 0.014], [-0.0135, 0.014], [0.0135, -0.011], [-0.0135, -0.011]]
+fidelity = "derived"
+derivation = "STEP (x500v2-frame.step, OpenCascade): the pole top end centre is at z_STEP = +-57.0 mm (pole bbox z 49.2..124.3 mm, lean 17.5 deg, see holybro-x500v2-landing-gear), under the plate on the STEP z axis = this model's y axis, so y = 0.057 m (was an estimated 0.060). z = -0.001 is the plate underside. The 4 M3x8 screws per leg (guide step 4) are at x = +-13.5 mm and y = 14 mm inboard / 11 mm outboard of this point in the plate frame (hole_pos is in this port's frame: y' = -y here since ref = +x, axis = -z)."
+
+[[ports]]
+name = "leg_rear"
+kind = "mech"
+type = "mount.x500v2-landing-gear"
+gender = "neutral"
+pos = [0.0, -0.057, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+hole_pos = [[0.0135, 0.014], [-0.0135, 0.014], [0.0135, -0.011], [-0.0135, -0.011]]
+fidelity = "derived"
+derivation = "Mirror of leg_front (see there): the STEP legs are symmetric about the plate (pole top ends at z_STEP = +-57.0 mm)."
+
+# Rail-rod hanger seats: the port position is the rod axis (hangers and rubber ring gaskets are not modelled).
+[[ports]]
+name = "rail_l"
+kind = "mech"
+type = "tube.10"
+gender = "female"
+pos = [0.0, 0.030, -0.014]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "derived"
+derivation = "STEP (x500v2-frame.step, OpenCascade): the rail rods (CARBON-FIBER-TUBE300, bbox 250 x 9.4 x 9.4 mm) run along STEP x at z_STEP = +-30.0 mm and y_STEP = -13.0 mm, i.e. 60 mm apart (y = +-0.030 here) and 13 mm below the plate underside (y_STEP = 0): z = -0.001 - 0.013 = -0.014 (was an estimated -0.021). The rod centre is 5 mm off the plate centre along x (x_STEP -120..+130 mm); ignored (x = 0)."
+
+[[ports]]
+name = "rail_r"
+kind = "mech"
+type = "tube.10"
+gender = "female"
+pos = [0.0, -0.030, -0.014]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "derived"
+derivation = "Mirror of rail_l (see there)."
+
+# ---- Mass-only seats for the rest of the frame kit. Frame mapping from the Y-up STEP (x_s, y_s, z_s; plate underside y_s = 0) to this
+# model: x = -x_s, y = z_s, z = y_s - 0.001. The sign of x is an INFERENCE: the STEP puts the Intel depth-camera mount (an optional
+# front-facing item) at x_s = -104.8 mm and the GPS mast at x_s = +99 mm, so STEP -x is taken as vehicle forward (GPS aft, as on
+# the real X500 V2); the existing top-plate 'gps_mast' estimate was also aft. All seats are flat mounts (the real support path goes
+# through the rails and hangers; the airframe is rigid, so only the pose matters). Axis -z, ref +x, plate underside z = -0.001.
+[[ports]]
+name = "hanger1"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.050, 0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "STEP hanger solids (HANGER-ZHU_ASM JIA-GUAN / HUAN-GUIJIAO) at x_s = -50 mm, z_s = +-30 mm; guide part 14 'Hanger 8pcs' (4 here at x = +-50 mm, 4 at x = -81 and -117 mm)."
+
+[[ports]]
+name = "hanger2"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.050, -0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "As hanger1, other rail."
+
+[[ports]]
+name = "hanger3"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.050, 0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "STEP hanger at x_s = +50 mm, z_s = +-30 mm."
+
+[[ports]]
+name = "hanger4"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.050, -0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "As hanger3, other rail."
+
+[[ports]]
+name = "hanger5"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.081, 0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "STEP hanger (HANGER_ASM) at x_s = +81 mm, z_s = +-29.5 mm (rounded to the 30 mm rail); these four hold the platform board. The STEP clamp of these four hangs 3 mm below the plate underside; ignored."
+
+[[ports]]
+name = "hanger6"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.081, -0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "As hanger5, other rail."
+
+[[ports]]
+name = "hanger7"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.117, 0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "STEP hanger (HANGER_ASM) at x_s = +117 mm, z_s = +-29.5 mm."
+
+[[ports]]
+name = "hanger8"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.117, -0.030, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "As hanger7, other rail."
+
+[[ports]]
+name = "platform"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.099, 0.0, -0.027]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "STEP PLATFORM-PLAT-X500 (65 x 2 x 93 mm, centre x_s = +99.0 mm, z_s = 0, top face y_s = -26.0 mm): below the bottom plate, aft, held by the four rear hangers. Top face z = -0.026 - 0.001 = -0.027."
+
+[[ports]]
+name = "battery_mount"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Plate-underside datum for the battery mount (slide-bar clips, board, pad, straps): the STEP clips/board/pad are centred on x_s = 0, z_s = 0 and hang from the rails. The part's shapes carry the heights."
+
+[[ports]]
+name = "hardware"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Mass carrier for the leftover kit screws (holybro-x500v2-hardware-kit) at the plate centre; where the individual screws sit is not modelled (they are spread over the arms, hangers, battery clips and GPS mast)."
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs), Frame Kit Details"
+accessed = "2026-10-06"
+quote = "Body - Full Carbon Fiber Top & Bottom plate (144 x 144mm, 2mm thick)"

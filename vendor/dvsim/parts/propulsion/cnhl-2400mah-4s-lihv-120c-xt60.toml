@@ -1,0 +1,67 @@
+id = "cnhl-2400mah-4s-lihv-120c-xt60"
+name = "CNHL Lightning LiHV 2400mAh 4S 15.2V 120C shorty LiPo pack, XT60"
+category = "battery.lipo"
+vendor = "CNHL (China Hobby Line)"
+part_number = "HVS2401204XT60"
+url = "https://chinahobbyline.com/products/cnhl-lightning-lihv-2400mah-15-2v-4s-120c-hv-shorty-lipo-battery-with-xt60-plug"
+
+# Part frame: origin at the pack centre, x along length (76 mm), y along width (32 mm), z up (35 mm). LiHV: 4.35 V/cell, 17.4 V fully charged (S1).
+
+[params]
+capacity_ah     = { value = 2.4, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 8640.0, unit = "C", fidelity = "derived", derivation = "2.4 Ah x 3600 s/h = 8640 C (coulombs)." }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", fidelity = "estimated", rationale = "Listing gives '4S LiHV' only; 1P assumed from the 4S nominal-voltage format." }
+v_nominal       = { value = 15.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 17.4, unit = "V", src = "S1", fidelity = "datasheet" }
+c_rating_cont   = { value = 120, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 240, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 288.0, unit = "A", fidelity = "derived", derivation = "120 C x 2.4 Ah = 288 A (rating label only)." }
+mass            = { value = 0.185, unit = "kg", src = "S1", fidelity = "datasheet" }          # "Approx. 185g"
+length          = { value = 0.076, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.032, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0433, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/2.4 = 10.8 mOhm/cell x 4 cells = 43.3 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.038, 0.016, 0.0175]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 17.4, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 288.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 120 C x 2.4 Ah = 288 A (S1 label); far above the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.038, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 17.4, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-lightning-lihv-2400mah-15-2v-4s-120c-hv-shorty-lipo-battery-with-xt60-plug"
+title = "China Hobby Line - CNHL Lightning LiHV 2400mAh 15.2V 4S 120C HV shorty LiPo with XT60 plug"
+accessed = "2026-10-07"
+quote = "Capacity | 2400mAh | Discharge Rate | 120C Continuous / 240C Burst | Output Connector | XT60 Plug | Dimensions (L × W × H) | 76 × 32 × 35mm | Balance Connector | JST-XH 5-Pin | Wire Gauge | 12AWG | Nominal Voltage | 15.2V | Fully Charged Voltage | 17.4V when charged to 4.35V per cell | Weight | Approx. 185g"

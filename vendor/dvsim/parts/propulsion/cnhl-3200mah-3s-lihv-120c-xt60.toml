@@ -1,0 +1,67 @@
+id = "cnhl-3200mah-3s-lihv-120c-xt60"
+name = "CNHL Lightning LiHV 3200mAh 3S 11.4V 120C shorty LiPo pack, XT60"
+category = "battery.lipo"
+vendor = "CNHL (China Hobby Line)"
+part_number = "HVS3201203XT60"
+url = "https://chinahobbyline.com/products/cnhl-lightning-lihv-3200mah-11-4v-3s-120c-hv-shorty-lipo-battery-with-xt60-plug"
+
+# Part frame: origin at the pack centre, x along length (107 mm), y along width (35 mm), z up (28 mm). LiHV: 4.35 V/cell full charge.
+
+[params]
+capacity_ah     = { value = 3.2, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 11520.0, unit = "C", fidelity = "derived", derivation = "3.2 Ah x 3600 s/h = 11520 C (coulombs)." }
+cells_series    = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", fidelity = "estimated", rationale = "Listing gives '3S LiHV' only; 1P assumed from the 3S nominal-voltage format." }
+v_nominal       = { value = 11.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 13.05, unit = "V", fidelity = "derived", derivation = "3S x 4.35 V/cell LiHV full-charge limit = 13.05 V." }
+c_rating_cont   = { value = 120, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 240, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 384.0, unit = "A", fidelity = "derived", derivation = "120 C x 3.2 Ah = 384 A (rating label only)." }
+mass            = { value = 0.208, unit = "kg", src = "S1", fidelity = "datasheet" }          # "Approx. 208 g"
+length          = { value = 0.107, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.028, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0244, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/3.2 = 8.1 mOhm/cell x 3 cells = 24.4 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.0535, 0.0175, 0.014]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 13.05, unit = "V", fidelity = "derived", derivation = "3S x 4.35 V/cell LiHV = 13.05 V." }
+i_max = { value = 384.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 120 C x 3.2 Ah = 384 A (S1 label); far above the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.0535, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 13.05, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-lightning-lihv-3200mah-11-4v-3s-120c-hv-shorty-lipo-battery-with-xt60-plug"
+title = "China Hobby Line - CNHL Lightning LiHV 3200mAh 11.4V 3S 120C HV shorty LiPo with XT60 plug"
+accessed = "2026-10-07"
+quote = "Capacity | 3200mAh | Voltage | 11.4V / 3S LiHV | Discharge Rate | 120C Continuous / 240C Burst | Output Connector | XT60 Plug | Dimensions (L×W×H) | 107 × 35 × 28 mm | Weight | Approx. 208 g | Charge Rate | 5C Max | Balance Connector | JST-XHP-4P | Wire Gauge | 12 AWG"

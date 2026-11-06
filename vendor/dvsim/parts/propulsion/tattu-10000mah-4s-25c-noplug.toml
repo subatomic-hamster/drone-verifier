@@ -1,0 +1,47 @@
+id = "tattu-10000mah-4s-25c-noplug"
+name = "Tattu 10000mAh 4S 14.8V 25C LiPo pack, bare leads (no plug)"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TA0802 (D303A/D303B)"
+url = "https://rcdrone.top/products/tattu-4s-10000mah-14-8v-25c-lipo-battery-pack-without-plug"
+
+# Part frame: origin at the pack centre, x along length (169 mm), y along width (65 mm), z up (39 mm). Sold without a connector: the discharge lead is
+# modelled as a bare wire-lead port (AWG10) so any connector part can be attached.
+
+[params]
+capacity_ah     = { value = 10.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 36000.0, unit = "C", fidelity = "derived", derivation = "10.0 Ah x 3600 s/h = 36000 C (coulombs)." }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 25, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 50, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 250.0, unit = "A", fidelity = "derived", derivation = "25 C x 10.0 Ah = 250 A (rating label only)." }
+mass            = { value = 0.940, unit = "kg", src = "S1", fidelity = "datasheet" }          # 940 g (+-20 g)
+length          = { value = 0.169, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.039, unit = "m", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.120, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0104, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/10 = 2.6 mOhm/cell x 4 cells = 10.4 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.0845, 0.0325, 0.0195]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 250.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 25 C x 10.0 Ah = 250 A (S1 label); the AWG10 lead is the practical limit (see parts/drone/awg-10-silicone-wire.toml)." }
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/tattu-4s-10000mah-14-8v-25c-lipo-battery-pack-without-plug"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu 4S 10000mAh 14.8V 25C LiPo pack without plug"
+accessed = "2026-10-07"
+quote = "Capacity(mAh): | 10000 | Configuration: | 4S1P | Connector Type: | NO | Discharge Rate (C): | 25 | Max Burst discharge Rate (C): | 50 | Net Weight(±20g): | 940 | Length(±5mm): | 169 | Width(±2mm): | 65 | Height(±2mm): | 39 | Voltage(V): | 14.8 | Wire Gauge: | AWG10# | Discharge Wire Length(mm): | 120 | Part Number: | TA0802"

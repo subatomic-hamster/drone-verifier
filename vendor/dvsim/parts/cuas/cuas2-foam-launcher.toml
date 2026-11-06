@@ -1,0 +1,54 @@
+id = "cuas2-foam-launcher"
+name = "cuas2 foam-ball launcher (device marker: dual-flywheel muzzle of the Rival-style cartridge; all mass is in the printed and bought parts)"
+category = "effector.launcher"
+vendor = "dvsim cuas2"
+part_number = "n/a"
+url = "docs/cuas2/spec.md"
+
+# NOT a physical part: the carrier of the simulator's `launcher` device for the cuas2 cartridge (the barrel, wheels, cage and feeder are separate parts of the assembly). It supplies the muzzle port
+# (device site) and the launcher constants. Per-shot speed, spin and aim error are NOT fixed here: python/dvsim/cuas2/launcher.py draws them from calib.toml and writes them to the device's per-shot
+# attrs (muzzle_velocity, spin_rps, dir_offset_x / y) at every nip crossing, so the device's own scatter stays 0 (the replay hash stays deterministic, spec 7.4). muzzle_velocity below is only the value
+# used before the first per-shot write. cl_k / spin_tau switch the Magnus model on (spec 7.3); both are [est] until bench step B4.
+# Part frame: origin at the muzzle centre; the port below carries the barrel axis (+x of the part frame), reference +z = up, so the device site has x = up, z = barrel (the Shot.attrs() convention).
+
+[params]
+mass                = { value = 0.0001, unit = "kg", fidelity = "estimated", rationale = "Marker only; the head's mass is in the parts that make it." }
+muzzle_velocity     = { value = 30.0, unit = "m/s", fidelity = "estimated", rationale = "Spec section 4.1 / 4.3: nominal 30 m/s at k_slip 0.8 (R1 band 25-35 m/s); overwritten per shot by the launcher model." }
+muzzle_velocity_std = { value = 0.0, unit = "m/s", fidelity = "derived", derivation = "The scatter is drawn in Python (spec 7.4) so the kernel device adds none." }
+spread_std          = { value = 0.0, unit = "rad", fidelity = "derived", derivation = "As muzzle_velocity_std: direction scatter is drawn in Python and written to dir_offset_x / y." }
+cl_k                = { value = 0.75, unit = "1", fidelity = "estimated", rationale = "Spec 4.3: C_L = cl_k S, 0.5-1.0 for a small-S foam ball [est]; replaced from bench step B4." }
+spin_tau            = { value = 6.0, unit = "s", fidelity = "estimated", rationale = "Spec 4.3 spin decay constant [est]." }
+length              = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope of the marker only." }
+width               = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope of the marker only." }
+height              = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope of the marker only." }
+bore_diameter       = { value = 0.0235, unit = "m", fidelity = "derived", derivation = "Ball 22.2 mm + 1.3 mm clearance = 23.5 mm (spec 4.1 barrel ID)." }
+barrel_length       = { value = 0.070, unit = "m", fidelity = "derived", derivation = "Spec 4.1: barrel 70 mm after the nip (a flywheel gains nothing from length)." }
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port."
+
+# Muzzle: the launcher device's site takes this port's pose: +z of the site = the port axis = the barrel direction (+x of the part frame, level), site x = the ref = up.
+[[ports]]
+name = "muzzle"
+kind = "mech"
+type = "muzzle-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Barrel muzzle on the barrel axis."
+
+[visual]
+rationale = "Device marker: nothing to draw; a 2 mm box at the muzzle keeps the part visible in the viewer."
+
+[[visual.elements]]
+gen = "box_device"

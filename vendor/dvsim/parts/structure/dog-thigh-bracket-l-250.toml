@@ -1,0 +1,61 @@
+id = "dog-thigh-bracket-l-250"
+name = "Dog thigh bracket, left, L = 250 mm (3D printed PLA)"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "thigh_bracket (left, L = 250)"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py thigh_bracket() built with DOG_L_THIGH = 250; length variant of dog-thigh-bracket-l (speed sweep). Twin: dog-thigh-bracket-r-250.
+
+[mirror]
+opposite = "dog-thigh-bracket-r-250"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+length          = { value = 0.25, unit = "m", fidelity = "estimated", rationale = "Sweep variant L_THIGH = 250 mm (cad/dog/params.py)." }
+knee_range      = { value = [-1.32, 0.01], unit = "rad", fidelity = "derived", derivation = "cad/dog/params.py linkage(0.25): both transmission angles of the four-bar in [30, 150] deg, 0.005 rad scan from q = 0; rod pin length 239.8 mm, same crank and lug as the 220 mm leg." }
+mass            = { value = 0.042, unit = "kg", fidelity = "derived", derivation = "Mesh volume 49.9 cm3 x PLA 1.24 g/cm3, shell + 30 % infill model, by cad/dog/build.py." }
+price           = { value = 0.84, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.042 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-thigh-bracket-l-250.stl"
+material = "pla"
+bbox_min = [-0.02998, 0.0, -0.26999]
+bbox_max = [0.02998, 0.012, 0.02998]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "flange.steadywin-gim8108-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Hip pitch axis, inboard face of the plate on the hip actuator output."
+
+[[ports]]
+name = "knee"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.013, -0.25]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee hinge axis."
+
+[[ports]]
+name = "rod"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.000135, 0.025, -0.103563]
+axis = [0.1046148, 0.0, 0.9945128]
+ref = [0.9945128, 0.0, -0.1046148]
+symmetry = 1
+note = "Centre of the knee push rod at the rest pose (tilt 6.01 deg)."

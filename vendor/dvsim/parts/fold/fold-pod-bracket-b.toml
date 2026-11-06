@@ -1,0 +1,41 @@
+id = "fold-pod-bracket-b"
+name = "fold drone tilt-pod bracket, hand B (pods 2 and 4): printed motor bracket + servo horn adapter, thrust line through the tilt axis"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "pod_bracket_b"
+url = "cad/fold/modules/pod.py"
+
+# Frame = the reference pose of pod 2 (tilt axis along +x through (0.26, -0.06, 0)); the mirror image of hand A about the loop's x = L/2 plane. Pod 4 is this part
+# turned 180 deg about the loop centre. Ports as hand A (no flow seat).
+
+[params]
+mass = { value = 0.00208, unit = "kg", fidelity = "derived", derivation = "CAD manifest pod2_bracket 2.08 g (printed, 2 walls + 20 % infill PA12-CF 1.10 g/cm^3 [est]) of cad/fold/build.py." }
+mass_tol = { value = 0.0002, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pod2_bracket.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pod2_horn.stl"
+
+[[ports]]
+name = "horn"
+kind = "mech"
+type = "servo-horn.20t"
+gender = "female"
+pos = [0.246, -0.06, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "motor"
+kind = "mech"
+type = "bolt-pattern.9x9.m2"
+gender = "male"
+pos = [0.26, -0.06, 0.0095]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

@@ -1,0 +1,90 @@
+id = "pololu-lps25hb-carrier"
+name = "Pololu LPS25HB pressure/altitude sensor carrier with voltage regulator"
+category = "sensor.baro"
+vendor = "Pololu (ST LPS25HB)"
+part_number = "Pololu item 2867"
+url = "https://www.pololu.com/product/2867"
+
+# Frame: origin at the board centre on the component face; +z out of the component face.
+# Only the sensitivity range and supply are on the page; noise and ODR need the ST datasheet, which was not read.
+[params]
+length              = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.003, unit = "m", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.0005, unit = "kg", src = "S1", fidelity = "datasheet" }  # without header pins
+supply_voltage_min  = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current      = { value = 0.002, unit = "A", src = "S1", fidelity = "datasheet" }
+pressure_min        = { value = 26000, unit = "Pa", src = "S1", fidelity = "datasheet" }  # 260 mbar
+pressure_max        = { value = 126000, unit = "Pa", src = "S1", fidelity = "datasheet" }  # 1260 mbar
+pressure_resolution = { value = 2.44, unit = "Pa", src = "S1", fidelity = "derived", derivation = "24-bit pressure reading with 4096 LSb/mbar: 100 Pa / 4096 = 2.44 Pa per LSb (output scaling, not noise)." }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "board.20x10-header"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "One mounting hole for #2 or M2 screws exists but its position is not stated on the page; opaque board-outline tag."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "header-0.1in"
+gender = "neutral"
+role = "sink"
+pins = ["H.VIN", "H.GND"]
+v_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "VIN; supply current 2 mA."
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+pins = ["H.SDA", "H.SCL"]
+note = "The page says the output format is I2C/SPI; I2C is the default mode."
+
+# Pin level: the eight-pin 0.1 in header of S2, in the page's table order (the edge and order along it are not stated: estimated).
+[[connectors]]
+id = "H"
+name = "8-pin 0.1 in header"
+type = "header-1x8-2.54mm"
+gender = "neutral"
+pos = [0.0, -0.005, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin names and functions from the S2 table; the edge used is not stated: estimated."
+pins = [
+  { number = "VDD", name = "VDD", kind = "power", dir = "out", v = 3.3, i_max = 0.15, note = "regulated 3.3 V output, almost 150 mA; may instead be a 3.3 V input with VIN disconnected" },
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v_min = 2.5, v_max = 5.5 },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "SDA", name = "SDA/SDI/SDO", kind = "signal", dir = "io", note = "level-shifted I2C data and SPI data in (SDO in 3-wire mode)" },
+  { number = "SCL", name = "SCL/SPC", kind = "signal", dir = "in", note = "level-shifted I2C / SPI clock" },
+  { number = "SA0", name = "SDO/SA0", kind = "signal", dir = "io", v = 3.3, note = "SPI data out in 4-wire mode / I2C address select; not level-shifted" },
+  { number = "CS", name = "CS", kind = "signal", dir = "in", v = 3.3, note = "SPI chip select, pulled up to VDD to enable I2C; drive low for SPI" },
+  { number = "INT1", name = "INT1_DRDY", kind = "signal", dir = "out", v = 3.3, note = "programmable interrupt / data ready; not level-shifted" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/2867"
+title = "Pololu LPS25HB pressure/altitude sensor carrier product page, Pinout"
+accessed = "2026-10-09"
+quote = "Pinout PIN Description VDD Regulated 3.3 V output. Almost 150 mA is available to power external components. VIN This is the main 2.5 V to 5.5 V power supply connection. GND SDA/SDI/SDO Level-shifted I2C data line and SPI data in line (also doubles as SDO in 3-wire mode) SCL/SPC Level-shifted I2C/SPI clock line SDO/SA0 SPI data out line in 4-wire mode: HIGH is VDD, LOW is 0 V. This output is not level-shifted. Also used as an input to determine I2C slave address. CS SPI enable (chip select). Pulled up to VDD to enable I2C communication by default; drive low to begin SPI communication. INT1_DRDY Programmable interrupt/data-ready indicator, a 3.3-V-logic-level output."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2867"
+title = "Pololu item 2867 product page (LPS25HB Pressure/Altitude Sensor Carrier with Voltage Regulator), Specifications"
+accessed = "2026-10-07"
+quote = "Dimensions: 0.4″ × 0.8″ × 0.1″ (10 mm × 20 mm × 3 mm) | Weight without header pins: 0.5 g (0.02 oz) | Operating voltage: 2.5 V to 5.5 V | Supply current: 2 mA | Output format (I²C/SPI): 24-bit pressure reading (4096 LSb/mbar) | Sensitivity range: 260 mbar to 1260 mbar (26 kPa to 126 kPa) | The board has one mounting hole that works with #2 and M2 screws (not included)."

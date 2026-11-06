@@ -1,0 +1,113 @@
+id = "towerpro-mg996r"
+name = "TowerPro MG996R standard metal-gear analog PWM servo"
+category = "motor.servo"
+vendor = "TowerPro (sold by Adafruit as product 1142)"
+part_number = "MG996R"
+url = "https://www.adafruit.com/product/1142"
+
+# Frame: origin on the output axis at the horn-seat (top) face of the case; +z = output axis out of the case;
+# x = long case dimension (40.7 mm), y = short (19.7 mm); case height 42.9 mm taken along z (inference from the L x W x H listing), so z in [-0.0429, 0].
+# The output axis is offset from the case centre along x (near one end); the offset is not published as text and is left at the origin.
+# Adafruit publishes no stall/no-load current, so NO electrical DC-motor model (R, Kt, eta) can be derived for this part.
+# Standard PWM control: 1-2 ms pulses (Adafruit notes 0.75-2.25 ms may be needed for the full 180 deg); 3-pin servo connector.
+
+[params]
+mass            = { value = 0.06241, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0407,  unit = "m",  src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0197,  unit = "m",  src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0429,  unit = "m",  src = "S1", fidelity = "datasheet" }
+horn_spline     = { value = "25T", unit = "-", src = "S1", fidelity = "datasheet" }
+protocol        = { value = "PWM, ~1-2 ms pulse width (Adafruit suggests 0.75-2.25 ms for full travel)", unit = "-", src = "S2", fidelity = "datasheet" }
+position_range  = { value = 3.1416, unit = "rad", src = "S2", fidelity = "datasheet" }  # 180 deg ("-90" to "+90")
+
+v_operating_min     = { value = 4.8,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 6.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_4v8   = { value = 5.236,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 60 deg in 0.20 s
+no_load_speed_6v    = { value = 6.545,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 60 deg in 0.16 s
+stall_torque_4v8    = { value = 0.8335, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 8.5 kg-cm
+stall_torque_6v     = { value = 0.9807, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 10 kg-cm
+gear_material       = { value = "metal gears (MG996R designation)", unit = "-", fidelity = "estimated", rationale = "The 'MG' prefix denotes metal gears; Adafruit page text does not state the gear material." }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.servo-standard-ears"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0429]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Standard-size hobby servo mounting ears; hole spacing not published on the vendor page, opaque family tag shared with other standard-size servos."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 25
+note = "25T spline; OD not stated (Feetech STS 25T is 5.9 mm but this is a different part, not assumed compatible)."
+
+[[ports]]
+name = "power_in"
+pins = ["SRV.1", "SRV.2"]
+kind = "power"
+type = "servo-3pin"
+gender = "female"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "Power shares the 3-pin servo connector with the signal; no current rating published."
+
+[[ports]]
+name = "signal"
+pins = ["SRV.3"]
+kind = "signal"
+type = "pwm"
+gender = "female"
+
+# Pin level: the 3-pin servo lead. P1 names only the signal wire (orange); the ground / +V pin order is the RC-servo convention, not stated by the sources.
+[[connectors]]
+id = "SRV"
+name = "servo lead (3-pin JR-style plug)"
+type = "servo-lead-3"
+port_type = "servo-3pin"
+gender = "female"
+pos = [-0.02, 0.0, -0.02]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "P1"
+fidelity = "estimated"
+rationale = "P1 states only that the control wire is orange; the plug style, pin order (ground, +V, signal) and 0.1 in pitch are assumed from the standard RC servo lead."
+pose_rationale = "Servo case dimensions are not in the sources, so the lead exit is a positional estimate: at the -x end of a standard-size case, lead pointing out along -x."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "V+", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "in", note = "orange control wire (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.adafruit.com/product/1142"
+title = "Adafruit - High Torque Servo, TowerPro MG996R (product description)"
+accessed = "2026-10-09"
+quote = "To control with an Arduino, we suggest connecting the orange control wire to pin 9 or 10 and using the Servo library included with the Arduino IDE"
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1142"
+title = "Adafruit Standard servo - TowerPro MG996R, Technical Details"
+accessed = "2026-10-07"
+quote = "Power: 4.8V - 6V DC max (5V works well)| Average Speed: 60 degrees in 0.20 sec (@ 4.8V), 60 degrees in 0.16 sec (@ 6.0V)| Weight: 62.41g| Torque: At 4.8V: 8.5 kg-cm / 120 oz-in, and at 6V: 10 kg-cm / 140 oz-in.| Size mm: (L x W x H) 40.7 x 19.7 x 42.9| Spline Count: 25"
+
+[[sources]]
+id = "S2"
+url = "https://www.adafruit.com/product/1142"
+title = "Adafruit TowerPro MG996R, product description (PWM range)"
+accessed = "2026-10-07"
+quote = "\"-90\" (~1ms pulse) is all the way to the left.| Note that the default servo pulse widths (usually 1ms to 2ms) may not give you a full 180 degrees of motion. In that case, check if you can set your servo controller to custom pulse lengths and try 0.75ms to 2.25ms."

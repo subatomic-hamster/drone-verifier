@@ -1,0 +1,37 @@
+id = "haluminium-2040-s6"
+name = "20x40 T-slot aluminium extrusion, slot 6.2 mm (haluminium HY-S6-2040)"
+category = "structure.extrusion"
+vendor = "haluminium"
+part_number = "HY-S6-2040"
+url = "https://fab.academany.org/2021/labs/agrilab/students/antonio-anaya/files/week10/profile_alum_2020_datasheet.pdf"
+
+# Vendor "Mass of Inertia" = second moment of area; Ix (4.64 cm4) is about the axis giving the stiff direction of the 40 mm side.
+[params]
+section_width    = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+section_height   = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+slot_width       = { value = 0.0062, unit = "m", src = "S1", fidelity = "datasheet" }
+slot_depth       = { value = 0.0061, unit = "m", src = "S1", fidelity = "datasheet" }
+center_hole_diameter = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_per_m       = { value = 0.90, unit = "kg/m", src = "S1", fidelity = "datasheet" }
+second_moment_area_x = { value = 4.64e-8, unit = "m^4", src = "S1", fidelity = "datasheet" }
+second_moment_area_y = { value = 1.42e-8, unit = "m^4", src = "S1", fidelity = "datasheet" }
+section_modulus_x = { value = 2.32e-6, unit = "m^3", src = "S1", fidelity = "datasheet" }
+section_modulus_y = { value = 1.32e-6, unit = "m^3", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "center_bore"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Hole phi5 mm along the extrusion axis (S1); the vendor lists one hole size for the profile, so one port at the profile centre is a modelling simplification"
+
+[[sources]]
+id = "S1"
+url = "https://fab.academany.org/2021/labs/agrilab/students/antonio-anaya/files/week10/profile_alum_2020_datasheet.pdf"
+title = "20 Series T-Slot Aluminium Extrusion Profile (haluminium datasheet, mirrored by Fab Academy student site)"
+accessed = "2026-10-07"
+quote = "Code: S6-20×40 Slot Width: 6.2 mm Weight: 0.90 kg/m Mass of Inertia: lx: 4.64 cm4 ly: 1.42 cm4 Section Modulus: zx: 2.32 cm3 zy: 1.32 cm3 ... Order No: HY-S6-2040, T-slot height: 6.1 mm, Section size: 20 mm × 40 mm, Hole: φ5 mm, Thickness of diagonal bar: 1.5 mm."

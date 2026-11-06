@@ -1,0 +1,79 @@
+id = "fold-link"
+name = "fold drone link: 2 mm CF ladder (16 x 8 x 200), roll boss, hinge knuckle and the two STS3032 horn adapters"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "link"
+url = "cad/fold/modules/link.py"
+
+# Frame = the reference pose of link 2 (p2 to p3 along +y at H_LAYER = 15 mm above the loop plane). Link 4 is this part turned 180 deg about the loop centre.
+# Ports: re = roll end (R2 / R4 axis along the link, at corner 2 / 4), he = hinge end (H3 / H1, vertical axis at corner 3 / 1), dock = seat of a mount printed in
+# link 2's frame, dock_w = seat of a mount printed in the world reference frame (link 4 carries the battery tray that way).
+# Mass: CF plates 10.415 + spacers 1.0 + roll cap 0.935 + knuckle 2.213 (horn adapters 0 g in the CAD, their mass is the servo's).
+
+[params]
+mass = { value = 0.014563, unit = "kg", fidelity = "derived", derivation = "Sum of the CAD manifest items of link 2 (cad/fold/build.py): CF ladder solid at 1.55 g/cm^3 [est], printed parts at 2 walls + 20 % infill of PA12-CF 1.10 g/cm^3 [est], spacers listed." }
+mass_tol = { value = 0.0015, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/link_plates_link2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/link_spacers_link2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/link_roll_cap_link2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/link_roll_horn_link2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/link_knuckle_link2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/link_hinge_horn_link2.stl"
+
+[[ports]]
+name = "re"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.2, 0.0, 0.015]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "he"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.2, 0.2, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "dock"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "dock_w"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.2, 0.2, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 1

@@ -1,0 +1,128 @@
+id = "daly-k-series-smart-bms-8s-60a"
+name = "Daly K-series smart BMS, 8S (Li-ion), 60 A, CAN / RS485 / UART"
+category = "pcb.bms"
+vendor = "Daly"
+part_number = "K-series smart BMS 8S 60A (Li-ion variant)"
+url = "https://www.dalybms.com/daly-smart-bms-lithium-battery-pack-lifepo4-3s-to-24s-40a-60a-100a-product/"
+
+# Dog pack protection (8S Li-ion). Part frame: origin at the board centre, z up. VERIFY BEFORE BUYING: the vendor page gives no per-model table; the dimensions and weight come from an Amazon listing of the 8S 24 V 60 A variant (LiFePO4-oriented) that
+# has the same board, and the Li-ion variant's thresholds were not retrieved. Mass, size and price are therefore estimates, flagged below.
+
+[params]
+cells_series        = { value = 8,    unit = "1", src = "S1", fidelity = "datasheet" }  # model name "8S"
+i_discharge_cont    = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }  # "60A" in the model name; K series is offered as 40 / 60 / 100 A
+balance_current     = { value = 0.100, unit = "A", src = "S1", fidelity = "datasheet" }  # "100mA passive balancing"
+mass                = { value = 0.177, unit = "kg", src = "S2", fidelity = "literature" }  # Amazon item weight of the 8S-24S 60 A listing (summary)
+length              = { value = 0.123, unit = "m", src = "S2", fidelity = "literature" }  # 4.84 in, 8S 24 V 60 A listing
+width               = { value = 0.065, unit = "m", src = "S2", fidelity = "literature" }  # 2.56 in
+height              = { value = 0.014, unit = "m", src = "S2", fidelity = "literature" }  # 0.55 in
+comms               = { value = "CAN, RS485, dual UART", unit = "-", src = "S1", fidelity = "datasheet" }
+
+[params.price]
+value = 35.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "No USD price retrieved: dalybms.com sells by inquiry; the only prices found were INR listings (about 1.9-6.0 thousand INR for 8S 60 A LiFePO4 boards). 35 USD is the typical US Amazon price class for a Daly smart 8S 60 A board, not a looked-up number (+-50 %)."
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0615, 0.0325, 0.007]
+pos = [0.0, 0.0, 0.007]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Underside of the board (the geometry sits on z >= 0): taped / standoff-mounted on a deck."
+
+[[ports]]
+name = "pack"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["PWR.1", "PWR.2"]
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V = 33.6 V full charge." }
+i_max = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "B- (pack minus) and P- (load minus) solder pads: the BMS switches the NEGATIVE leg. Pad names are the family's usual B- / P-; the retrieved pages show no diagram."
+
+[[ports]]
+name = "balance"
+kind = "signal"
+type = "jst-xh.9"
+gender = "neutral"
+pins = ["SENSE.1", "SENSE.2", "SENSE.3", "SENSE.4", "SENSE.5", "SENSE.6", "SENSE.7", "SENSE.8", "SENSE.9"]
+note = "Cell sense harness, 9 wires for 8S."
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+note = "CAN interface to a host (S1); connector and protocol not retrieved."
+
+[[connectors]]
+id = "PWR"
+name = "power pads B- / P-"
+type = "solder-pad"
+port_type = "solder-pad"
+gender = "neutral"
+pos = [0.0, -0.0325, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.02
+joinable = true
+src = "S2"
+fidelity = "estimated"
+rationale = "A 60 A smart BMS has two heavy pads for the pack minus and the load minus; names and spacing assumed from the product family, no drawing retrieved."
+pins = [
+  { number = 1, name = "B-", kind = "ground", note = "pack negative" },
+  { number = 2, name = "P-", kind = "ground", note = "load negative (switched)" },
+]
+
+[[connectors]]
+id = "SENSE"
+name = "cell sense harness (JST-XH 9P, assumed)"
+type = "jst-xh.9"
+gender = "neutral"
+pos = [0.0, 0.0325, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 9
+pitch = 0.0025
+src = "S2"
+fidelity = "estimated"
+rationale = "Nine sense wires for 8S, connector family assumed; wire order B0, B1 ... B8 follows the cell sequence."
+pins = [
+  { number = 1, name = "B0", kind = "ground", dir = "in" },
+  { number = 2, name = "B1", kind = "power", dir = "in", v_max = 4.2 },
+  { number = 3, name = "B2", kind = "power", dir = "in", v_max = 8.4 },
+  { number = 4, name = "B3", kind = "power", dir = "in", v_max = 12.6 },
+  { number = 5, name = "B4", kind = "power", dir = "in", v_max = 16.8 },
+  { number = 6, name = "B5", kind = "power", dir = "in", v_max = 21.0 },
+  { number = 7, name = "B6", kind = "power", dir = "in", v_max = 25.2 },
+  { number = 8, name = "B7", kind = "power", dir = "in", v_max = 29.4 },
+  { number = 9, name = "B8", kind = "power", dir = "in", v_max = 33.6 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.dalybms.com/daly-smart-bms-lithium-battery-pack-lifepo4-3s-to-24s-40a-60a-100a-product/"
+title = "Daly K Series Smart BMS product page (3S-24S, 40/60/100 A; page-fetch summary)"
+accessed = "2026-10-16"
+quote = "K Series Smart BMS, 3S to 24S, 40A 60A 100A; CAN, RS485 and dual UART communication interfaces; 100mA passive balancing (page-fetch summary, not verbatim)"
+
+[[sources]]
+id = "S2"
+url = "https://www.amazon.com/DALY-Communication-Protection-Monitoring-LifePO4/dp/B0CXJ7T8GX"
+title = "Amazon listing, DALY Smart BMS 8S 24V 60A (web-search result summary: 4.84 x 2.56 x 0.55 in; another 8S-24S 60 A listing item weight 177 g)"
+accessed = "2026-10-16"
+quote = "4.84 x 2.56 x 0.55 inches; item weight 177 g (search-result summary of two Amazon Daly 60 A listings, not verbatim; the 8S 24V LiFePO4 board is assumed to share the Li-ion board's size)"

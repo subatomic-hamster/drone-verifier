@@ -1,0 +1,66 @@
+id = "so101-moving-jaw"
+name = "SO-101 follower moving jaw (3D printed, moving_jaw_so101_v1_link)"
+category = "frame.printed"
+vendor = "TheRobotStudio (open design, Apache-2.0)"
+part_number = "Moving_Jaw_SO101.stl (sim mesh moving_jaw_so101_v1.stl)"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/STL/SO101/Individual/Moving_Jaw_SO101.stl"
+
+[params]
+volume_solid = { value = 2.07e-5, unit = "m^3", fidelity = "derived", derivation ="Signed-volume integral over the 28270 triangles of meshes/so101/moving_jaw_so101_v1.stl (binary STL, metres) = 20.70 cm^3. Solid." }
+infill_fraction = { value = 0.15, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale ="Repo README gives only material, nozzle/layer height and 15% infill, no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile)." }
+gripper_range = { value = [-0.174533, 1.74533], unit = "rad", src = "S3", fidelity = "datasheet" }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/so101/moving_jaw_so101_v1.stl"
+material = "pla"
+urdf_link = "moving_jaw_so101_v1_link"
+origin_xyz = [0.0, 0.0, 0.0189]
+origin_rpy = [0.0, 0.0, 0.0]
+bbox_min = [-0.0123, -0.082, -0.024]
+bbox_max = [0.01, 0.01, 0.024]
+
+# Ports derived by tools/so101_ports.py (closure check: python tools/so101_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame.
+# horn_seat: mate with feetech-sts3215-c001 `output` (k = 0, no reverse needed) to reproduce the URDF; q = 0 is the URDF zero of joint gripper, limits in gripper_range.
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "female"
+pos = [2.2257e-08, 1.34182e-07, 0.0175]
+axis = [-6.11468e-07, -6.704417e-06, -0.999999999977]
+ref = [1.0, -5.2433e-08, -6.11468e-07]
+symmetry = 25
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): F = inv(T_part) @ inv(J_gripper) @ T_servo_gripper @ P_out @ Rx(pi); mating servo.output (k=0) reproduces the URDF; absorbs the 0.000003 deg rotation about z of joint gripper relative to the canonical output frame"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin). Estimated."
+joint = "gripper"
+joint_reverse = false
+
+[[sources]]
+id = "S1"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "SO-ARM100 README, Printing the Parts, Step 1 (commit a758567)"
+accessed = "2026-10-06"
+quote = "Material: PLA+ || Nozzle Diameter and Precision: 0.4mm nozzle diameter at 0.2mm layer height or 0.6mm nozzle at 0.4mm layer height. || Infill Density: 15%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), part placement in link moving_jaw_so101_v1_link"
+accessed = "2026-10-06"
+quote = "<!-- Part moving_jaw_so101_v1 --> <visual> <origin xyz=\"-5.55112e-17 -5.55112e-17 0.0189\" rpy=\"9.53145e-17 6.93889e-18 1.24077e-24\"/>"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), joint gripper (parent gripper_link, child moving_jaw_so101_v1_link)"
+accessed = "2026-10-07"
+quote = "<joint name=\"gripper\" type=\"revolute\"> || <limit effort=\"10\" velocity=\"10\" lower=\"-0.174533\" upper=\"1.74533\"/>"
+license = "Apache-2.0"

@@ -1,0 +1,40 @@
+id = "generic-m3-hardware-kit"
+name = "M3 hex-socket screw + nut + washer assortment kit (about 520 pieces, M3/M4, 8-16 mm)"
+category = "fastener.kit"
+vendor = "generic (listing: SCC Ltd, Hong Kong)"
+part_number = "522pcs M3 M4 hex socket screw nut kit"
+url = "https://scccltd.com/products/522pcs-m3-m4-hex-socket-screw-nut-kit"
+
+# Stand-in for the turret's M3 hardware (briefing item 12): one assortment kit covers every M3 x 6..16 fastener the printed turret needs. Individual fasteners with datasheet masses already exist
+# in parts/common (iso4762-m3x8, iso4762-m3x12, iso4032-m3-nut ...); this part is the purchase line only.
+# Mass is not in the listing; the dimensions of the box are not either.
+
+[params]
+piece_count = { value = 522, unit = "1", src = "S1", fidelity = "datasheet" }
+mass        = { value = 0.30, unit = "kg", fidelity = "estimated", rationale = "Not in the listing; about 520 small steel screws, nuts and washers plus a plastic case is of the order of 0.3 kg." }
+length      = { value = 0.17, unit = "m", fidelity = "estimated", rationale = "Case size not in the listing; a typical compartment case." }
+width       = { value = 0.11, unit = "m", fidelity = "estimated", rationale = "As length." }
+height      = { value = 0.04, unit = "m", fidelity = "estimated", rationale = "As length." }
+price_hkd   = { value = 65.0, unit = "HKD", src = "S1", fidelity = "datasheet" }   # as of 2026-10-11 (page marked sold out in the search snippet)
+price   = { value = 8.33, unit = "USD", fidelity = "derived", derivation = "65 HKD (S1) / an assumed 7.8 HKD per USD (the HKD peg) = 8.33 USD. Cross-check: M3-size kits at 15.99-18.91 USD for 436-900 pieces in US listings (web search, 2026-10-11). The SCC listing was marked sold out in the search snippet." }
+
+[visual]
+src = "V1"
+note = "Plastic compartment case of screws (listing photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://scccltd.com/products/522pcs-m3-m4-hex-socket-screw-nut-kit"
+title = "SCC Ltd: 522pcs M3 M4 Hex Socket Screw Nut Kit (page text as returned by a web search)"
+accessed = "2026-10-11"
+quote = "522pcs M3 M4 hex socket screw nut kit ... HK$65.00 ... covers M3 and M4 sizes in 8mm to 16mm lengths, with both flat head and round head styles"
+
+[[sources]]
+id = "V1"
+url = "https://scccltd.com/products/522pcs-m3-m4-hex-socket-screw-nut-kit"
+title = "SCC Ltd listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "522pcs M3 M4 hex socket screw nut kit"

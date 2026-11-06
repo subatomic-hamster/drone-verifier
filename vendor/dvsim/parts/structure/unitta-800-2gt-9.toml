@@ -1,0 +1,58 @@
+id = "unitta-800-2gt-9"
+name = "Gates Unitta POWER GRIP GT 2GT belt 800-2GT, 9 mm wide (catalogue size, 400 teeth)"
+category = "structure.belt"
+vendor = "Gates Unitta Asia"
+part_number = "800-2GT-9"
+url = "https://cdn-shop.adafruit.com/product-files/1184/C1373_dendo_cat-b02-15_P014_087.pdf"
+
+# Closed loop with no fixed frame; see adafruit-1184 for the port convention.
+[params]
+teeth        = { value = 400, unit = "1", src = "S1", fidelity = "datasheet" }
+pitch        = { value = 2e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+width        = { value = 9e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+pitch_length = { value = 800e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width_capacity_factor = { value = 2.67, unit = "1", src = "S2", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.00936
+unit = "kg"
+fidelity = "derived"
+derivation = "Unit mass 1.3 g per mm of width per metre of length (S2) x 9 mm x 0.800 m = 9.36 g (pitch length used as belt length)."
+
+[[ports]]
+name = "pulley_a"
+kind = "mech"
+type = "belt.gt2.9"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "A belt loop has no fixed pulley locations; both wrap points are filed at the origin and the layout sets the centre distance."
+
+[[ports]]
+name = "pulley_b"
+kind = "mech"
+type = "belt.gt2.9"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "As pulley_a."
+
+[[sources]]
+id = "S1"
+url = "https://cdn-shop.adafruit.com/product-files/1184/C1373_dendo_cat-b02-15_P014_087.pdf"
+title = "Gates Unitta Asia POWER GRIP GT catalogue, 2GT belt size table"
+accessed = "2026-10-07"
+quote = "130-2GT 130.00 65 320-2GT 320.00 160 800-2GT 800.00 400"
+
+[[sources]]
+id = "S2"
+url = "https://cdn-shop.adafruit.com/product-files/1184/C1373_dendo_cat-b02-15_P014_087.pdf"
+title = "Gates Unitta Asia POWER GRIP GT catalogue, 2GT width factor and unit mass"
+accessed = "2026-10-07"
+quote = "ベルト幅（mm） 2.0 3.0 4.0 6.0 9.0 12.0 15.0 幅補正係数（KW） 0.46 0.67 1.00 1.67 2.67 3.66 4.68 ... ◦ベルト単位質量：1.3（g/mm幅×m長）"

@@ -1,0 +1,37 @@
+id = "pololu-2688-traveling-nut-tr8x8"
+name = "Traveling nut for Tr8x8(P2) threaded rods, copper alloy, M3 flange (Pololu 2688)"
+category = "structure.nut"
+vendor = "Pololu"
+part_number = "2688"
+url = "https://www.pololu.com/product/2688"
+
+# Frame: origin on the screw axis at the flange face, +z along the screw. Flange hole pattern and nut length are not published.
+[params]
+mass          = { value = 0.012, unit = "kg", src = "S1", fidelity = "datasheet" }
+screw_diameter = { value = 0.008, unit = "m", src = "S2", fidelity = "datasheet" }
+screw_lead    = { value = 0.008, unit = "m/rev", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "screw"
+kind = "mech"
+type = "leadscrew.tr8x8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Tr8x8(P2) bore (8 mm, 8 mm lead): mates the screw of the Pololu lead-screw steppers 2268 / 2689 / 2690."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2688"
+title = "Pololu item 2688: Traveling Nut for TR8x8(P2) Threaded Rods"
+accessed = "2026-10-07"
+quote = "This copper alloy traveling nut is intended for use with Tr8×8(P2) threaded rods and features a mounting flange with four holes threaded for M3 screws. This is the same nut that is included with our stepper motors with lead screw. ... Weight: | 12 g"
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/2689/specs"
+title = "Pololu item 2689 specs, thread note"
+accessed = "2026-10-07"
+quote = "ISO definition of thread characteristics: Tr 8 × 8(P2) – trapezoidal thread, 8 mm diameter, 8 mm lead, 2 mm pitch."

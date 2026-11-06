@@ -1,0 +1,178 @@
+id = "kde-2315xf-885"
+name = "KDE Direct KDE2315XF-885 brushless motor"
+category = "motor.bldc"
+vendor = "KDE Direct"
+part_number = "KDE2315XF-885"
+url = "https://www.kdedirect.com/products/kde2315xf-885"
+
+# Part frame: origin at the centre of the mounting face, +z along the shaft towards the prop.
+# Ports: see the [[ports]] tables after [geometry].
+
+[params]
+mass = { value = 0.075, unit = "kg", src = "S1", fidelity = "datasheet" }  # with wires/bullets
+mass_no_cable = { value = 0.064, unit = "kg", src = "S1", fidelity = "datasheet" }  # motor only
+kv = { value = 885, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+kt = { value = 0.0108, unit = "N*m/A", src = "S1", fidelity = "datasheet" }  # Kt (Motor Torque Constant)
+km = { value = 0.0303, unit = "N*m/sqrt(W)", src = "S1", fidelity = "datasheet" }  # Km (Motor Constant)
+r_winding = { value = 0.127, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Rm phase-to-phase, delta wound
+i0 = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }  # Io (@10V)
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 24.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Maximum Continuous Current (180 s)
+p_max = { value = 355.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Maximum Continuous Power (180 s)
+cells_min = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }  # 11.1 V (3S LiPo) - 26.1 V (6S LiHV)
+cells_max = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration = { value = "12 (12S14P) / 14 (12S14P)", unit = "text", src = "S1", fidelity = "datasheet" }  # stator poles / magnet poles
+diameter = { value = 0.0283, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body = { value = 0.0285, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+j_rotor_bell = { value = 4.1e-06, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }  # Motor Rotor Inertia, kg*cm^2 x 1e-4
+
+[tables.thrust_test]
+# VALIDATION TARGET. KDE performance data sheet (xlsx), prop '9" x 3.0', 25.2V supply. All printed rows; thrust 'Thrust Output' columns in g and N as printed.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "torque_Nm", "efficiency_g_per_W"]
+rows = [
+  [25.0, 25.2, 2.3, 58.0, 7780, 3.7, 377, 0.045, 6.5],
+  [37.5, 25.2, 3.9, 98.3, 9425, 5.64, 575, 0.068, 5.85],
+  [50.0, 25.2, 5.6, 141.1, 10754, 7.64, 779, 0.09, 5.52],
+  [62.5, 25.2, 8.6, 216.7, 12315, 10.49, 1070, 0.123, 4.94],
+  [75.0, 25.2, 12.7, 320.0, 14005, 14.2, 1448, 0.166, 4.52],
+  [87.5, 25.2, 18.0, 453.6, 15540, 18.37, 1873, 0.213, 4.13],
+  [100.0, 25.2, 22.3, 562.0, 16515, 22.3, 2274, 0.244, 4.05],
+]
+prop_label = "KDE 9 in x 3.0"
+src = "S2"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.01415, 0.016]
+pos = [0.0, 0.0, 0.016]
+
+[[ports]]
+name = "base_19_m3"
+kind = "mech"
+type = "bolt-circle.19.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+holes = 4
+thread = "m3"
+fidelity = "estimated"
+src = "S1"
+rationale = "S1 lists only 'M3 x ф 19 mm'; hole count 4 assumed (same circle on T-Motor drawings)."
+
+[[ports]]
+name = "base_16_m2.5"
+kind = "mech"
+type = "bolt-circle.16.4.m2.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+holes = 4
+thread = "m2.5"
+fidelity = "estimated"
+src = "S1"
+rationale = "S1 lists only 'M2.5 x ф 16 mm'; hole count 4 assumed (same circle on T-Motor drawings)."
+
+# Family naming: see kde-2315xf-965 (the 16 / 19 mm M3 pair is the rectangle `bolt-pattern.16x19.m3`).
+[[ports]]
+name = "base_16x19_m3"
+kind = "mech"
+type = "bolt-pattern.16x19.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+holes = 4
+thread = "m3"
+fidelity = "estimated"
+src = "S1"
+rationale = "S1 lists 'M3 x ф 16/19 mm' (a 16 mm and a 19 mm hole spacing, no hole count or shape). Read as the 16 x 19 mm rectangle of 4 M3 holes that the same-class T-Motor MN2212 / MN3110 drawings show; not confirmed against a KDE drawing."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.032]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+src = "S1"
+rationale = "Tip height = Motor Length 28.5 mm + Shaft Length 3.5 mm (S1); assumes the listed Motor Length excludes the protruding shaft."
+
+[[ports]]
+name = "prop_adapter"
+kind = "mech"
+type = "shaft.6"
+gender = "male"
+pos = [0.0, 0.0, 0.032]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+src = "S3"
+rationale = "The KDE2315XF motors ship with an M6 x 12 mm propeller adapter (S3, product page of the -965; same series); shaft.6 is the library family for an M6 prop adapter (as the T-Motor MN parts). Tip height as port 'shaft'."
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 26.1, unit = "V", fidelity = "derived", derivation = "6S x 4.35 V/cell (LiHV) = 26.1 V from the Voltage Range '11.1 V (3S LiPo) - 26.1 V (6S LiHV)' (S1)." }
+i_max = { value = 24.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "i_max is the 180 s continuous current ('Maximum Continuous Current'); the motor needs 5 mph+ airflow for it (vendor footnote). The 75 g mass includes the wires / bullets; the lead length is not published (flag only: autowire uses the routed run)."
+lead = {}
+
+# Pin level: three phase leads. S1 mentions only 'wires/bullets' in the listing mass: no gauge, length, connector or phase labels.
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01415, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 only says the listed mass includes 'wires/bullets': no gauge, length, connector or phase labels. Three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 24.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 24.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 24.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.kdedirect.com/products/kde2315xf-885"
+title = "KDE Direct - KDE2315XF-885 product page (Full Specifications)"
+accessed = "2026-10-07"
+quote = "Full Specifications : Kv (Motor Velocity Constant)| 885 RPM/V|Kt (Motor Torque Constant)| 0.0108 Nm/A|Km (Motor Constant)| 0.0303 Nm/ √(W)|Maximum Continuous Current*| 24 A (180 s)|Maximum Continuous Power*| 355 W (180 s)|Voltage Range| 11.1 V (3S LiPo) - 26.1 V (6S LiHV)|Io (@10V)| 0.5 A|Rm (Phase to Phase Resistance Delta Wound)| 0.127 Ω|Stator Poles| 12 (12S14P)|Magnetic Poles| 14 (12S14P)|Mount Pattern| M3 x ф 19 mm, M2.5 x ф 16 mm, M3 x ф 16/19 mm|Shaft Diameter| ф4 mm ( ф 4 mm Internal)|Shaft Length| 3.5 mm|Motor Diameter| ф28.3 mm|Motor Rotor Inertia| 0.041 kg*cm^2|Motor Length| 28.5 mm|Motor Weight| 64 g (75 g with Wires/Bullets)"
+
+[[sources]]
+id = "S2"
+url = "https://cdn.shopify.com/s/files/1/0496/8205/files/KDE2315-885kV_v1.xlsx"
+title = "KDE Direct KDE2315XF-885 performance testing data sheet (XLSX linked from the product page)"
+accessed = "2026-10-07"
+quote = "KDE2315XF-885|25.2V    [6S]|9\" x 3.0|0.25|2.30|58.0|377|3.70|7780|0.045|6.50 (values rounded for display; columns: THROTTLE RANGE, AMPERAGE [A], POWER INPUT [W], THRUST OUTPUT [g], [N], RPM [rev/min], TORQUE [Nm], Efficiency [g/W]; first printed row)"
+
+[[sources]]
+id = "S3"
+url = "https://www.kdedirect.com/products/kde2315xf-965"
+title = "KDE Direct - KDE2315XF-965 product page (What's Included; same XF series / accessory kit, checked on the -965 page, not on the -885 page)"
+accessed = "2026-10-07"
+quote = "One (1) KDE Direct XF UAS M6 x 12mm Propeller Adapter Assembly"
+

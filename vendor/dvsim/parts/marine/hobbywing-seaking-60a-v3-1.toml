@@ -1,0 +1,163 @@
+id = "hobbywing-seaking-60a-v3-1"
+name = "Hobbywing SeaKing 60A V3.1 waterproof brushless marine ESC (2-3S)"
+category = "esc"
+vendor = "Hobbywing"
+part_number = "30302200"
+url = "https://www.hobbywing.com/en/products/seaking-v3-series75"
+
+# Waterproof marine ESC (water-cooled, 100 % waterproof per the maker). The device model is the same ESC chain as the multirotor ESCs; the
+# vendor publishes no FET resistance, switching loss or quiescent current, so those are ESTIMATES. FORWARD ONLY in this simulator: the Esc throttle is 0..1,
+# the real unit's reverse (brake / reverse) is not modelled.
+# Part frame: origin at the centre of the underside (mounting face), x along the 60.5 mm length, z up.
+[params]
+current_continuous = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+current_peak       = { value = 360.0, unit = "A", src = "S1", fidelity = "datasheet" }
+mass               = { value = 0.095, unit = "kg", src = "S1", fidelity = "datasheet" }
+v_cells_min        = { value = 2, unit = "cells", src = "S1", fidelity = "datasheet" }
+v_cells_max        = { value = 3, unit = "cells", src = "S1", fidelity = "datasheet" }
+bec_voltage        = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+bec_current        = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+size_length        = { value = 0.0605, unit = "m", src = "S1", fidelity = "datasheet" }
+size_width         = { value = 0.0385, unit = "m", src = "S1", fidelity = "datasheet" }
+size_height        = { value = 0.0256, unit = "m", src = "S1", fidelity = "datasheet" }
+r_on_total         = { value = 0.004, unit = "ohm", fidelity = "estimated", rationale = "ESC FET resistance is unpublished. 4 mOhm total series (two conducting half-bridge FETs ~1.5 mOhm each plus ~1 mOhm traces / solder) is typical of a 60 A continuous / 360 A peak ESC; at the T200's 17 A the loss is 1.2 W (0.6 % of 205 W). Treat as +-50 %." }
+switching_loss_fraction = { value = 0.003, unit = "1", fidelity = "estimated", rationale = "Switching + dead-time loss as a fraction of the motor-side power (device field Esc.sw_loss); unpublished, a typical 0.2-0.5 % for a hard-switching brushless ESC at ~16-24 kHz." }
+quiescent_current  = { value = 0.02, unit = "A", fidelity = "estimated", rationale = "Bus-side current of the ESC electronics (MCU, gate drivers, switch-mode BEC unloaded), drawn also at zero throttle; unpublished, 20 mA (0.24 W at 12 V). +-3x." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.03025, 0.01925, 0.0128]
+pos = [0.0, 0.0, 0.0128]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat; Hobbywing publishes no mounting method (the ESC is water-cooled through a pipe and may be fixed by its own bracket)."
+
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+lead = {}   # the battery input leads are part of the 95 g datasheet mass (the table weight is the unit with its leads); their length is not published
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 12.6, unit = "V", src = "S1", fidelity = "derived", derivation = "3 cells x 4.2 V from the table's 'Input (LiPo cells) 2-3S'." }
+i_max = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Input leads of the unit; connector style not stated on the series page."
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+i_max = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Three motor leads to the thruster's phase port; continuous rating."
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.3"]   # throttle, GND (the +BEC pin 2 is left to the connector's synthetic port)
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+note = "Throttle signal; the series page does not state the frequency or pulse range."
+
+# ---- Connectors (pin level). S2 lists the wires: two 14 AWG 150 mm battery leads (no connector), three 14 AWG 100 mm motor leads with 4.0 mm
+# gold female plugs, a throttle / program wire (no colours, no connector) and the 6 V / 3 A switch-mode BEC. Poses are estimates on the
+# 60.5 x 38.5 x 25.6 mm sealed case (the leads leave the case ends); the throttle plug is not documented, so its pins follow the RC servo
+# plug convention (S3: signal, +V, ground): estimated.
+[[connectors]]
+id = "IN"
+name = "battery input leads (red / black 14 AWG, 150 mm, bare)"
+type = "wire-lead"
+gender = "neutral"
+pos = [-0.03025, 0.0, 0.0128]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Estimated: leads leave the rear end of the case; lead spacing assumed."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", v_min = 5.0, v_max = 12.6, i_max = 60.0, note = "'Red-14AWG-150mm*1' (S2); 2-3S LiPo (S1)" },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 60.0, note = "'Black-14AWG-150mm*1' (S2)" },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor leads (3 x 14 AWG, 4.0 mm gold female plugs)"
+type = "bullet-4.0mm-x3"
+gender = "female"
+pos = [0.03025, 0.0, 0.0128]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.006
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Estimated: leads leave the front end of the case; lead spacing assumed."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 60.0, note = "'Black-14AWG-100mm*3' ... '4.0mm golden female plug' (S2): the three phase leads are identical" },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 60.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 60.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "throttle / BEC signal lead"
+type = "servo-lead-3"
+gender = "female"
+pos = [0.0, 0.01925, 0.0128]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S2"
+fidelity = "estimated"
+rationale = "S2 states a throttle / program wire and a 6 V / 3 A switch-mode BEC but not the plug, its colours or its pin order: the RC servo lead (S3) of signal, +V (here the BEC), ground is assumed."
+pins = [
+  { number = 1, name = "THR", kind = "signal", dir = "in", note = "throttle signal; frequency and pulse range not stated (S1)" },
+  { number = 2, name = "BEC 6V", kind = "power", dir = "out", v = 6.0, i_max = 3.0, note = "'Switch Mode: 6V/3A' (S1)" },
+  { number = 3, name = "GND", kind = "ground" },
+]
+
+[visual]
+rationale = "Waterproof marine ESC: sealed black case of the part's size_length / size_width / size_height with a label and side cooling ribs (approximate; the open-PCB board_esc default does not fit a sealed unit)."
+
+[[visual.elements]]
+gen = "esc_sealed"
+
+[[sources]]
+id = "S1"
+url = "https://www.hobbywing.com/en/products/seaking-v3-series75"
+title = "Hobbywing SeaKing V3 series product page, specification table"
+accessed = "2026-10-08"
+quote = "Seaking 60A-V3.1 (30302200) | 60A / 360A | 2-3S (5-9 cells NiMH) | Switch Mode: 6V/3A | 95g | 60.5×38.5×25.6mm | WP ... 100% waterproof without the need of extra protection"
+
+[[sources]]
+id = "S2"
+url = "https://www.hobbywing.com/en/products/seaking-v3-series75"
+title = "Hobbywing SeaKing V3 series product page, wire table for 60A-V3.1 (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "Input wires: Red-14AWG-150mm*1, Black-14AWG-150mm*1, connector: No || Output wires: Black-14AWG-100mm*3, 4.0mm golden female plug || BEC: Switch Mode 6V/3A"
+
+[[sources]]
+id = "S3"
+url = "https://en.wikipedia.org/wiki/Servo_(radio_control)"
+title = "Servo (radio control) (Wikipedia), connector (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "RC servos use a three-pin 0.1\"-spacing jack (female) which mates to standard 0.025\" square pins. ... The most common order is signal, +voltage, ground."

@@ -1,0 +1,59 @@
+id = "same-sky-pj-102ah"
+name = "Same Sky (formerly CUI Devices) PJ-102AH DC power jack, 5.0 A, right-angle through-hole (5.5 mm barrel plug)"
+category = "connector"
+vendor = "Same Sky (CUI Devices)"
+part_number = "PJ-102AH"
+url = "https://www.cuidevices.com/product/resource/pj-102ah.pdf"
+
+# DC barrel connector for bench supplies / wall adapters (e.g. a 5 V 4 A PSU with a barrel plug into a driver board). The datasheet
+# calls the centre pin '2.0 mm' (the mating plug family is the usual 5.5 mm OD / 2.1 mm ID barrel plug; the datasheet's drawing page
+# shows only 'Jack Insertion Depth: 9.5 mm', so the 5.5 / 2.1 mm plug sizes are the family convention, not a quoted figure).
+[params]
+voltage_rated          = { value = 24, unit = "V", src = "S1", fidelity = "datasheet" }
+current_rated          = { value = 5.0, unit = "A", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.030, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 1e8, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles          = { value = 5000, unit = "1", src = "S1", fidelity = "datasheet" }
+center_pin_diameter    = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+jack_insertion_depth   = { value = 0.0095, unit = "m", src = "S1", fidelity = "datasheet" }
+temp_min               = { value = 248.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max               = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.003
+unit = "kg"
+fidelity = "estimated"
+rationale = "The datasheet (3 pages: specs, drawing with materials, revision history) gives no mass or body dimensions in text; distributor pages found (thinkrobotics, Future, Master Electronics) list none. Materials per the drawing: PBT housing and cover, brass / copper-alloy silver-plated terminals, nickel-plated copper centre pin. 3 g is an order-of-magnitude placeholder for a right-angle PCB DC jack of this class."
+
+[params.mass_tol]
+value = 0.002
+unit = "kg"
+fidelity = "estimated"
+rationale = "+-2 g: no mass or envelope published; negligible against any build budget."
+
+[[ports]]
+name = "jack"
+kind = "power"
+type = "dc-barrel.5.5x2.1"
+gender = "female"
+v_max = { value = 24, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Panel/PCB jack; the plug side is the generic barrel plug. Port family name 'dc-barrel.5.5x2.1' = the usual barrel plug sizes (OD x ID in mm), not quoted from this datasheet."
+
+[[ports]]
+name = "plug"
+kind = "power"
+type = "dc-barrel.5.5x2.1"
+gender = "male"
+v_max = { value = 24, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Mating barrel plug on the supply cable (generic; ratings limited by the jack, S1)."
+
+[[sources]]
+id = "S1"
+url = "https://www.cuidevices.com/product/resource/pj-102ah.pdf"
+title = "PJ-102AH DC power jack datasheet (Same Sky / CUI Devices)"
+accessed = "2026-10-07"
+quote = "MODEL: PJ-102AH | DESCRIPTION: DC POWER JACK | 2.0 mm center pin | 5.0 A rating | right-angle orientation | through hole | rated input voltage 24 Vdc | rated input current 5.0 A | contact resistance 30 mΩ | insulation resistance at 500 Vdc 100 MΩ | life 5,000 cycles | operating temperature -25 85 °C | Jack Insertion Depth: 9.5 mm"

@@ -1,0 +1,43 @@
+id = "cuas2-yoke-right"
+name = "cuas2 yoke_right (3D printed PETG, M2 right tilt yoke, group pan)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "yoke_right"
+url = "cad/cuas2/modules/tilt_head.py"
+
+# Mesh in frame B; bolted to the rotor plate (Y1 dock), identity transform.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/yoke_right.stl"
+material = "petg"
+bbox_min = [-0.031, -0.09, 0.035]
+bbox_max = [0.031, -0.03, 0.214]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "tilt_axis"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.2]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt axis H = (0, 0, 200 mm) in frame B, axis +y, as the left yoke; closure partner of the cradle `hinge` (the right trunnion stub rides in this yoke)."

@@ -1,0 +1,68 @@
+id = "generic-608zz-bearing"
+name = "608ZZ deep-groove ball bearing, shielded, 8x22x7 mm (skate / 3D-printer type)"
+category = "structure.bearing"
+vendor = "generic (mass: NSK 608ZZ catalogue row; price: Olimex 608ZZ)"
+part_number = "608ZZ"
+url = "https://www.olimex.com/Products/Robot-CNC-Parts/Bearings/608ZZ/"
+
+# Idler / pulley-shaft bearing for the turret belt drive. Mass, dimensions and price only (briefing item 12). The NSK 608 table row (also parts/structure/nsk-608.toml, open type) lists the ZZ type's mass as 12.2 g.
+# The seller of a cheap 608ZZ is generic, so the NSK catalogue figure is a class value (literature), not a measurement of the part bought.
+
+[params]
+bore_diameter  = { value = 0.008, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter = { value = 0.022, unit = "m", src = "S1", fidelity = "datasheet" }
+width          = { value = 0.007, unit = "m", src = "S1", fidelity = "datasheet" }
+mass           = { value = 0.0122, unit = "kg", src = "S2", fidelity = "literature" }   # NSK 608 ZZ column
+price_eur      = { value = 0.70, unit = "EUR", src = "S1", fidelity = "datasheet" }   # single piece, 2026-10-11 (0.63 for 10-49)
+price      = { value = 0.80, unit = "USD", fidelity = "derived", derivation = "0.70 EUR (S1, single piece; no VAT statement on the page) x an assumed 1.15 USD/EUR = 0.80 USD; exchange rate assumed, not looked up. Cross-check: a 10-pack at 8-11 USD in US listings (web search, 2026-10-11)." }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.007
+note = "8 mm bore (S1)."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port, for seating the part by the pose of its frame."
+
+[visual]
+src = "V1"
+note = "Metal ring with two flat shields (product photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.olimex.com/Products/Robot-CNC-Parts/Bearings/608ZZ/"
+title = "Olimex: Single Row Ball bearing 608ZZ 8x22x7mm"
+accessed = "2026-10-11"
+quote = "Single Row Ball bearing 608ZZ 8x22x7mm ... Outer diameter 22 mm ... Inner diameter 8 mm ... Width 7 mm ... 0.70 EUR ... 10 - 49 pcs: 0.63 EUR"
+
+[[sources]]
+id = "S2"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, miniature and small ball bearings table (open and ZZ types; mass in g)"
+accessed = "2026-10-07"
+quote = "8 ... 22 7.0 7.0 0.30 0.30 3 650 1 370 34 000 28 000 40 000 608 608 ZZ1 VV DD 10.0 10.5 20.0 19.0 0.30 0.30 12.10 12.20"
+
+[[sources]]
+id = "V1"
+url = "https://www.olimex.com/Products/Robot-CNC-Parts/Bearings/608ZZ/"
+title = "Olimex listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "Single Row Ball bearing 608ZZ 8x22x7mm"

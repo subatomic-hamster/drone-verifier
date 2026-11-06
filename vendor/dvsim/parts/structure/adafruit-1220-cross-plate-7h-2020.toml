@@ -1,0 +1,43 @@
+id = "adafruit-1220-cross-plate-7h-2020"
+name = "Cross plate, 7 holes, 100x60 mm, for 20x20 aluminium extrusion (Adafruit 1220)"
+category = "structure.bracket"
+vendor = "Adafruit"
+part_number = "1220"
+url = "https://www.adafruit.com/product/1220"
+
+# Frame: origin at the plate centre on the face that sits against the extrusion, +z out of the other face. The hole map and arm width are
+# not published: only the envelope, thickness and hole size are filed, and no hole-pattern port.
+[params]
+length         = { value = 100e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width          = { value = 60e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness      = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter  = { value = 5.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_count     = { value = 7, unit = "1", src = "S1", fidelity = "datasheet" }
+hole_spacing   = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0259
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Aluminium (2700 kg/m3, assumed; alloy not stated), a cross of a 100 mm bar and a 60 mm bar both 18 mm wide (the width of the sibling coupling plates, an assumption): 1800 + 1080 - 324 = 2556 mm2 x 4 mm = 10224 mm3 less seven 5.3 mm holes (617 mm3) = 9607 mm3 -> 25.9 g. The cross shape and arm width are assumed: +-30 %."
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Plate lies flat on the extrusion faces; the seven hole positions are not in the published text, so no bolt pattern is invented."
+note = "Fastens with M4 or M5 screws and T-nuts, 10 mm screws (S1)."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1220"
+title = "Adafruit product 1220: Cross-Plate for 2020 Aluminum Extrusion"
+accessed = "2026-10-07"
+quote = "Attach various pieces of 20mm slotted aluminum extrusion together with this 7-hole cross joining plate. Measures 100mm long x 60mm wide, 4mm thick. 5.3m drill holes 20mm apart so you can use M4 or M5 screws. You'll want to use 10mm long screws to attach this to 20mm extrusion."

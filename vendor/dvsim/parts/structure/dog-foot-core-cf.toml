@@ -1,0 +1,66 @@
+id = "dog-foot-core-cf"
+name = "Dog foot core (3D printed PA12-CF): 40 mm cup on the 35 mm rubber ball, 22.8 mm spigot bonded into the 25 x 23 carbon shank tube"
+category = "frame.printed_cf"  # not "frame.printed": priced as CF-nylon filament, not the 20 USD/kg PLA rule of test_dog_parts
+vendor = "dvsim dog (own design)"
+part_number = "foot_core_cf"
+url = "docs/dog/leg-survey.md"
+
+# cad/dog/parts_al.py foot_core_cf(). Frame: origin at the rubber ball centre; the cup's top face (z = +25 mm) mates dog-shank-cf's foot port, the spigot (z 25 to 45) goes up into the tube. Axisymmetric: its own mirror.
+
+[mirror]
+symmetry = "xz"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+mass            = { value = 0.0193, unit = "kg", fidelity = "derived", derivation = "Mesh volume 29.33 cm3 x PA12-CF 1.15 g/cm3 (parts/common/nylon-cf-pa12.toml), shell = min(V, area x 3 walls x 0.4 mm), 30 % infill elsewhere (assemblies/README.md 'Mass properties'), by cad/dog/build.py." }
+price           = { value = 1.5, unit = "USD", fidelity = "estimated", rationale = "Filament about 19 g x 40-60 USD/kg for CF-nylon = 1 USD plus failed prints; print time and the epoxy not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-foot-core-cf.stl"
+material = "nylon-cf-pa12"
+bbox_min = [-0.02, -0.02, -0.005]
+bbox_max = [0.02, 0.02, 0.045]
+
+[visual]
+rationale = "Cosmetic: printed PA12-CF is black / dark grey (carbon-filled nylon), not the orange of the PLA parts; the same mesh as [geometry]."
+
+[[visual.elements]]
+mesh = "meshes/dog/dog-foot-core-cf.stl"
+colors = { body = "plastic-dark" }
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Ball centre; the ball seat is a sphere of 35.2 mm."
+
+[[ports]]
+name = "shank"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.025]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Top face of the cup, where the carbon tube's end face sits; the 22.8 mm spigot continues 20 mm up into the 23 mm tube bore."
+
+[[ports]]
+name = "ball"
+kind = "mech"
+type = "sphere-seat.35"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0174625]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Top of the 35.2 mm spherical socket: the rubber ball seat port mates here so the ball centre sits on the core origin."

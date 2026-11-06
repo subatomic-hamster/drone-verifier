@@ -1,0 +1,77 @@
+id = "amass-xt30u-f"
+name = "Amass XT30U-F connector (XT30 family, female, wire-solder)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT30U-F"
+url = "https://www.china-amass.net/xt30u-f-product/"
+
+# Mating half of amass-xt30apw-m for the ESC / PDB XT30 leads. The XT30U-F page (title 'AMASS XT30U-F/M') carries its spec table as an
+# image only, so the ratings below are the ones printed in text on the sister XT30U-M page of the same family (S1); the family page for
+# the XT30APW-M (amass-xt30apw-m) prints the same 20 A / 80 V / <= 1.2 mOhm. Holybro says only 'XT30 plug' for the ESC and PDB leads (kit
+# page) and does not name the connector maker or variant; this part exists so the library can close the PDB -> ESC wire with a female XT30.
+[params]
+current_rated       = { value = 20, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0012, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 100, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0009
+unit = "kg"
+fidelity = "estimated"
+rationale = "Amass publishes no mass. Retailer listing of 'Original AMASS XT30' wire-solder connectors (vetco.net VUPN645, S2): 0.9 g female. XT30U family, same housing; tagged estimated because a retailer figure is not an Amass datasheet value."
+
+[params.mass_tol]
+value = 0.0003
+unit = "kg"
+fidelity = "estimated"
+rationale = "0.3 g (~+-35 %): retailer figure, and the listing's own numbers do not add up exactly (0.7 g male + 0.9 g female against '1.7g (complete set)')."
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "xt30"
+gender = "female"
+v_max = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 20, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "20 A max at a temperature rise <= 85 K (16 AWG wire, S1)"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "xt30"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the family (XT30, 2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/xt30u-m-product/"
+title = "AMASS XT30U-M product page (Amass), electrical SPEC (sister page of XT30U-F)"
+accessed = "2026-10-07"
+quote = "Electrical specifications | Current rating | 20A (16AWG△≤85K) | Rated voltage | 80V DC | Insulation Resistance | ≥2000MΩ | Contact Resistance | ≤1.2mΩ | Mechanical characteristics | Plug Life. | 100 times | Environmental resistance | Work Temperature | -20℃ to 120℃"
+
+[[sources]]
+id = "S2"
+url = "https://vetco.net/products/vupn645_xt30_connector_male-female_pair"
+title = "XT30 connector male/female pair, 'Original AMASS XT30 design' (Vetco retailer listing VUPN645)"
+accessed = "2026-10-07"
+quote = "Weight: | 0.7g (male), 0.9g (female), 1.7g (complete set)"

@@ -1,0 +1,230 @@
+id = "raspberry-pi-pico-h"
+name = "Raspberry Pi Pico H (RP2040, 2 MB flash, headers soldered)"
+category = "pcb.mcu"
+vendor = "Raspberry Pi Ltd"
+part_number = "Raspberry Pi Pico H (SC0917)"
+url = "https://www.adafruit.com/product/5525"
+
+# Pico H = Pico with the 2 x 20 male header and the 3-pin SWD header soldered. The cheaper headerless Pico ($4 and up, raspberrypi.com) is the same board. Pico W / WH are not used (no radio wanted).
+# Part frame: origin at the board centre on the underside, +x along the 51 mm length from the micro-USB end (x = -25.5 mm) to the far end, +y across the 21 mm width, z up.
+# Pins 1-20 run down the y = -8.89 mm edge from the USB end, pins 21-40 back up the y = +8.89 mm edge (the datasheet's pin numbering); the header rows are 0.7 in apart.
+# The pinout and function table are from S1/S2; GP23-GP25 and GP29 are used on the board (SMPS mode, VBUS sense, LED, VSYS/3 ADC) and are not on the header.
+# GPIO function names a1..a4 are the RP2040 function select F1..F4 (SPI, UART, I2C, PWM); every GPIO is also SIO (F5), PIO0 (F6) and PIO1 (F7), not repeated on each pin.
+
+[params]
+length          = { value = 0.051, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.021, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness       = { value = 0.001, unit = "m", src = "S1", fidelity = "datasheet" }   # PCB
+height          = { value = 0.0126, unit = "m", fidelity = "estimated", rationale = "Not published. 1 mm PCB + a standard 2.54 mm male strip (2.5 mm plastic body + about 6 mm of pin above it, 3 mm below) gives roughly 10.5 mm above the underside; 12.6 mm is only a drawing height with the headers' pin tips, never used for kinematics." }
+mass            = { value = 0.004, unit = "kg", fidelity = "estimated", rationale = "No published mass. A 51 x 21 x 1 mm FR4 board is about 2 g (density 1.85 g/cm3), plus the RP2040, flash and the micro-USB socket (about 1 g) and about 1 g for the two 20-pin headers: 4 g; reseller sheets quote 12 g but that is a packed figure." }
+mount_hole_diameter = { value = 0.0021, unit = "m", src = "S1", fidelity = "datasheet" }   # 4 drilled holes, 2.1 +-0.05 mm
+pin_pitch       = { value = 0.00254, unit = "m", src = "S1", fidelity = "datasheet" }
+vbus            = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }   # 5 V +-10 %
+vsys_min        = { value = 1.8, unit = "V", src = "S1", fidelity = "datasheet" }
+vsys_max        = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+io_voltage      = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }   # fixed on Pico
+v3v3_out_max    = { value = 0.3, unit = "A", src = "S1", fidelity = "datasheet" }   # recommended load limit on pin 36
+gpio_count      = { value = 26, unit = "1", src = "S1", fidelity = "datasheet" }   # 3 of them ADC capable
+cpu_clock       = { value = 133e6, unit = "Hz", src = "S1", fidelity = "datasheet" }   # dual-core Cortex-M0+ "up to 133 MHz"
+flash_size      = { value = 2e6, unit = "B", src = "S1", fidelity = "datasheet" }   # on-board QSPI flash, 2 MB
+sram_size       = { value = 264e3, unit = "B", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }   # -20 degC
+operating_temp_max = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }   # 85 degC including self-heating
+price       = { value = 5.0, unit = "USD", src = "S3", fidelity = "datasheet" }   # Pico H, Adafruit, 2026-10-11 (the headerless Pico starts at 4 USD, S4)
+
+# Envelope (collision, wire clearance): 51 x 21 mm board, 12.6 mm drawing height (header pin tips), underside at z = 0.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0255, 0.0105, 0.0063]
+pos = [0.0, 0.0, 0.0063]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Board lying on a face. Four 2.1 mm holes (S1) exist, but their positions are only in the datasheet's Figure 3 without a table, so no bolt pattern is declared."
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "female"
+pins = ["USB.1", "USB.2", "USB.3", "USB.5"]
+note = "Micro-USB B socket, USB 1.1 device or host (S1)."
+
+[[ports]]
+name = "vsys_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["J.39", "J.38"]
+v_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 1.8, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "VSYS (pin 39) with a ground (pin 38): the supply when USB is not used."
+
+# Port-level groupings of the header pins for pin wiring (a pin wire end `pico.J.<n>` is folded into the port that lists the pin). They are signal-kind at port level: nothing here is a modelled supply
+# (the 3V3 pin feeds pull-ups and logic inputs, milliamps); the pin kinds (power on 36, ground on 3 / 8 / ...) still apply in the pin rules.
+[[ports]]
+name = "gpio"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["J.1", "J.2", "J.4", "J.5", "J.6", "J.7", "J.9", "J.10", "J.11", "J.12", "J.14", "J.15", "J.16", "J.17", "J.19", "J.20", "J.21", "J.22", "J.24", "J.25", "J.26", "J.27", "J.29", "J.31", "J.32", "J.34", "J.3", "J.8", "J.13", "J.18", "J.23", "J.28", "J.33"]
+note = "GPIO pins and the ground pins of the header, for single-conductor pin wires."
+
+[[ports]]
+name = "rail_3v3"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["J.36"]
+note = "3V3(OUT), pin 36: the logic rail for pull-ups and the driver VIO (recommended load at most v3v3_out_max)."
+
+# ---- J: the 40 castellated / through-hole pins (S1 Figure 2 and Section 2.1; the function table is the RP2040 data sheet Table 2, S2). Positions are exact (0.1 in pitch, rows 0.7 in apart); the
+# numbering follows the datasheet's Figure 4 (pin 1 at the USB end of the y = -8.89 mm row).
+[[connectors]]
+id = "J"
+name = "40 pins, two rows"
+type = "header-2x20-2.54mm"
+gender = "male"
+pos = [0.0, 0.0, 0.0105]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 20
+pitch = 0.00254
+layout = "seq"
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Pin tips about 10.5 mm above the underside (1 mm PCB + a standard 2.54 mm male strip, upward as the Pico H is soldered); the pin field is centred on the board (positional estimate)."
+note = "Pin order, power and ground pins: S1; GPIO functions F1-F4: S2 Table 2 (GP0 = SPI0 RX / UART0 TX / I2C0 SDA / PWM0 A ...). GPIO drive limits are in the RP2040 data sheet (not recorded: 12 mA per pad default)."
+pins = [
+  { number = 1, name = "GP0", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_RX", "a2:UART0_TX", "a3:I2C0_SDA", "a4:PWM0_A"], offset = [-0.02413, -0.00889] },
+  { number = 2, name = "GP1", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_CSn", "a2:UART0_RX", "a3:I2C0_SCL", "a4:PWM0_B"], offset = [-0.02159, -0.00889] },
+  { number = 3, name = "GND", kind = "ground", offset = [-0.01905, -0.00889] },
+  { number = 4, name = "GP2", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_SCK", "a2:UART0_CTS", "a3:I2C1_SDA", "a4:PWM1_A"], offset = [-0.01651, -0.00889] },
+  { number = 5, name = "GP3", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_TX", "a2:UART0_RTS", "a3:I2C1_SCL", "a4:PWM1_B"], offset = [-0.01397, -0.00889] },
+  { number = 6, name = "GP4", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_RX", "a2:UART1_TX", "a3:I2C0_SDA", "a4:PWM2_A"], offset = [-0.01143, -0.00889] },
+  { number = 7, name = "GP5", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_CSn", "a2:UART1_RX", "a3:I2C0_SCL", "a4:PWM2_B"], offset = [-0.00889, -0.00889] },
+  { number = 8, name = "GND", kind = "ground", offset = [-0.00635, -0.00889] },
+  { number = 9, name = "GP6", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_SCK", "a2:UART1_CTS", "a3:I2C1_SDA", "a4:PWM3_A"], offset = [-0.00381, -0.00889] },
+  { number = 10, name = "GP7", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_TX", "a2:UART1_RTS", "a3:I2C1_SCL", "a4:PWM3_B"], offset = [-0.00127, -0.00889] },
+  { number = 11, name = "GP8", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_RX", "a2:UART1_TX", "a3:I2C0_SDA", "a4:PWM4_A"], offset = [0.00127, -0.00889] },
+  { number = 12, name = "GP9", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_CSn", "a2:UART1_RX", "a3:I2C0_SCL", "a4:PWM4_B"], offset = [0.00381, -0.00889] },
+  { number = 13, name = "GND", kind = "ground", offset = [0.00635, -0.00889] },
+  { number = 14, name = "GP10", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_SCK", "a2:UART1_CTS", "a3:I2C1_SDA", "a4:PWM5_A"], offset = [0.00889, -0.00889] },
+  { number = 15, name = "GP11", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_TX", "a2:UART1_RTS", "a3:I2C1_SCL", "a4:PWM5_B"], offset = [0.01143, -0.00889] },
+  { number = 16, name = "GP12", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_RX", "a2:UART0_TX", "a3:I2C0_SDA", "a4:PWM6_A"], offset = [0.01397, -0.00889] },
+  { number = 17, name = "GP13", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_CSn", "a2:UART0_RX", "a3:I2C0_SCL", "a4:PWM6_B"], offset = [0.01651, -0.00889] },
+  { number = 18, name = "GND", kind = "ground", offset = [0.01905, -0.00889] },
+  { number = 19, name = "GP14", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_SCK", "a2:UART0_CTS", "a3:I2C1_SDA", "a4:PWM7_A"], offset = [0.02159, -0.00889] },
+  { number = 20, name = "GP15", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_TX", "a2:UART0_RTS", "a3:I2C1_SCL", "a4:PWM7_B"], offset = [0.02413, -0.00889] },
+  { number = 21, name = "GP16", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_RX", "a2:UART0_TX", "a3:I2C0_SDA", "a4:PWM0_A"], offset = [0.02413, 0.00889] },
+  { number = 22, name = "GP17", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_CSn", "a2:UART0_RX", "a3:I2C0_SCL", "a4:PWM0_B"], offset = [0.02159, 0.00889] },
+  { number = 23, name = "GND", kind = "ground", offset = [0.01905, 0.00889] },
+  { number = 24, name = "GP18", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_SCK", "a2:UART0_CTS", "a3:I2C1_SDA", "a4:PWM1_A"], offset = [0.01651, 0.00889] },
+  { number = 25, name = "GP19", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_TX", "a2:UART0_RTS", "a3:I2C1_SCL", "a4:PWM1_B"], offset = [0.01397, 0.00889] },
+  { number = 26, name = "GP20", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_RX", "a2:UART1_TX", "a3:I2C0_SDA", "a4:PWM2_A"], offset = [0.01143, 0.00889] },
+  { number = 27, name = "GP21", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_CSn", "a2:UART1_RX", "a3:I2C0_SCL", "a4:PWM2_B"], offset = [0.00889, 0.00889] },
+  { number = 28, name = "GND", kind = "ground", offset = [0.00635, 0.00889] },
+  { number = 29, name = "GP22", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI0_SCK", "a2:UART1_CTS", "a3:I2C1_SDA", "a4:PWM3_A"], offset = [0.00381, 0.00889] },
+  { number = 30, name = "RUN", kind = "signal", dir = "in", v = 3.3, offset = [0.00127, 0.00889], note = "RP2040 enable / reset; ~50 kohm internal pull-up to 3.3 V, short low to reset" },
+  { number = 31, name = "GP26", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_SCK", "a2:UART1_CTS", "a3:I2C1_SDA", "a4:PWM5_A", "ADC0"], offset = [-0.00127, 0.00889], note = "ADC0: analogue input 0-3.3 V" },
+  { number = 32, name = "GP27", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_TX", "a2:UART1_RTS", "a3:I2C1_SCL", "a4:PWM5_B", "ADC1"], offset = [-0.00381, 0.00889], note = "ADC1: analogue input 0-3.3 V" },
+  { number = 33, name = "AGND", kind = "ground", offset = [-0.00635, 0.00889], note = "analogue ground for GP26-GP28" },
+  { number = 34, name = "GP28", kind = "signal", dir = "io", v = 3.3, alt = ["a1:SPI1_RX", "a2:UART0_TX", "a3:I2C0_SDA", "a4:PWM6_A", "ADC2"], offset = [-0.00889, 0.00889], note = "ADC2: analogue input 0-3.3 V" },
+  { number = 35, name = "ADC_VREF", kind = "power", dir = "io", v = 3.3, offset = [-0.01143, 0.00889], note = "ADC supply and reference (filtered 3.3 V), may take an external reference" },
+  { number = 36, name = "3V3", kind = "power", dir = "out", v = 3.3, i_max = 0.3, offset = [-0.01397, 0.00889], note = "3V3(OUT) from the on-board SMPS; keep the load under 300 mA" },
+  { number = 37, name = "3V3_EN", kind = "signal", dir = "in", offset = [-0.01651, 0.00889], note = "SMPS enable, 100 kohm pull-up to VSYS; short low to switch the 3.3 V off" },
+  { number = 38, name = "GND", kind = "ground", offset = [-0.01905, 0.00889] },
+  { number = 39, name = "VSYS", kind = "power", dir = "in", v_min = 1.8, v_max = 5.5, offset = [-0.02159, 0.00889], note = "main system input 1.8-5.5 V feeding the SMPS; also fed from VBUS through Schottky D1" },
+  { number = 40, name = "VBUS", kind = "power", dir = "io", v = 5.0, offset = [-0.02413, 0.00889], note = "micro-USB VBUS, 5 V +-10 %; 5 V may be fed in here instead of USB" },
+]
+
+# ---- USB: micro-USB B socket overhanging the board edge. S1 says only that VBUS is socket pin 1 and that the port is USB 1.1 with 27 ohm series resistors; the other contacts follow the micro-B standard (estimated).
+[[connectors]]
+id = "USB"
+name = "micro-USB B socket"
+type = "usb-micro-b"
+port_type = "usb"
+gender = "female"
+pos = [-0.0275, 0.0, 0.0035]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.0008
+src = "S1"
+fidelity = "estimated"
+rationale = "S1: 'VBUS ... connected to micro-USB port pin 1' and 'brings this interface to a standard micro-USB port'. The contact numbering 2 D-, 3 D+, 4 ID, 5 GND is the micro-B standard (not fetched); the ID pin is not connected on Pico (not stated in S1, assumed)."
+pose_rationale = "Overhangs the top edge of the board centred in the width (S1: 'a micro-USB port overhanging the top edge')."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "io", v = 5.0, note = "5 V in from the host (S1); fed through Schottky D1 to VSYS" },
+  { number = 2, name = "D-", kind = "signal", dir = "io", note = "27 ohm in series to RP2040 USB DM" },
+  { number = 3, name = "D+", kind = "signal", dir = "io", note = "27 ohm in series to RP2040 USB DP" },
+  { number = 4, name = "ID", kind = "nc", note = "micro-B ID, not used (assumed)" },
+  { number = 5, name = "GND", kind = "ground" },
+]
+
+# ---- SWD: the 3-pin debug header on the lower edge (S1 Section 4.6 / "SWD port"). The pin order SWCLK, GND, SWDIO is the one printed on the board (not in the fetched text): estimated.
+[[connectors]]
+id = "SWD"
+name = "3-pin SWD debug header"
+type = "jst-sh-3"
+gender = "male"
+pos = [0.0, 0.0105, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.001
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 says the SWD interface is brought to 'a 3 pin debug header on the lower edge of the board' with internal ~60 kohm pull-ups on SWDIO and SWCLK. The pin order (SWCLK, GND, SWDIO) is from the board silkscreen, not from the fetched datasheet text."
+pose_rationale = "Lower edge, centred (positional estimate); on the unpopulated Pico it is three through-holes, on the Pico H a JST-SH socket."
+pins = [
+  { number = 1, name = "SWCLK", kind = "signal", dir = "in", v = 3.3 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "SWDIO", kind = "signal", dir = "io", v = 3.3 },
+]
+
+[visual]
+src = "V1"
+note = "Green 51 x 21 mm board with the black RP2040 package, silver flash and micro-USB shell (Raspberry Pi product photos); generic board drawing."
+
+[[visual.elements]]
+gen = "board_generic"
+
+[[sources]]
+id = "S1"
+url = "https://datasheets.raspberrypi.com/pico/pico-datasheet.pdf"
+title = "Raspberry Pi Pico datasheet (Rev3)"
+accessed = "2026-10-11"
+quote = "The Raspberry Pi Pico is a single sided 51×21 mm 1 mm thick PCB with a micro-USB port overhanging the top edge and dual castellated/through-hole pins around the remaining edges. ... the 40 main user pins on a 2.54 mm (0.1″) pitch grid with 1 mm holes ... 4× 2.1 mm (± 0.05 mm) drilled mounting holes ... PIN40 VBUS PIN39 VSYS PIN37 3V3_EN PIN36 3V3 PIN35 ADC_VREF PIN33 AGND PIN30 RUN ... VSYS ... the allowed range 1.8 V to 5.5 V ... it is recommended to keep the load on this pin less than 300 mA ... VBUS 5 V ± 10%. ... Operating Temp Max 85°C (including self-heating) Operating Temp Min −20°C ... Dual-core cortex M0+ at up to 133 MHz ... 264 kB multi-bank high performance SRAM ... 2 MB Flash"
+
+[[sources]]
+id = "S2"
+url = "https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf"
+title = "RP2040 Datasheet, Table 2: General Purpose Input/Output (GPIO) Bank 0 Functions"
+accessed = "2026-10-11"
+quote = "GPIO F1 F2 F3 F4 F5 ... 0 SPI0 RX UART0 TX I2C0 SDA PWM0 A SIO PIO0 PIO1 ... 1 SPI0 CSn UART0 RX I2C0 SCL PWM0 B ... 8 SPI1 RX UART1 TX I2C0 SDA PWM4 A ... 12 SPI1 RX UART0 TX I2C0 SDA PWM6 A ... 26 SPI1 SCK UART1 CTS I2C1 SDA PWM5 A ... 28 SPI1 RX UART0 TX I2C0 SDA PWM6 A"
+
+[[sources]]
+id = "S3"
+url = "https://www.adafruit.com/product/5525"
+title = "Adafruit: Raspberry Pi Pico H - Pico with Headers Soldered (product 5525)"
+accessed = "2026-10-11"
+quote = "Raspberry Pi Pico H - Pico with Headers Soldered ... $5.00"
+
+[[sources]]
+id = "V1"
+url = "https://www.raspberrypi.com/products/raspberry-pi-pico/"
+title = "Raspberry Pi Pico product page (appearance only)"
+accessed = "2026-10-11"
+quote = "21 mm × 51 mm form factor"

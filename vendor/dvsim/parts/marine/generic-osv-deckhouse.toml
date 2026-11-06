@@ -1,0 +1,89 @@
+id = "generic-osv-deckhouse"
+name = "Generic 3.6 x 2.8 x 2.1 m FRP wheelhouse for the 12.6 m work boat (sized after the Damen FCS 1204's superstructure class; illustrative, not a product)"
+category = "structure.deckhouse"
+vendor = "generic"
+part_number = "n/a (sized after Damen FCS 1204)"
+url = "https://medialibrary.damen.com/m/471c1f7842832c80/original/fcs-1204-for-sale-damen-trading-07675.pdf"
+
+# A thin-walled box (roof, two side walls, front, back): the electronics and batteries stand INSIDE it on the hull's main deck, so the wall shapes leave the cabin
+# volume empty (a solid box would overlap them). The sheet gives only "Superstructure material FRP" (S1): the footprint, height and wall mass are ESTIMATES.
+# Part frame: origin at the centre of the footprint at the main-deck level, x forward, z up.
+[params]
+length   = { value = 3.6, unit = "m", fidelity = "estimated", rationale = "Wheelhouse of a 12.6 m crew boat: about 30 % of the length (the sheet gives the material only)." }
+width    = { value = 2.8, unit = "m", fidelity = "estimated", rationale = "0.5 m side decks each side of the 3.8 m beam." }
+height   = { value = 2.1, unit = "m", fidelity = "estimated", rationale = "Standing headroom 1.9 m plus the roof structure." }
+wall     = { value = 0.04, unit = "m", fidelity = "estimated", rationale = "FRP sandwich panel thickness (collision shape only)." }
+mass_roof  = { value = 220.0, unit = "kg", fidelity = "estimated", rationale = "10 m2 roof at 22 kg/m2 including the instrument mast base and the window headers." }
+mass_front = { value = 120.0, unit = "kg", fidelity = "estimated", rationale = "2.8 m x 2.0 m front with windows, about 21 kg/m2." }
+mass_back  = { value = 120.0, unit = "kg", fidelity = "estimated", rationale = "Rear bulkhead with a door, about 21 kg/m2." }
+mass_side  = { value = 220.0, unit = "kg", fidelity = "estimated", rationale = "3.6 m x 2.0 m side with window band, about 30 kg/m2 (framing, glazing)." }
+mass     = { value = 900.0, unit = "kg", fidelity = "estimated", rationale = "Roof 220 + front 120 + back 120 + 2 x side 220 kg. A 12 m FRP wheelhouse with glazing, seats and consoles (excluding the electronics listed as parts) weighs 0.7-1.2 t (order of magnitude; no figure is published for the FCS 1204)." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [1.8, 1.4, 0.04]
+pos = [0.0, 0.0, 2.06]
+mass_param = "mass_roof"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.04, 1.4, 1.0]
+pos = [1.76, 0.0, 1.0]
+mass_param = "mass_front"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.04, 1.4, 1.0]
+pos = [-1.76, 0.0, 1.0]
+mass_param = "mass_back"
+
+[[geometry.shapes]]
+shape = "box"
+size = [1.8, 0.04, 1.0]
+pos = [0.0, 1.36, 1.0]
+mass_param = "mass_side"
+
+[[geometry.shapes]]
+shape = "box"
+size = [1.8, 0.04, 1.0]
+pos = [0.0, -1.36, 1.0]
+mass_param = "mass_side"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside of the footprint on the main deck."
+
+[[ports]]
+name = "roof_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.2, 0.0, 3.34]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Top of the 1.2 m instrument mast on the roof (roof top 2.14 m, mast to 3.34 m above the deck): the RTK base antenna seat, 3.34 + 1.7 = 5.04 m above the keel, above the radio and light height of a 12 m boat's mast."
+
+[visual]
+rationale = "Raked-front white wheelhouse with dark window bands and a roof mast, drawn from the part's own length, width and height."
+
+[[visual.elements]]
+gen = "osv_deckhouse"
+
+[[sources]]
+id = "S1"
+url = "https://medialibrary.damen.com/m/471c1f7842832c80/original/fcs-1204-for-sale-damen-trading-07675.pdf"
+title = "Damen Trading & Chartering, FOLIO 07675, Damen Fast Crew Supplier 1204 (sales sheet)"
+accessed = "2026-10-13"
+quote = "Superstructure material FRP"

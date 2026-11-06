@@ -1,0 +1,41 @@
+id = "pololu-1998-universal-hub-5mm-m3"
+name = "Pololu universal aluminium mounting hub for 5 mm shaft, M3 holes (item 1998, one hub)"
+category = "structure.hub"
+vendor = "Pololu"
+part_number = "1998"
+url = "https://www.pololu.com/product/1998"
+
+# Frame: origin on the bore axis at the shaft-side face, +z = the face carrying the four mounting holes. Mass is for ONE hub (the pack holds two).
+[params]
+mass            = { value = 0.0032, unit = "kg", src = "S1", fidelity = "datasheet" }
+outer_diameter  = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness       = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+bore_diameter   = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+mounting_hole_count = { value = 4, unit = "1", src = "S2", fidelity = "datasheet" }
+
+# The mounting-hole bolt-circle diameter is not on the product or specs page, so the hole pattern is not filed as a port.
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.005
+note = "5 mm bore for round or D shafts, secured by the M3 set screw (included, one per hub)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1998/specs"
+title = "Pololu item 1998 specs (Universal Aluminum Mounting Hub for 5mm Shaft, M3 Holes, 2-pack)"
+accessed = "2026-10-07"
+quote = "Size: | 19 mm diameter × 5 mm thick | Weight: | 3.2 g| 1| Shaft diameter: | 5 mm | Mounting hole size: | M3| 2| Notes:| 1| For a single hub only (without set screw)."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/1998"
+title = "Pololu item 1998 product page"
+accessed = "2026-10-07"
+quote = "Each of the two included hubs has four mounting holes for M3 screws (not included)"

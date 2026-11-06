@@ -1,0 +1,34 @@
+id = "carbon-fibre-epoxy-ud"
+name = "Carbon fibre / epoxy unidirectional laminate (Toray T700S, 60% Vf) - for tubes"
+category = "material"
+vendor = "Toray Composite Materials America"
+part_number = "TORAYCA T700S"
+url = "https://www.toraycma.com/wp-content/uploads/T700S-Data-Sheet.pdf"
+
+[params]
+fibre_density         = { value = 1800, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+fibre_tensile_modulus = { value = 230e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+youngs_modulus_axial  = { value = 134e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+flexural_modulus_axial = { value = 120e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[params.density]
+value = 1550
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Composite density not on the T700S sheet (only fibre 1800 kg/m3). Rule of mixtures with Vf 0.6 and epoxy ~1200 kg/m3 (typical, not sourced here) gives 1.56 g/cc; 1550 used. X500 V2 tubes are Holybro-supplied 'carbon fiber tubes' of unspecified layup; roll-wrapped hobby tubes are typically lower than aerospace UD."
+
+[params.transverse_modulus_fraction]
+value = 0.06
+unit = "1"
+fidelity = "estimated"
+rationale = "Transverse modulus of UD carbon/epoxy is typically ~8-10 GPa vs 134 GPa axial (~6%); not on the T700S sheet. Only relevant for tube ovalisation, not for bending of the arm."
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.11, 0.11, 0.12, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://www.toraycma.com/wp-content/uploads/T700S-Data-Sheet.pdf"
+title = "TORAYCA T700S Standard Modulus data sheet"
+accessed = "2026-10-07"
+quote = "Tensile Modulus 33.4 Msi 230 GPa ... Density 1.80 g/cm3 ... COMPOSITE PROPERTIES ... Tensile Modulus* 19 Msi 134 GPa ASTM D3039 ... Flexural Modulus* 17 Msi 120 GPa ASTM D790"

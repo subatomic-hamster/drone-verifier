@@ -1,0 +1,108 @@
+id = "cubemars-ak-v3-power-can-cable"
+name = "CubeMars AK V3.0 replacement cable set: XT30(2+2) power + CAN lead (and UART lead)"
+category = "wire"
+vendor = "CubeMars"
+part_number = "AK V3.0 replacement cable"
+url = "https://www.robotshop.com/products/ak-v30-replacement-cable-for-cubemars-motors"
+
+# Per-actuator lead of the dog: mates the XT30PW(2+2)-M on a CubeMars / SteadyWin-class QDD. The retail set also carries the 3-pin UART lead; only the power + CAN lead is modelled (pins as in the CubeMars AK54 V3 driver manual, same connector P/N).
+# Length is not stated in the retrieved text: 0.30 m is an estimate for the daisy-chain hop between two joints of one leg (the leg builder overrides it with the routed length).
+
+[params]
+length  = { value = 0.30, unit = "m", fidelity = "estimated", rationale = "Not retrieved (the set is sold in fixed lengths; the page text found says nothing). 0.30 m is the typical hop between adjacent joints of a 0.22 m leg." }
+awg_power = { value = 18, unit = "AWG", src = "S2", fidelity = "literature" }  # reseller note for the XT30(2+2)-F: 18 AWG power, 24 AWG signal
+awg_signal = { value = 24, unit = "AWG", src = "S2", fidelity = "literature" }
+mass_per_m = { value = 0.025, unit = "kg/m", fidelity = "estimated", rationale = "4 conductors (2 x 18 AWG ~ 6 g/m each with insulation, 2 x 24 AWG ~ 2 g/m each, jacket) ~ 25 g/m; two connectors add ~3 g each (not included)." }
+resistance_per_m = { value = 0.02095, unit = "ohm/m", fidelity = "derived", derivation = "Per power conductor: 18 AWG (awg_power, reseller note) copper at 20 degC = 20.95 mOhm/m, the value of parts/drone/awg-18-silicone-wire.toml. The 24 AWG signal pair is not used for the supply drop." }
+
+[params.price]
+value = 6.31
+unit = "USD"
+fidelity = "datasheet"
+src = "S1"
+rationale = "RobotShop sale price for the genuine CubeMars AK V3.0 replacement set seen 2026-10-16 (USD; page marked re-stocking soon)."
+
+[[ports]]
+name = "end_a"
+pins = ["A.1", "A.2", "A.3", "A.4"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "female"
+role = "passthrough"
+v_max = { value = 56.0, unit = "V", fidelity = "estimated", rationale = "XT30 contact is rated 30 V/ 15 A class by AMASS for the plain XT30; the 2+2 variant is used by CubeMars at 48 V, so 56 V (the GIM driver maximum) is the level the dog needs; not a published cable rating." }
+i_max = { value = 15.0, unit = "A", fidelity = "estimated", rationale = "XT30 family continuous rating 15-30 A (AMASS), 18 AWG conductor; 15 A taken." }
+note = "Plugs onto the actuator's XT30PW(2+2)-M."
+
+[[ports]]
+name = "end_b"
+pins = ["B.1", "B.2", "B.3", "B.4"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "female"
+role = "passthrough"
+note = "Daisy-chain end (second connector) or bare tail in the retail kit; modelled as a second female end."
+
+[[connectors]]
+id = "A"
+name = "XT30(2+2)-F end A"
+type = "xt30pw-2+2"
+port_type = "xt30pw-2+2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "P1"
+fidelity = "literature"
+rationale = "Pin order and colours from the CubeMars AK54 V3 driver manual (the same XT30PW(2+2)-M connector); the retail set's own pin list was not retrieved."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io", note = "white" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io", note = "blue" },
+]
+
+[[connectors]]
+id = "B"
+name = "XT30(2+2)-F end B"
+type = "xt30pw-2+2"
+port_type = "xt30pw-2+2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "P1"
+fidelity = "literature"
+rationale = "Straight-through copy of end A (same colour order)."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io", note = "white" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io", note = "blue" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.cubemars.com/images/file/202511/AK54-4810-1C-A2%20Driver%20Installation%20Instructions.pdf"
+title = "CubeMars AK54-4810-1C-A2 Driver Installation Instructions V1.0.0, 4.2 Driver Interface Pin Definitions"
+accessed = "2026-10-09"
+quote = "Power input and CAN communication: 1 Positive Pole (+) Red; 2 Negative Pole (-) Black; 3 CAN communication high side (CAN_H) White; 4 CAN communication low side (CAN_L) Blue. Onboard interface model: A1257WR-S-3P (CJT), XT30PW(2+2)-M (AMASS)."
+
+[[sources]]
+id = "S1"
+url = "https://www.robotshop.com/products/ak-v30-replacement-cable-for-cubemars-motors"
+title = "RobotShop AK V3.0 Replacement Cable for CubeMars Motors (web-search result summary)"
+accessed = "2026-10-16"
+quote = "genuine CubeMars AK V3.0 replacement set, sale price $6.31, includes a power and CAN cable plus a separate UART cable, XT30 (2P+2P) connectors (search-result summary, not verbatim)"
+
+[[sources]]
+id = "S2"
+url = "https://www.tradeinn.com/techinn/en/amass-am-xt30-2-2--f-adapter/143359317/p"
+title = "Tradeinn AMASS XT30(2+2)-F listing (web-search result summary of a reseller note)"
+accessed = "2026-10-16"
+quote = "recommended wire gauge is 18AWG for power and 24AWG for signal (search-result summary, not verbatim)"

@@ -1,0 +1,85 @@
+id = "estes-g40"
+name = "Estes G40 composite model rocket motor (29 x 124 mm, relabeled AeroTech G40W)"
+category = "motor.solid"
+vendor = "Estes Industries"
+part_number = "G40"
+url = "https://www.thrustcurve.org/motors/Estes/G40/"
+
+# Part frame: origin on the motor axis at the nozzle (aft) face, +z = thrust direction (towards the rocket's nose). The nozzle port's axis is
+# the thrust direction (the solid_motor device's site +z), like the launcher's muzzle port.
+# Thrust curve: NAR certification data as a RASP .eng file (thrustcurve.org simfile, source "cert"); 12 points, thrust ramps from (0 s, 0 N)
+# to the first point. Delivered impulse of the table (trapezoid) = 99.0 N s; the motor page certifies 97.1 N s (the file is 2.0 % above), which
+# the unit test tolerates. The file's highest sample is 74.3 N against the certified 84.5 N peak (a short spike the 12 samples miss).
+[params]
+mass                = { value = 0.123, unit = "kg", src = "S1", fidelity = "datasheet" }
+propellant_mass     = { value = 0.0538, unit = "kg", src = "S1", fidelity = "datasheet" }
+diameter            = { value = 0.029, unit = "m", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.124, unit = "m", src = "S1", fidelity = "datasheet" }
+total_impulse_cert  = { value = 97.1, unit = "N*s", src = "S2", fidelity = "datasheet" }
+avg_thrust_cert     = { value = 40.9, unit = "N", src = "S2", fidelity = "datasheet" }
+max_thrust_cert     = { value = 84.5, unit = "N", src = "S2", fidelity = "datasheet" }
+burn_time_cert      = { value = 2.4, unit = "s", src = "S2", fidelity = "datasheet" }
+ignition_delay      = { value = 0.3, unit = "s", fidelity = "estimated", rationale = "No published value. Composite motors need an igniter that lights the whole grain surface; 0.3 s is a design choice for the command-to-first-thrust time (the curve itself starts at 0.024 s)." }
+
+[tables.thrust_curve]
+columns = ["time_s", "thrust_N"]
+rows = [
+  [0.024, 74.325], [0.057, 67.005], [0.252, 65.879], [0.500, 63.063], [0.765, 60.248], [1.000, 54.054],
+  [1.250, 47.298], [1.502, 36.599], [1.751, 25.338], [1.999, 12.951], [2.121, 3.941], [2.300, 0.000],
+]
+src = "S1"
+fidelity = "datasheet"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0145, 0.062]
+pos = [0.0, 0.0, 0.062]
+zaxis = [0.0, 0.0, 1.0]
+
+# Case seat: the motor sits in a motor-mount tube / gimbal cradle of this bore.
+[[ports]]
+name = "case"
+kind = "mech"
+type = "tube.29"
+gender = "male"
+pos = [0.0, 0.0, 0.062]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "datasheet"
+src = "S1"
+rationale = "Round casing, 29 mm diameter (the RASP header gives the diameter)."
+
+# Nozzle: the solid_motor device's site takes this port's pose (site +z = thrust direction).
+[[ports]]
+name = "nozzle"
+kind = "mech"
+type = "motor-nozzle-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "datasheet"
+src = "S1"
+rationale = "Aft face of the casing on the motor axis; thrust acts along the axis towards the nose."
+
+[visual]
+rationale = "Generic model-rocket motor look from the part's own diameter and length: paper casing, label band, recessed ceramic nozzle (label colours are not sourced)."
+
+[[visual.elements]]
+gen = "solid_motor"
+
+[[sources]]
+id = "S1"
+url = "https://www.thrustcurve.org/simfiles/5f4294d20002e900000007b0/"
+title = "thrustcurve.org: Estes G40 (G40W) RASP simulation file (certification data), the .eng file as downloaded"
+accessed = "2026-10-08"
+quote = ";ESTES G40W [Relabeled Aerotech] ... G40W 29 124 7 0.0538 0.123 AeroTech 0.024 74.325 0.057 67.005 0.252 65.879 0.500 63.063 0.765 60.248 1.000 54.054 ... 2.121 3.941 2.300 0 (RASP header: name, diameter mm, length mm, delays, propellant kg, loaded kg)"
+
+[[sources]]
+id = "S2"
+url = "https://www.thrustcurve.org/motors/Estes/G40/"
+title = "thrustcurve.org: Estes G40 motor details (certified values)"
+accessed = "2026-10-08"
+quote = "Total Impulse: 97.1 Ns  Avg. Thrust: 40.9 N  Max. Thrust: 84.5 N  Burn Time: 2.4 s  Total Weight: 123 g  Prop. Weight: 55 g  Diameter: 29 mm  Length: 124 mm  Delays: 4,7"

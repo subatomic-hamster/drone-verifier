@@ -1,0 +1,62 @@
+id = "dog-hip-housing-l"
+name = "Dog hip housing, left (3D printed PLA): abad output flange, web, hip and knee actuator sleeves face to face, bridge"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "hip_housing (left, +y outboard)"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py hip_housing(); mesh by cad/dog/build.py. Leg frame: origin on the abduction axis at the abad actuator OUTPUT face, +x outward, +y outboard (left), z up.
+# The hip pitch axis is at x = 60 mm. The hip actuator (92 x 55 mm) sits in the inboard sleeve with its output face at y = 95 mm pointing outboard; the knee actuator sits in the
+# outboard sleeve with its output face at y = 132 mm pointing INBOARD. The thigh plate, push rod and crank live in the 37 mm slab between the two output faces; a bridge
+# over the top (z in [44, 54]) ties the sleeves. Twin: dog-hip-housing-r (mirror image about the XZ plane).
+
+[mirror]
+opposite = "dog-hip-housing-r"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+mass            = { value = 0.1663, unit = "kg", fidelity = "derived", derivation = "Mesh volume 207.3 cm3 x PLA 1.24 g/cm3, shell = min(V, area x 3 walls x 0.4 mm), 30 % infill elsewhere (assemblies/README.md 'Mass properties'), by cad/dog/build.py." }
+price           = { value = 3.33, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.1663 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-hip-housing-l.stl"
+material = "pla"
+bbox_min = [0.0, -0.03, -0.0502]
+bbox_max = [0.1102, 0.187, 0.054]
+
+[[ports]]
+name = "abad"
+kind = "mech"
+type = "flange.steadywin-gim8108-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Flange disc on the abad actuator output (6 x M3 on a 50 mm circle); output pattern is opaque (vendor drawing not retrieved)."
+
+[[ports]]
+name = "pitch_seat"
+kind = "mech"
+type = "bolt-pattern.steadywin-gim8108-base"
+gender = "neutral"
+pos = [0.06, 0.095, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Hip pitch actuator: output face at y = 95 mm, output pointing outboard (+y), body in the inboard sleeve (y in [40, 95])."
+
+[[ports]]
+name = "knee_seat"
+kind = "mech"
+type = "bolt-pattern.steadywin-gim8108-base"
+gender = "neutral"
+pos = [0.06, 0.132, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee actuator: output face at y = 132 mm, output pointing inboard (-y) toward the crank, body in the outboard sleeve (y in [132, 187])."

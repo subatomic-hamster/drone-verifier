@@ -1,0 +1,36 @@
+id = "din985-m3-locknut"
+name = "Nylon-insert lock nut M3 (DIN 985 / ISO 10511), steel"
+category = "fastener"
+vendor = "generic (DIN 985)"
+part_number = "DIN 985 M3"
+url = "https://fasten.it/norms/norm/din_985"
+
+[params]
+mass            = { value = 5.0e-4, unit = "kg", src = "S1", fidelity = "datasheet" }
+thread_diameter = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+height_max      = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }   # = height_max (column 'h max'); the nut height used by the port
+thread_pitch    = { value = 0.5e-3, unit = "m", src = "S1", fidelity = "datasheet" } # column P of the M3 row
+width_across_flats = { value = 5.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+steel_density   = { value = 7850, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.004
+fidelity = "datasheet"
+src = "S1"
+note = "Through-threaded bore (nylon insert), axis normal to the nut faces; length = nut height = 'h max' 4 mm of the M3 row (S1); same convention as parts/structure/iso4032-m2-nut."
+
+[[sources]]
+id = "S1"
+url = "https://fasten.it/norms/norm/din_985"
+title = "DIN 985 self-locking hexagon thin nuts with non-metallic insert (fasten.it)"
+accessed = "2026-10-07"
+quote = "d thread size P e min. s m min h weigth in kg x1000 pcs, (ρ=7,85 kg/dm3) max min max min M 3 0.5 6.01 5.5 2.4 4 3.7 1.0 0.5 M 4 0.7 7.74 7 2.9 5 4.7 1.0 1"

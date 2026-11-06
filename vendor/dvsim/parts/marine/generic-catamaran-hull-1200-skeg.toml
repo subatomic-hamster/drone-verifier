@@ -1,0 +1,262 @@
+id = "generic-catamaran-hull-1200-skeg"
+name = "Generic 1.2 m twin-hull catamaran ASV hull with a skeg under each hull (sized after the Blue Robotics BlueBoat; illustrative, not a product)"
+category = "hull.catamaran"
+vendor = "generic"
+part_number = "n/a (sized after BlueBoat BR-101103)"
+url = "https://bluerobotics.com/store/boat/blueboat/blueboat/"
+
+# The hull of generic-catamaran-hull-1200 (same boxes, same added mass and damping, same thruster / ESC / battery seats) plus
+#  - a fixed skeg under the stern of each hull (table `fins`), the directional-stability fix, and
+#  - seats for the avionics, two sensor masts and the radio (this is the hull of the ASV, assemblies/asv.toml).
+# WHY THE BARE HULL IS DIRECTIONALLY UNSTABLE. The vessel device has, in sway-yaw, only the diagonal damping and the inviscid Munk moment
+# N = (A11 - A22) u v (= -9.3 u v N m for A11 = 1.7 kg, A22 = 11 kg): a drift v to the left turns the bow away from the velocity vector, and nothing aft
+# resists it. Linear sway-yaw stability needs  D_v D_r - (Y_r - (m + A11) U) N_v > 0  (N_v: yaw moment per unit sway velocity). The bare hull has
+# D_v D_r = 15 N s/m x 2 N m s = 30 and (m + A11) U |N_v| = 20.7 U x 9.3 U = 192 U^2 N^2 s^2/m^2 against it, i.e. it is unstable above U = 0.4 m/s:
+# a boat that holds a heading only by the autopilot (docs/models.md; examples/boat/float.py steers by differential thrust throughout). Real hulls have
+# hull lift (the slender hull is a wing of aspect ratio 2T/L) that produces a sway force and a yaw moment of the opposite sign, and skegs or keels add to it;
+# the strip-theory table below has no hull lift, so the lift is put where the naval-architecture practice puts it: on a fin aft of the centre of gravity.
+# Each skeg is a flat plate 0.30 m long and 0.10 m deep under the stern of its hull: side area 0.03 m2, geometric aspect ratio 0.10^2 / 0.03 = 0.33, effective
+# aspect ratio 0.67 with the hull as an end plate, Helmbold lift slope 2 pi AR / (2 + sqrt(4 + AR^2)) = 1.02 / rad. Two of them 0.45 m aft of the centre
+# give a yaw stiffness of 2 x (rho / 2) x 0.03 x 1.02 x 0.45 U = 13.7 U N m s/m against the Munk 9.3 U: net +4.4 U (stable at any speed) and a sway damping
+# 2 x (rho / 2) x 0.03 x 1.02 U = 30.5 U N s/m. Part frame (= the vessel's body frame): origin at mid-length on the centreline at the keel level, x forward,
+# y to port, z up.
+[params]
+length         = { value = 1.2, unit = "m", src = "S1", fidelity = "datasheet" }
+beam           = { value = 0.93, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_blueboat  = { value = 14.5, unit = "kg", src = "S1", fidelity = "datasheet" }
+hull_length    = { value = 1.2, unit = "m", fidelity = "estimated", rationale = "Design choice: the overall length of the BlueBoat (S1)." }
+hull_width     = { value = 0.17, unit = "m", fidelity = "estimated", rationale = "Design choice: each of the two hulls 0.17 m wide, hull centrelines +-0.38 m, outer edges at +-0.465 m = half the 0.93 m deployed beam (S1)." }
+hull_depth     = { value = 0.20, unit = "m", fidelity = "estimated", rationale = "Design choice: deck 0.20 m above the keel, so the freeboard at 15 kg is ~0.16 m (S1 gives 0.160 m with two batteries, 16.9 kg)." }
+hull_mass      = { value = 13.74, unit = "kg", fidelity = "derived", derivation = "BlueBoat 14.5 kg without batteries or payload (S1) minus its two M200 motors 2 x 0.282 kg (S2) minus its two Basic ESCs 2 x 0.0163 kg (S3) = 13.90 kg of hulls, deck, enclosure and the unlisted electronics; minus the avionics this design lists as separate instances in their place (Raspberry Pi 5 0.046 kg + Pixhawk 6C 0.0593 kg + M8N GPS 0.032 kg + SiK radio 0.0235 kg = 0.1608 kg; ASSUMES the BlueBoat's own computer, autopilot, GNSS and radio weigh about the same) = 13.74 kg. The lidar, the regulator, the masts and the skegs are additions: the skegs (0.06 m2 of plate) are inside this figure, a few hundred grams of the hull." }
+mass           = { value = 13.74, unit = "kg", fidelity = "derived", derivation = "= hull_mass, split equally over the two hull boxes (uniform density: the hull's own centre of gravity at 0.10 m above the keel, mid-length)." }
+hull_mass_each = { value = 6.87, unit = "kg", fidelity = "derived", derivation = "hull_mass / 2 = 6.87 kg per hull." }
+skeg_chord     = { value = 0.30, unit = "m", fidelity = "estimated", rationale = "Design choice (fore-aft length of each skeg)." }
+skeg_depth     = { value = 0.10, unit = "m", fidelity = "estimated", rationale = "Design choice: 0.10 m below the keel (3 x the 0.0375 m draft; the BlueBoat's maximum draft with payload is 0.32 m, S1)." }
+skeg_x         = { value = -0.45, unit = "m", fidelity = "estimated", rationale = "Design choice: skeg centre 0.45 m aft of mid-length (the stern is at -0.60 m); the further aft the larger the restoring moment." }
+
+# Two boxes (full extents 1.2 x 0.17 x 0.20 m) sampled into 24 x 4 x 8 buoyancy cells each (device vessel); cells = [along x, along y, along z].
+[[geometry.shapes]]
+shape = "box"
+size = [0.6, 0.085, 0.10]
+pos = [0.0, 0.38, 0.10]
+cells = [24, 4, 8]
+mass_param = "hull_mass_each"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.6, 0.085, 0.10]
+pos = [0.0, -0.38, 0.10]
+cells = [24, 4, 8]
+mass_param = "hull_mass_each"
+
+# Fossen diagonal coefficients of the whole vehicle at the design waterline, order surge, sway, heave, roll, pitch, yaw. As generic-catamaran-hull-1200
+# except the surge quadratic damping, which gains the skin friction of the skegs (0.5 rho Cf (1 + k) S_wet with Cf 0.0045, 1 + k = 1.3, S_wet = 2 skegs x 2 sides
+# x 0.03 m2 = 0.12 m2: 0.35 -> 1.6 + 0.35 = 1.95 N s2/m2).
+[tables.hydro]
+columns = ["added_mass", "damp_lin", "damp_quad"]
+rows = [
+  [1.7,   3.0,   1.95],
+  [11.0,  15.0,  49.4],
+  [54.0,  211.0, 244.0],
+  [7.8,   10.0,  13.4],
+  [6.5,   6.0,   13.2],
+  [1.6,   2.0,   2.7],
+]
+fidelity = "estimated"
+rationale = "Strip theory on two rectangular hulls, no hull lift (see the header). Added mass: surge 0.1 x the 17 kg displaced (slender-body A11 ~ 0.05-0.1 m for L/B > 6); sway 2 hulls x 1.2 m x rho pi T^2 (half-ellipse of draft T = 0.0375 m, 2-D added mass rho pi T^2 = 4.4 kg/m, 11 kg total with an end-effect allowance); heave 2 x 1.2 m x rho pi (b/2)^2 = 2 x 1.2 x 22.7 = 54 kg (2-D added mass of the waterplane half-width b/2 = 0.085 m); roll = heave x 0.38^2 = 7.8 kg m2; pitch = 2 hulls x 22.7 x L^3/12 = 6.5 kg m2; yaw = sway x L^2/12 = 1.6 kg m2. Quadratic damping: surge 0.5 rho Cf(1 + k) S_wet with Cf 0.0045 (ITTC-57 at Re 1.2e6), form factor 1 + k = 1.2, S_wet = 2 x 1.2 x (0.17 + 2 x 0.0375) = 0.59 m2 -> 1.6 N s2/m2 plus the skegs 0.35; sway 0.5 rho 1.1 x (2 x 1.2 x 0.0375 = 0.09 m2) = 49.4; heave 0.5 rho 1.2 x A_wp 0.408 = 244; roll 0.5 rho 1.2 (b L) 2 y^3 = 13.4; pitch 0.5 rho 1.2 b 2 x 2 (L/2)^4 / 4 = 13.2; yaw (sway coefficient per metre 41.2) x 2 (L/2)^4 / 4 = 2.7. Linear damping: heave 2 zeta sqrt(rho g A_wp (m + A33)) with zeta = 0.2 (ESTIMATED; small catamarans sit at 0.1-0.3), m = 15.35 kg: 2 x 0.2 x sqrt(3995 x 69.35) = 211 N s/m; roll and pitch zeta ~ 0.1; surge / sway / yaw a few percent of the quadratic term at 1 m/s. The damping ratios and the end-effect allowance are estimates; the rest is arithmetic on the stated geometry."
+
+# Skegs: one fin under the stern of each hull (device vessel `fins`): x y z of the fin centre (z = keel level - depth / 2), side area, depth, lift-curve slope, cross-flow Cd.
+[tables.fins]
+columns = ["x", "y", "z", "area", "span", "cl_alpha", "cd_cross"]
+rows = [
+  [-0.45,  0.38, -0.05, 0.03, 0.10, 1.02, 1.1],
+  [-0.45, -0.38, -0.05, 0.03, 0.10, 1.02, 1.1],
+]
+fidelity = "estimated"
+rationale = "Fin geometry is a design choice (30 cm x 10 cm plate, centre 0.45 m aft of mid-length, 5 cm below the keel level). Lift slope: Helmbold's equation for a low-aspect-ratio wing, CL_alpha = 2 pi AR / (2 + sqrt(4 + AR^2)) per rad (the 2-D slope 2 pi reduced by the finite span), with the effective aspect ratio taken as twice the geometric one, 2 x 0.10^2 / 0.03 = 0.67, because the hull is a reflection plane at the root (a standard rule of thumb for skegs, not checked against a tank test of this hull): 1.02 / rad. Cross-flow drag coefficient 1.1: the normal-force coefficient of a flat plate of low aspect ratio in a flow at 90 degrees is about 1.1-1.2 (Hoerner, Fluid-Dynamic Drag; recalled, not re-fetched). Quasi-steady, valid for incidence below stall (about 15 degrees, beyond which the cross-flow term dominates)."
+
+# Thruster seats: flat faces on the stern transom, the thruster's rear face against it (the thruster then points aft: pusher), at the keel level so the
+# propeller disc (r 0.038 m) is submerged at the design draft.
+[[ports]]
+name = "thruster_port"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.6, 0.38, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Stern face of the port hull at keel level (the real BlueBoat hangs its thrusters under the hulls on brackets; the bracket is not modelled)."
+
+[[ports]]
+name = "thruster_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.6, -0.38, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As thruster_port on the starboard hull."
+
+[[ports]]
+name = "esc_port"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.40, 0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the port hull (the BlueBoat keeps its electronics in a central enclosure; not modelled)."
+
+[[ports]]
+name = "esc_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.40, -0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As esc_port on the starboard hull."
+
+[[ports]]
+name = "battery_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the port hull amidships; one pack per hull (each hull's thruster runs from its own battery), so the weights balance."
+
+[[ports]]
+name = "battery_seat_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, -0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As battery_seat on the starboard hull."
+
+[[ports]]
+name = "fc_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.30, 0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the port hull forward (the real boat has one central electronics enclosure; not modelled)."
+
+[[ports]]
+name = "computer_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.30, -0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the starboard hull forward, opposite the flight controller."
+
+[[ports]]
+name = "regulator_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.20, 0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the port hull aft of the battery."
+
+[[ports]]
+name = "radio_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.20, -0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the starboard hull aft of the battery."
+
+[[ports]]
+name = "mast_fwd"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.30, 0.0, 0.1275]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Top of the forward aluminium cross-member (visual: x = 0.30 m, 0.035 m high, centred at 0.55 x the hull depth), on the centreline between the hulls."
+
+[[ports]]
+name = "mast_aft"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.15, 0.0, 0.1275]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Top of the aft cross-member (x = -0.15 m), on the centreline."
+
+[visual]
+src = "S1"
+note = "BlueBoat look: two deep orange hulls with flat inner walls, a hatch lid on each, aluminium cross-members between them (S1 product page text; hull colour choices are Mariner Blue / Garibaldi Orange / Moray Green / Axolotl Pink, orange drawn). The skegs are dark plates under the stern."
+
+[[visual.elements]]
+gen = "catamaran_hull"
+
+[[sources]]
+id = "S1"
+url = "https://bluerobotics.com/store/boat/blueboat/blueboat/"
+title = "BlueBoat product page, Technical Details (Blue Robotics)"
+accessed = "2026-10-08"
+quote = "Weight (no batteries or payload): 14.5 kg ... Maximum Draft (maximum payload): 320 mm ... Freeboard (2 batteries, no payload): 160 mm ... 120 x 93 x 46 cm (deployed) ... Maximum Speed (2 batteries, no payload): 3 m/s"
+
+[[sources]]
+id = "S2"
+url = "https://bluerobotics.com/store/thrusters/m200-motor/"
+title = "M200 Motor product page (Blue Robotics), specifications"
+accessed = "2026-10-08"
+quote = "Weight in Air (with 1 m cable): 282 g ... Motor Kv: 470 RPM/V ... Max Current (Power) @ 12 V: 17 Amps (205 Watts)"
+
+[[sources]]
+id = "S3"
+url = "https://bluerobotics.com/store/thrusters/speed-controllers/besc30-r3/"
+title = "Basic ESC product page (Blue Robotics), specifications"
+accessed = "2026-10-08"
+quote = "Weight: 16.3 g"

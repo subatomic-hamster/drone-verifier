@@ -1,0 +1,50 @@
+id = "dog-shank-200"
+name = "Dog shank, L = 200 mm (3D printed PLA)"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "shank (L = 200)"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py shank() built with DOG_L_SHANK = 200; length variant of dog-shank (speed sweep). Symmetric solid; the right-hand twin dog-shank-200-r only reflects the knee port axis.
+
+[mirror]
+opposite = "dog-shank-200-r"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+length          = { value = 0.2, unit = "m", fidelity = "estimated", rationale = "Sweep variant L_SHANK = 200 mm (cad/dog/params.py)." }
+lug_radius      = { value = 0.03, unit = "m", fidelity = "estimated", rationale = "Design value KNEE_R2 = KNEE_R1 x KNEE_RATIO = 20 mm x 1.5 (cad/dog/params.py)." }
+mass            = { value = 0.0473, unit = "kg", fidelity = "derived", derivation = "Mesh volume 58.1 cm3 x PLA 1.24 g/cm3, shell + 30 % infill model, by cad/dog/build.py." }
+price           = { value = 0.95, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.0473 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-shank-200.stl"
+material = "pla"
+bbox_min = [-0.01968, -0.017, -0.204]
+bbox_max = [0.017, 0.017, 0.03419]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee axis, beam mid-plane."
+
+[[ports]]
+name = "foot"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, -0.2]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Foot socket stub, 8.4 mm stud bore for the foot core."

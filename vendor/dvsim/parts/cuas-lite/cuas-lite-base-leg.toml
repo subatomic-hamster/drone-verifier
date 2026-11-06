@@ -1,0 +1,22 @@
+id = "cuas-lite-base-leg"
+name = "cuas-lite base_leg (3D printed PETG, group static)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "base_leg"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (14.07 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in its group frame (B static/pan, head frame H tilt): the part frame IS that frame.
+# The CAD draws the leg at (+88, +75); the other three are this mesh rotated by their yaw about their own centre (manifest instances.base_leg).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/base_leg.stl"
+material = "petg"
+bbox_min = [0.078, 0.065, -0.088]
+bbox_max = [0.098, 0.085, -0.008]

@@ -1,0 +1,91 @@
+id = "dog-thigh-al-l"
+name = "Dog thigh, left (hollow shell: two 0.063 in 6061 side plates + printed PA12-CF bands, 36 mm wide x 60-78 mm deep, houses the knee push rod, L = 220 mm): the bio-inspired deep thigh of the '-al' leg"
+category = "frame.machined"
+vendor = "dvsim dog (own design: laser-cut 6061 sheet, SendCutSend-class, + printed PA12-CF bands)"
+part_number = "thigh_al (left)"
+url = "docs/dog/leg-survey.md"
+
+# cad/dog/parts_al.py thigh_al(); mesh by cad/dog/build.py. Frame: origin on the hip pitch axis at the hip actuator output face; hangs along -z; y outboard.
+# Go2 / Mini Cheetah style: the knee push rod (y = 25) and the shank tube run INSIDE the shell. Inboard plate y [0, 1.6] (hull outline of circles r30 at the hip, r26 at the knee, r4 rear-bottom corner), 3/16 in doubler ring on its inner face at the hip,
+# outboard plate y [34.4, 36] below z = -38 (the crank disc r30 occupies y 30..37 above), 3/16 in pin pads on the outer faces at the knee, printed PA12-CF bands (2.5 mm) between the plates: rear z -38 to the bottom to x = -18, front z -38 to -196. Top and the
+# bottom front stay open for the crank and the swinging shank. Knee axis y = 18 mm (shank tube centre line). Same joint axes, rod port and knee range as dog-thigh-bracket-l. Twin: dog-thigh-al-r.
+# The meshes dog-thigh-al-l-vis-al.stl (plates, doubler, pads) and -vis-pa.stl (bands) are the same solid split by material for the [visual] layer (cosmetic only).
+
+[mirror]
+opposite = "dog-thigh-al-r"
+
+[params]
+length          = { value = 0.22, unit = "m", fidelity = "estimated", rationale = "Design value L_THIGH (cad/dog/params.py), the same as the printed thigh so the controller and kinematics stay valid." }
+shell_width     = { value = 0.036, unit = "m", fidelity = "estimated", rationale = "Design value cad/dog/params.py AL_Y: the hip output face to the knee motor output face is SLAB = 37 mm (params.py), 1 mm clearance. The rod and crank positions fix this; a 40-50 mm shell would need a longer slab." }
+depth_hip       = { value = 0.060, unit = "m", fidelity = "estimated", rationale = "Fore-aft depth at the hip: hull of circle r30 about the hip axis (cad/dog/params.py AL_HULL)." }
+depth_knee      = { value = 0.078, unit = "m", fidelity = "estimated", rationale = "Fore-aft depth at the knee: x from -48 to +30 (rear corner circle r4 at x = -44 so the rod end at the flexed lug clears the band; front r26 about the knee). Verified by boolean intersection volume = 0 at 9 knee angles (docs/dog/leg-survey.md)." }
+plate_thickness = { value = 0.0016002, unit = "m", fidelity = "estimated", rationale = "0.063 in = 1.60 mm: listed as a 6061 T6 laser-cut thickness at https://sendcutsend.com/materials/6061-aluminum/ (fetched 2026-10-19: .040, .063, .080, .100, .125, .187, ... in)." }
+pad_thickness   = { value = 0.0047625, unit = "m", fidelity = "estimated", rationale = "3/16 in = 4.76 mm: SendCutSend lists .187 in 6061 (same page). Used for the hip doubler ring and the knee pin pads; must be bonded or riveted to the plate (hand-calc: 664 MPa in the plate alone, 42 MPa with the pad)." }
+youngs_modulus  = { value = 68.9e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+yield_strength  = { value = 276e6, unit = "Pa", src = "S1", fidelity = "datasheet" }
+knee_range      = { value = [-1.32, 0.02], unit = "rad", fidelity = "derived", derivation = "Same linkage as dog-thigh-bracket-l (cad/dog/params.py linkage(0.22): crank R1 = 20 mm, lug R2 = 30 mm at 115 deg, rod pin length 210.0 mm): the crank, rod, lug radius and joint axes are unchanged, so the transmission-angle range [30, 150] deg is the same." }
+mass            = { value = 0.2167, unit = "kg", fidelity = "derived", derivation = "Plates + doubler + pads: mesh volume 72.16 cm3 x 6061 2.70 g/cm3 (parts/common/aluminium-6061.toml) = 194.8 g; printed PA12-CF bands: 31.74 cm3 x 1.15 g/cm3 (parts/common/nylon-cf-pa12.toml) x 0.6 effective solid fraction (3 walls + 30 % infill at 2.5 mm, estimated) = 21.9 g; sum 216.7 g, thigh_al_mass_g() in cad/dog/parts_al.py, run by cad/dog/build.py." }
+
+[params.price]
+value = 38.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "Two laser-cut 0.063 in 6061 plates (about 21 and 18 in2; SendCutSend publishes 2.28 USD for one 0.040 in 2.56 x 1.82 in part and 1.14 USD each at 100, https://sendcutsend.com/services/laser-cutting/examples/; scaled by area and thickness about 12 USD each at a quantity of 8) + 3/16 in doubler and two pads (about 8 USD) + two printed PA12-CF bands (22 g, about 3 USD at 60 USD/kg plus failures) = about 38 USD. No instant quote was obtained; +-50 %."
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-thigh-al-l.stl"
+material = "aluminium-6061"
+bbox_min = [-0.048, -0.00476, -0.246]
+bbox_max = [0.030, 0.04076, 0.030]
+
+[visual]
+rationale = "Cosmetic: 6061 sheet plates in brushed aluminium, printed PA12-CF bands in dark nylon; the two meshes are the same solid as [geometry], split by material (cad/dog/build.py VISUALS)."
+
+[[visual.elements]]
+mesh = "meshes/dog/dog-thigh-al-l-vis-al.stl"
+colors = { body = "alu-brushed" }
+
+[[visual.elements]]
+mesh = "meshes/dog/dog-thigh-al-l-vis-pa.stl"
+colors = { body = "plastic-dark" }
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "flange.steadywin-gim8108-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Hip pitch axis, inboard face of the inboard plate on the hip actuator output (6 x M3 on a 50 mm circle through plate and doubler); pattern is opaque (vendor drawing not retrieved)."
+
+[[ports]]
+name = "knee"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.018, -0.22]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee axis (8 mm shoulder bolt through both plates and pads and the shank boss), on the shank tube centre line y = 18 mm."
+
+[[ports]]
+name = "rod"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.000135, 0.025, -0.088563]
+axis = [0.1194661, 0.0, 0.9928383]
+ref = [0.9928383, 0.0, -0.1194661]
+symmetry = 1
+note = "Centre of the knee push rod at the rest pose, unchanged from dog-thigh-bracket-l (the rod is at y = 25 mm, inside the shell between the plates). Rigid on the thigh here; the Qdd models the linkage as a constant ratio."
+
+[[sources]]
+id = "S1"
+url = "https://quickparts.com/wp-content/uploads/2024/05/Aluminum-6061.pdf"
+title = "Aluminum 6061-T6; 6061-T651 (MatWeb/ASM data sheet, printed copy hosted by Quickparts)"
+accessed = "2026-10-19"
+quote = "Tensile Yield Strength 276 MPa 40000 psi AA; Typical ... Modulus of Elasticity 68.9 GPa 10000 ksi"

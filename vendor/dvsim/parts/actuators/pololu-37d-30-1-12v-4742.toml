@@ -1,0 +1,114 @@
+id = "pololu-37d-30-1-12v-4742"
+name = "Pololu 30:1 Metal Gearmotor 37Dx52L mm 12V, Helical Pinion (item 4742)"
+category = "motor.dc.gearmotor"
+vendor = "Pololu"
+part_number = "Pololu 4742"
+url = "https://www.pololu.com/product/4742"
+
+# Frame: origin on the output-shaft axis at the gearbox face plate; +z = shaft direction (out of the face plate); cylindrical body (37 mm class) occupies z in [-0.052, 0];
+# the 6 mm D-shaft extends 16 mm to z = +0.016. Length is measured from the face plate to back of motor (excludes shaft and terminals).
+# Full DC-motor model derivable at 12 V (6 V figures also published). No encoder.
+
+[params]
+mass               = { value = 0.185,   unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_diameter      = { value = 0.037,   unit = "m",      src = "S1", fidelity = "datasheet" }  # "37D" nominal class
+body_length        = { value = 0.052,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_diameter     = { value = 0.006,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_length       = { value = 0.016,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_type         = { value = "6 mm D-shaft", unit = "-", src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 30.0,    unit = "1",      src = "S1", fidelity = "datasheet" }
+v_nominal          = { value = 12.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+no_load_speed_12v  = { value = 34.558,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 330 rpm
+no_load_current_12v = { value = 0.2,    unit = "A",      src = "S1", fidelity = "datasheet" }
+stall_torque_12v   = { value = 1.3729,  unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 14 kg.cm, extrapolated
+stall_current_12v  = { value = 5.5,     unit = "A",      src = "S1", fidelity = "datasheet" }  # extrapolated
+no_load_speed_6v   = { value = 17.802,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 170 rpm
+no_load_current_6v = { value = 0.15,    unit = "A",      src = "S1", fidelity = "datasheet" }
+stall_torque_6v    = { value = 0.77472, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 7.9 kg.cm
+stall_current_6v   = { value = 3.0,     unit = "A",      src = "S1", fidelity = "datasheet" }
+max_output_power_12v = { value = 12.0,  unit = "W",      src = "S1", fidelity = "datasheet" }
+max_efficiency_12v = { value = 0.54,    unit = "1",      src = "S1", fidelity = "datasheet" }
+speed_at_max_eff   = { value = 29.322,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 280 rpm
+torque_at_max_eff  = { value = 0.17652, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 1.8 kg.cm
+current_at_max_eff = { value = 0.78,    unit = "A",      src = "S1", fidelity = "datasheet" }
+torque_limit_continuous = { value = 0.9807, unit = "N*m", src = "S2", fidelity = "datasheet" }  # 10 kg.cm
+torque_limit_instantaneous = { value = 2.4517, unit = "N*m", src = "S2", fidelity = "datasheet" }  # 25 kg.cm
+mount_screw_max_engagement = { value = 0.003, unit = "m", src = "S2", fidelity = "datasheet" }
+
+# --- DC-motor equivalent (motor side), derived at 12 V ---
+r_effective = { value = 2.182, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 12 V / 5.5 A = 2.182 ohm (Pololu stall values are theoretical extrapolations). The 6 V point gives 6/3.0 = 2.0 ohm; the ~9 % difference is a Pololu source inconsistency, 12 V values are used." }
+omega_noload_motor_12v = { value = 1036.7, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 30 * 34.558 rad/s = 1036.7 rad/s (9900 RPM)." }
+ke = { value = 0.011154, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (12 - 0.2*2.182)/(30*34.558) = 11.564/1036.7 = 1.1154e-2 V*s/rad." }
+kt_motor = { value = 0.011154, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.774, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 1.3729/(30*0.011154*(5.5-0.2)) = 1.3729/1.7735 = 0.774. (Pololu's separate 'max efficiency' of 54 % is the overall motor+gearbox peak.)" }
+friction_torque_motor_noload = { value = 0.002231, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.011154*0.2 = 2.23e-3 N*m at the motor shaft." }
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-circle.31.6.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 6
+note = "Six M3 holes evenly spaced on the face plate forming a regular hexagon with 15.5 mm between neighbouring hole centres (S2). For a regular hexagon the circumradius equals the side, so the bolt circle diameter is 2 * 15.5 = 31 mm (derived). Max 3 mm screw engagement."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.6d"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "6 mm D-shaft, 16 mm long."
+
+[[ports]]
+name = "motor_power"
+pins = ["MOT.1", "MOT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }  # rated (nominal) voltage
+i_peak = { value = 5.5, unit = "A", src = "S1", fidelity = "datasheet" }  # extrapolated stall current
+i_max = { value = 1.375, unit = "A", fidelity = "derived", derivation = "Pololu's general recommendation for brushed DC motors is 25 % or less of the stall current: 0.25 * 5.5 A = 1.375 A." }
+note = "Two motor terminals; terminal style not stated in the retrieved text."
+
+# Pin level: two motor terminals on the rear end cap (estimated: the product page text gives no terminal geometry).
+[[connectors]]
+id = "MOT"
+name = "motor terminals (2)"
+type = "solder-pad-1x2"
+port_type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.052]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states two motor terminals (the port above) but no terminal geometry; position at the rear face z = -body_length, 5 mm spacing, is an estimate. Polarity unmarked (swap to reverse)."
+pins = [
+  { number = 1, name = "M1", kind = "power", dir = "in", v_max = 12.0, i_max = 1.375 },
+  { number = 2, name = "M2", kind = "power", dir = "in", v_max = 12.0, i_max = 1.375 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/4742/specs"
+title = "Pololu item 4742 Specs tab (30:1 Metal Gearmotor 37Dx52L mm 12V Helical Pinion)"
+accessed = "2026-10-07"
+quote = "These units have a 16 mm-long, 6 mm-diameter D-shaped output shaft. || Size: | 37D × 52L mm| 1| Weight: | 185 g | Shaft diameter: | 6 mm| 2| General specifications| Gear ratio: | 30:1 | No-load speed @ 12V: | 330 rpm | No-load current @ 12V: | 0.2 A | Stall current @ 12V: | 5.5 A| 3| Stall torque @ 12V: | 14 kg·cm| 3| Max output power @ 12V: | 12 W | No-load speed @ 6V: | 170 rpm| 4| No-load current @ 6V: | 0.15 A| 4| Stall current @ 6V: | 3.0 A| 4| Stall torque @ 6V: | 7.9 kg·cm| 4| Motor type: | 12V | Performance at maximum efficiency| Max efficiency @ 12V: | 54 % | Speed at max efficiency: | 280 rpm | Torque at max efficiency: | 1.8 kg·cm | Current at max efficiency: | 0.78 A | Output power at max efficiency: | 5.1 W | General specifications| Encoders?: | N | Notes:| 1| Length measurement is from gearbox face plate to back of motor (it does not include the output shaft or motor terminals). See dimension diagram for details.| 2| D shaft."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/4742"
+title = "Pololu item 4742 product page (mounting holes, load limits)"
+accessed = "2026-10-07"
+quote = "The face plate has six mounting holes evenly spaced around the outer edge threaded for M3 screws. These mounting holes form a regular hexagon and the centers of neighboring holes are 15.5 mm apart. || We recommend screwing no more than 3mm (0.12″) into the screw hole. || The recommended upper limit for continuously applied loads is 10 kg-cm (150 oz-in), and the recommended upper limit for instantaneous torque is 25 kg-cm (350 oz-in). || a general recommendation for brushed DC motor operation is 25% or less of the stall current."

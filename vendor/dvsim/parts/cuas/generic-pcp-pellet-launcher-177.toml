@@ -1,0 +1,85 @@
+id = "generic-pcp-pellet-launcher-177"
+name = "Generic compact pneumatic (PCP-class) .177 pellet launcher, barrel + action module (illustrative, not a product)"
+category = "effector.launcher"
+vendor = "generic"
+part_number = "n/a (placeholder for an air-rifle-class pellet launcher)"
+url = "https://hn-sport.de/en/air-gun-hunting-target-shooting/field-target-trophy-177"
+
+# NOT a real product. A generic small-bore pneumatic pellet launcher of the air-rifle class (4.5 mm / .177 diabolo, 150-250 m/s), for
+# the counter-UAS simulation demo. Every number is an estimate; the S1 page (the pellet maker's page) is cited only for the energy
+# band of this class of rifle. The simulator models point-mass ballistics only (device `launcher`): no real firearm, no military
+# munition and no weapon system is modelled.
+# Part frame: origin on the tilt axis at the -y face of the action box (x = barrel direction = muzzle, y = tilt axis, z up). The box
+# spans y in [0, 0.05]; the barrel lies on x, centred in y, z = 0.
+[params]
+mass            = { value = 1.2, unit = "kg", fidelity = "estimated", rationale = "A compact air-rifle-class barrel + action module without stock, scope or large cylinder: 1.2 kg is a design choice sized so the tilt servo (Dynamixel XL430-W250, 1.5 N*m stall) can carry and slew it. Real PCP rifles weigh about 2.5-3.5 kg; this is a lightened placeholder, not a catalogue weight." }
+muzzle_velocity = { value = 200.0, unit = "m/s", fidelity = "estimated", rationale = "Air-rifle-class muzzle speed. With the 0.5598 g pellet 200 m/s is 11.2 J (8.2 ft.lbf), inside the 5.5 ft.lbf minimum energy to ~290 m/s test range quoted on the pellet maker's page (S1)." }
+muzzle_velocity_std = { value = 2.0, unit = "m/s", fidelity = "estimated", rationale = "Shot-to-shot muzzle speed spread of a regulated pneumatic: about 1 % one sigma. Not measured." }
+spread_std      = { value = 2.0e-4, unit = "rad", fidelity = "estimated", rationale = "Direction dispersion per axis (one sigma) of a good air rifle, about 1 MOA (0.29 mrad) group size; 0.2 mrad per axis. Not measured." }
+min_shot_interval = { value = 0.5, unit = "s", fidelity = "estimated", rationale = "Re-cock / indexing time of a repeating pneumatic action; program-side limit, the device has none." }
+bore_diameter   = { value = 4.5e-3, unit = "m", fidelity = "estimated", rationale = "Nominal .177 calibre (4.5 mm); the pellet part carries the head size used for drag." }
+barrel_length   = { value = 0.26, unit = "m", fidelity = "estimated", rationale = "Compact carbine barrel; geometry only." }
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+rationale = "Generic air-rifle-class PCP module, deliberately without any maker's styling: black anodised receiver with a Picatinny-style top rail (the camera seat), air reservoir bottle with a pressure gauge under the barrel, shrouded barrel with a muzzle crown, side bolt handle with a ball knob, clamp plate on the horn side. Proportions follow the [geometry] receiver box and barrel."
+
+[[visual.elements]]
+gen = "pcp_launcher"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.10, 0.025, 0.035]
+pos = [-0.02, 0.025, 0.0]
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.008, 0.13]
+pos = [0.21, 0.025, 0.0]
+zaxis = [1.0, 0.0, 0.0]
+
+# Mount: the tilt servo's horn lands on the -y face; the output axis then runs along +y (the tilt axis), the barrel along +x.
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl430"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "A real launcher would be clamped to the horn through a cradle; the seat is placed on the tilt axis so the module balances on it (centre of mass 4 mm behind the axis)."
+
+# Muzzle: the launcher device's site takes this port's pose: +z of the site = the port axis = the barrel direction.
+[[ports]]
+name = "muzzle"
+kind = "mech"
+type = "muzzle-axis"
+gender = "neutral"
+pos = [0.34, 0.025, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "Barrel muzzle on the barrel axis: action box front at x = 0.08, barrel 0.26 m long."
+
+# Camera seat on top of the action box (the camera is co-aligned with the barrel).
+[[ports]]
+name = "camera_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.04, 0.025, 0.035]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "Top face of the action box, 4 cm behind the front, centred in y (so the camera and barrel optical/ballistic axes are parallel, 4 cm apart vertically)."
+
+[[sources]]
+id = "S1"
+url = "https://hn-sport.de/en/air-gun-hunting-target-shooting/field-target-trophy-177"
+title = "H&N Sport, Field Target Trophy .177 cal. product page (values read through a page summariser)"
+accessed = "2026-10-07"
+quote = "Weight: 8.64 gr | Ballistic coefficient (Bc): 0.021 | Minimum muzzle energy: 5.5 ft.lbs | Maximum distance: 50 m"

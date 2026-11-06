@@ -1,0 +1,108 @@
+id = "infineon-irlb8721pbf"
+name = "Infineon (International Rectifier) IRLB8721PbF logic-level N-MOSFET, 30 V, 62 A, TO-220AB (one flywheel channel)"
+category = "semiconductor.mosfet"
+vendor = "Infineon / International Rectifier (sold by Adafruit as product 355)"
+part_number = "IRLB8721PbF"
+url = "https://www.adafruit.com/product/355"
+
+# Low-side switch for one brushed flywheel motor: source to ground, drain to the motor's negative lead, gate to a Pico GPIO through a 100 ohm resistor with a 10 kohm pull-down (circuit advice, not a part property).
+# Two of them make the 'dual MOSFET' of the flywheel stage; add one flyback diode across each motor (parts/electronics/vishay-1n5822-schottky-3a-40v.toml).
+# Gate drive: the data sheet specifies RDS(on) at VGS = 10 V and 4.5 V only. The Pico drives 3.3 V, which is above the 2.35 V maximum threshold but below the specified 4.5 V point; Adafruit's page says the part can be driven
+# 'directly from a microcontroller running on 2.8V, 3.3V, or 5V logic' (S2). At the 1.9 A stall current of a 180 motor the dissipation at 3.3 V (RDS(on) of several tens of mohm, not specified) is well under 1 W.
+# Part frame: origin at the centre of the plastic body's mounting face, +z up from the face, pins pointing to -y; the metal tab (drain) at +y. Dimensions: S1's package outline figure has no text values here, so the body size is the TO-220AB standard (estimated).
+
+[params]
+v_ds_max          = { value = 30.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_d_cont_25c      = { value = 62.0, unit = "A", src = "S1", fidelity = "datasheet" }   # ID @ TC = 25 degC, VGS = 10 V (package-limited)
+i_d_cont_100c     = { value = 44.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_d_pulsed        = { value = 250.0, unit = "A", src = "S1", fidelity = "datasheet" }
+v_gs_max          = { value = 20.0, unit = "V", src = "S1", fidelity = "datasheet" }   # +-20 V
+v_gs_th_min       = { value = 1.35, unit = "V", src = "S1", fidelity = "datasheet" }
+v_gs_th_typ       = { value = 1.80, unit = "V", src = "S1", fidelity = "datasheet" }
+v_gs_th_max       = { value = 2.35, unit = "V", src = "S1", fidelity = "datasheet" }
+r_ds_on_10v_max   = { value = 0.0087, unit = "ohm", src = "S1", fidelity = "datasheet" }   # VGS = 10 V, ID = 31 A
+r_ds_on_4v5_max   = { value = 0.016, unit = "ohm", src = "S1", fidelity = "datasheet" }   # VGS = 4.5 V, ID = 25 A
+q_g_typ           = { value = 7.6e-9, unit = "C", src = "S1", fidelity = "datasheet" }   # total gate charge, VGS = 4.5 V
+p_d_25c           = { value = 65.0, unit = "W", src = "S1", fidelity = "datasheet" }
+t_j_max           = { value = 448.15, unit = "K", src = "S1", fidelity = "datasheet" }   # 175 degC
+mass              = { value = 0.002, unit = "kg", fidelity = "estimated", rationale = "The data sheet gives no weight. A TO-220AB package weighs about 2 g (typical for the package; not fetched)." }
+length            = { value = 0.0156, unit = "m", fidelity = "estimated", rationale = "Overall length of a TO-220AB with the tab, about 15.6 mm (package standard); S1's outline figure carries no readable text values." }
+width             = { value = 0.0100, unit = "m", fidelity = "estimated", rationale = "TO-220AB body width about 10 mm (package standard)." }
+height            = { value = 0.0045, unit = "m", fidelity = "estimated", rationale = "TO-220AB body thickness about 4.5 mm (package standard)." }
+price         = { value = 2.25, unit = "USD", src = "S2", fidelity = "datasheet" }   # Adafruit, quantity 1-9, 2026-10-11 (page said out of stock; 10-99: 2.03)
+
+# Envelope (collision, wire clearance): the TO-220AB body, 15.6 x 10 x 4.5 mm lying on its mounting face (z = 0), tab towards +y, leads towards -y.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0078, 0.005, 0.00225]
+pos = [0.0, 0.0, 0.00225]
+
+[[ports]]
+name = "switch"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "passthrough"
+pins = ["Q.2", "Q.3"]
+v_max = { value = 30.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 62.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Drain and source, the switched path."
+
+[[ports]]
+name = "gate"
+kind = "signal"
+type = "gate"
+gender = "neutral"
+pins = ["Q.1"]
+level_max = { value = 20.0, unit = "V", src = "S1", fidelity = "datasheet" }
+level_min = { value = 2.35, unit = "V", src = "S1", fidelity = "datasheet" }   # maximum threshold: guaranteed on above this (fully enhanced at 4.5 V)
+note = "Logic-level gate; +-20 V absolute maximum."
+
+[[connectors]]
+id = "Q"
+name = "TO-220AB leads (G, D, S)"
+type = "to-220-3"
+gender = "male"
+joinable = true
+pos = [0.0, -0.0050, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Leads leave the bottom edge of the body; the 2.54 mm lead pitch is the TO-220 standard (positional estimate for the origin)."
+pins = [
+  { number = 1, name = "G", kind = "signal", dir = "in", v_max = 20.0, v_min = 2.35, note = "gate" },
+  { number = 2, name = "D", kind = "power", dir = "io", v_max = 30.0, i_max = 62.0, note = "drain; also the metal tab" },
+  { number = 3, name = "S", kind = "ground", note = "source (low-side switch: the return rail)" },
+]
+
+[visual]
+src = "V1"
+note = "Black TO-220 body with a metal tab and three leads (product photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.infineon.com/dgdl/irlb8721pbf.pdf?fileId=5546d462533600a40153566056732591"
+title = "Infineon / IR IRLB8721PbF data sheet (PD-97390)"
+accessed = "2026-10-11"
+quote = "VDSS 30V RDS(on) max 8.7m @VGS = 10V Qg (typ.) 7.6nC ... G Gate D Drain S Source TO-220AB ... ID @ TC = 25°C Continuous Drain Current, VGS @ 10V 62 ... ID @ TC = 100°C 44 ... IDM Pulsed Drain Current 250 ... VGS Gate-to-Source Voltage ± 20 ... RDS(on) Static Drain-to-Source On-Resistance 6.5 8.7 mΩ VGS = 10V, ID = 31A; 13.1 16 VGS = 4.5V, ID = 25A ... VGS(th) Gate Threshold Voltage 1.35 1.80 2.35 V VDS = VGS, ID = 25μA ... Qg Total Gate Charge 7.6 13 ... PD @TC = 25°C 65 W ... TJ -55 to + 175 °C"
+
+[[sources]]
+id = "S2"
+url = "https://www.adafruit.com/product/355"
+title = "Adafruit: N-channel power MOSFET - 30V / 60A (product 355)"
+accessed = "2026-10-11"
+quote = "N-channel power MOSFET - 30V / 60A ... $2.25 ... Vds = 30V max ... Max current = 62A ... Vgs = 2.35V max ... Rds_on = as low as 8.7 milliohm - depending on Vgs ... directly from a microcontroller running on 2.8V, 3.3V, or 5V logic"
+
+[[sources]]
+id = "V1"
+url = "https://www.adafruit.com/product/355"
+title = "Adafruit product 355 photo (appearance only)"
+accessed = "2026-10-11"
+quote = "N-channel power MOSFET - 30V / 60A"

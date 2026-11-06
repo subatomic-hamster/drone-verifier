@@ -1,0 +1,242 @@
+id = "pjrc-teensy-4-0"
+name = "PJRC Teensy 4.0 (NXP iMXRT1062 Cortex-M7, 600 MHz) development board"
+category = "pcb.mcu"
+vendor = "PJRC"
+part_number = "Teensy 4.0 (Adafruit product 4323)"
+url = "https://www.pjrc.com/store/teensy40.html"
+
+# Flight computer of assemblies/tvc-lander.toml: the real-time loop (IMU read, estimator, TVC control, servo bus, pyro outputs) of examples/lander/flight.py is firmware-style
+# code meant for a board of this class. Frame: origin at the board centre on the component face, +z out of that face, x along the 36.8 mm side.
+[visual]
+rationale = "A small development board of the part's length x width x height (36.8 x 18.0 x 4.6 mm), drawn by the generic board generator."
+
+[[visual.elements]]
+gen = "board_generic"
+
+[params]
+mass            = { value = 0.0028, unit = "kg", src = "S2", fidelity = "datasheet" }
+length          = { value = 0.0368, unit = "m", src = "S2", fidelity = "datasheet" }
+width           = { value = 0.018, unit = "m", src = "S2", fidelity = "datasheet" }
+height          = { value = 0.0046, unit = "m", src = "S2", fidelity = "datasheet" }
+cpu_clock       = { value = 600e6, unit = "Hz", src = "S2", fidelity = "datasheet" }
+supply_voltage  = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_600mhz = { value = 0.100, unit = "A", fidelity = "estimated", rationale = "A retailer summary of the PJRC power-consumption page says 'at 600 MHz, the board draws approximately 100 mA'; the PJRC page itself was not retrieved. Used only for the battery budget." }
+v3v3_max_external = { value = 0.250, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0023]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "Underside of the board on a deck (standoffs); the board has no mounting holes, it is held by its header pins or a clip."
+
+[[ports]]
+name = "vin"
+pins = ["R.VIN", "R.GND"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "The PJRC page says only that 5 V may be applied to VIN when USB power is not used; the 5.5 V ceiling of the VIN pad is the usual 5 V-class limit and is not on the retrieved page." }
+
+[[ports]]
+name = "bus"
+kind = "signal"
+type = "dynamixel-ttl"
+gender = "neutral"
+level = { value = 3.3, unit = "V", fidelity = "estimated", rationale = "Teensy 4.0 pins are 3.3 V logic (the 3.3 V pin recommendation of S1); the XL330 data line is 3.3 V compatible (parts/arm/robotis-xl330-m077-t)." }
+
+[[ports]]
+name = "pyro"
+kind = "signal"
+type = "gpio"
+gender = "neutral"
+level = { value = 3.3, unit = "V", fidelity = "estimated", rationale = "3.3 V GPIO that drives the pyro MOSFET gates (a logic-level N-FET switching the igniter from the battery)." }
+
+# ---- Connectors (pin level). Pin names, numbers and alternate functions are the PJRC pinout cards (S3 front, S4 back; the word positions of
+# the card PDFs were matched to the pin columns). Frame: component face up, USB Micro-B at the -x end (the side is not stated: estimated);
+# the two 14-pin rows are 0.6 in apart (the Teensy 4.0 standard; the card gives no dimension, estimated) on a 0.1 in pitch.
+[[connectors]]
+id = "L"
+name = "left pin row (GND, 0 - 12)"
+type = "header-1x14-2.54mm"
+gender = "male"
+pos = [0.0, -0.00762, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 14
+pitch = 0.00254
+src = "S3"
+fidelity = "literature"
+pose_rationale = "Row spacing 15.24 mm and the USB end are estimates; the card shows the order of the pins only. Signal pins accept 0 to 3.3 V and are not 5 V tolerant (S1)."
+pins = [
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "0", name = "0", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["RX1", "CRX2", "CS1", "PWM"] },
+  { number = "1", name = "1", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["TX1", "CTX2", "MISO1", "PWM"] },
+  { number = "2", name = "2", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["OUT2", "PWM"] },
+  { number = "3", name = "3", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["LRCLK2", "PWM"] },
+  { number = "4", name = "4", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["BCLK2", "PWM"] },
+  { number = "5", name = "5", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["IN2", "PWM"] },
+  { number = "6", name = "6", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["OUT1D", "PWM"] },
+  { number = "7", name = "7", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["RX2", "OUT1A", "PWM"] },
+  { number = "8", name = "8", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["TX2", "IN1", "PWM"] },
+  { number = "9", name = "9", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["OUT1C", "PWM"] },
+  { number = "10", name = "10", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["CS", "MQSR", "PWM"] },
+  { number = "11", name = "11", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["MOSI", "CTX1", "PWM"] },
+  { number = "12", name = "12", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["MISO", "MQSL", "PWM"] },
+]
+
+[[connectors]]
+id = "R"
+name = "right pin row (Vin, GND, 3.3V, 23 - 13)"
+type = "header-1x14-2.54mm"
+gender = "male"
+pos = [0.0, 0.00762, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 14
+pitch = 0.00254
+src = "S3"
+fidelity = "literature"
+pose_rationale = "As L."
+pins = [
+  { number = "VIN", name = "Vin", kind = "power", dir = "in", v_min = 3.6, v_max = 5.5, note = "card: 'Vin (3.6 to 5.5 volts)'; S1: 'When USB power is not used, 5V power may be applied to the VIN pin'; VIN and VUSB are tied unless the pad between them is cut (S4)" },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "3V3", name = "3.3V", kind = "power", dir = "out", v = 3.3, i_max = 0.25, note = "card: '3.3V (250 mA max)'; 'not meant to receive power on its 3.3V pin' (S1)" },
+  { number = "23", name = "23", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A9", "CRX1", "MCLK1", "PWM"] },
+  { number = "22", name = "22", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A8", "CTX1", "PWM"] },
+  { number = "21", name = "21", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A7", "RX5", "BCLK1"] },
+  { number = "20", name = "20", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A6", "TX5", "LRCLK1"] },
+  { number = "19", name = "19", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A5", "SCL0", "PWM"] },
+  { number = "18", name = "18", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A4", "SDA0", "PWM"] },
+  { number = "17", name = "17", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A3", "TX4", "SDA1"] },
+  { number = "16", name = "16", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A2", "RX4", "SCL1"] },
+  { number = "15", name = "15", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A1", "RX3", "S/PDIF IN", "PWM"] },
+  { number = "14", name = "14", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A0", "TX3", "S/PDIF OUT", "PWM"] },
+  { number = "13", name = "13", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["LED", "SCK", "CRX1", "PWM"], note = "pin 13 has the orange LED (S1)" },
+]
+
+[[connectors]]
+id = "BOT"
+name = "bottom pads 24 - 33"
+type = "smd-pad-2x5"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0016]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 5
+pitch = 0.00254
+layout = "dual"
+src = "S4"
+fidelity = "literature"
+pose_rationale = "Pads on the underside, pairs 24/25 .. 32/33 (S4); the position on the board is estimated, the pad size is 2.794 x 0.889 mm (S1)."
+pins = [
+  { number = "24", name = "24", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A10", "TX6", "SCL2", "PWM"] },
+  { number = "25", name = "25", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A11", "RX6", "SDA2", "PWM"] },
+  { number = "26", name = "26", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A12", "MOSI1"] },
+  { number = "27", name = "27", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["A13", "SCK1"] },
+  { number = "28", name = "28", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["RX7", "PWM"] },
+  { number = "29", name = "29", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["TX7", "PWM"] },
+  { number = "30", name = "30", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["CRX3"] },
+  { number = "31", name = "31", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["CTX3"] },
+  { number = "32", name = "32", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["OUT1B"] },
+  { number = "33", name = "33", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["MCLK2", "PWM"] },
+]
+
+[[connectors]]
+id = "SD"
+name = "bottom SD / system pads (34 - 39, VUSB, USB host, On/Off, Program, VBat)"
+type = "smd-pad-line"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0016]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 16
+pitch = 0.0015
+src = "S4"
+fidelity = "literature"
+pose_rationale = "The back card lists these pads (SD card 4-bit SDIO 34-39, GND and 3.3V beside them, USB host D+ / D- / VUSB, the On/Off, Program, GND, 3.3V and VBat pads); only the names and functions come from it, the positions are estimates."
+pins = [
+  { number = "34", name = "34", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["DAT1", "MISO2", "PWM"] },
+  { number = "35", name = "35", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["DAT0", "MOSI2", "PWM"] },
+  { number = "36", name = "36", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["CLK", "CS2", "PWM"] },
+  { number = "37", name = "37", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["CMD", "SCK2", "PWM"] },
+  { number = "38", name = "38", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["DAT3", "RX5", "PWM"] },
+  { number = "39", name = "39", kind = "signal", dir = "io", v = 3.3, v_max = 3.3, alt = ["DAT2", "TX5", "PWM"] },
+  { number = "SDGND", name = "GND", kind = "ground" },
+  { number = "SD3V3", name = "3.3V", kind = "power", dir = "out", v = 3.3 },
+  { number = "VUSB", name = "VUSB", kind = "power", dir = "io", v = 5.0, note = "USB power, connected to VIN; the back card says to cut the link between VIN and VUSB when using battery or external power (S4)" },
+  { number = "D-", name = "D-", kind = "signal", dir = "io", alt = ["USB host"] },
+  { number = "D+", name = "D+", kind = "signal", dir = "io", alt = ["USB host"] },
+  { number = "ONOFF", name = "On/Off", kind = "signal", dir = "in", note = "'A pushbutton is meant to be connected between On/Off and GND' (S1)" },
+  { number = "PROG", name = "Program", kind = "signal", dir = "in", note = "external hardware can force entry to programming mode (S1)" },
+  { number = "PGND", name = "GND", kind = "ground" },
+  { number = "P3V3", name = "3.3V", kind = "power", dir = "out", v = 3.3 },
+  { number = "VBAT", name = "VBat", kind = "power", dir = "in", note = "3 V coin cell for date and time and power management (S4)" },
+]
+
+[[connectors]]
+id = "USB"
+name = "USB Micro-B"
+type = "usb-micro-b"
+gender = "female"
+pos = [-0.0184, 0.0, 0.0015]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.0008
+src = "S5"
+fidelity = "literature"
+pose_rationale = "S4 lists 'USB Micro-B Cable' among the system requirements; the 5-pin assignment is the USB standard's (S5), the end of the board estimated."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "in", v = 5.0 },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "ID", kind = "signal", dir = "in" },
+  { number = 5, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S3"
+url = "https://www.pjrc.com/teensy/card10a_rev2_web.pdf"
+title = "PJRC Teensy 4.0 front-side reference card (pdftotext word positions matched to the pin columns)"
+accessed = "2026-10-09"
+quote = "Vin (3.6 to 5.5 volts) | GND | 3.3V (250 mA max) | 23 A9 CRX1 MCLK1 | 22 A8 CTX1 | 21 A7 RX5 BCLK1 | 20 A6 TX5 LRCLK1 | 19 A5 SCL0 | 18 A4 SDA0 | 17 A3 TX4 SDA1 | 16 A2 RX4 SCL1 | 15 A1 RX3 S/PDIF IN | 14 A0 TX3 S/PDIF OUT | 13 (LED) SCK CRX1 | GND 0 RX1 CRX2 | 1 TX1 CTX2 | 2 OUT2 | 3 LRCLK2 | 4 BCLK2 | 5 IN2 | 6 OUT1D | 7 RX2 OUT1A | 8 TX2 IN1 | 9 OUT1C | 10 CS MQSR | 11 MOSI CTX1 | 12 MISO MQSL"
+
+[[sources]]
+id = "S4"
+url = "https://www.pjrc.com/teensy/card10b_rev2_web.pdf"
+title = "PJRC Teensy 4.0 back-side reference card (pdftotext)"
+accessed = "2026-10-09"
+quote = "24 A10 TX6 SCL2 | 25 A11 RX6 SDA2 | 26 A12 MOSI1 | 27 A13 SCK1 | 28 RX7 | 29 TX7 | 30 CRX3 | 31 CTX3 | 32 OUT1B | 33 MCLK2 | 34 DAT1 MISO2 | 35 DAT0 MOSI2 | 36 CLK CS2 | 37 CMD SCK2 | 38 DAT3 RX5 | 39 DAT2 TX5 | VUSB D- D+ | On/Off Program GND 3.3V VBat | Cut to separate VIN from VUSB, if using battery or external power. | Teensy 4.0 signal pins are not 5V tolerant. Do not apply more than 3.3 volts to any pin, except VIN or VUSB. | USB Micro-B Cable"
+
+[[sources]]
+id = "S5"
+url = "https://en.wikipedia.org/wiki/USB_hardware"
+title = "USB hardware (Wikipedia), Micro-B pin assignments (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "1: Power (VBUS, 5 V) | 2: Data- (D-) | 3: Data+ (D+) | 4: ID (On-The-Go) | 5: GND"
+
+[[sources]]
+id = "S1"
+url = "https://www.pjrc.com/store/teensy40.html"
+title = "PJRC Teensy 4.0 product page"
+accessed = "2026-10-08"
+quote = "When USB power is not used, 5V power may be applied to the VIN pin. ... The recommended maximum for external 3.3V usage is 250mA."
+
+[[sources]]
+id = "S2"
+url = "https://www.adafruit.com/product/4323"
+title = "PJRC Teensy 4.0 USB Development Board (Adafruit product 4323), Technical Details"
+accessed = "2026-10-08"
+quote = "Product Dimensions: 36.8mm x 18.0mm x 4.6mm / 1.4\" x 0.7\" x 0.2\" ... Product Weight: 2.8g / 0.1oz ... The Teensy 4.0 features an ARM Cortex-M7 processor at 600 MHz, with a NXP iMXRT1062 chip"

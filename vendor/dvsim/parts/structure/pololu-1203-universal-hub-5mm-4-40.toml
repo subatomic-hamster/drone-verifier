@@ -1,0 +1,33 @@
+id = "pololu-1203-universal-hub-5mm-4-40"
+name = "Pololu universal aluminium mounting hub for 5 mm shaft, #4-40 holes (item 1203, one hub)"
+category = "structure.hub"
+vendor = "Pololu"
+part_number = "1203"
+url = "https://www.pololu.com/product/1203"
+
+# Frame: origin on the bore axis at the shaft-side face, +z = the face carrying the mounting holes. Mass is for ONE hub (the pack holds two).
+[params]
+mass            = { value = 0.0032, unit = "kg", src = "S1", fidelity = "datasheet" }
+outer_diameter  = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness       = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+bore_diameter   = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+
+# Imperial #4-40 holes: no thread.<m> family exists for them and the hole circle is not published, so only the bore is filed.
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.005
+note = "5 mm bore for round or D shafts, secured by a set screw (included, one per hub)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1203/specs"
+title = "Pololu item 1203 specs (Universal Aluminum Mounting Hub for 5mm Shaft, #4-40 Holes, 2-pack)"
+accessed = "2026-10-07"
+quote = "Size: | 19 mm diameter × 5 mm thick | Weight: | 3.2 g| 1| Shaft diameter: | 5 mm | Mounting hole size: | #4-40 | Notes:| 1| For a single hub only (without set screw)."

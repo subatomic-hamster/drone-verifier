@@ -1,0 +1,134 @@
+id = "robotis-dynamixel-xc430-w150"
+name = "ROBOTIS DYNAMIXEL XC430-W150-T 12V 159.59:1 smart servo (coreless, metal gears)"
+category = "motor.servo"
+vendor = "ROBOTIS"
+part_number = "XC430-W150-T"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xc430-w150/"
+
+# Frame: origin on the output axis at the horn-seat face of the case; +z = output axis out of the case.
+# Case 28.5 x 46.5 x 34 mm (W x H x D per ROBOTIS); D is taken as the extent along the output axis (inference), so the case occupies z in [-0.034, 0].
+# Output axis in-plane offset is only in the drawing PDF/STEP; left at the origin.
+# ROBOTIS publishes no no-load current, so Ke is computed with I0*R neglected.
+# Frame-hole family 'dynamixel-x430-frame' shared with XL430/XM430 (ROBOTIS lists the same FR12 frames on all their pages; inference).
+
+[params]
+mass            = { value = 0.065,   unit = "kg",  src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0285,  unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0465,  unit = "m",   src = "S1", fidelity = "datasheet" }
+depth           = { value = 0.034,   unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 159.59,  unit = "1",   src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "full metal gears, engineering plastic body, coreless motor", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }  # 12-bit contactless absolute, ams AS5601
+protocol        = { value = "DYNAMIXEL TTL half-duplex asynchronous serial, 8N1, IDs 0-252", unit = "-", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 9600,    unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 4500000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+connector       = { value = "JST EHR-03 housing / JST B3B-EH-A header, pins GND-VDD-DATA", unit = "-", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -5, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 80, unit = "degC", src = "S1", fidelity = "datasheet" }
+standby_current = { value = 0.046, unit = "A", src = "S1", fidelity = "datasheet" }
+horn_spline     = { value = "ROBOTIS X430 horn (spline/bolt circle only in the drawing PDF/STEP, not retrievable as text)", unit = "-", src = "S1", fidelity = "datasheet" }
+
+# --- datasheet performance at three supply voltages ---
+v_nominal           = { value = 12.0,   unit = "V",     src = "S1", fidelity = "datasheet" }  # "Recommended : 12.0 [V]"
+v_operating_min     = { value = 6.5,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 14.8,   unit = "V",     src = "S1", fidelity = "datasheet" }
+stall_torque_11v1   = { value = 1.4,    unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_11v1  = { value = 1.3,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_11v1  = { value = 10.367, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 99 rev/min
+stall_torque_12v    = { value = 1.6,    unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_12v   = { value = 1.4,    unit = "A",     src = "S1", fidelity = "datasheet" }
+kt_output_12v       = { value = 1.143,  unit = "N*m/A", src = "S1", fidelity = "datasheet" }
+no_load_speed_12v   = { value = 11.100, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 106 rev/min
+stall_torque_9v     = { value = 1.2,    unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_9v    = { value = 1.1,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_9v    = { value = 8.378,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 80 rev/min
+
+# --- DC-motor equivalent (motor side), derived from the 11.1 V and 12 V points (I0 unpublished, neglected) ---
+r_effective = { value = 8.55, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall: 11.1 V/1.3 A = 8.538 ohm, 12 V/1.4 A = 8.571 ohm; mean 8.55 ohm (includes driver and lead resistance; 1-digit current table so +/-4%)." }
+ke = { value = 0.006741, unit = "V*s/rad", fidelity = "derived", derivation = "Ke ~ V/(N*omega_out) with I0*R neglected: 11.1 V/(159.59*10.367 rad/s) = 6.709e-3; 12 V/(159.59*11.100) = 6.774e-3; mean 6.741e-3 V*s/rad." }
+kt_motor = { value = 0.006741, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency_raw = { value = 1.03, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Ke*I_stall): 11.1 V 1.4/(159.59*0.006709*1.3) = 1.006; 12 V 1.6/(159.59*0.006774*1.4) = 1.057; mean 1.03. Marginally above 1: stall current published to 1 decimal (+/-4%) and I0 neglected, so the true value is probably 0.9-1.0 but cannot be pinned down. Do NOT use as a physical efficiency; a metal-gear train realistically gives 0.7-0.9." }
+
+[tables.datasheet_points]
+columns = ["voltage_V", "stall_torque_Nm", "stall_current_A", "kt_output_Nm_per_A", "no_load_rpm"]
+rows = [[9.0, 1.2, 1.1, 1.091, 80], [11.1, 1.4, 1.3, 1.077, 99], [12.0, 1.6, 1.4, 1.143, 106]]
+src = "S1"
+fidelity = "datasheet"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.dynamixel-x430-frame"
+gender = "neutral"
+pos = [0.0, 0.0, -0.034]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Frame/side mounting points per ROBOTIS drawing (PDF/DWG/STEP, not retrievable as text); opaque family tag."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.dxl-x430"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "ROBOTIS X430 output horn interface; spline/bolt circle not published as text."
+
+[[ports]]
+name = "power_in"
+pins = ["TTL.1", "TTL.2"]
+kind = "power"
+type = "jst-eh.3"
+gender = "female"
+role = "sink"
+v_max = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 6.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 1.4, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 12 V; no continuous rating published
+
+[[ports]]
+name = "bus"
+pins = ["TTL.3"]
+kind = "signal"
+type = "dynamixel-ttl"
+gender = "female"
+note = "TTL multidrop bus; logic level not stated on the XC430 page."
+
+# Pin level: the TTL connector (JST EHR-03 housing, pinout GND / VDD / DATA) from the e-Manual Connector Information table (P1).
+[[connectors]]
+id = "TTL"
+name = "TTL connector (JST EHR-03)"
+type = "jst-eh-3"
+port_type = "jst-eh.3"
+gender = "female"
+pos = [-0.01425, 0.0, -0.012]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "P1"
+fidelity = "datasheet"
+rationale = "P1 gives the housing (JST EHR-03) and the pin functions; the 2.5 mm pitch is the JST EH-series pitch, not stated in P1."
+pose_rationale = "The e-Manual drawing is not machine-readable, so the connector position on the case is a positional estimate (side of the case, near the base)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "in" },
+  { number = 3, name = "DATA", kind = "signal", dir = "io", note = "half-duplex TTL (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xc430-w150/"
+title = "ROBOTIS e-Manual XC430-W150, Connector Information"
+accessed = "2026-10-09"
+quote = "Connector Information | Item | TTL | Pinout | 1 | GND | 2 | VDD | 3 | DATA | Housing | JST EHR-03 | PCB Header | JST B3B-EH-A | Crimp Terminal | JST SEH-001T-P0.6 | Wire Gauge for DYNAMIXEL | 21 AWG"
+
+[[sources]]
+id = "S1"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xc430-w150/"
+title = "ROBOTIS e-Manual XC430-W150, Specifications and Connector Information"
+accessed = "2026-10-07"
+quote = "Position Sensor| Contactless absolute encoder (12Bit, 360 [°])| Maker : ams(www.ams.com), Part No : AS5601 || Motor| Coreless || Baud Rate| 9,600 [bps] ~ 4.5 [Mbps] || Resolution| 4096 [pulse/rev] || Weight| 65 [g] || Dimensions (W x H x D)| 28.5 x 46.5 x 34 [mm] || Gear Ratio| 159.59 : 1 || Stall Torque| 1.2 [N.m] (at 9.0 [V], 1.1 [A], 1.091 [Nm/A])| 1.4 [N.m] (at 11.1 [V], 1.3 [A], 1.077 [Nm/A])| 1.6 [N.m] (at 12.0 [V], 1.4 [A], 1.143 [Nm/A]) || No Load Speed| 80 [rev/min] (at 9.0 [V])| 99 [rev/min] (at 11.1 [V])| 106 [rev/min] (at 12.0 [V]) || Operating Temperature| -5 ~ +80 [°C] || Input Voltage| 6.5 ~ 14.8 [V] (Recommended : 12.0 [V]) || Physical Connection| TTL Level Multidrop Bus | Half Duplex Asynchronous Serial Communication (8bit, 1stop, No Parity) || ID| 253 ID (0 ~ 252) || Case Material| Engineering Plastic (Body)| Gear Material| Full Metal Gear| Standby Current| 46 [mA] || Connector Information| Item| TTL| Pinout| 1| GND| 2| VDD| 3| DATA| Diagram| Housing| JST EHR-03| PCB Header| JST B3B-EH-A"

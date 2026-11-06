@@ -1,0 +1,77 @@
+id = "tvc-gimbal-plate"
+name = "TVC gimbal, fixed plate: 4 in tube bulkhead with the pitch servo arm, PLA (design of this repo)"
+category = "rocket.gimbal"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# A two-axis gimbal for a 29 mm motor, direct-driven by two Dynamixel XL330 servos (20 x 34 x 26 mm), in a 4 in tube (inside diameter 0.0991 m). Three printed
+# parts: this plate (fixed to the tube), tvc-gimbal-ring (hinged to the plate about y by the PITCH servo) and tvc-gimbal-cradle (hinged to the ring about x
+# by the YAW servo, holds the motor). The axes cross at the origin of all three part frames (the gimbal centre); +z towards the nose. The servo bodies
+# sit outside the ring (hub planes at |r| = 0.021 m, bodies to 0.0469 m, the arms' inner faces), inside the tube wall (0.0496 m): hence the 4 in tube.
+# Dimensions are design choices; the packaging (clearances at +-10 deg, screws, wiring) is NOT checked beyond the builder's interference check.
+# PITCH SERVO: output hub at (0, 0.021, 0) facing -y; its base mounts to this plate's arm at (0, 0.0469, 0.0075) (the XL330 base port is 7.5 mm off the
+# body centre along the servo's long axis, which runs along z).
+[params]
+disc_radius = { value = 0.0495, unit = "m", fidelity = "estimated", rationale = "Design choice: 0.5 mm inside the tube's 0.04955 m inside radius (parts/rocket/generic-fiberglass-tube-102)." }
+disc_thickness = { value = 0.004, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+mass = { value = 0.0260, unit = "kg", fidelity = "derived", derivation = "PLA 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 1178 kg/m3 times the volume: disc pi (0.0495^2 - 0.031^2) x 0.004 m (31 mm radius cut-out for the motor) = 1.871e-5 m3, servo arm 0.024 x 0.0027 x 0.035 m = 2.27e-6 m3, strut 0.02 x 0.0027 x 0.021 m = 1.13e-6 m3; total 2.21e-5 m3 = 0.0260 kg. Screws and the hub of the unused -y pivot are not counted." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0495, 0.002]
+pos = [0.0, 0.0, 0.048]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.012, 0.00135, 0.0175]
+pos = [0.0, 0.04825, 0.0075]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.01, 0.00135, 0.0105]
+pos = [0.0, 0.04825, 0.0355]
+material = "pla"
+
+# Tube end: the plate's disc sits on the tube's aft face, 0.05 m above the gimbal centre.
+[[ports]]
+name = "tube"
+kind = "mech"
+type = "tube.102"
+gender = "female"
+pos = [0.0, 0.0, 0.05]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Disc top face at z = 0.05 m; the tube's aft face rests on it."
+
+# Pitch servo base seat (see the header for the geometry).
+[[ports]]
+name = "pitch_servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0, 0.0469, 0.0075]
+axis = [0.0, -1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.0027
+fidelity = "estimated"
+rationale = "Inner face of the servo arm (0.0469 m = hub plane 0.021 + 0.0259 servo height), centred 7.5 mm along z so that the servo's output hub lands on the pitch axis (the XL330 base port is offset 7.5 mm from the body centre)."
+
+[visual]
+rationale = "Design of this repo: printed tube bulkhead with the stepped pitch-servo arm on +y and a bearing boss at the servo seat."
+
+[[visual.elements]]
+gen = "tvc_gimbal"
+params = { kind = "plate" }
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

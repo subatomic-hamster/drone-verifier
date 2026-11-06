@@ -22,9 +22,13 @@ laptop (or any Mac)                                   hfbox (AMD GPU box, build 
   harness/ -- claude -p, one per model ---MCP(http)---> dv/server.py  one process per session
        streams agent text into the event feed --POST->    tools (filtered dvsim) -> dvsim Design, DRC, BOM
   web/ dashboard (static, any browser)                    verifier: gates -> flights (subprocess per flight)
-       <- SSE events, leaderboard ------------- ssh -L    sandbox: agent controller in a child, nobody uid
+       <- SSE events, leaderboard ------------- ssh exec  sandbox: agent controller in a child, nobody uid
        <- MJPEG of dvsim's GUI --------------------------  xvfb + dvsim viewer window (Design / Program / Run pages)
 ```
+
+hfbox refuses port forwarding (`ssh -L`), so the laptop reaches sessions through an ssh-exec bridge: `harness/bridge.py` serves
+the allowlisted routes on local ports and carries each request as framed JSON over one `ssh hfbox python3 dv/pipe.py PORT`
+(stdin/stdout); the GUI stream is a separate ssh exec of `dv.gui_stream`.
 
 Sessions listen on 127.0.0.1:8801 (A), 8802 (B), 8803, 8804, each with its own design, run dir, MCP endpoint `/mcp`,
 events `/events` (SSE) and `/events.jsonl`, stream `/stream.mjpg` (GUI sessions only), and `POST /agent-event`. Off limits
@@ -119,8 +123,11 @@ rlimits (CPU, memory, no files, no new processes), a per-step deadline (a late s
 against the run). Model API keys stay on the laptop. Good enough for benchmark models; not for untrusted submissions. A
 test tries the escapes and must fail them.
 
-## What dvsim provides (import, never copy)
+## What dvsim provides (vendored)
 
-`dvsim.design` (Design, DRC, BOM, build, viewer Backend, `run.*`, `prog.*`), the kernel (Rotor, JetVane, Environment wind, rain
-device), `examples/hopper` (flight stack used for the reference solution and the estimator, scene builder, scatter). The repo
-points at a dvsim build at `/workspace/wt/dv-dvsim/src`.
+dvsim is vendored at `vendor/dvsim` (a committed subset of dvsim main, commit and date in `vendor/dvsim/VENDORED`): C++ kernel and
+Vulkan viewer sources, `python/dvsim` (`dvsim.design`: Design, DRC, BOM, build, viewer Backend), the part library with prices,
+`assemblies/hopper.toml`, `examples/hopper` (flight stack, estimator, scene builder) and the rain code of `examples/hopper-land`.
+Build it with dvsim's own build (`uv pip install -e .` in `vendor/dvsim`; third-party sources are fetched by cmake at build time).
+`DVSIM_ROOT` is the only path knob: it names the vendored tree (or any dvsim tree) and `dv/` reads parts, assembly and
+`examples/hopper` from it. Never edit `vendor/dvsim` here; re-vendor from dvsim instead.

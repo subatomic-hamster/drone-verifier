@@ -1,0 +1,129 @@
+id = "tmotor-mn3508-kv700"
+name = "T-Motor MN3508 KV700 multirotor / fixed-wing motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN3508 KV700"
+url = "https://store.tmotor.com/goods-354-MN3508.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop; body length 26.5 mm along +z (Motor Dimensions 41.8 x 26.5 mm).
+# The product page covers KV380 / KV580 / KV700; KV700 values used here.
+
+[params]
+mass            = { value = 0.104, unit = "kg", src = "S1", fidelity = "datasheet" }          # Weight Including Cables, KV700
+mass_no_cable   = { value = 0.082, unit = "kg", src = "S1", fidelity = "datasheet" }          # Weight Excluding Cables
+kv              = { value = 700, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.072, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 72 mOhm
+i0              = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }             # Idle Current@10v
+i0_voltage      = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 23.0, unit = "A", src = "S1", fidelity = "datasheet" }            # "Max Continuous Current 180S"
+p_max           = { value = 510.0, unit = "W", src = "S1", fidelity = "datasheet" }           # Max Power (180S)
+cells_min       = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0418, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.0265, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_diameter = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height   = { value = 0.008, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_circle    = { value = 0.025, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing "4-M3, O25"
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+prop_adapter_thread = { value = "M6", unit = "thread", src = "S2", fidelity = "datasheet" }
+lead_length     = { value = 0.6, unit = "m", src = "S1", fidelity = "datasheet" }             # 600 mm, 18 AWG
+kt              = { value = 0.013642, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*700) = 0.013642 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR "12*4CF" prop, 14.8 V. All 5 printed rows. Operating temperature 48 C.
+# Vendor columns: Current(A), Power(W), Thrust(g), RPM, Efficiency(g/W); thrust_N = thrust_g * 0.00980665. (No torque column on this page.)
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [50, 14.8, 3.8, 56.24, 4700, 4.5111, 460, 8.18],
+  [65, 14.8, 7.4, 109.52, 6300, 7.8453, 800, 7.3],
+  [75, 14.8, 10, 148, 6900, 9.8066, 1000, 6.76],
+  [85, 14.8, 13.5, 199.8, 7500, 11.768, 1200, 6.01],
+  [100, 14.8, 16.1, 238.28, 8100, 13.337, 1360, 5.71],
+]
+prop_label = "T-MOTOR 12*4CF"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0209, 0.01325]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.0265]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "prop_adapter"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.6"
+gender = "male"
+pos = [0.0, 0.0, 0.0265]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V (upper end of the 3-4S range, S1)." }
+i_max = { value = 23.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 18 AWG phase leads, 600 mm (S1 'Cable Length|600mm|AWG|18#'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 18 AWG, 600 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0209, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the cable length and gauge (600mm, 18#), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 23.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 23.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 23.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/goods-354-MN3508.html"
+title = "T-MOTOR store - MN3508 multirotor / fixed wing UAV motor KV380/KV580/KV700 (specification + test data)"
+accessed = "2026-10-07"
+quote = "Test Item|MN3508 KV700|Configuration|12N14P|Internal Resistance|72mΩ|Motor Dimensions|Φ41.8×26.5mm|Shaft Diameter|4mm|Stator Height|8mm|Stator Diameter|35mm|Cable Length|600mm|AWG|18#|Weight Excluding Cables|82g|Weight Including Cables|104g|Idle Current@10v|0.5A|No.of Cells(Lipo)|3-4S|Max Continuous Current 180S|23A|Max Power (180S)|510W. Test: MN3508 KV700 14.8 T-MOTOR 12*4CF 50%|3.8|56.24|460|4700|8.18|48 ... 100%|16.1|238.28|1360|8100|5.71"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202606/MN3508-draw-0603-v1.jpg"
+title = "T-MOTOR MN3508 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 35.1, 6, 2.6, Ø41.8, 4-M3, Ø12, Ø4, 4-M3, Ø25, Ø4; accessory M6 prop adapter 26 long, Ø20, 4-Ø3.2 on Ø12"

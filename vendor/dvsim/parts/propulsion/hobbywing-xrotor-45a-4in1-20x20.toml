@@ -1,0 +1,254 @@
+id = "hobbywing-xrotor-45a-4in1-20x20"
+name = "Hobbywing XRotor 45A 4-in-1 ESC 3-6S (BLHeli_32), 20x20 stack"
+category = "esc"
+vendor = "Hobbywing"
+part_number = "XRotor 45A 4in1 (SKU 30902065)"
+url = "https://rcdrone.top/products/hobbywing-xrotor-45a-3-6s-blheli_32-20x20-4-in-1-esc-for-130-280mm-wheelbase-fpv-drone"
+
+# Part frame: origin at the centre of the board underside, z up, +x toward the signal-connector edge (assumed). Mount pattern 20 x 20 mm
+# (screw size not stated; M3 assumed to match the existing bolt-pattern.20x20.m3 type). Input wires 14 AWG x 100 mm. Burst duration not stated.
+# The listing text notes some source data also lists AM32; product identification specifies BLHeli_32.
+
+[params]
+mass            = { value = 0.012, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.033, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+cells_min       = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+v_max           = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (S1 'LiPo power input 3S-6S')." }
+i_cont_per_ch   = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst_per_ch  = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+channels        = { value = 4, unit = "1", fidelity = "derived", derivation = "Product is a 4-in-1 ESC (S1 'Continuous current 45Ax4'): four motor channels." }
+mcu_clock       = { value = 1.2e8, unit = "Hz", src = "S1", fidelity = "datasheet" }
+pwm_freq_min    = { value = 24000, unit = "Hz", src = "S1", fidelity = "datasheet" }
+pwm_freq_max    = { value = 128000, unit = "Hz", src = "S1", fidelity = "datasheet" }
+bec             = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+firmware        = { value = "BLHeli_32", unit = "text", src = "S1", fidelity = "datasheet" }
+input_wire_awg  = { value = 14, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.020, 0.0165, 0.0025]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.20x20.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "20 x 20 mm per S1; screw size assumed M3"
+
+[[ports]]
+name = "power_in"
+pins = ["BAT.1", "BAT.2"]
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 180.0, unit = "A", fidelity = "derived", derivation = "4 channels x 45 A continuous per channel (S1) = 180 A if all four run flat out; no total-input rating is published (14 AWG leads per S1, XT60 plug enclosed)." }
+
+[[ports]]
+name = "motor_out_1"
+pins = ["M1.1", "M1.2", "M1.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out_2"
+pins = ["M2.1", "M2.2", "M2.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out_3"
+pins = ["M3.1", "M3.2", "M3.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out_4"
+pins = ["M4.1", "M4.2", "M4.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["SIG.5", "SIG.6", "SIG.7", "SIG.8", "SIG.3", "SIG.1"]   # S1 .. S4 throttle inputs, CRT current sense, GND
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1 states the 14 AWG x 100 mm red/black input wires and 'No wires (solder tabs)' for the outputs. The signal
+# harness is not documented for this 20x20 board; the pin names and order are those of the sibling XRotor Micro 45A manual (P1: GND, BAT,
+# CRT, GND, S1-S4, minus its 5 V / 10 V BEC pins, which this board has none of: 'BEC output N/A', S1). Positions are estimates.
+[[connectors]]
+id = "BAT"
+name = "battery input wires (14 AWG x 100 mm)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0165, 0.0025]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "S1 gives gauge, length and colours (red / black); the exit edge and spacing are estimated."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", v_max = 25.2, i_max = 180.0, fidelity = "derived", derivation = "v_max: 6S x 4.2 V (S1 'LiPo power input 3S-6S'); i_max: 4 x 45 A continuous (S1) if all four run flat out." },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 180.0, fidelity = "derived", derivation = "4 x 45 A continuous (S1)." },
+]
+
+[[connectors]]
+id = "M1"
+name = "motor 1 solder tabs"
+type = "solder-pad-1x3"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.014, -0.0115, 0.0025]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1: 'Output wires: No wires (solder tabs)', 45 A continuous / 60 A burst per channel. The tab positions, the corner of motor 1 and the A B C labels are conventions (swapping two phases reverses the motor)."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 45.0 },
+]
+
+[[connectors]]
+id = "M2"
+name = "motor 2 solder tabs"
+type = "solder-pad-1x3"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [-0.014, -0.0115, 0.0025]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "As M1."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 45.0 },
+]
+
+[[connectors]]
+id = "M3"
+name = "motor 3 solder tabs"
+type = "solder-pad-1x3"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [-0.014, 0.0115, 0.0025]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "As M1."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 45.0 },
+]
+
+[[connectors]]
+id = "M4"
+name = "motor 4 solder tabs"
+type = "solder-pad-1x3"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.014, 0.0115, 0.0025]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "As M1."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 45.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 45.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "signal harness (8 positions)"
+type = "header-1x8"
+gender = "male"
+pos = [0.0185, 0.0, 0.005]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+src = "P1"
+fidelity = "estimated"
+rationale = "P1 documents the signal port of the sibling XRotor Micro 45A (30.5 x 30.5, with BEC): 10V GND BAT CRT GND 5V S1 S2 S3 S4. This 20x20 board has no BEC (S1), so the same list without the two BEC pins is used; the housing, pitch and position are not published."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "BAT", kind = "signal", dir = "out", note = "battery voltage monitoring port (P1)" },
+  { number = 3, name = "CRT", kind = "signal", dir = "out", note = "amperage monitoring port (P1)" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "S1", kind = "signal", dir = "in", note = "throttle signal input of ESC M1 (P1)" },
+  { number = 6, name = "S2", kind = "signal", dir = "in", note = "throttle signal input of ESC M2 (P1)" },
+  { number = 7, name = "S3", kind = "signal", dir = "in", note = "throttle signal input of ESC M3 (P1)" },
+  { number = 8, name = "S4", kind = "signal", dir = "in", note = "throttle signal input of ESC M4 (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://support.hobbywingdirect.com/hc/article_attachments/29229277733395"
+title = "Hobbywing XRotor Micro 45A BLHeli_32 4in1 DShot1200 user manual (sibling 30.5 x 30.5 board with BEC), 'Definitions for Different Ports'"
+accessed = "2026-10-09"
+quote = "10V GND BAT CRT GND 5V S1 S2 S3 S4 ... BAT: Battery Volt monitoring port ... CTR: Amp monitoring port with the amperage of 15.2mv/A ... GND: Ground wire ... 5V: 5V Power output port ... S1-4: Throttle Signal Input Ports. Port S1 is for ESC M1, S2 is for M2, S3 is for M3, and S4 is for M4. POWER INPUT: Power input soldering point"
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/hobbywing-xrotor-45a-3-6s-blheli_32-20x20-4-in-1-esc-for-130-280mm-wheelbase-fpv-drone"
+title = "rcdrone.top (Hobbywing distributor) - Hobbywing XRotor 45A 3-6S 20x20 4-in-1 ESC BLHeli_32"
+accessed = "2026-10-07"
+quote = "LiPo power input | 3S-6S | Continuous current | 45Ax4 | Burst current | 60Ax4 | BEC output | N/A | Mounting hole spacing | 20x20mm | Operating frequency | 120MHz | PWM frequency support | 24K-128KHz (dynamic), up to 128KHz | Firmware | BLHeli_32 | Input wires | Red-14AWG-100mm / Black-14AWG-100mm | Output wires | No wires (solder tabs) | Weight | 12g | Size | 40x33x5mm"

@@ -1,0 +1,62 @@
+id = "generic-jet-vane-alu-45x34"
+name = "Jet vane: flat 1.5 mm aluminium plate 45 x 34 mm on a servo horn adapter (design of this repo)"
+category = "rocket.vane"
+vendor = "custom (cut aluminium sheet + printed horn adapter)"
+part_number = "n/a"
+url = "https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=ma6061t6"
+
+# A flat plate placed in the exhaust of the EDF hopper (examples/hopper) a few millimetres below the nozzle; four of them at 90 degrees. Turning a
+# vane about its radial hinge axis tilts the jet's momentum flux sideways: the plate is the control surface, the servo the actuator. Part frame: origin on the
+# hinge axis at the horn seat, +y radially outwards (towards the servo), the plate normal is x and the chord z (hinge at 25 % of the chord from the top edge,
+# i.e. on the quarter-chord line, so the aerodynamic centre sits on the hinge line); the plate spans y from -0.037 to -0.003 m. No published jet-vane data exists
+# for this size; the force model is the jet_vane device (schema/devices.fbs): flat-plate normal force C_N = cn_max tanh(cn_alpha sin(alpha) / cn_max) in the jet's
+# dynamic pressure, Ae and jet_factor from the duct and the fan.
+#
+# The URL above is the aluminium 6061 material page (density); nothing else in this file is quoted. All other values are design choices or derived from them.
+
+[params]
+chord      = { value = 0.045, unit = "m", fidelity = "estimated", rationale = "Design choice: long enough for 20 deg deflection at the nozzle exit without leaving the 66 mm jet in chord." }
+span       = { value = 0.034, unit = "m", fidelity = "estimated", rationale = "Design choice: from 3 mm off the axis to 37 mm, i.e. to the nozzle radius 33 mm plus 4 mm so the whole jet radius is covered." }
+thickness  = { value = 0.0015, unit = "m", fidelity = "estimated", rationale = "Design choice: 1.5 mm sheet; at 97 m/s jet speed the dynamic pressure is 5.8 kPa, the plate carries N = 5.8 kPa x 1.53e-3 m2 x 1.2 = 10 N at most (the q of 0.5 rho v^2 is 5.8 kPa; 5.3 N at the C_N of about 0.6 the hopper uses): a 34 mm cantilever with the 5.3 N spread evenly bends the plate (E = 69 GPa, I = 1.27e-11 m4) by 0.03 mm."  }
+area       = { value = 0.00153, unit = "m^2", fidelity = "derived", derivation = "chord x span = 0.045 x 0.034 m." }
+mass_plate = { value = 0.0062, unit = "kg", fidelity = "derived", derivation = "aluminium 6061 2700 kg/m3 (parts/common/aluminium-6061, S1 of that part) x 0.045 x 0.034 x 0.0015 m = 6.2 g." }
+mass_horn  = { value = 0.002, unit = "kg", fidelity = "estimated", rationale = "Printed PETG horn adapter and two M2 screws: 2 g." }
+mass       = { value = 0.0082, unit = "kg", fidelity = "derived", derivation = "mass_plate + mass_horn." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00075, 0.017, 0.0225]
+pos = [0.0, -0.020, -0.01125]
+material = "aluminium-6061"
+
+[visual]
+rationale = "Flat aluminium vane on a round servo-horn adapter."
+
+[[visual.elements]]
+gen = "jet_vane"
+
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl330"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Adapter bolted to the XL330 horn; the hinge axis is the vane's +y (towards the servo). Chord (ref) along z."
+
+[[ports]]
+name = "aero"
+kind = "mech"
+type = "aero-point"
+gender = "neutral"
+pos = [0.0, -0.020, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Centre of the plate's lift on the quarter-chord line, half way along the span: site frame z = chord, x = plate normal (the frame the jet_vane device expects). Not a mating port."

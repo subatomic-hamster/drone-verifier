@@ -1,0 +1,127 @@
+id = "bluerobotics-t200-thruster"
+name = "Blue Robotics T200 thruster (flooded brushless motor and nozzle, without propeller)"
+category = "motor.bldc"
+vendor = "Blue Robotics"
+part_number = "T200-THRUSTER-R2-RP"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+
+# The thruster is sold with its 3-blade propeller; the propeller is a separate part here (bluerobotics-t200-propeller) because the rotor device needs a
+# spinning body. The motor constants Blue Robotics does not publish (Kv, winding resistance, no-load current, inertia) are DERIVED from the 12 V full-throttle
+# point of the product page (3075 rpm, 17 A, 205 W, 3.71 kgf) with the motor efficiency at that point ESTIMATED (see kv): the chain ESC + motor + propeller
+# then reproduces that one published point by construction; at 16 V it overshoots (rpm +8 %, current +11 %, derived in the kv entry), so the pack should be 3S
+# (12 V nominal; a full 3S pack is 12.6 V).
+# Part frame: origin at the mounting face centre (the thruster's rear end), +z along the shaft towards the propeller, as the multirotor motors.
+[params]
+mass            = { value = 0.412, unit = "kg", fidelity = "derived", derivation = "Whole thruster with its propeller and 1 m cable 427 g (S1, 'Weight in Air' standard T200) minus the propeller part's 0.015 kg (estimated in bluerobotics-t200-propeller) = 0.412 kg; the 1 m cable is inside this mass." }
+diameter        = { value = 0.100, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.113, unit = "m", src = "S1", fidelity = "datasheet" }
+prop_diameter   = { value = 0.076, unit = "m", src = "S1", fidelity = "datasheet" }
+cable_length    = { value = 1.0, unit = "m", src = "S1", fidelity = "datasheet" }
+voltage_min     = { value = 7.0, unit = "V", src = "S1", fidelity = "datasheet" }
+voltage_max     = { value = 20.0, unit = "V", src = "S1", fidelity = "datasheet" }
+current_12v     = { value = 17.0, unit = "A", src = "S1", fidelity = "datasheet" }
+power_12v       = { value = 205.0, unit = "W", src = "S1", fidelity = "datasheet" }
+current_16v     = { value = 24.0, unit = "A", src = "S1", fidelity = "datasheet" }
+power_16v       = { value = 390.0, unit = "W", src = "S1", fidelity = "datasheet" }
+thrust_12v      = { value = 36.38, unit = "N", src = "S1", fidelity = "datasheet" }
+thrust_12v_rev  = { value = 28.64, unit = "N", src = "S1", fidelity = "datasheet" }
+rpm_12v         = { value = 3075.0, unit = "rpm", src = "S2", fidelity = "datasheet" }
+rpm_16v         = { value = 3600.0, unit = "rpm", src = "S2", fidelity = "datasheet" }
+kv              = { value = 335.0, unit = "rpm/V", fidelity = "derived", derivation = "Full throttle at 12 V (S1/S2): n = 3075 rpm = 322 rad/s, I = 17 A, P_in = 205 W. Assume the ESC drops 0.2 V (12 V pack, 17 A through ~0.012 ohm) so the motor sees 11.8 V and 200.6 W, and an ESTIMATED motor efficiency of 75 % at this point (flooded outrunner with a heavy copper load): shaft power 150 W, Q = 150 / 322 = 0.467 N*m. With the estimated no-load current i0 = 0.6 A, Kt = Q / (I - i0) = 0.467 / 16.4 = 0.02848 N*m/A, hence Kv = 9.5493 / 0.02848 = 335 rpm/V; back-EMF 9.17 V, R = (11.8 - 9.17) / 17 = 0.155 ohm (r_winding). Check at 16 V (same constants, C_Q as in the propeller part, duty 1, 15.7 V at the motor): 3877 rpm and 26.7 A against the published 3600 rpm and 24 A (+8 %, +11 %)." }
+r_winding       = { value = 0.155, unit = "ohm", fidelity = "derived", derivation = "See kv: (11.8 V - Kt x 322 rad/s = 9.17 V) / 17 A = 0.155 ohm at the winding temperature of the full-throttle point (the device model scales it from 20 degC; flooded, the motor stays near water temperature)." }
+i0              = { value = 0.6, unit = "A", fidelity = "estimated", rationale = "No-load (friction + iron) current is unpublished; 0.6 A is typical of a 250-300 W outrunner with wet bearings and is ~3.5 % of the full-throttle current. It splits the shaft torque from the current in the kv derivation (a 0.3-1 A change moves Kv by 2-4 %)." }
+j_rotor         = { value = 1.5e-5, unit = "kg*m^2", fidelity = "estimated", rationale = "No rotor data published. Rotating bell + magnets assumed 0.1 kg (a quarter of the 0.41 kg thruster) at an effective radius of 0.012 m: 0.1 x 0.012^2 = 1.4e-5 kg*m^2, rounded to 1.5e-5; the propeller's own inertia and the entrained water are not included. Only the spin-up time depends on it." }
+c_th            = { value = 80.0, unit = "J/K", fidelity = "estimated", rationale = "Lumped thermal capacity of the 0.41 kg motor at ~0.2-0.4 J/(g K) (copper / steel / aluminium mix), ~80 J/K for the heat-producing winding + stator share; no vendor value." }
+r_th            = { value = 1.0, unit = "K/W", fidelity = "estimated", rationale = "Winding-to-water thermal resistance of a flooded, water-cooled motor; ~1 K/W gives +45 K at the 45 W copper loss of full throttle, plausible for the sustained full-power rating. Unpublished." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.05, 0.0565]
+pos = [0.0, 0.0, 0.0565]
+
+# Mounting face (flat clamp seat on a hull deck / bracket): rear end of the thruster.
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Seat on the rear end face; Blue Robotics sells clamp brackets, the clamp is not modelled."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.t200"
+gender = "male"
+pos = [0.0, 0.0, 0.113]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Shaft end at the front face of the thruster (length 0.113 m, S1); the propeller sits on it. Interface family name only (no published shaft diameter)."
+
+[[ports]]
+name = "phase"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+pins = ["PH.1", "PH.2", "PH.3"]
+lead = { length = "cable_length" }
+note = "The 1 m cable (S1 'with 1m cable') carries the three phase leads to the ESC and is inside the 427 g datasheet mass."
+
+# Connector (pin level): the thruster cable is 3 conductors of 16 AWG (S3); the page names no connector or colours, so the three phase
+# conductors are bare ends (the BlueROV2 splices them to the ESC's phase wires: 'Connect thruster wires to ESC motor phase wires').
+[[connectors]]
+id = "PH"
+name = "phase cable (3 x 16 AWG, bare ends)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.0, 0.05, 0.02]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Estimated: the cable leaves the motor can at its rear side; the product page gives no drawing text."
+pins = [
+  { number = 1, name = "PHASE A", kind = "power", dir = "in", note = "conductor colours not stated (S3); the three phases are interchangeable (swap two to reverse)" },
+  { number = 2, name = "PHASE B", kind = "power", dir = "in" },
+  { number = 3, name = "PHASE C", kind = "power", dir = "in" },
+]
+
+[visual]
+rationale = "T200 shape from the part's own diameter and body length: dark motor can with a rounded nose inside a short shroud held by four struts (approximate, not copied from CAD)."
+
+[[visual.elements]]
+gen = "ducted_thruster"
+
+[[sources]]
+id = "S1"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+title = "T200 Thruster (R2-RP) product page, Technical Details tab (Blue Robotics)"
+accessed = "2026-10-08"
+quote = "Full Throttle FWD/REV Thrust @ 12 V | 3.71 / 2.92 kg f ... Full Throttle Current (Power) @ 12 V | 17 Amps (205 Watts) ... Full Throttle Current (Power) @ Nominal (16 V) | 24 Amps (390 Watts) ... Propeller Diameter | 76 mm ... Weight in Air | Standard T200 (1m cable) | 427 g"
+
+[[sources]]
+id = "S2"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+title = "T200 Thruster (R2-RP) product page, FAQ on water flow rate (Blue Robotics)"
+accessed = "2026-10-08"
+quote = "and spins at about 3075 RPM full throttle 12 V, and 3600 RPM 16 V."
+
+[[sources]]
+id = "S3"
+url = "https://bluerobotics.com/store/thrusters/t200-thruster-r2-rp/"
+title = "T200 Thruster (R2-RP) product page, cable and Basic ESC connection step (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "T200 Thruster Cable (3 conductors, 16 AWG) ... Standard T200 (1m cable) ... Connect thruster wires to ESC motor phase wires."

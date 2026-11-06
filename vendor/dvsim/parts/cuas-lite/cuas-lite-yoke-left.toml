@@ -1,0 +1,57 @@
+id = "cuas-lite-yoke-left"
+name = "cuas-lite yoke_left (3D printed PETG, group pan, carries the tilt axis)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "yoke_left"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (65.24 g, supports: minor). The mesh is the CAD's dvsim mesh (m), already in its group frame (B static/pan, head frame H tilt): the part frame IS that frame.
+# `tilt_axis` is the a-side of the tilt joint: the tilt axis H = (0, 0, 202 mm) in frame B, axis along +y (manifest interface.frames.tilt_joint: axis_H = (0, -1, 0); the chassis hinge port is the b-side
+# and the mate carries reverse = true so that positive tilt raises the muzzle).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/yoke_left.stl"
+material = "petg"
+bbox_min = [-0.042, 0.051, 0.035]
+bbox_max = [0.042, 0.075, 0.234]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the rotor plate's seat port mates here."
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame, axis +z: the 'a' side of a closure mate to a printed part modelled in the same group frame (bolted pair, identity transform)."
+
+[[ports]]
+name = "tilt_axis"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.202]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt axis H = (0, 0, 202 mm) in frame B (manifest interface.frames.H origin_B_mm), axis along +y; the chassis `hinge` port mates here (b = chassis, so the joint sits at H)."

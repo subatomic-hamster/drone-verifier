@@ -1,0 +1,116 @@
+id = "tmotor-3110-kv1580"
+name = "T-Motor 3110 KV1580 high-speed motor (7.5-inch class)"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "3110 KV1580"
+url = "https://uav-en.tmotor.com/2026/Motor_0126/1337.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop. "Motor Dimension 37.5 x 42.1 mm" is used as
+# diameter x length; the source does not say whether the 42.1 mm includes the shaft stub (inference - verify before stack-up use).
+# Source page is T-Motor's UAV motor spec sheet (title "Technical Drawing"); the test uses T-Motor C7.5*4.6*3 (3-blade 7.5-inch).
+
+[params]
+mass            = { value = 0.0794, unit = "kg", src = "S1", fidelity = "datasheet" }         # 79.4 g incl. cable
+kv              = { value = 1580, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.0358, unit = "ohm", src = "S1", fidelity = "datasheet" }        # 35.8 mOhm
+i0              = { value = 2.05, unit = "A", src = "S1", fidelity = "datasheet" }            # Idle Current (10V)
+i0_voltage      = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 78.09, unit = "A", src = "S1", fidelity = "datasheet" }
+p_max           = { value = 878.0, unit = "W", src = "S1", fidelity = "datasheet" }
+thrust_max      = { value = 29.13, unit = "N", src = "S1", fidelity = "datasheet" }           # "Max Thrust 2.97kg" x 9.80665
+cells_min       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0375, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.0421, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_circle    = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }           # "Screw Diameter Φ19-M3-4"
+mount_screw     = { value = "M3", unit = "thread", src = "S1", fidelity = "datasheet" }
+prop_adapter_thread = { value = "M5", unit = "thread", src = "S1", fidelity = "datasheet" }
+lead_length     = { value = 0.25, unit = "m", src = "S1", fidelity = "datasheet" }            # 18AWG x 250 mm
+kt              = { value = 0.006044, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*1580) = 0.006044 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR C7.5*4.6*3 prop, ~21 V (per-row voltage as printed). All 10 printed rows (10-100 %).
+# Operating temperature 55 C. Vendor columns: Current(A), RPM, Thrust(g), Power(W), Efficiency(g/W), Torque(N*m); thrust_N = thrust_g * 0.00980665.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [10, 22.23, 0.38, 3, 2961, 0.01, 0.5492, 56, 20.38],
+  [20, 22.19, 1.83, 24, 5728, 0.04, 2.5203, 257, 10.51],
+  [30, 22.11, 5.05, 75, 8260, 0.09, 5.5113, 562, 7.45],
+  [40, 21.93, 10.57, 159, 10573, 0.14, 9.2379, 942, 5.91],
+  [50, 21.75, 17.46, 266, 12515, 0.2, 13.0527, 1331, 5.01],
+  [60, 21.49, 27.2, 386, 14136, 0.26, 16.7694, 1710, 4.43],
+  [70, 21.21, 38, 526, 15637, 0.32, 20.6626, 2107, 4],
+  [80, 20.89, 49.89, 658, 16797, 0.37, 24.0067, 2448, 3.72],
+  [90, 20.48, 64.09, 782, 17768, 0.42, 26.9389, 2747, 3.51],
+  [100, 20.09, 78.09, 878, 18470, 0.45, 29.1748, 2975, 3.39],
+]
+prop_label = "T-MOTOR C7.5*4.6*3"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.01875, 0.02105]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.19.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0421]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (rated voltage 6S, S1)." }
+i_max = { value = 78.09, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 18 AWG phase leads, 250 mm (S1 'Lead|18AWG*250mm'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 18 AWG, 250 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01875, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the lead gauge and length (18AWG*250mm), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 78.09 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 78.09 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 78.09 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://uav-en.tmotor.com/2026/Motor_0126/1337.html"
+title = "T-MOTOR UAV motor specification page - 3110 (Specification + Test Data)"
+accessed = "2026-10-07"
+quote = "Type|3110|Motor Dimension|φ37.5*42.1|Configuration|12N14P|Shaft Diameter|5mm|Lead|18AWG*250mm|Screw Diameter|Φ19-M3-4|Prop Adapter Shaft Thread|M5|Recommended Voltage|KV1580|Idle Current (10V)|2.05A|Max Power|878W|Internal Resistance|35.8mΩ|Rated Voltage (LiPo)|6S|Peak Current|78.09A|Max Thrust|2.97kg|Weight (Incl. Cable)|79.4g. Test: 3110 KV1580|C7.5*4.6*3|22.23|10%|0.38|2961|56|3|20.38|0.01|55℃ ... 100%|20.09|78.09|18470|2975|878|3.39|0.45"

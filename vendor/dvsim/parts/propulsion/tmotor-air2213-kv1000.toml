@@ -1,0 +1,107 @@
+id = "tmotor-air2213-kv1000"
+name = "T-Motor AIR2213 KV1000 motor (AIR Gear 355 set)"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "AIR2213 KV1000"
+url = "https://store.tmotor.com/product/air-gear-355-combo-set.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop. S2 drawing: O27.5 body, 32.45 mm overall height
+# with the supplied prop clamp fitted (so the geometry half-height below is an envelope, not the bare body length).
+# GAP: the shaft diameter and bare body length are not published in the fetched AIR Gear 355 page text/drawing -> no shaft port declared.
+
+[params]
+mass            = { value = 0.052, unit = "kg", src = "S1", fidelity = "datasheet" }          # 52+-2 g incl. cable
+mass_tol        = { value = 0.002, unit = "kg", src = "S1", fidelity = "datasheet" }
+kv              = { value = 1000, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.130, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 130+-10 mOhm
+r_winding_tol   = { value = 0.010, unit = "ohm", src = "S1", fidelity = "datasheet" }
+i0              = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }             # Idle Current(10V)
+i0_voltage      = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 15.0, unit = "A", src = "S1", fidelity = "datasheet" }            # 180 s
+p_max           = { value = 238.0, unit = "W", src = "S1", fidelity = "datasheet" }           # 180 s
+cells_min       = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0275, unit = "m", src = "S2", fidelity = "datasheet" }
+mount_circle    = { value = 0.016, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing "4-M3, O16"
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+kt              = { value = 0.009549, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*1000) = 0.009549 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, MF9545 plastic prop, constant 16 V. Printed table has 5 % steps 30-100 %;
+# rows 30/40/50/60/70/80/90/100 % transcribed. Operating temperature 47 C at 100 % for 10 min.
+# Vendor columns: Thrust(g), Torque(N*m), Current(A), RPM, Power(W), Efficiency(g/W); thrust_N = thrust_g * 0.00980665.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [30, 16, 1.01, 16, 3419, 0.02, 1.7554, 179, 11.04],
+  [40, 16, 1.91, 31, 4378, 0.04, 2.9518, 301, 9.84],
+  [50, 16, 3.16, 51, 5256, 0.06, 4.2267, 431, 8.49],
+  [60, 16, 5.04, 81, 6186, 0.08, 5.9232, 604, 7.48],
+  [70, 16, 7.3, 117, 6997, 0.1, 7.6296, 778, 6.66],
+  [80, 16, 9.76, 156, 7681, 0.12, 9.2183, 940, 6.02],
+  [90, 16, 12.58, 200, 8292, 0.14, 10.7775, 1099, 5.48],
+  [100, 16, 15.17, 241, 8768, 0.16, 12.0916, 1233, 5.11],
+]
+prop = "tmotor-mf9545"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.01375, 0.016225]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.16.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V (upper end of the 3S-4S rated range, S1)." }
+i_max = { value = 15.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three phase leads. S1 does not describe the leads (gauge, length, connector).
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01375, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives no lead gauge, length, connector or phase labels: three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention (swapping two reverses the motor)."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 15.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 15.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 15.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/air-gear-355-combo-set.html"
+title = "T-MOTOR store - AIR GEAR 355 combo set (AIR2213 KV1000 + AIR 20A ESC + MF9545 prop): specification + test data"
+accessed = "2026-10-07"
+quote = "AIR2213-Specifications|KV|1000|Rated Voltage(Lipo)|3S-4S（4.2V/PC）/ 12.6V-16V|Idle Current(10V)|0.5A|Internal Resistance|130±10mΩ|Peak Current(180s)|15A|Weight (Incl. Cable)|52±2g|Max Power (180S)|238W. Test: AIR2213-KV1000|MF9545|30%|16|179|0.02|1.01|3419|16|11.04|47℃ ... 100%|16|1233|0.16|15.17|8768|241|5.11"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/271724747098589296.jpg"
+title = "T-MOTOR AIR Gear 355 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 20, 4-M3, Ø16, 32.45, Ø27.5"

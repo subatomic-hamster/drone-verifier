@@ -1,0 +1,86 @@
+id = "amass-xt60pw-m"
+name = "Amass XT60PW-M connector (XT60 family, male, PCB through-hole)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT60PW-M"
+url = "https://www.china-amass.net/xt60pw-m-product/"
+
+# PCB-mount male XT60 for PDB / ESC boards. Footprint not recorded (the page spec table has no drawing text); the pad port is a solder joint.
+# No mass published.
+[params]
+current_rated       = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0012, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 100, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "xt60"
+gender = "male"
+v_max = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "35 A at a temperature rise <= 85 K (the page gives no wire gauge for the PCB version)"
+
+[[ports]]
+name = "pcb"
+pins = ["PCB.1", "PCB.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+i_max = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Through-hole pins; copper width / plating limits current on the board, not modelled"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line, through-hole pin n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "xt60"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the family (XT60, 2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, board side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "PCB"
+name = "through-hole pins (2)"
+type = "solder-pad"
+gender = "neutral"
+pos = [0.0, 0.0, -0.005]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "One through-hole pin per contact; pin n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Board side of the body at z = -5 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/xt60pw-m-product/"
+title = "AMASS XT60PW-M product page (Amass), electrical SPEC"
+accessed = "2026-10-07"
+quote = "Electrical specifications | Current rating | 35A      (△≤85K） | Rated voltage | 80V DC | Insulation Resistance | ≥2000MΩ | Contact Resistance | ≤1.2mΩ | Mechanical characteristics | Plug Life. | 100 times | Environmental resistance | Work Temperature | -20℃ to 120℃"

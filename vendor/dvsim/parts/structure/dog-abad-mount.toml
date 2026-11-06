@@ -1,0 +1,62 @@
+id = "dog-abad-mount"
+name = "Dog abduction mount (3D printed PLA): open-backed cup for the abad actuator through the bulkhead, flange, leg-hub pad"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "abad_mount"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py abad_mount(); mesh by cad/dog/build.py. Leg frame (LF): origin on the abduction axis at the OUTER face of the flange (flange x in [-6, 0]),
+# +x outward along the abduction axis (forward for a front leg), +y outboard, z up. The 92 x 55 mm actuator sits in the cup INSIDE the body (x in [-58, 0]) with
+# its output face flush with x = 0; the cup is open at the back (cables); a pad behind it (x in [-95, -56], y +-28, top face z = -37 mm) carries the leg hub. Bolts to the bulkhead with
+# 4 x M3 at (+-40, +-45) mm. Symmetric about XZ: one part for all four legs.
+
+[mirror]
+symmetry = "xz"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+mass            = { value = 0.0875, unit = "kg", fidelity = "derived", derivation = "Mesh volume 96.9 cm3 x PLA 1.24 g/cm3, shell = min(V, area x 3 walls x 0.4 mm), 30 % infill elsewhere (assemblies/README.md 'Mass properties'), by cad/dog/build.py." }
+price           = { value = 1.75, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.0875 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-abad-mount.stl"
+material = "pla"
+bbox_min = [-0.095, -0.052, -0.052]
+bbox_max = [0.0, 0.052, 0.052]
+
+[[ports]]
+name = "chassis"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Leg-frame origin on the abduction axis, flange outer face. The bulkhead hip port sits 6 mm (flange thickness) outside the bulkhead plate, so the flange lies on the plate's outer face. 4 x M3 at (y, z) = (+-40, +-45) mm."
+
+[[ports]]
+name = "motor"
+kind = "mech"
+type = "bolt-pattern.steadywin-gim8108-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Seat of the abad actuator: output face flush with the flange outer face, output pointing away from the body (+x), body in the cup behind it. Mounting pattern is opaque (vendor drawing not retrieved)."
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.075, 0.0, -0.037]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Pad behind the cup (top face z = -37 mm, x in [-95, -56] mm) for the leg hub board."

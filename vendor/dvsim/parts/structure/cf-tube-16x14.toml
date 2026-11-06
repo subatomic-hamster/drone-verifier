@@ -1,0 +1,41 @@
+id = "cf-tube-16x14"
+name = "Carbon fibre tube 16 mm OD x 14 mm ID, woven-finish roll-wrapped (Easy Composites; X500-class arm size)"
+category = "structure.tube"
+vendor = "Easy Composites"
+part_number = "16mm (14mm) Woven Finish Carbon Fibre Tube"
+url = "https://www.easycomposites.eu/16mm-woven-finish-carbon-fibre-tube"
+
+# 16 mm OD is stated by the vendor to be one of the most common multicopter arm sizes. Per-metre values.
+[params]
+price_per_m = { value = 22.0, unit = "USD", fidelity = "estimated", rationale = "Easy Composites EU lists EUR 19.95 per metre ex VAT (1 m tube, 2026-10-16, page-fetch summary). No exchange rate looked up; assumed 1.1 USD/EUR -> 22 USD/m, shipping excluded." }
+outer_diameter   = { value = 0.016, unit = "m", src = "S1", fidelity = "datasheet" }
+inner_diameter   = { value = 0.014, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_thickness   = { value = 0.001, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_per_m       = { value = 0.0742, unit = "kg/m", src = "S1", fidelity = "datasheet" }
+youngs_modulus_axial = { value = 64e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+od_tolerance     = { value = 0.00015, unit = "m", src = "S1", fidelity = "datasheet" }
+id_tolerance     = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.second_moment_area]
+value = 1.3312e-9
+unit = "m^4"
+fidelity = "derived"
+derivation = "Hollow circular section I = pi/64 x (OD^4 - ID^4) with OD = 0.016 m and ID = 0.014 m from S1 (nominal dimensions)."
+
+[[ports]]
+name = "tube"
+kind = "mech"
+type = "tube.16"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Axisymmetric (360 = discrete stand-in for continuous)"
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/16mm-woven-finish-carbon-fibre-tube"
+title = "16mm (14mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table"
+accessed = "2026-10-07"
+quote = "Length | 1000 | mm ... Wall Thickness | 1 | mm ... Inside Diameter (ID) | 14 | mm ... Outside Diameter (OD) | 16 | mm ... Weight per metre | 74.2 | g ... ID Tolerance (mm) | 0.2 | mm ... Tensile Modulus (lengthways) | 64 | GPa ... OD Tolerance (mm) | 0.15 | mm"

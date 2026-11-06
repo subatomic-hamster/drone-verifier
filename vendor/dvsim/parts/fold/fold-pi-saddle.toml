@@ -1,0 +1,72 @@
+id = "fold-pi-saddle"
+name = "fold drone Pi 5 saddle + BEC / receiver shelves on link 2 (printed)"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "pi_saddle"
+url = "cad/fold/modules/link.py"
+
+# Frame = the reference pose of link 2 (world frame at the flat square). Ports: origin (seat on the link), pi (Pi 5 58 x 49 M2.5 pattern, long axis along y, GPIO header
+# edge toward the loop interior), hs (heatsink on the SoC), bec (5 V BEC), rx (receiver). Seat heights from cad/fold/params.py (PLATFORM_Z 46.5, BEC 36, receiver 40).
+# Mass: pi_saddle 9.488 + bec_rx_shelves 4.716.
+
+[params]
+mass = { value = 0.014204, unit = "kg", fidelity = "derived", derivation = "CAD manifest pi_saddle 9.488 g + bec_rx_shelves 4.716 g (printed, 2 walls + 20 % infill PA12-CF [est]) of cad/fold/build.py." }
+mass_tol = { value = 0.0014, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pi_saddle_link2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/bec_rx_shelves_link2.stl"
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "pi"
+kind = "mech"
+type = "bolt-pattern.58x49.m2.5"
+gender = "neutral"
+pos = [0.2, 0.1189, 0.0527]  # the Pi frame is placed so its mass sits at the CAD COM of the board (manifest pi5.link2: y 118.9, z 52.7 mm); the library part has only a mass point
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "hs"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.2, 0.0925, 0.0493]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "bec"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.2, 0.15, 0.0372]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "rx"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.2, 0.048, 0.0412]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1

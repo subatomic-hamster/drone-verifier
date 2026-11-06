@@ -1,0 +1,66 @@
+id = "tattu-plus-10000mah-6s-25c-as150"
+name = "Tattu Plus 10000mAh 6S 22.2V 25C LiPo pack, AS150"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "10000mAh PLUS 25C 22.2V"
+url = "https://rcdrone.top/products/tattu-plus-10000mah-25c-22-2v-6s1p-6s-fpv-lipo-battery"
+
+# Part frame: origin at the pack centre, x along length (184 mm), y along width (68.5 mm), z up (63 mm). The listing also sells an XT90S variant;
+# the AS150 variant is modelled. No burst rating, wire gauge or resistance published.
+
+[params]
+capacity_ah     = { value = 10.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 36000.0, unit = "C", fidelity = "derived", derivation = "10.0 Ah x 3600 s/h = 36000 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", fidelity = "derived", derivation = "Listing configuration '6S1P / 22.2V / 6 cells' (S1)." }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 25, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 250.0, unit = "A", fidelity = "derived", derivation = "25 C x 10.0 Ah = 250 A (rating label only)." }
+mass            = { value = 1.471, unit = "kg", src = "S1", fidelity = "datasheet" }          # 1471 g (+-20 g)
+length          = { value = 0.184, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0685, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.063, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "AS150", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0156, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/10 = 2.6 mOhm/cell x 6 cells = 15.6 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.092, 0.03425, 0.0315]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "as150"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 250.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 25 C x 10.0 Ah = 250 A (S1 label); exceeds the AS150 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the AS150 plug but not its polarity or contact spacing: + then -, an assumed 16 mm spacing for the AS150 family (no source read); the anti-spark path is not modelled. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (AS150)"
+type = "as150"
+gender = "neutral"
+pos = [0.092, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.016
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the AS150 plug but not its polarity or contact spacing: + then -, an assumed 16 mm centre distance (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/tattu-plus-10000mah-25c-22-2v-6s1p-6s-fpv-lipo-battery"
+title = "rcdrone.top (Tattu distributor) - Tattu Plus 10000mAh 25C 22.2V 6S1P LiPo with AS150 connector"
+accessed = "2026-10-07"
+quote = "Minimum Capacity: 10000mAh | Configuration: 6S1P / 22.2V /6 cells | Discharge Rate: 25C | Net Weight(±20g): 1471g | Dimensions: 184 mm Length x 68.5mm Width x 63mm Height | Connector Type: AS150"

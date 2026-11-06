@@ -1,0 +1,109 @@
+id = "hitec-hs-65hb"
+name = "Hitec HS-65HB sub-micro-size hobby servo"
+category = "motor.servo"
+vendor = "Hitec RCD (via ServoCity)"
+part_number = "HS-65HB"
+url = "https://www.servocity.com/hs-65hb-servo/"
+
+# Frame: origin on the output axis at the horn-seat face of the case; +z = output axis out of the case.
+# The ServoCity Specs tab gives no case dimensions, so no height param; the base port sits at z=0 and is positional only.
+
+[params]
+mass = { value = 0.0112, unit = "kg", src = "S1", fidelity = "datasheet" }  # 0.39oz (11.2g)
+servo_size_class = { value = "Sub-Micro", unit = "-", src = "S1", fidelity = "datasheet" }
+horn_spline = { value = "B25T Spline", unit = "-", src = "S1", fidelity = "datasheet" }
+gear_material = { value = "Karbonite", unit = "-", src = "S1", fidelity = "datasheet" }
+motor_type = { value = "3-Pole Neodynium Magnet", unit = "-", src = "S1", fidelity = "datasheet" }
+output_shaft_support = { value = "Top Ball Bearing", unit = "-", src = "S1", fidelity = "datasheet" }
+protocol = { value = "PWM 610-2360us, pulse amplitude 3-5V, deadband 4us", unit = "-", src = "S1", fidelity = "datasheet" }
+position_range = { value = 3.2987, unit = "rad", src = "S1", fidelity = "datasheet" }  # 189°
+v_operating_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }  # lowest tabulated voltage; page Voltage Range: 4.8V - 6.0V
+v_operating_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }  # highest tabulated voltage; page Voltage Range: 4.8V - 6.0V
+no_load_speed_4v8 = { value = 7.480, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.14sec/60°
+no_load_speed_6v0 = { value = 9.520, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.11sec/60°
+stall_torque_4v8 = { value = 0.1765, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 25 oz-in (1.8 kg.cm)
+stall_torque_6v0 = { value = 0.2189, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 31 oz-in (2.2 kg.cm)
+idle_current_4v8 = { value = 0.0053, unit = "A", src = "S1", fidelity = "datasheet" }  # 5.3mA
+idle_current_6v0 = { value = 0.0066, unit = "A", src = "S1", fidelity = "datasheet" }  # 6.6mA
+no_load_current_4v8 = { value = 0.4000, unit = "A", src = "S1", fidelity = "datasheet" }  # 400mA
+no_load_current_6v0 = { value = 0.5000, unit = "A", src = "S1", fidelity = "datasheet" }  # 500mA
+operating_temp_min = { value = -20, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 60, unit = "degC", src = "S1", fidelity = "datasheet" }
+feedback = { value = "5KΩ Potentiometer", unit = "-", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.servo-sub-micro-ears"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Sub-Micro-size hobby servo mounting ears; hole spacing and case height not on the page, opaque family tag; z is positional only."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.b25t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 25
+note = "Hitec B25T output spline (25 teeth); horns are not interchangeable across spline families."
+
+[[ports]]
+name = "power_in"
+pins = ["SRV.1", "SRV.2"]
+kind = "power"
+type = "servo-3pin"
+gender = "female"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "Power shares the 3-pin servo connector with the signal; i_max not stated unless a stall current is tabulated."
+
+[[ports]]
+name = "signal"
+pins = ["SRV.3"]
+kind = "signal"
+type = "pwm"
+gender = "female"
+level = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }  # lower end of the 3-5V pulse amplitude
+
+# Pin level: the 3-pin servo lead. Wire colours and order from P1 (a Hitec retailer's description covering all Hitec servos); S1 does not describe the lead.
+[[connectors]]
+id = "SRV"
+name = "servo lead (3-pin Hitec/JR plug)"
+type = "servo-lead-3"
+port_type = "servo-3pin"
+gender = "female"
+pos = [-0.012, 0.0, -0.01]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "P1"
+fidelity = "literature"
+pose_rationale = "Servo case dimensions are not in the sources, so the lead exit is a positional estimate: at the -x end of a micro-size case, lead pointing out along -x."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "black wire (P1)" },
+  { number = 2, name = "V+", kind = "power", dir = "in", note = "red, centre wire (P1)" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "in", note = "yellow, third wire (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.superdroidrobots.com/shop/item.aspx/hs-422-servo/184"
+title = "SuperDroid Robots - HS-422 Servo (Hitec), product description"
+accessed = "2026-10-09"
+quote = "On all Hitec servos the Black wire is 'ground', the Red wire (center wire) is 'power', and the yellow (third) wire is 'signal'. This servo has a Hitec/JR connector which mates directly with a 0.1\" 3-pin header."
+
+[[sources]]
+id = "S1"
+url = "https://www.servocity.com/hs-65hb-servo/"
+title = "ServoCity HS-65HB Servo-Clockwise (Stock), Specs tab"
+accessed = "2026-10-07"
+quote = "Output Shaft Style| B25T Spline| Voltage Range| 4.8V - 6.0V| No-Load Speed (4.8V)| 0.14sec/60°| No-Load Speed (6.0V)| 0.11sec/60°| Stall Torque (4.8V)| 25 oz-in (1.8 kg.cm)| Stall Torque (6.0V)| 31 oz-in (2.2 kg.cm)| Max PWM Signal Range| 610-2360μsec| Travel per µs| .108°/μsec| Max Rotation| 189°| Pulse Amplitude| 3-5V| Operating Temperature| -20°C to +60°C| Current Drain - idle (4.8V)| 5.3mA| Current Drain - idle (6.0V)| 6.6mA| Current Drain - no-load (4.8V)| 400mA| Current Drain - no-load (6V)| 500mA| Continuous Rotation Modifiable| No| Direction w/ Increasing PWM Signal| Clockwise| Deadband Width| 4µs| Motor Type| 3-Pole Neodynium Magnet| Feedback Style| 5KΩ Potentiometer| Output Shaft Support| Top Ball Bearing| Gear Material| Karbonite| Wire Length| 6\" (150mm)| Weight| 0.39oz (11.2g)| Wire Gauge| 28AWG| Servo Size| Sub-Micro"

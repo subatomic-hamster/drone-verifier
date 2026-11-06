@@ -1,0 +1,38 @@
+id = "fold-harness-4wire-p26"
+name = "fold servo harness cable, 6 V + GND on 26 AWG, bus A + bus B on 28 AWG, silicone (hand-made, 4 conductors)"
+category = "wire"
+vendor = "dvsim fold (own design)"
+part_number = "harness 2 x 26 AWG + 2 x 28 AWG"
+url = "docs/fold/wiring.md"
+
+# Same construction as fold-harness-4wire (see there); power pair sized per hop (wiring.md section 2). Mass per metre = (2 x 1.15 + 2 x 0.72) g/m copper x 1.4 = 5.3 g/m [est, +-20 %].
+
+[params]
+conductors = { value = 4, unit = "1", fidelity = "estimated", rationale = "6 V, GND, bus A, bus B (spec 2.2)." }
+awg_power = { value = 26, unit = "AWG", fidelity = "estimated", rationale = "Hop carrying 0.9-1.0 A of rated servo current (wiring.md): 26 AWG, 1.3 A in the library." }
+resistance_per_m = { value = 0.1339, unit = "ohm/m", src = "S1", fidelity = "literature" }
+mass_per_m = { value = 0.005256, unit = "kg/m", fidelity = "estimated", rationale = "Copper 2 x 1.15 + 2 x 0.72 g/m (awg-26 and awg-28 parts of this library) x 1.4 insulation factor; not weighed." }
+price_per_m = { value = 1.0, unit = "USD/m", fidelity = "estimated", rationale = "Four hookup conductors; no listing fetched." }
+
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 1.3, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 1.3, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[sources]]
+id = "S1"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia) - table, as recorded in parts/drone/awg-26-silicone-wire.toml"
+accessed = "2026-10-07"
+quote = "see parts/drone/awg-26-silicone-wire.toml (resistance per metre and ampacity of the 26 AWG row)"

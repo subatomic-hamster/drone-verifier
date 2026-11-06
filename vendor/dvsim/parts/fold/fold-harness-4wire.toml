@@ -1,0 +1,41 @@
+id = "fold-harness-4wire"
+name = "fold servo harness cable: 6 V + GND on 24 AWG, bus A + bus B on 28 AWG, silicone (hand-made, 4 conductors)"
+category = "wire"
+vendor = "dvsim fold (own design)"
+part_number = "harness 2 x 24 AWG + 2 x 28 AWG"
+url = "docs/fold/wiring.md"
+
+# One 4-wire cable runs round the loop (spec 2.2); every servo taps it with its own 3-pin lead. A hop of the model is one whole cable (the servo plugs sit on a tap in the
+# real build): `conductors` below makes the builder count mass_per_m per CABLE, while the wire entries of fold.toml state the electrical conductors (2 for 6 V + GND) and the
+# signal wires of the same hop carry `included_in` (no second mass). Mass per metre = copper (parts/connectors/awg-24, awg-28: 1.81 + 0.72 g/m per conductor) x 1.4 for the insulation
+# (the factor parts/drone/awg-18-silicone-wire.toml uses) = 2 x 2.53 + 2 x 1.01 = 7.1 g/m [est, +-20 %].
+
+[params]
+conductors = { value = 4, unit = "1", fidelity = "estimated", rationale = "6 V, GND, bus A, bus B (spec 2.2)." }
+awg_power = { value = 24, unit = "AWG", fidelity = "estimated", rationale = "Servo rail share of ~1.5 A typical: 24 AWG (2.1 A, 60 C column); the stalled worst case is cut by the servo overload registers (spec 3.3), bom.md lists it as a margin item." }
+resistance_per_m = { value = 0.08422, unit = "ohm/m", src = "S1", fidelity = "literature" }
+mass_per_m = { value = 0.0071, unit = "kg/m", fidelity = "estimated", rationale = "Copper 2 x 1.81 + 2 x 0.72 g/m (24 and 28 AWG parts of this library) x 1.4 insulation factor = 7.1 g/m; not weighed." }
+price_per_m = { value = 1.0, unit = "USD/m", fidelity = "estimated", rationale = "Four hookup conductors; no listing fetched." }
+
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 2.1, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 2.1, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[sources]]
+id = "S1"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia) - table, solid copper at 68 F (24 AWG row, as recorded in parts/connectors/awg-24-silicone-wire.toml)"
+accessed = "2026-10-07"
+quote = "24 | 0.0201 | 0.511 | 49.7 | 19.6 | 0.404 | 0.205 | 84.22 | 25.67 | 2.1 | 3.5 | — | 29 A | 62 A | 348 A (columns: in, mm, per in, per cm, kcmil, mm2, mOhm/m, mOhm/ft, ampacity 60C/75C/90C, fusing current Preece 10 s / 1 s / Onderdonk 32 ms)"

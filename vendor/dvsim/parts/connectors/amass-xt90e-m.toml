@@ -1,0 +1,90 @@
+id = "amass-xt90e-m"
+name = "Amass XT90E-M connector (XT90 family, male, chassis / panel mount)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT90E-M"
+url = "https://www.electrokit.com/en/stromkontakt-2-pol-xt90-40a-hane-chassi"
+
+# Panel-mount male XT90 (flange); mounting pattern not recorded. Mass not given on the page.
+[params]
+current_rated       = { value = 45, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance  = { value = 0.0004, unit = "ohm", src = "S1", fidelity = "datasheet" }
+current_burst_family = { value = 90, unit = "A", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "xt90"
+gender = "male"
+v_max = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 45, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 90, unit = "A", src = "S2", fidelity = "datasheet" }
+role = "passthrough"
+note = "45 A max current (page), 90 A burst (Holybro XT90 table)"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 45, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, 10 AWG class"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line, solder cup n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "xt90"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the title (XT90 power connector 2-pin); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.electrokit.com/en/stromkontakt-2-pol-xt90-40a-hane-chassi"
+title = "Electrokit - XT90 power connector 2-pin 45(90)A male chassis"
+accessed = "2026-10-07"
+quote = "Max voltage: 500V | * Max current: 45A | * Contact resistance: 0.4mOhm"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module/connector-and-wire-rating.md"
+title = "Connector & Wire Rating (Holybro docs), genuine AMASS connector rating"
+accessed = "2026-10-07"
+quote = "XT90 10 AWG 45A 90A (columns: plug, wire size, cont. current 4 hours temperature rise < 60 C, burst current 1 minute)"

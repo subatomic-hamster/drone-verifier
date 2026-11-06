@@ -1,0 +1,108 @@
+id = "hitec-hs-485hb"
+name = "Hitec HS-485HB standard analog PWM servo (Karbonite gears)"
+category = "motor.servo"
+vendor = "Hitec RCD (ServoCity SKU 33485S)"
+part_number = "HS-485HB"
+url = "https://www.servocity.com/hs-485hb-servo/"
+
+# Frame: origin on the output axis at the horn-seat (top) face of the case; +z = output axis out of the case.
+# The ServoCity page gives only 'Servo Size: Standard', no dimensions; the body height below is an estimate, so the base port z is only approximate.
+# Gives a no-load current but no stall current, so a full R / Kt model cannot be derived (only a rough output-referred ke from no-load).
+
+[params]
+mass            = { value = 0.045,   unit = "kg", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.038,   unit = "m",  fidelity = "estimated", rationale = "Not on the retrieved ServoCity page ('Servo Size: Standard'). Taken equal to the Savox SB-2290SG listing (38.7 mm, parts/actuators/savox-sb-2290sg.toml) and close to the MG996R (42.9 mm) as other standard-size servos; +/-4 mm." }
+horn_spline     = { value = "C24T (24-tooth Hitec spline)", unit = "-", src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "Karbonite", unit = "-", src = "S1", fidelity = "datasheet" }
+protocol        = { value = "PWM 553-2425 us max range, 3-5 V pulse amplitude, 8 us dead band, 190 deg max rotation", unit = "-", src = "S1", fidelity = "datasheet" }
+position_range  = { value = 3.3161, unit = "rad", src = "S1", fidelity = "datasheet" }  # 190 deg max rotation
+v_operating_min     = { value = 4.8,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 6.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_4v8   = { value = 4.760,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.22 s/60deg
+no_load_speed_6v    = { value = 5.818,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.18 s/60deg
+stall_torque_4v8    = { value = 0.4707, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 66.6 oz-in (4.8 kg.cm)
+stall_torque_6v     = { value = 0.5884, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 83.3 oz-in (6.0 kg.cm)
+no_load_current_4v8 = { value = 0.150,  unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_current_6v  = { value = 0.180,  unit = "A",     src = "S1", fidelity = "datasheet" }
+idle_current_4v8    = { value = 0.008,  unit = "A",     src = "S1", fidelity = "datasheet" }
+idle_current_6v     = { value = 0.0088, unit = "A",     src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = -20,    unit = "degC",  src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 60,     unit = "degC",  src = "S1", fidelity = "datasheet" }
+feedback            = { value = "5 kohm potentiometer; 3-pole ferrite motor; top ball bearing, bottom bushing", unit = "-", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.servo-standard-ears"
+gender = "neutral"
+pos = [0.0, 0.0, -0.038]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Standard-size hobby servo mounting ears; hole spacing not on the page, opaque family tag. z position uses the estimated height."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.c24t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 24
+note = "Hitec C24T spline (24 teeth), not interchangeable with 25T horns."
+
+[[ports]]
+name = "power_in"
+pins = ["SRV.1", "SRV.2"]
+kind = "power"
+type = "servo-3pin"
+gender = "female"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "Power shares the 3-pin servo connector with the signal; no stall/continuous current rating published (no-load 150-180 mA only)."
+
+[[ports]]
+name = "signal"
+pins = ["SRV.3"]
+kind = "signal"
+type = "pwm"
+gender = "female"
+level = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }  # lower end of the 3-5 V pulse amplitude range
+
+# Pin level: the 3-pin servo lead. Wire colours and order from P1 (a Hitec retailer's description covering all Hitec servos); S1 does not describe the lead.
+[[connectors]]
+id = "SRV"
+name = "servo lead (3-pin Hitec/JR plug)"
+type = "servo-lead-3"
+port_type = "servo-3pin"
+gender = "female"
+pos = [-0.02, 0.0, -0.02]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "P1"
+fidelity = "literature"
+pose_rationale = "Servo case dimensions are not in the sources, so the lead exit is a positional estimate: at the -x end of a standard-size case, lead pointing out along -x."
+pins = [
+  { number = 1, name = "GND", kind = "ground", note = "black wire (P1)" },
+  { number = 2, name = "V+", kind = "power", dir = "in", note = "red, centre wire (P1)" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "in", note = "yellow, third wire (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.superdroidrobots.com/shop/item.aspx/hs-422-servo/184"
+title = "SuperDroid Robots - HS-422 Servo (Hitec), product description"
+accessed = "2026-10-09"
+quote = "On all Hitec servos the Black wire is 'ground', the Red wire (center wire) is 'power', and the yellow (third) wire is 'signal'. This servo has a Hitec/JR connector which mates directly with a 0.1\" 3-pin header."
+
+[[sources]]
+id = "S1"
+url = "https://www.servocity.com/hs-485hb-servo/"
+title = "ServoCity HS-485HB Servo - Stock Rotation, Specs tab"
+accessed = "2026-10-07"
+quote = "Output Shaft Style| C24T Spline| Voltage Range| 4.8V - 6.0V| No-Load Speed (4.8V)| 0.22sec/60°| No-Load Speed (6.0V)| 0.18sec/60°| Stall Torque (4.8V)| 66.6 oz-in (4.8 kg.cm)| Stall Torque (6.0V)| 83.3 oz-in (6.0 kg.cm)| Max PWM Signal Range| 553-2425μsec| Max Rotation| 190°| Pulse Amplitude| 3-5V| Operating Temperature| -20°C to +60°C| Current Drain - idle (4.8V)| 8mA| Current Drain - idle (6.0V)| 8.8mA| Current Drain - no-load (4.8V)| 150mA| Current Drain - no-load (6V)| 180mA| Deadband Width| 8µs| Motor Type| 3 Pole Ferrite| Feedback Style| 5KΩ Potentiometer| Output Shaft Support| Top Ball Bearing, Bottom Bushing| Gear Material| Karbonite| Weight| 1.59oz (45g)| Servo Size| Standard"

@@ -1,0 +1,35 @@
+id = "cf-plate-2mm"
+name = "Carbon fibre sheet 2 mm nominal (1.7 mm actual), high-strength 0/90 twill (Easy Composites)"
+category = "structure.plate"
+vendor = "Easy Composites"
+part_number = "High Strength Carbon Fibre Sheet, 2mm"
+url = "https://www.easycomposites.eu/high-strength-carbon-fibre-sheet"
+
+# Stock sheet; holes and outlines are cut by the user, so no fixed port pattern is declared.
+[params]
+thickness_nominal = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness_actual  = { value = 0.0017, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness_tolerance = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+areal_mass        = { value = 2.80, unit = "kg/m^2", src = "S1", fidelity = "datasheet" }
+youngs_modulus_inplane_tension = { value = 31.6e9, unit = "Pa", src = "S2", fidelity = "datasheet" }
+youngs_modulus_inplane_compression = { value = 32.4e9, unit = "Pa", src = "S2", fidelity = "datasheet" }
+
+[params.density_effective]
+value = 1647
+unit = "kg/m3"
+fidelity = "derived"
+derivation = "areal mass 2.80 kg/m2 divided by actual thickness 0.0017 m (S1 table row '2mm | 1.7mm +/-0.2mm | 2.80'). This is noticeably above the other thicknesses (about 1.47 g/cc); the vendor's own thickness tolerance (+/-0.2 mm) explains much of the spread."
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/high-strength-carbon-fibre-sheet"
+title = "High Strength Carbon Fibre Sheet (Easy Composites), thickness tolerance and sheet weight table"
+accessed = "2026-10-07"
+quote = "Thickness | Thickness & Tolerance | Weight kg/m² ... 1mm | 0.9mm +/-0.2mm | 1.32 ... 2mm | 1.7mm +/-0.2mm | 2.80 ... 3mm | 2.8mm +/-0.2mm | 4.11 ... 4mm | 4.0mm +/-0.2mm | 5.84"
+
+[[sources]]
+id = "S2"
+url = "https://www.easycomposites.eu/high-strength-carbon-fibre-sheet"
+title = "High Strength Carbon Fibre Sheet (Easy Composites), weight and dimensions table"
+accessed = "2026-10-07"
+quote = "Youngs Modulus 0/90° Gloss Side in Compression | 32.4 | GPa ... Youngs Modulus 0/90° Gloss Side in Tension | 31.6 | GPa ... Density | 1.33 | g/cm³"

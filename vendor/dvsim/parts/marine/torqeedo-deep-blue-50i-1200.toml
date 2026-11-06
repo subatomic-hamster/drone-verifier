@@ -1,0 +1,103 @@
+id = "torqeedo-deep-blue-50i-1200"
+name = "Torqeedo Deep Blue 50i electric inboard drive, 1200 rpm propeller-speed variant (motor and sea-water cooled housing, without controller or propeller)"
+category = "motor.bldc"
+vendor = "Torqeedo"
+part_number = "Deep Blue 50i 1200"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+
+# What Torqeedo publishes for the 50i (S1): "Input power (peak) 66.0 kW | Input power (continuous) 55.1 kW | Propulsive power > 32.4 kW | Maximum overall efficiency > 54 % |
+# Motor weight without battery, including electronics 80 kg | Maximum propeller speed 1200 rpm | Liquid cooling Sea Water, 7 l/min". The battery page of the same sheet lists the
+# 352 V Deep Blue Battery 40. NOT published: Kv, winding resistance, no-load current, torque, inertia, or the drive's controller interface. They are DERIVED below from the
+# rated point (55.1 kW from 352 V at 1200 rpm) with ONE estimated assumption, the motor efficiency at that point (0.93); the chain controller + motor + propeller then
+# reproduces the rated input power and speed by construction. In the simulator the motor, the controller (torqeedo-deep-blue-50i-controller) and the propeller
+# (generic-4blade-propeller-550) are separate parts because the rotor device needs a spinning body; the 80 kg datasheet mass is split 62 kg motor + 18 kg controller (ESTIMATE).
+# This is a stern-mounted drive here (hung on the transom like an outboard / pod; the real 50i is an inboard on a shaft), which only changes where the mass sits.
+# Part frame: origin at the mounting face centre, +z along the shaft towards the propeller, as the other motors.
+[params]
+mass            = { value = 62.0, unit = "kg", fidelity = "estimated", rationale = "S1 gives 80 kg for the motor INCLUDING its electronics; the motor's share is not published. 62 kg motor + 18 kg controller (an 80 kHz-class traction inverter of 55 kW weighs 10-20 kg)." }
+diameter        = { value = 0.30, unit = "m", fidelity = "estimated", rationale = "Not published; a 50 kW permanent-magnet motor of 400 Nm is a 0.25-0.35 m class housing. Drawing and collision shape only." }
+length_body     = { value = 0.60, unit = "m", fidelity = "estimated", rationale = "Not published; housing length of a 62 kg 400 Nm motor, drawing and collision only." }
+power_in_continuous = { value = 55100.0, unit = "W", src = "S1", fidelity = "datasheet" }
+power_in_peak   = { value = 66000.0, unit = "W", src = "S1", fidelity = "datasheet" }
+power_propulsive = { value = 32400.0, unit = "W", src = "S1", fidelity = "datasheet" }
+efficiency_overall = { value = 0.54, unit = "1", src = "S1", fidelity = "datasheet" }
+rpm_max         = { value = 1200.0, unit = "rpm", src = "S1", fidelity = "datasheet" }
+voltage_nominal = { value = 352.0, unit = "V", src = "S1", fidelity = "datasheet" }
+eta_motor_rated = { value = 0.93, unit = "1", fidelity = "estimated", rationale = "Motor efficiency at the rated point (copper plus iron plus friction loss): 0.92-0.96 for a 55 kW liquid-cooled PM motor; ONE assumption that the Kv, R and i0 derivations rest on (+-0.03 moves R by 40 %, Kv by 1 %)." }
+i_rated         = { value = 156.5, unit = "A", fidelity = "derived", derivation = "Rated DC current = continuous input power / nominal pack voltage = 55100 W / 352 V = 156.5 A (S1)." }
+kv              = { value = 3.70, unit = "rpm/V", fidelity = "derived", derivation = "Rated shaft power = 55.1 kW x controller efficiency 0.97 x eta_motor 0.93 = 49.7 kW at 1200 rpm = 125.7 rad/s: Q = 395 N m. Kt = Q / (I - i0) = 395 / (156.5 - 3.0) = 2.573 N m/A (i0 = 3 A, estimated), Kv = 9.5493 / Kt = 3.71 rpm/V, rounded 3.70; back-EMF at 1200 rpm = 1200 / 3.70 = 324 V of the ~341 V at the motor terminals. No-load speed at 352 V: 1302 rpm." }
+r_winding       = { value = 0.106, unit = "ohm", fidelity = "derived", derivation = "Motor terminal voltage at the rated point = (motor input power 49.7 / 0.93 = 53.4 kW) / 156.5 A = 341.5 V; R = (341.5 - 324.3) / 156.5 A = 0.106 ohm (DC-equivalent line-to-line). Copper loss 156.5^2 x 0.106 = 2.6 kW of the 3.7 kW motor loss (rest: iron / friction, ~1.1 kW)." }
+i0              = { value = 3.0, unit = "A", fidelity = "estimated", rationale = "No-load current (iron + bearing + seal friction) is unpublished: 3 A x 324 V = 1.0 kW, about 2 % of the rated power, typical for a PM motor with a lip-seal shaft." }
+j_rotor         = { value = 0.075, unit = "kg*m^2", fidelity = "estimated", rationale = "Rotor and shaft of a 62 kg motor: ~15 kg at an effective radius of 0.1 m = 0.075 kg m2. The propeller (22 kg, 0.83 kg m2) is its own body. Only the spin-up time depends on it." }
+c_th            = { value = 25000.0, unit = "J/K", fidelity = "estimated", rationale = "Lumped heat capacity of the winding + stator share of a 62 kg motor: 50 kg x ~0.5 kJ/kg K." }
+r_th            = { value = 0.012, unit = "K/W", fidelity = "estimated", rationale = "Winding to cooling water: 3.7 kW of loss at +45 K gives 0.012 K/W (7 l/min sea water, S1)." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.15, 0.30]
+pos = [0.0, 0.0, 0.30]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Mounting face on the transom bracket (the bracket is not modelled)."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.deepblue50"
+gender = "male"
+pos = [0.0, 0.0, 0.70]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Propeller shaft end 0.10 m beyond the housing front face. S1 lists shaft diameters of 30, 35, 40 mm / 1 1/8 and 1 1/4 inch; interface family name only."
+
+[[ports]]
+name = "phase"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+pins = ["PH.1", "PH.2", "PH.3"]
+i_max = { value = 187.5, unit = "A", fidelity = "derived", derivation = "Peak input power 66.0 kW / 352 V = 187.5 A (S1)." }
+note = "Three phase studs on the housing; the drive's own cable gland and connector are not documented by the vendor."
+
+[[connectors]]
+id = "PH"
+name = "motor phase terminals (3 studs)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.15, 0.05]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.03
+fidelity = "estimated"
+rationale = "The vendor publishes no connector or terminal drawing for the 50i; a three-phase PM motor has three phase terminals, drawn as studs on the housing side (pose and spacing are drawing choices). Phase order is interchangeable (swap two to reverse)."
+pins = [
+  { number = 1, name = "U", kind = "power", dir = "in" },
+  { number = 2, name = "V", kind = "power", dir = "in" },
+  { number = 3, name = "W", kind = "power", dir = "in" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+title = "Deep Blue 50i 1200 (Torqeedo product page, technical data)"
+accessed = "2026-10-13"
+quote = "Input power (peak) in kW 66.0 | Input power (continuous) in kW 55.1 | Propulsive power in kW > 32.4 | Maximum overall efficiency in % > 54 | Motor weight without battery, including electronics in kg 80 | Maximum propeller speed in rpm 2000 / 1200 | Liquid cooling Sea Water, 7 l/min, max. 32°C | Nominal voltage 352 V"

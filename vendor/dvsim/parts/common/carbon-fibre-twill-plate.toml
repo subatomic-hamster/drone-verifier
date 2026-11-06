@@ -1,0 +1,39 @@
+id = "carbon-fibre-twill-plate"
+name = "Carbon fibre twill laminate plate (X500 V2 top/bottom plates)"
+category = "material"
+vendor = "generic (Holybro 'full carbon fiber twill')"
+part_number = ""
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+
+[params]
+density_fibre_t700s = { value = 1800, unit = "kg/m3", src = "S2", fidelity = "datasheet" }
+axial_modulus_ud_t700s = { value = 134e9, unit = "Pa", src = "S2", fidelity = "datasheet" }
+
+[params.density]
+value = 1550
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Holybro states only 'full carbon fiber twill' (S1) with no resin/fibre data. Estimate uses T700S-class fibre (1800 kg/m3, S2) at ~60% Vf with epoxy ~1200 kg/m3 = 1.56 g/cc; typical commercial 3K twill sheets are 1.5-1.6 g/cc. Cross-check: CAD volume of both plates (derived in docs/research/x500v2-airframe.md) times 1550 gives 111 g for a kit stated at 610 g total, plausible."
+
+[params.youngs_modulus_inplane]
+value = 60e9
+unit = "Pa"
+fidelity = "estimated"
+rationale = "Woven twill puts half the fibre in warp and half in weft, so in-plane modulus is roughly half of the UD value 134 GPa (S2) minus crimp loss, giving ~55-65 GPa; 60 GPa used. No Holybro datasheet exists for the plate layup."
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.15, 0.15, 0.17, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs)"
+accessed = "2026-10-06"
+quote = "The Frame (X500 v2) is made with full carbon fiber twill, with carbon fiber tube arms supported by the newly designed fiber reinforced nylon connectors"
+
+[[sources]]
+id = "S2"
+url = "https://www.toraycma.com/wp-content/uploads/T700S-Data-Sheet.pdf"
+title = "TORAYCA T700S Standard Modulus data sheet"
+accessed = "2026-10-07"
+quote = "Density 1.80 g/cm3 ... Tensile Modulus* 19 Msi 134 GPa ASTM D3039"

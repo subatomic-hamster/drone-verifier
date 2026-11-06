@@ -1,0 +1,38 @@
+id = "cf-tube-12x10"
+name = "Carbon fibre tube 12 mm OD x 10 mm ID, woven-finish roll-wrapped (Easy Composites)"
+category = "structure.tube"
+vendor = "Easy Composites"
+part_number = "12mm (10mm) Woven Finish Carbon Fibre Tube"
+url = "https://www.easycomposites.eu/12mm-10mm-woven-finish-carbon-fibre-tube"
+
+# Per-metre values; tensile modulus is lengthways.
+[params]
+outer_diameter   = { value = 0.012, unit = "m", src = "S1", fidelity = "datasheet" }
+inner_diameter   = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_thickness   = { value = 0.001, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_per_m       = { value = 0.0536, unit = "kg/m", src = "S1", fidelity = "datasheet" }
+youngs_modulus_axial = { value = 64e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[params.second_moment_area]
+value = 5.2700e-10
+unit = "m^4"
+fidelity = "derived"
+derivation = "Hollow circular section I = pi/64 x (OD^4 - ID^4) with OD = 0.012 m and ID = 0.010 m from S1 (nominal dimensions)."
+
+[[ports]]
+name = "tube"
+kind = "mech"
+type = "tube.12"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Axisymmetric (360 = discrete stand-in for continuous)"
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/12mm-10mm-woven-finish-carbon-fibre-tube"
+title = "12mm (10mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table"
+accessed = "2026-10-07"
+quote = "Length | 1000 | mm ... Wall Thickness | 1 | mm ... Outside Diameter (OD) | 12 | mm ... Inside Diameter (ID) | 10 | mm ... Weight per metre | 53.6 | g ... Tensile Modulus (lengthways) | 64 | GPa"

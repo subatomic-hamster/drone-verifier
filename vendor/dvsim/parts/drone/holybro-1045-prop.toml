@@ -1,0 +1,152 @@
+id = "holybro-1045-prop"
+name = "Holybro 1045 propeller (T1045II, 10x4.5, X500 V2 kit)"
+category = "prop"
+vendor = "Holybro"
+part_number = "530084 (Propeller1045, 2 pair)"
+url = "https://holybro.com/products/spare-parts-x500-v2-kit"
+
+# Kit ships 6 props (CW + CCW pairs). The Holybro motor spec image lists them as "T1045II".
+# No measured C_T/C_P curve exists for this exact prop. Static C_T/C_Q below are DERIVED from the vendor thrust-stand
+# table of holybro-2216-kv920 (J = 0 only). For the advance-ratio (J) shape, the closest published reference is
+# parts/drone/uiuc-apc-sf-10x4.7.toml (APC Slow Flyer 10x4.7, UIUC wind-tunnel data): same diameter, similar pitch (4.7 vs 4.5).
+
+[params]
+diameter   = { value = 0.254, unit = "m", src = "S1", fidelity = "datasheet" }     # 10 in
+pitch      = { value = 0.1143, unit = "m", src = "S1", fidelity = "datasheet" }    # 4.5 in
+mass       = { value = 0.0125, unit = "kg", src = "S1", fidelity = "datasheet" }   # "Weight (Single Propeller) 12.5g"
+blade_count = { value = 2, unit = "1", fidelity = "estimated", rationale = "Holybro sells '1045 Propellers (6 pcs)' / 'Propeller1045(2pair)', i.e. CW/CCW pairs of the standard 2-blade 10x4.5 plastic prop; blade count is not written in the spec table." }
+material   = { value = "Nylon+Glass fiber", unit = "text", src = "S1", fidelity = "datasheet" }
+optimum_rpm_min = { value = 6000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+optimum_rpm_max = { value = 7000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 11.768, unit = "N", src = "S1", fidelity = "datasheet" }  # "Thrust Limitation 1.2kg" -> 1.2 kg x 9.80665
+j_prop     = { value = 6.72e-5, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.0125*0.254^2/12 = 6.72e-5 kg*m^2. Real blades carry mass nearer the hub and have a hub boss, so true J is likely 20-40% lower; mass distribution is not published. Treat as an upper bound." }
+ct_static  = { value = 0.095, unit = "1", fidelity = "derived", derivation = "Mean of derived C_T over the 55-100% throttle rows of [tables.ct_cq_static_derived] (range 0.0936-0.0962), C_T = T/(rho*n^2*D^4), rho = 1.225 kg/m^3 assumed (vendor does not state air density), D = 0.254 m. Uncertainty from rho and thrust-stand conditions is a few percent." }
+cq_static  = { value = 0.0053, unit = "1", fidelity = "derived", derivation = "Mean of derived C_Q over the rows of [tables.ct_cq_static_derived]; C_Q = Q/(rho*n^2*D^5) with vendor torque rounded to 0.01 N*m, so each row carries up to +-10% rounding error at low throttle (+-3% at 100%)." }
+ct_borrowed_from = { value = "uiuc-apc-sf-10x4.7", unit = "part id", fidelity = "estimated", rationale = "J-dependence of C_T and C_P should be scaled from the UIUC APC Slow Flyer 10x4.7 curves (same D, pitch/D 0.45 vs 0.47): use C_T(J) = C_T,static(this prop) * [C_T(J)/C_T(0)]_APC-SF. Quantitative accuracy at J > 0 is unvalidated for this prop." }
+
+[tables.ct_cq_static_derived]
+# Derived from holybro-2216-kv920 [tables.thrust_test]: columns rpm, thrust, torque as printed there.
+# C_T = T/(rho n^2 D^4), C_Q = Q/(rho n^2 D^5), n = rpm/60, rho = 1.225 kg/m^3, D = 0.254 m. (J = 0, sea-level static.)
+columns = ["rpm", "J", "C_T", "C_Q"]
+rows = [
+  [4042, 0.0, 0.0890, 0.00510],
+  [4469, 0.0, 0.0898, 0.00557],
+  [4855, 0.0, 0.0908, 0.00590],
+  [5301, 0.0, 0.0919, 0.00495],
+  [5780, 0.0, 0.0926, 0.00499],
+  [6298, 0.0, 0.0936, 0.00561],
+  [6800, 0.0, 0.0940, 0.00541],
+  [7281, 0.0, 0.0952, 0.00524],
+  [7679, 0.0, 0.0956, 0.00519],
+  [8096, 0.0, 0.0957, 0.00509],
+  [8468, 0.0, 0.0959, 0.00543],
+  [8867, 0.0, 0.0957, 0.00530],
+  [9257, 0.0, 0.0962, 0.00519],
+  [9675, 0.0, 0.0953, 0.00535],
+  [9857, 0.0, 0.0949, 0.00515],
+]
+fidelity = "derived"
+derivation = "From the vendor thrust-stand table (src S2 of holybro-2216-kv920): C_T = T/(rho*n^2*D^4), C_Q = Q/(rho*n^2*D^5), n = rpm/60, rho = 1.225 kg/m^3 assumed, D = 0.254 m, T = thrust_g*0.00980665."
+
+[tables.ct_cq_j]
+# C_T(J), C_Q(J) for the rotor device. J = V/(n*D). Shape from UIUC APC SF 10x4.7 advancing run at ~4014 rpm
+# (parts/drone/uiuc-apc-sf-10x4.7.toml [tables.advancing_4014rpm]), scaled so J = 0 equals this prop's own static values.
+# Rows: j, ct, cq. J = 0 row is ct_static / cq_static of this file; the other rows are scaled UIUC rows (J 0.142 .. 0.719,
+# C_T crosses zero at J ~ 0.647). Computed on hfbox (.venv python, numpy interp) 2026-10-07.
+columns = ["j", "ct", "cq"]
+rows = [
+  [0.0, 0.09500, 0.005300],
+  [0.142, 0.08161, 0.005133],
+  [0.177, 0.07750, 0.005076],
+  [0.216, 0.07266, 0.004962],
+  [0.255, 0.06806, 0.004860],
+  [0.289, 0.06322, 0.004712],
+  [0.325, 0.05903, 0.004632],
+  [0.361, 0.05353, 0.004462],
+  [0.399, 0.04778, 0.004268],
+  [0.438, 0.04121, 0.004006],
+  [0.468, 0.03621, 0.003813],
+  [0.510, 0.02816, 0.003506],
+  [0.534, 0.02364, 0.003323],
+  [0.577, 0.01461, 0.002936],
+  [0.612, 0.00681, 0.002595],
+  [0.647, -0.00090, 0.002265],
+  [0.685, -0.01002, 0.001844],
+  [0.719, -0.01790, 0.001480],
+]
+fidelity = "derived"
+derivation = "ct(J) = ct_static * CT_APC(J) / CT_APC,static(4014 rpm); cq(J) = cq_static * CP_APC(J) / CP_APC,static(4014 rpm) (C_Q = C_P/(2*pi), so the C_P ratio equals the C_Q ratio). ct_static = 0.095 and cq_static = 0.0053 are this prop's own static values derived from the Holybro thrust table (C_T = T/(rho*n^2*D^4), C_Q = Q/(rho*n^2*D^5), rho 1.225, D 0.254 m; see [tables.ct_cq_static_derived], means of its 15 rows). UIUC static values at 4014 rpm by linear interpolation of [tables.static_ct_cp]: CT = 0.11572, CP = 0.04657. UIUC rows are those of apcsf_10x4.7_kt0836_4014 (J 0.142-0.719); the 6020 rpm run (J 0.408-0.774) is not used so that one Reynolds number anchors the J = 0 scaling. Not validated at J > 0 for the Holybro prop (APC SF 10x4.7 is a different blade; pitch/D 0.47 vs 0.45)."
+
+[params.geom_width]
+value = 0.030
+unit = "m"
+fidelity = "estimated"
+rationale = "Full width (y) of the thin-box geometry. The Holybro spec image reads 'Plastic Propeller 10\" *4.5 (260mmx30mm)'; the '30mm' is unexplained there (hub or maximum chord). Cross-check: the APC SF 10x4.7 blade_geometry table in parts/drone/uiuc-apc-sf-10x4.7.toml has maximum c/R = 0.226, i.e. chord 0.226 * 0.127 = 28.7 mm, which agrees with 30 mm. Resolve with a measured prop."
+
+[params.geom_thickness]
+value = 0.004
+unit = "m"
+fidelity = "estimated"
+rationale = "Full thickness (z) of the thin-box geometry, kept from the earlier disc envelope (half-thickness 2 mm); stands for the hub boss, blade thickness is ~1-3 mm. Not published. Box inertia about z is m*(L^2+w^2)/12 = 0.0125*(0.254^2+0.030^2)/12 = 6.81e-5 kg*m^2, 1.4% above j_prop (6.72e-5, rod upper bound), so the geometry stays consistent with j_prop."
+
+[geometry]
+shape = "box"
+size = [0.127, 0.015, 0.002]       # half-extents: diameter 0.254 m along x, geom_width 0.030 m along y, geom_thickness 0.004 m along z
+material = "nylon-pa66"   # closest filed material; the prop is nylon + glass fibre (src S1), no glass-filled material file exists
+# Part frame: origin at the hub centre, z = shaft axis (towards the prop-side of the motor), z-up when installed.
+# Estimated blade-plane geometry: see params geom_width / geom_thickness.
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "bore.3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Hub bore sits on the 3 mm motor shaft (holybro-2216-kv920 'O3' drawing dimension); Holybro does not publish the hub bore or the prop adapter (the drawing's M6 is the shaft-end thread). Origin at hub centre, axis down the shaft (-z), ref along the blade (+x). Symmetry 1: the 2-blade prop has a blade direction but spins freely about z, so the builder uses a hinge, not k."
+
+[[ports]]
+name = "hub_m6"
+kind = "mech"
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "The same hub seen on an M6 prop adapter (the M6 shaft-end thread of the Holybro motor drawing, S1 of holybro-2216-kv920; KDE ships an M6 x 12 mm adapter with the 2315XF). Holybro does not publish the hub bore, so which adapter the hub takes is an assumption: both hub ports sit at the same place and only one is mated. Frame as port 'hub'."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "V1"
+note = "Two-blade 10x4.5 slow-fly propeller, black nylon, small hub (kit photo)."
+
+[[visual.elements]]
+gen = "propeller"
+colors = { blade = "plastic-black", hub = "plastic-black" }
+
+[[sources]]
+id = "V1"
+url = "https://holybro.com/products/spare-parts-x500-v2-kit"
+title = "Holybro spare parts, X500 V2 kit (product photo of the 1045 propeller, appearance only)"
+accessed = "2026-10-07"
+quote = "Spare Parts-X500 V2 Kit"
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/0604/5905/7341/files/X500MotorSpec.png?v=1678791632"
+title = "Holybro X500 V2 motor specification image (T1045II propeller specification block)"
+accessed = "2026-10-06"
+quote = "T1045II-Specifications: Plastic Propeller 10\" *4.5 (260mmx30mm); Weight (Single Propeller) 12.5g; Material Nylon+Glass fiber; Surface Treatment Matte Technology; Propeller Type Polymer Propeller; working Temp -10℃ ~40℃; Optimum RPM 6000-7000RPM/min; Thrust Limitation 1.2kg"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "Holybro docs - PX4 Development Kit - X500v2"
+accessed = "2026-10-06"
+quote = "1045 Propellers (6 pcs)"

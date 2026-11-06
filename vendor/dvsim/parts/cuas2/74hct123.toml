@@ -1,0 +1,96 @@
+id = "74hct123"
+name = "74HCT123 dual retriggerable monostable multivibrator with clear, DIP-16 (cuas2 shot limiter and kick supervisor)"
+category = "ic.logic"
+vendor = "Nexperia / Texas Instruments (CD74HCT123E, SN74HCT123N)"
+part_number = "74HCT123N"
+url = "https://futurlec.com/74HCT/74HCT123pr.shtml"
+
+# Part frame: origin at the centre of the DIP-16 body underside, z up, pin 1 at (-0.0095, +0.00381) (row y = +3.81 mm holds pins 1-8 .. see connector), body 19.2 x 6.4 x 3.3 mm.
+# HCT inputs accept 3.3 V from the Pico (TTL thresholds, VIH 2.0 V); outputs swing 0-5 V and drive only the 5 V gates of the limiter MOSFET and the supervisor MOSFET, never a Pico pin.
+# Pulse width (data sheet, HC/HCT123): tW = 0.45 x Rext x Cext, so 120 k x 4.7 uF = 254 ms, 75 k x 10 uF = 338 ms, 100 k x 3.3 uF = 149 ms; electrolytic tolerance +-20 % [est].
+
+[params]
+mass       = { value = 0.001, unit = "kg", fidelity = "estimated", rationale = "A DIP-16 plastic package weighs about 1 g (package standard)." }
+length     = { value = 0.0192, unit = "m", fidelity = "estimated", rationale = "DIP-16 body length (package standard)." }
+width      = { value = 0.0064, unit = "m", fidelity = "estimated", rationale = "DIP-16 body width (package standard)." }
+height     = { value = 0.0033, unit = "m", fidelity = "estimated", rationale = "DIP-16 body height (package standard)." }
+vcc_min    = { value = 4.5, unit = "V", fidelity = "estimated", rationale = "HCT family supply range 4.5-5.5 V (TI CD74HCT123 sheet class)." }
+vcc_max    = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "As vcc_min." }
+vih_min    = { value = 2.0, unit = "V", fidelity = "estimated", rationale = "HCT inputs are TTL-compatible: VIH 2.0 V." }
+t_w_k      = { value = 0.45, unit = "1", fidelity = "estimated", rationale = "Output pulse width tW = 0.45 Rext Cext (HC/HCT123 data sheets)." }
+price      = { value = 0.40, unit = "USD", src = "S1", fidelity = "datasheet" }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0096, 0.0032, 0.00165]
+pos = [0.0, 0.0, 0.00165]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power"
+kind = "power"
+type = "dip-pin"
+gender = "neutral"
+role = "sink"
+pins = ["U.16", "U.8"]
+v_max = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "HCT supply maximum." }
+v_min = { value = 4.5, unit = "V", fidelity = "estimated", rationale = "HCT supply minimum." }
+i_max = { value = 0.02, unit = "A", fidelity = "estimated", rationale = "Quiescent plus timing-capacitor charge; well under 20 mA." }
+note = "VCC (pin 16) and GND (pin 8)."
+
+[[ports]]
+name = "io"
+kind = "signal"
+type = "dip-pin"
+gender = "neutral"
+pins = ["U.1", "U.2", "U.3", "U.4", "U.5", "U.6", "U.7", "U.9", "U.10", "U.11", "U.12", "U.13", "U.14", "U.15"]
+note = "Inputs A, B, CLR of both monostables, outputs Q and Q-bar, and the Cext / Rext-Cext timing pins."
+
+[[connectors]]
+id = "U"
+name = "DIP-16 pins (2 rows of 8, 2.54 mm pitch, 7.62 mm apart)"
+type = "dip-16"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 8
+pitch = 0.00254
+fidelity = "estimated"
+rationale = "DIP-16 pin-out of the 74123 family (TI CD74HCT123 pin diagram, from memory of the sheet, not fetched: verify against the part in hand);row spacing 7.62 mm and pitch 2.54 mm are the package standard."
+pins = [
+  { number = 1, name = "1A", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 2, name = "1B", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 3, name = "1CLR", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 4, name = "1QN", kind = "signal", dir = "out", v = 5.0 },
+  { number = 5, name = "2Q", kind = "signal", dir = "out", v = 5.0 },
+  { number = 6, name = "2CEXT", kind = "signal", dir = "io", v_max = 5.5 },
+  { number = 7, name = "2REXT/CEXT", kind = "signal", dir = "io", v_max = 5.5 },
+  { number = 8, name = "GND", kind = "ground" },
+  { number = 9, name = "2A", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 10, name = "2B", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 11, name = "2CLR", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 12, name = "2QN", kind = "signal", dir = "out", v = 5.0 },
+  { number = 13, name = "1Q", kind = "signal", dir = "out", v = 5.0 },
+  { number = 14, name = "1CEXT", kind = "signal", dir = "io", v_max = 5.5 },
+  { number = 15, name = "1REXT/CEXT", kind = "signal", dir = "io", v_max = 5.5 },
+  { number = 16, name = "VCC", kind = "power", dir = "in", v_min = 4.5, v_max = 5.5 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://futurlec.com/74HCT/74HCT123pr.shtml"
+title = "Futurlec 74HCT123 16-pin DIP listing (search snippet: 1+ USD 0.40, 25+ 0.35, 100+ 0.33; equivalent to the 74HCT123N)"
+accessed = "2026-10-27"
+quote = "74HCT123 ... 1+ $0.40, 25+ $0.35, 100+ $0.33"

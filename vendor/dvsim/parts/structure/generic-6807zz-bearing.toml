@@ -1,0 +1,60 @@
+id = "generic-6807zz-bearing"
+name = "6807ZZ / 6807-2RS thin-section deep-groove ball bearing, 35x47x7 mm (right tilt trunnion of cuas-lite)"
+category = "structure.bearing"
+vendor = "generic (mass and size: NSK 6807ZZ, Simply Bearings; price: search listings)"
+part_number = "6807ZZ"
+url = "https://www.simplybearings.co.uk/products/6807zz-nsk"
+
+# Carries the hollow 35 mm right trunnion tube of the printed trunnion_beam in the right cheek (cad/cuas-lite manifest interface.mounts.bearing_6807_right: centre (0, -64.5, 202) mm in frame B, axis y).
+# The shielded (ZZ) and rubber-sealed (2RS) versions are the same size; either fits the CAD seat. Mass is for the NSK ZZ part; a budget 2RS is within a few grams.
+# Part frame: origin at the centre of the bearing's underside face, axis along the bore (z).
+
+[params]
+bore_diameter  = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter = { value = 0.047, unit = "m", src = "S1", fidelity = "datasheet" }
+width          = { value = 0.007, unit = "m", src = "S1", fidelity = "datasheet" }
+mass           = { value = 0.027, unit = "kg", src = "S1", fidelity = "datasheet" }
+price      = { value = 7.49, unit = "USD", src = "S2", fidelity = "estimated", rationale = "Newegg lists a 6807-2RS at 7.49 USD (web-search snippet 2026-10-11; the page was not fetched, 403/bot wall). Cheaper offers exist in the same search (an eBay seller at about 3.09 USD each, ABEC1, no returns; not fetched), which are not used for the BOM because stock and shipping were not verified. The NSK 6807ZZ is 20-30 GBP at RS / 20 USD at IMS Supply: far above what a printed-trunnion bearing needs." }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.35"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.007
+note = "35 mm bore (S1)."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port, for seating the part by the pose of its frame."
+
+[visual]
+rationale = "Metal ring drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.simplybearings.co.uk/products/6807zz-nsk"
+title = "Simply Bearings: NSK 6807ZZ (page fetched 2026-10-11; its price of 984 GBP is an error on the page, only the dimensions and weight are used)"
+accessed = "2026-10-11"
+quote = "Bore (d) 35 mm ... Outside diameter (D) 47 mm ... Width (B) 7 mm ... Weight 0.027 kg"
+
+[[sources]]
+id = "S2"
+url = "https://www.newegg.com/p/325-003X-00V81"
+title = "Newegg: 6807-2RS double-sealed bearing 35x47x7 (price from a web-search snippet; the page was not fetched)"
+accessed = "2026-10-11"
+quote = "6807-2RS double-sealed bearing, $7.49"

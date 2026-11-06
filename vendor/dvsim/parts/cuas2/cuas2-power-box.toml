@@ -1,0 +1,43 @@
+id = "cuas2-power-box"
+name = "cuas2 power_box (3D printed PETG, M6 power / safety box under the base plate, group static)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "power_box"
+url = "cad/cuas2/modules/power_box.py"
+
+# Mesh in frame B (106 x 80 x 60 mm incl. the H1 harness pad on +x, open at the bottom; lid below). Holds the Pico, 2 TMC2209, the 40 A relay, the buck, the 5 V regulator and the safety ICs;
+# key switch and E-stop sit in the -y wall at x -75 / -35, z -28. Identity free placement.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/power_box.stl"
+material = "petg"
+bbox_min = [-0.097, -0.04, -0.068]
+bbox_max = [0.009, 0.04, -0.008]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame, axis +z: 'a' side of the closure mate to the lid."

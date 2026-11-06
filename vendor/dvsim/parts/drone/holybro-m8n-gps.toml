@@ -1,0 +1,147 @@
+id = "holybro-m8n-gps"
+name = "Holybro M8N GPS module (X500 V2 kit GPS: u-blox NEO-M8N + IST8310 compass)"
+category = "pcb.gps"
+vendor = "Holybro"
+part_number = "M8N GPS"
+url = "https://docs.holybro.com/gps-and-rtk-system/m8n-m9n-m10-gps/standard-m10-m9n-m8n-gps/overview.md"
+
+# Holybro's spec table lists only the M10 and M9N columns; the M8N shares the family case, patch antenna
+# and IST8310 compass. Mass and size below are therefore taken from the family table as estimates for the M8N.
+# Receiver chip numbers: parts ublox-neo-m8n; compass: isentek-ist8310.
+[params]
+antenna_size_xy      = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+antenna_thickness    = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+supply_voltage_min   = { value = 4.7, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max   = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_max   = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }
+default_baud         = { value = 115200, unit = "baud", src = "S1", fidelity = "datasheet" }
+cable_length         = { value = 0.26, unit = "m", src = "S1", fidelity = "datasheet" }
+kit_listed_in_x500v2 = { value = 1, unit = "1", src = "S2", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.032
+unit = "kg"
+fidelity = "estimated"
+rationale = "Holybro's M10/M9N/M8N family table gives 'Weight (V1) 32g' and 'Weight (V2) 36.8g' for the M10 and M9N columns and does not list an M8N column. Same case and patch antenna, so the V1 32 g is used; the X500 V2 kit ships an M8N of unspecified hardware revision (V1 assumed because the kit docs predate the V2 IP67 case)."
+
+[params.diameter]
+value = 0.050
+unit = "m"
+fidelity = "estimated"
+rationale = "Family table lists 'Dimension (V1) phi50 x14.4 mm' (V2 phi51 x18.5 mm) for the M10/M9N columns; assumed identical for the M8N V1 case."
+
+[params.height]
+value = 0.0144
+unit = "m"
+fidelity = "estimated"
+rationale = "Family table 'Dimension (V1) phi50 x14.4 mm'; assumed identical for the M8N V1 case. Excludes the GPS mount pole."
+
+[params.mass_tol]
+value = 0.005
+unit = "kg"
+fidelity = "estimated"
+rationale = "mass (32 g) is taken from the V1 column of the M10/M9N table; the V2 case is 36.8 g (same family table, cited in the mass rationale), so +-5 g covers both revisions and rounding."
+
+[geometry]
+# Part frame: origin at the centre of the underside (mounting face), z up (antenna side up). Puck envelope: diameter and height
+# are the (estimated) params above, from the family table 'phi50 x14.4 mm'; the mast is not included.
+shape = "cylinder"
+size = [0.025, 0.0072]       # [radius 0.050/2, half-height 0.0144/2]
+pos = [0.0, 0.0, 0.0072]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat (mates 'gps_mast' of holybro-x500v2-top-plate). The GPS mount is a 4 x M3x10 + locknut bracket (airframe doc extras) whose hole pattern is not recorded, so a flat seat is used; ref +x = cable-side forward is not published either. The mast between the plate and this seat is not a filed part."
+
+[[ports]]
+name = "gps_out"
+lead = { length = "cable_length" }   # pre-attached 26 cm cable (see note)
+kind ="signal"
+type = "jst-gh.10"
+gender = "female"
+pins = ["GPS.1", "GPS.2", "GPS.3", "GPS.4", "GPS.5", "GPS.6", "GPS.7", "GPS.8", "GPS.9", "GPS.10"]
+note = "Pre-attached 26 cm cable (S1 'Cable Length 26cm') ending in a 10-pin connector for the Pixhawk GPS1 header (10 pins listed on the Holybro Pixhawk 6C ports page, 2026-10-07); JST-GH family and the 10-pin count of the M8N cable are assumed (estimated): the M8N column is missing from the family table. Female cable-side housing mates the Pixhawk gps1 (male). Supply 4.7-5.2 V, < 200 mA (params)."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "V1"
+note = "Black domed puck with a white forward arrow (product photo)."
+
+[[visual.elements]]
+gen = "gnss_puck"
+
+# Pin level: the pre-attached cable plug. Holybro's M8N page points to a separate pinout page that was not retrievable; the cable plugs into
+# the Pixhawk GPS1 header, so pin n of this plug is pin n of GPS1 (holybro-pixhawk-6c S10), signal names mirrored (module TX meets FC RX).
+[[connectors]]
+id = "GPS"
+name = "GPS cable plug (JST-GH 10)"
+type = "jst-gh-10"
+gender = "female"
+pos = [-0.025, 0.0, 0.0072]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 10
+pitch = 0.00125
+fidelity = "derived"
+derivation = "A straight cable to the Pixhawk 6C GPS1 header (10 pins: 1 VCC +5V, 2 TX1, 3 RX1, 4 SCL1, 5 SDA1, 6 SAFETY_SWITCH, 7 SAFETY_SWITCH_LED, 8 IO_VDD_3V3, 9 BUZZER-, 10 GND); the module's own pin names are the FC's with TX / RX mirrored. The 10-pin count of the M8N cable is itself an assumption of this library (see port gps_out)."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "in", v = 5.0, v_min = 4.7, v_max = 5.2 },
+  { number = 2, name = "RX", kind = "signal", dir = "in", v = 3.3, alt = ["UART RX"] },
+  { number = 3, name = "TX", kind = "signal", dir = "out", v = 3.3, alt = ["UART TX"] },
+  { number = 4, name = "SCL", kind = "signal", dir = "io", v = 3.3, alt = ["I2C SCL"] },
+  { number = 5, name = "SDA", kind = "signal", dir = "io", v = 3.3, alt = ["I2C SDA"] },
+  { number = 6, name = "SAFETY_SWITCH", kind = "signal", dir = "out", v = 3.3 },
+  { number = 7, name = "SAFETY_SWITCH_LED", kind = "signal", dir = "in", v = 3.3 },
+  { number = 8, name = "IO_VDD_3V3", kind = "power", dir = "in", v = 3.3 },
+  { number = 9, name = "BUZZER-", kind = "signal", dir = "in", v = 5.0 },
+  { number = 10, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "V1"
+url = "https://holybro.com/products/m8n-gps"
+title = "Holybro M8N GPS product page (appearance photo)"
+accessed = "2026-10-07"
+quote = "M8N GPS"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/gps-and-rtk-system/m8n-m9n-m10-gps/standard-m10-m9n-m8n-gps/overview.md"
+title = "Standard M10/M9N/M8N GPS Overview (Holybro docs), specification table"
+accessed = "2026-10-06"
+quote = "Input Voltage 4.7-5.2V ... Antenna 25 x 25 x 4 mm ceramic patch antenna ... Power consumption Less than 200mA @ 5V ... Dimension (V1) φ50 x14.4 mm ... Weight (V1) 32g ... Cable Length 26cm (42cm cable purchase separately) ... Default Baud Rate 115200"
+
+[params.receiver_icc_tracking_continuous]
+value = 0.030
+unit = "A"
+src = "S3"
+fidelity = "datasheet"
+
+[params.supply_current_typ]
+value = 0.030
+unit = "A"
+fidelity = "derived"
+derivation = "u-blox NEO-M8N tracking, continuous mode, GPS + GLONASS: ICC 30 mA typical, 'Estimated at 3 V' (receiver_icc_tracking_continuous, S3 Table 11), taken as the 5 V input current by assuming the module's 5 V to ~3 V regulator is linear (a buck would draw about 0.6x). The Holybro compass chip (IST8310, sub-mA) and any LED are not added. Holybro's own bound 'Less than 200mA @ 5V' (supply_current_max) is a ceiling, not a typical figure: using it would put the battery-side load about 6x higher."
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs), kit contents"
+accessed = "2026-10-06"
+quote = "M8N GPS Module"
+
+[[sources]]
+id = "S3"
+url = "https://content.u-blox.com/sites/default/files/NEO-M8-FW3_DataSheet_UBX-15031086.pdf"
+title = "NEO-M8 u-blox M8 concurrent GNSS modules Data sheet UBX-15031086 R14, Table 11 Indicative power requirements at 3.0 V"
+accessed = "2026-10-07"
+quote = "ICC Tracking (continuous mode) NEO-M8N 30 (Typical GPS & GLONASS) 23 (Typical GPS) mA Estimated at 3 V"

@@ -1,0 +1,50 @@
+id = "wurth-970140144-m25-standoff-ff"
+name = "Wurth Elektronik 970140144 hex standoff M2.5 female-female, nickel brass, 14 mm, 4 mm hex"
+category = "structure.standoff"
+vendor = "Wurth Elektronik"
+part_number = "970140144"
+url = "https://www.we-online.com/katalog/datasheet/970140144.pdf"
+
+# WA-SBRII series, nickel-plated brass. Frame: origin on the axis at one end face, +z toward the other end.
+[params]
+thread_diameter = { value = 2.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 14e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+inner_thread_length = { value = 14e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.00127
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass in the datasheet. Hex prism 4 mm across flats (13.86 mm2) less the M2.5 x 0.45 minor bore (2.01 mm dia, 3.18 mm2) = 10.67 mm2 x 14 mm = 149 mm3 x brass 8500 kg/m3 (assumed, alloy not stated) = 1.27 g. Chamfers not modelled: +-10 %."
+
+[[ports]]
+name = "thread_a"
+kind = "mech"
+type = "thread.m2.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.014
+note = "Internal M2.5 thread, 'Inner Thread Length Tli 14 mm' equals the body length: threaded right through; end face at z = 0."
+
+[[ports]]
+name = "thread_b"
+kind = "mech"
+type = "thread.m2.5"
+gender = "female"
+pos = [0.0, 0.0, 0.014]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.014
+note = "Same through thread seen from the other end face (z = 14 mm); the two lengths overlap."
+
+[[sources]]
+id = "S1"
+url = "https://www.we-online.com/katalog/datasheet/970140144.pdf"
+title = "Wurth Elektronik datasheet 970140144 WA-SBRII Brass Spacer"
+accessed = "2026-10-07"
+quote = "Material Brass; Surface Nickel (Ni); Length L 14 mm; Inner Thread Ti M2.5; Inner Thread Length Tli 14 mm; Wrench SW 4"

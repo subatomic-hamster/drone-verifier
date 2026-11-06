@@ -1,0 +1,165 @@
+id = "holybro-x500v2-battery-mount"
+name = "Holybro X500 V2 battery mount: battery mounting board V2 (#31108), 2 slide-bar clips, battery pad, 2 battery straps"
+category = "frame.mount"
+vendor = "Holybro"
+part_number = "31108"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+
+# Everything that sits between the rail rods and the battery. Geometry from x500v2-frame.step (OpenCascade; STEP solids
+# BATTERY-MOUNTING-PLAT, PYLONS-X500 x2 = the guide's part 15 'Slide Bar Clip 2pcs', BATTERY-PAD). The battery straps are in the
+# kit ('Battery mount with two Battery Straps') but NOT in the STEP: their mass and place are estimates.
+# Part frame: origin = plate-underside datum (x = vehicle centre, y = 0), z up, shapes hang below it (z negative):
+# z = y_STEP/1000. Rod axes are at z = -0.013 (y_STEP -13.0 mm); clips span z -0.0057..-0.0445, board -0.0445..-0.0465, pad
+# -0.0465..-0.0485, battery top at -0.0485 (the battery part's rail ports put it there).
+[params.board_cad_volume]
+value = 8.3549e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of BATTERY-MOUNTING-PLAT in x500v2-frame.step: bbox 100.0 x 2.0 x 50.3 mm (x -50..50, z_STEP -25.2..25.2, y_STEP -46.5..-44.5)."
+
+[params.clip_cad_volume]
+value = 5.2745e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of one PYLONS-X500 solid: bbox 9.5 x 38.8 x 69.4 mm, x_STEP = +-35 mm, y_STEP -44.5..-5.7, z_STEP -34.7..34.7 (it spans the rails at z_STEP = +-30 mm and carries the board below). 2 off. Role (slide bar clip, guide part 15) inferred from position."
+
+[params.pad_cad_volume]
+value = 4.1349e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of BATTERY-PAD: bbox 91.5 x 2.0 x 23.6 mm, y_STEP -48.5..-46.5 (directly under the board)."
+
+[params.plastic_density]
+value = 1300
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Clip material not stated (guide: 'Slide Bar Clip'); plastic assumed, same 1300 kg/m3 estimate as the fibre-reinforced nylon arm connectors (holybro-x500v2-arm-connectors density)."
+
+[params.pad_density]
+value = 600
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Pad material not stated ('Battery Pad'). Battery pads are soft foam or anti-slip rubber, i.e. from ~100 kg/m3 (foam) to ~1200 kg/m3 (solid rubber, TPU 95A 1220 kg/m3 in parts/common); 600 kg/m3 is the geometric-ish mid value, +-80 % carried in mass_tol."
+
+[params.mass_board]
+value = 0.01295
+unit = "kg"
+fidelity = "derived"
+derivation = "board_cad_volume 8.3549e-6 m3 * carbon-fibre-twill-plate estimated density 1550 kg/m3 = 12.95 g. Board material not stated (carbon twill assumed, as for the platform board)."
+
+[params.mass_clip]
+value = 0.006857
+unit = "kg"
+fidelity = "derived"
+derivation = "clip_cad_volume 5.2745e-6 m3 * plastic_density 1300 kg/m3 (estimated) = 6.857 g per clip."
+
+[params.mass_pad]
+value = 0.002481
+unit = "kg"
+fidelity = "derived"
+derivation = "pad_cad_volume 4.1349e-6 m3 * pad_density 600 kg/m3 (estimated) = 2.481 g."
+
+[params.mass_strap]
+value = 0.006
+unit = "kg"
+fidelity = "estimated"
+rationale = "Per strap. Holybro lists 'Battery mount with two Battery Straps' but publishes no mass and the straps are not in the STEP. 6 g is an order-of-magnitude placeholder for a ~20 x 250 mm hook-and-loop strap with buckle (no source found), +-100 % carried in mass_tol."
+
+[params.mass]
+value = 0.041145
+unit = "kg"
+fidelity = "derived"
+derivation = "mass_board 0.01295 + 2 x mass_clip 0.006857 + mass_pad 0.002481 + 2 x mass_strap 0.006 = 0.041145 kg."
+
+[params.mass_tol]
+value = 0.019
+unit = "kg"
+fidelity = "estimated"
+rationale = "Sum of component tolerances: board +-25 % of 12.95 g = 3.2 g (material unknown); clips +-13 % of 13.7 g = 1.8 g (plastic grade); pad +-80 % of 2.5 g = 2.0 g; straps +-100 % of 12 g = 12 g (no data). Total 19.0 g. Nothing weighed."
+
+[geometry]
+material = "carbon-fibre-twill-plate"   # nominal; masses are set per shape by mass_param (shapes are solid boxes, the real parts have holes)
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.05, 0.0252, 0.001]
+pos = [0.0, 0.0, -0.0455]
+mass_param = "mass_board"
+note = "battery mounting board (#31108), 100 x 50.3 x 2 mm"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00475, 0.0347, 0.0194]
+pos = [0.035, 0.0, -0.0251]
+mass_param = "mass_clip"
+note = "slide bar clip at x = +35 mm"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00475, 0.0347, 0.0194]
+pos = [-0.035, 0.0, -0.0251]
+mass_param = "mass_clip"
+note = "slide bar clip at x = -35 mm"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.04575, 0.0118, 0.001]
+pos = [0.0, 0.0, -0.0475]
+mass_param = "mass_pad"
+note = "battery pad under the board, 91.5 x 23.6 x 2 mm"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0125, 0.0225, 0.0005]
+pos = [0.03, 0.0, -0.0825]
+mass_param = "mass_strap"
+note = "battery strap under the pack (position and size estimated: not in the STEP; pack bottom is at z = -0.082)"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0125, 0.0225, 0.0005]
+pos = [-0.03, 0.0, -0.0825]
+mass_param = "mass_strap"
+note = "battery strap under the pack (estimated, see above)"
+
+[[ports]]
+name = "seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Plate-underside datum (mates 'battery_mount' of holybro-x500v2-bottom-plate). The real mount hangs on the rails, not on the plate; the airframe is rigid so only the pose matters."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "V1"
+note = "Carbon board with black clips, pad and straps (kit photo). Slot sK = geometry shape K."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "plastic-black", s0 = "carbon-fibre", s3 = "rubber", s4 = "rubber", s5 = "rubber" }
+
+[[sources]]
+id = "V1"
+url = "https://holybro.com/products/x500-v2-kits"
+title = "Holybro X500 V2 kits product page (battery mount photo, appearance only)"
+accessed = "2026-10-07"
+quote = "X500 V2 Kits"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs), Frame Kit Details"
+accessed = "2026-10-07"
+quote = "Battery mount with two Battery Straps"
+
+[[sources]]
+id = "S2"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+title = "X500 v2 Assembly Guide (Holybro PDF), part list and exploded views"
+accessed = "2026-10-07"
+quote = "#31108 Battery Mounting Board ... 15. Slide Bar Clip 2pcs ... 10. Battery Pad"

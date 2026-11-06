@@ -1,0 +1,69 @@
+id = "tattu-11000mah-6s-hv-25c-xt90s"
+name = "Tattu G-Tech 11000mAh 6S 22.8V 25C LiPo pack, XT90-S"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA110006SFX9 (TA-25C-11000-6S1P-HV-XT90)"
+url = "https://rcdrone.top/products/tattu-g-tech-6s-11000mah-22-8v-25c-lipo-battery-with-xt90-s-plug-for-uav"
+
+# Part frame: origin at the pack centre, x along length (178 mm), y along width (65 mm), z up (57 mm). 22.8 V nominal = LiHV chemistry (3.8 V/cell),
+# full charge 4.35 V/cell.
+
+[params]
+capacity_ah     = { value = 11.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 39600.0, unit = "C", fidelity = "derived", derivation = "11.0 Ah x 3600 s/h = 39600 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 26.1, unit = "V", fidelity = "derived", derivation = "22.8 V nominal = 6 x 3.8 V (HV chemistry); HV full-charge limit 4.35 V/cell x 6 = 26.1 V (part number carries 'HV')." }
+c_rating_cont   = { value = 25, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 50, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 275.0, unit = "A", fidelity = "derived", derivation = "25 C x 11.0 Ah = 275 A (rating label only)." }
+mass            = { value = 1.296, unit = "kg", src = "S1", fidelity = "datasheet" }          # 1296 g (+-20 g)
+length          = { value = 0.178, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.057, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90-S", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.120, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0142, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/11 = 2.36 mOhm/cell x 6 cells = 14.2 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.089, 0.0325, 0.0285]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 26.1, unit = "V", fidelity = "derived", derivation = "6S x 4.35 V/cell HV full charge = 26.1 V." }
+i_max = { value = 275.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 25 C x 11.0 Ah = 275 A (S1 label); exceeds the XT90 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug (XT90-S anti-spark), drawn on the +x face. S1 names the XT90-S plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family; the anti-spark resistor path is not modelled. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90-S)"
+type = "xt90"
+gender = "neutral"
+pos = [0.089, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90-S plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 26.1, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/tattu-g-tech-6s-11000mah-22-8v-25c-lipo-battery-with-xt90-s-plug-for-uav"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu G-Tech 6S 11000mAh 22.8V 25C LiPo, XT90-S / EC5"
+accessed = "2026-10-07"
+quote = "Minimum Capacity: 11000mAh | Configuration: 6S / 22.8V / 6 cells | Discharge Rate: 25C | Max Burst Discharge Rate: 50C | Net Weight(±20g): 1296g | Dimensions: 178mm Length x 65mm Width x 57mm Height | Wire Gauge: | 10# | Discharge Wire Length(mm): | 120 | Part N: | TA-25C-11000-6S1P-HV-XT90"

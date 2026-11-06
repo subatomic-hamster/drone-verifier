@@ -1,0 +1,43 @@
+id = "iso4762-m2.5x10"
+name = "Socket head cap screw ISO 4762 M2.5x10, steel"
+category = "fastener"
+vendor = "generic (ISO 4762 / DIN 912)"
+part_number = "ISO 4762 M2.5x10"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+
+[params]
+mass            = { value = 5.25e-4, unit = "kg", src = "S1", fidelity = "datasheet" }
+thread_diameter = { value = 2.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+length          = { value = 10e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thread_pitch    = { value = 0.45e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+head_diameter   = { value = 4.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+head_height     = { value = 2.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+steel_density   = { value = 7850, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m2.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.010
+fidelity = "datasheet"
+src = "S1"
+note = "Shank thread; pos at the head underside, axis points out of the shank tip (library screw convention); length = params.length (S1 row l=10); pitch in params.thread_pitch (S2)."
+
+[[sources]]
+id = "S1"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 standard dimensions (fasten.it), approximate mass table"
+accessed = "2026-10-07"
+quote = "Approximate mass, in kg x1000 pcs, (ρ=7,85 kg/dm 3 ) - commercial items ... 10 0.16 0.295 0.525 0.88 1.8 2.7 4.7  (row l=10; columns M1.6 M2 M2.5 M3 M4 M5 M6; M2.5 = 0.525 kg per 1000 pcs)"
+
+[[sources]]
+id = "S2"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 key dimensions table (fasten.it)"
+accessed = "2026-10-07"
+quote = "M 2.5 0.45 4.5 4.68 4.32 2.5 2.66 2 1.1 0.85 17  (d, P, dk max plain, dk max knurled, dk min, k max, k min, s nom, t min, w min, b)"

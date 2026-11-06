@@ -1,0 +1,86 @@
+id = "gemfan-hurricane-51466"
+name = "Gemfan Hurricane 51466 3-blade 5-inch propeller"
+category = "prop"
+vendor = "Gemfan"
+part_number = "Hurricane 51466 (getfpv SKU 10196)"
+url = "https://www.getfpv.com/gemfan-hurricane-51466-propeller-set-of-4.html"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# This is the "51466" prop used in the iFlight XING2 2207 spec-image thrust tables. The hub bore is not printed on the retailer pages
+# fetched; 5 mm is assumed (estimated below) from the 5 mm motor shafts this prop is paired with -> port type bore.5 is an inference.
+
+[params]
+diameter    = { value = 0.12954, unit = "m", src = "S1", fidelity = "datasheet" }           # Length 5.1 in
+pitch       = { value = 0.118364, unit = "m", src = "S1", fidelity = "datasheet" }          # 4.66 in
+blade_count = { value = 3, unit = "1", src = "S2", fidelity = "datasheet" }
+mass        = { value = 0.00413, unit = "kg", src = "S1", fidelity = "datasheet" }          # 4.13 g
+material    = { value = "Polycarbonate", unit = "text", src = "S1", fidelity = "datasheet" }
+hub_thickness = { value = 0.007, unit = "m", src = "S1", fidelity = "datasheet" }
+bore_diameter = { value = 0.005, unit = "m", fidelity = "estimated", rationale = "Hub ID is not printed on the fetched getfpv/myfpvstore pages; 5 mm assumed because the iFlight XING2 2207 (5 mm shaft, M5 thread) lists 51466 as its test prop, and HQProp/Gemfan 5-inch FPV props are sold for 5 mm shafts." }
+j_prop      = { value = 5.78e-6, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.00413*0.12954^2/12 = 5.78e-6 kg*m^2. Upper bound (real blades keep mass nearer the hub)." }
+
+[tables.ct_cq_j]
+# C_T(J), C_Q(J) for the rotor device (J = V/(n D)). NO measured aerodynamic data exists for this prop (the iFlight tables give thrust / current / power vs
+# throttle, no rpm, so C_T cannot be derived from them as for the Holybro 1045). ESTIMATED: J = 0 row = the static C_T0 / C_Q0 the repo's thrust-stand
+# bench (python/dvsim/bench.py, docs/validation/thrust-stands.md, iflight-xing2-2207-1855kv thrust_test, 24 V, 3 fitted rows 50/80/100 %) fitted for this prop at the
+# Reynolds reference x = n D^2 = 4.5 m^2/s; those fits are regularised by a weak prior because the table has no rpm (C_T0 and the duty slope trade off),
+# so treat them as +-25 %. Shape in J: the APC SF 10x4.7 advancing run used by parts/drone/holybro-1045-prop.toml, scaled to J = 0 equal to the values above and with J
+# stretched by the pitch/diameter ratio (0.914 / 0.45 = 2.03). Only J near 0 (hover) is meaningful; the forward-flight shape is a guess.
+columns = ["j", "ct", "cq"]
+rows = [
+  [0.000, 0.09965, 0.006658],
+  [0.288, 0.08561, 0.006448],
+  [0.359, 0.08129, 0.006377],
+  [0.439, 0.07622, 0.006234],
+  [0.518, 0.07139, 0.006105],
+  [0.587, 0.06632, 0.005920],
+  [0.660, 0.06192, 0.005819],
+  [0.733, 0.05615, 0.005605],
+  [0.810, 0.05012, 0.005362],
+  [0.889, 0.04323, 0.005033],
+  [0.950, 0.03798, 0.004790],
+  [1.036, 0.02954, 0.004404],
+  [1.084, 0.02480, 0.004175],
+  [1.172, 0.01533, 0.003688],
+  [1.243, 0.00714, 0.003260],
+  [1.314, -0.00094, 0.002845],
+  [1.391, -0.01051, 0.002317],
+  [1.460, -0.01878, 0.001859],
+]
+fidelity = "estimated"
+rationale = "Static values fitted (not measured) by the repo thrust-stand bench to the iFlight XING2 2207 1855KV / 51466 table, J shape borrowed from a different (10 in, pitch/D 0.47) APC prop; see the comment block above."
+
+[geometry]
+shape = "cylinder"
+size = [0.06477, 0.0035]       # disc envelope: radius D/2, half of the 7 mm hub thickness
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "S1"
+note = "Three-blade 5.1 inch FPV propeller (listing title); black finish is the category default."
+
+[[visual.elements]]
+gen = "propeller"
+
+[[sources]]
+id = "S1"
+url = "https://www.getfpv.com/gemfan-hurricane-51466-propeller-set-of-4.html"
+title = "GetFPV - Gemfan Hurricane 51466 Propeller (Set of 4)"
+accessed = "2026-10-07"
+quote = "Specifications|Length: 5.1\"|Pitch: 4.66\"|Hub Thickness: 7mm|POPO: Yes|Weight: 4.13g|Material: Polycarbonate"
+
+[[sources]]
+id = "S2"
+url = "https://myfpvstore.com/6wap"
+title = "MyFPVStore - GemFan Hurricane 5in Durable 3 Blade 51466 Prop (Set of 4)"
+accessed = "2026-10-07"
+quote = "Length: 5.1 inch|Pitch: 4.66 inch|Blades: 3|Material: Polycarbonate|Weight: 4.13g"

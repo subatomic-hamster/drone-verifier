@@ -1,0 +1,35 @@
+id = "ruland-mcl-8-f"
+name = "Ruland MCL-8-F one-piece clamp shaft collar, 8 mm bore, 18 mm OD, 9 mm wide, black-oxide steel"
+category = "structure.shaft-collar"
+vendor = "Ruland Manufacturing"
+part_number = "MCL-8-F"
+url = "https://docs.rs-online.com/09ba/0900766b816574f5.pdf"
+
+# Frame: origin on the bore axis at the bore-end face, +z along the axis through the width.
+[params]
+bore_diameter    = { value = 8e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter   = { value = 18e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width            = { value = 9e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+clearance_diameter_max = { value = 22.4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+clamp_screw      = { value = "M3x8", unit = "-", src = "S1", fidelity = "datasheet" }
+seating_torque   = { value = 2.1, unit = "N*m", src = "S1", fidelity = "datasheet" }
+mass             = { value = 0.013608, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.009
+note = "8 mm clamped bore (+0.050 / +0.012 mm), through the 9 mm width."
+
+[[sources]]
+id = "S1"
+url = "https://docs.rs-online.com/09ba/0900766b816574f5.pdf"
+title = "Ruland MCL-8-F datasheet (RS Components mirror of the Ruland sheet)"
+accessed = "2026-10-07"
+quote = "Ruland MCL-8-F, 8mm One-Piece Shaft Collar, Black Oxide Steel, Clamp Style, 18mm OD, 9mm Width ... Bore B 8 mm ... Outer Diameter OD 18 mm Clearance Diameter C MAX 22.4 mm Width W 9 mm ... Forged Clamp Screw M3x8 ... Seating Torque 2.1 Nm ... Weight (lbs.) 0.0300"

@@ -1,0 +1,93 @@
+id = "pololu-d24v50f5"
+name = "Pololu 5 V, 5 A step-down regulator D24V50F5"
+category = "pcb.bec"
+vendor = "Pololu"
+part_number = "D24V50F5 (item 2851)"
+url = "https://www.pololu.com/product/2851"
+
+# Efficiency and current-vs-input graphs are images on the product page; the quoted 85-95 % range is all that is text.
+[params]
+length              = { value = 0.0178, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.0203, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.0088, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_min   = { value = 6, unit = "V", src = "S1", fidelity = "datasheet" }
+input_voltage_max   = { value = 38, unit = "V", src = "S1", fidelity = "datasheet" }
+output_voltage      = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+output_current_typ_max = { value = 5, unit = "A", src = "S1", fidelity = "datasheet" }
+efficiency_min      = { value = 0.85, unit = "1", src = "S1", fidelity = "datasheet" }
+efficiency_max      = { value = 0.95, unit = "1", src = "S1", fidelity = "datasheet" }
+quiescent_current   = { value = 700e-6, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[params.mount_hole_spacing_x]
+value = 0.013462
+unit = "m"
+fidelity = "derived"
+derivation = "S1 gives 0.53 in horizontally; 0.53 x 25.4 mm = 13.462 mm."
+
+[params.mount_hole_spacing_y]
+value = 0.016002
+unit = "m"
+fidelity = "derived"
+derivation = "S1 gives 0.63 in vertically; 0.63 x 25.4 mm = 16.002 mm."
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.13.46x16.0.m2"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Two 0.086 in holes at opposite corners for #2 or M2 screws"
+
+[[ports]]
+name = "vin"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 38, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+pins = ["IO.VIN", "IO.GND1"]
+
+[[ports]]
+name = "vout"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+note = "5 A is the typical continuous maximum; thermally limited"
+pins = ["IO.VOUT", "IO.GND2"]
+
+# ---- Connectors (pin level). S1 lists the five connection points; the order along the edge is not in the page text, so the pad order is an estimate.
+[[connectors]]
+id = "IO"
+joinable = true   # bare solder pads: several wires may be soldered to one pad
+name = "5 solder pads on a 0.1 in grid"
+type = "pad-1x5-2.54mm"
+gender = "neutral"
+pos = [0.0, -0.0101, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "S1 gives the five connection points ('enable (EN), input voltage (VIN), 2x ground (GND), and output voltage (VOUT)') and the 0.1 in grid; the left-to-right order along the board edge is not in the page text: estimated."
+pins = [
+  { number = "EN", name = "EN", kind = "signal", dir = "in", note = "enable input; the page gives no threshold, left out" },
+  { number = "VIN", name = "VIN", kind = "power", dir = "in", v_min = 6.0, v_max = 38.0 },
+  { number = "GND1", name = "GND", kind = "ground", note = "input-side ground pad; the two GND pads are the same net" },
+  { number = "GND2", name = "GND", kind = "ground", note = "output-side ground pad" },
+  { number = "VOUT", name = "VOUT", kind = "power", dir = "out", v = 5.0, i_max = 5.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2851"
+title = "Pololu 5V, 5A Step-Down Voltage Regulator D24V50F5 (Pololu product page)"
+accessed = "2026-10-07"
+quote = "Input voltage: 6 V to 38 V ... Fixed 5 V output (with 4% accuracy) Typical maximum continuous output current: 5 A ... Typical efficiency of 85% to 95%, depending on input voltage and load ... 700 μA typical no-load quiescent current ... Compact size: 0.7″ × 0.8″ × 0.35″ (17.8 mm × 20.3 mm × 8.8 mm) Two 0.086″ mounting holes for #2 or M2 screws ... separated by 0.53″ horizontally and 0.63″ vertically"

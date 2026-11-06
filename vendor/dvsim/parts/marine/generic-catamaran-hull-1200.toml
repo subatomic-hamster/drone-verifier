@@ -1,0 +1,161 @@
+id = "generic-catamaran-hull-1200"
+name = "Generic 1.2 m twin-hull catamaran ASV hull (sized after the Blue Robotics BlueBoat; illustrative, not a product)"
+category = "hull.catamaran"
+vendor = "generic"
+part_number = "n/a (sized after BlueBoat BR-101103)"
+url = "https://bluerobotics.com/store/boat/blueboat/blueboat/"
+
+# NOT a catalogue part. Only the overall size and mass come from the BlueBoat spec table (S1: 120 x 93 x 46 cm deployed, 14.5 kg without batteries or payload,
+# freeboard 160 mm with two batteries); the hull shape is a design of this repo: two straight-sided rectangular hulls (Cb = 1: no V-section, no rocker), the simplest
+# prismatic body the vessel device samples. Real BlueBoat hulls are slimmer at the keel; the waterplane area and so the draft / heave stiffness differ.
+# Part frame (= the vessel's body frame): origin at mid-length on the centreline at the keel level, x forward, y to port, z up.
+# At the design mass (hull + 2 thrusters + 2 ESCs + one 0.41 kg battery = 15.3 kg) it floats at 0.0377 m draft (waterplane 0.408 m2, rho 998.2 kg/m3).
+[params]
+length         = { value = 1.2, unit = "m", src = "S1", fidelity = "datasheet" }
+beam           = { value = 0.93, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_blueboat  = { value = 14.5, unit = "kg", src = "S1", fidelity = "datasheet" }
+hull_length    = { value = 1.2, unit = "m", fidelity = "estimated", rationale = "Design choice: the overall length of the BlueBoat (S1)." }
+hull_width     = { value = 0.17, unit = "m", fidelity = "estimated", rationale = "Design choice: each of the two hulls 0.17 m wide, hull centrelines +-0.38 m, outer edges at +-0.465 m = half the 0.93 m deployed beam (S1)." }
+hull_depth     = { value = 0.20, unit = "m", fidelity = "estimated", rationale = "Design choice: deck 0.20 m above the keel, so the freeboard at 15 kg is ~0.16 m (S1 gives 0.160 m with two batteries, 16.9 kg)." }
+hull_mass      = { value = 13.90, unit = "kg", fidelity = "derived", derivation = "BlueBoat 14.5 kg without batteries or payload (S1) minus its two M200 motors 2 x 0.282 kg (S2) minus its two Basic ESCs 2 x 0.0163 kg (S3) = 14.5 - 0.564 - 0.033 = 13.90 kg of hulls, deck, enclosure and the unlisted electronics; thrusters, ESCs and batteries are separate instances in an assembly." }
+mass           = { value = 13.90, unit = "kg", fidelity = "derived", derivation = "= hull_mass: 13.90 kg, split equally over the two hull boxes (uniform density: the hull's own centre of gravity at 0.10 m above the keel, mid-length)." }
+hull_mass_each = { value = 6.95, unit = "kg", fidelity = "derived", derivation = "hull_mass / 2 = 6.95 kg per hull." }
+
+# Two boxes (full extents 1.2 x 0.17 x 0.20 m) sampled into 24 x 4 x 8 buoyancy cells each (device vessel); cells = [along x, along y, along z].
+[[geometry.shapes]]
+shape = "box"
+size = [0.6, 0.085, 0.10]
+pos = [0.0, 0.38, 0.10]
+cells = [24, 4, 8]
+mass_param = "hull_mass_each"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.6, 0.085, 0.10]
+pos = [0.0, -0.38, 0.10]
+cells = [24, 4, 8]
+mass_param = "hull_mass_each"
+
+# Fossen diagonal coefficients of the whole vehicle at the design waterline, order surge, sway, heave, roll, pitch, yaw (units kg, N s/m, N s^2/m^2 and the rotational
+# analogues). The numbers follow a strip-theory estimate of this box geometry (hulls 1.2 x 0.17 m, draft T = 0.0375 m, hull centrelines y = +-0.38 m): see the
+# rationale. Unvalidated against tank or sea data of any real boat.
+[tables.hydro]
+columns = ["added_mass", "damp_lin", "damp_quad"]
+rows = [
+  [1.7,   3.0,   1.6],
+  [11.0,  15.0,  49.4],
+  [54.0,  211.0, 244.0],
+  [7.8,   10.0,  13.4],
+  [6.5,   6.0,   13.2],
+  [1.6,   2.0,   2.7],
+]
+fidelity = "estimated"
+rationale = "Strip theory on two rectangular hulls. Added mass: surge 0.1 x the 17 kg displaced (slender-body A11 ~ 0.05-0.1 m for L/B > 6); sway 2 hulls x 1.2 m x rho pi T^2 (half-ellipse of draft T = 0.0375 m, 2-D added mass rho pi T^2 = 4.4 kg/m, 11 kg total with an end-effect allowance); heave 2 x 1.2 m x rho pi (b/2)^2 = 2 x 1.2 x 22.7 = 54 kg (2-D added mass of the waterplane half-width b/2 = 0.085 m); roll = heave x 0.38^2 = 7.8 kg m2; pitch = 2 hulls x 22.7 x L^3/12 = 6.5 kg m2; yaw = sway x L^2/12 = 1.6 kg m2. Quadratic damping: surge 0.5 rho Cf(1 + k) S_wet with Cf 0.0045 (ITTC-57 at Re 1.2e6), form factor 1 + k = 1.2, S_wet = 2 x 1.2 x (0.17 + 2 x 0.0375) = 0.59 m2 -> 1.6 N s2/m2; sway 0.5 rho 1.1 x (2 x 1.2 x 0.0375 = 0.09 m2) = 49.4; heave 0.5 rho 1.2 x A_wp 0.408 = 244; roll 0.5 rho 1.2 (b L) 2 y^3 = 13.4; pitch 0.5 rho 1.2 b 2 x 2 (L/2)^4 / 4 = 13.2; yaw (sway coefficient per metre 41.2) x 2 (L/2)^4 / 4 = 2.7. Linear damping: heave 2 zeta sqrt(rho g A_wp (m + A33)) with zeta = 0.2 (ESTIMATED; small catamarans sit at 0.1-0.3), m = 15.35 kg: 2 x 0.2 x sqrt(3995 x 69.35) = 211 N s/m; roll and pitch zeta ~ 0.1; surge / sway / yaw a few percent of the quadratic term at 1 m/s. The damping ratios and the end-effect allowance are estimates; the rest is arithmetic on the stated geometry."
+
+# Thruster seats: flat faces on the stern transom, the thruster's rear face against it (the thruster then points aft: pusher), at the keel level so the
+# propeller disc (r 0.038 m) is submerged at the design draft.
+[[ports]]
+name = "thruster_port"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.6, 0.38, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Stern face of the port hull at keel level (the real BlueBoat hangs its thrusters under the hulls on brackets; the bracket is not modelled)."
+
+[[ports]]
+name = "thruster_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.6, -0.38, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As thruster_port on the starboard hull."
+
+[[ports]]
+name = "esc_port"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.40, 0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the port hull (the BlueBoat keeps its electronics in a central enclosure; not modelled)."
+
+[[ports]]
+name = "esc_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.40, -0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As esc_port on the starboard hull."
+
+[[ports]]
+name = "battery_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Deck of the port hull amidships; one pack per hull (each hull's thruster runs from its own battery), so the weights balance."
+
+[[ports]]
+name = "battery_seat_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, -0.38, 0.20]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As battery_seat on the starboard hull."
+
+[visual]
+src = "S1"
+note = "BlueBoat look: two deep orange hulls with flat inner walls, a hatch lid on each, aluminium cross-members between them (S1 product page text; hull colour choices are Mariner Blue / Garibaldi Orange / Moray Green / Axolotl Pink, orange drawn)."
+
+[[visual.elements]]
+gen = "catamaran_hull"
+
+[[sources]]
+id = "S1"
+url = "https://bluerobotics.com/store/boat/blueboat/blueboat/"
+title = "BlueBoat product page, Technical Details (Blue Robotics)"
+accessed = "2026-10-08"
+quote = "Weight (no batteries or payload): 14.5 kg ... Maximum Draft (maximum payload): 320 mm ... Freeboard (2 batteries, no payload): 160 mm ... 120 x 93 x 46 cm (deployed) ... Maximum Speed (2 batteries, no payload): 3 m/s"
+
+[[sources]]
+id = "S2"
+url = "https://bluerobotics.com/store/thrusters/m200-motor/"
+title = "M200 Motor product page (Blue Robotics), specifications"
+accessed = "2026-10-08"
+quote = "Weight in Air (with 1 m cable): 282 g ... Motor Kv: 470 RPM/V ... Max Current (Power) @ 12 V: 17 Amps (205 Watts)"
+
+[[sources]]
+id = "S3"
+url = "https://bluerobotics.com/store/thrusters/speed-controllers/besc30-r3/"
+title = "Basic ESC product page (Blue Robotics), specifications"
+accessed = "2026-10-08"
+quote = "Weight: 16.3 g"

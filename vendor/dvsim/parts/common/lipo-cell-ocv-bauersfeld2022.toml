@@ -1,0 +1,81 @@
+id = "lipo-cell-ocv-bauersfeld2022"
+ports_note = "Data-only effective open-circuit-voltage curve and per-cell resistance law for hobby LiPo packs (1.55-5.2 Ah, 4S-6S); not a physical part, no ports."
+name = "Hobby LiPo cell effective OCV vs consumed energy, Bauersfeld & Scaramuzza 2022 (identified on 10 packs, 5-70 C discharge)"
+category = "battery.cell_curve"
+vendor = "L. Bauersfeld / D. Scaramuzza, UZH Robotics and Perception Group"
+part_number = "10 hobby LiPo packs, 4S1P 1.55 Ah to 6S4P 5.2 Ah (makes not stated)"
+url = "https://arxiv.org/pdf/2109.04741"
+
+# The paper identifies U0(E_cell) = a0 + a1 E + a2 E^2 + a3 E^3 by RMSE minimisation on held-out *loaded* discharge data
+# (not a relaxed rest voltage), together with a 1-RC model, so U0 absorbs part of the polarisation. Valid only down to the paper's
+# 3.5 V/cell end criterion: at E = 13.32 kJ/Ah (nominal capacity delivered) it reads 3.531 V, so it has no knee below 3.5 V.
+#
+# UNIT RESOLUTION (inference, not stated in the paper text): Table I and Eq. (14) give no unit for E_cell = integral of
+# P_cell = P_mot/(N_cell C_cell). With E in Wh/Ah the cubic would stay near 3.9 V over the whole discharge (cell energy is only
+# ~3.7 Wh/Ah), which contradicts the 3.5 V end criterion; with E in J/Ah the terms would be 1e4 times too big. E in kJ per Ah
+# (= W*s/Ah / 1000) is the only consistent reading: the paper's Fig. 4 effective capacity of ~24 Wh for a 4S 1.8 Ah pack
+# (the right-hand plot axis spans 20-26 Wh, read from the PDF text layer, i.e. ~3.1-3.6 Wh/Ah = 11-13 kJ/Ah) lands at U0 = 3.6-3.5 V,
+# i.e. ~3.5 V once the R0/RC drop is subtracted. Treat the unit as inferred.
+#
+# Per-cell resistance law R0 = max(b0 + b1 Pcell + b2 Ccell, Rmin) (Eq. 16): the model's quadratic U = (U0 - Ucap + sqrt(...))/2
+# uses R0*Pcell as V^2 with Pcell in W/Ah, so R0 is read as a capacity-normalised resistance in ohm*Ah per cell (inference).
+# R_cell = R0/Ccell then gives ~7 mOhm per cell at the X500 hover point; the identified packs include 1.55 Ah 4S1P and (5.2 Ah / 4 =) 1.3 Ah
+# cells in 6S4P; other pack sizes are not listed, so 5.2 Ah single cells are probably an extrapolation (b2 acts as a per-cell floor of ~7 mOhm that does not fall with capacity).
+
+[params]
+a0 = { value = 4.2, unit = "V", src = "S1", fidelity = "literature" }
+a1 = { value = -0.1102178, unit = "V/(kJ/Ah)", src = "S1", fidelity = "literature" }   # unit inferred, see header
+a2 = { value = 0.0103368, unit = "V/(kJ/Ah)^2", src = "S1", fidelity = "literature" }
+a3 = { value = -4.3778e-4, unit = "V/(kJ/Ah)^3", src = "S1", fidelity = "literature" }
+r0_b0 = { value = 0.0015778, unit = "ohm*Ah", src = "S1", fidelity = "literature" }
+r0_b1 = { value = -7.7608e-5, unit = "ohm*Ah/(W/Ah)", src = "S1", fidelity = "literature" }
+r0_b2 = { value = 0.0069498, unit = "ohm", src = "S1", fidelity = "literature" }   # multiplies Ccell in Ah
+r_min = { value = 0.0045, unit = "ohm*Ah", src = "S1", fidelity = "literature" }
+tau_rc = { value = 3.3, unit = "s", src = "S1", fidelity = "literature" }
+k_ucap = { value = 0.00104846, unit = "V/(W/Ah)", src = "S1", fidelity = "literature" }
+e_nominal_full = { value = 13.32, unit = "kJ/Ah", fidelity = "derived", derivation = "3.7 V nominal x 3600 s/h / 1000 = 13.32 kJ per Ah of nominal capacity (energy delivered by a nominal-capacity cell between 4.2 V and ~3.0 V). Used only to map E to an SOC column: soc = 1 - E/13.32." }
+r_cell_5v2ah_hover = { value = 0.0071, unit = "ohm", fidelity = "derived", derivation = "Eq. (16) with Ccell = 5.2 Ah, Pcell = 209 W/(4 x 5.2 Ah) = 10.05 W/Ah: R0 = 0.0015778 - 7.7608e-5 x 10.05 + 0.0069498 x 5.2 = 0.03694 ohm*Ah; R_cell = R0/Ccell = 7.1 mOhm per cell, 28 mOhm for 4S (reading R0 as ohm*Ah, see header; extrapolated beyond the identified cell sizes)." }
+
+[tables.ocv_vs_soc]
+# soc = 1 - E/13.32; u0_V = a0 + a1 E + a2 E^2 + a3 E^3. E = 0..13.0 kJ/Ah step 0.5, plus the nominal-capacity point. 28 points; soc 1 -> 0.
+columns = ["soc", "e_kj_per_ah", "u0_V"]
+rows = [
+  [1.0000, 0.0, 4.200],
+  [0.9625, 0.5, 4.147],
+  [0.9249, 1.0, 4.100],
+  [0.8874, 1.5, 4.056],
+  [0.8498, 2.0, 4.017],
+  [0.8123, 2.5, 3.982],
+  [0.7748, 3.0, 3.951],
+  [0.7372, 3.5, 3.922],
+  [0.6997, 4.0, 3.896],
+  [0.6622, 4.5, 3.873],
+  [0.6246, 5.0, 3.853],
+  [0.5871, 5.5, 3.834],
+  [0.5495, 6.0, 3.816],
+  [0.5120, 6.5, 3.800],
+  [0.4745, 7.0, 3.785],
+  [0.4369, 7.5, 3.770],
+  [0.3994, 8.0, 3.756],
+  [0.3619, 8.5, 3.741],
+  [0.3243, 9.0, 3.726],
+  [0.2868, 9.5, 3.710],
+  [0.2492, 10.0, 3.694],
+  [0.2117, 10.5, 3.676],
+  [0.1742, 11.0, 3.656],
+  [0.1366, 11.5, 3.634],
+  [0.0991, 12.0, 3.609],
+  [0.0616, 12.5, 3.582],
+  [0.0240, 13.0, 3.552],
+  [0.0000, 13.32, 3.531],
+]
+src = "S1"
+fidelity = "derived"
+derivation = "Cubic of paper Eq. (15) with Table I coefficients evaluated at E; E unit (kJ per Ah of cell capacity) and the SOC mapping soc = 1 - E/13.32 are our inference (see file header). Effective loaded-fit curve, ends at 3.53 V; not a rest-voltage curve."
+
+[[sources]]
+id = "S1"
+url = "https://arxiv.org/pdf/2109.04741"
+title = "Bauersfeld & Scaramuzza, Range, Endurance, and Optimal Speed Estimates for Multicopters, IEEE RA-L 2022 (arXiv 2109.04741), Table I and Eq. (14)-(16)"
+accessed = "2026-10-07"
+quote = "a0 4.2 V a1 -0.1102178 a2 0.0103368 a3 -4.3778e-4 Rmin 4.5 mΩ b0 0.0015778 b1 -7.7608e-5 b2 0.0069498 τRC 3.3 s k 0.00104846 ... the open-circuit battery voltage is identified: U0(Ecell) = a0 + a1 Ecell + a2 Ecell^2 + a3 Ecell^3 ... R0(P̄cell, Ccell) = max(b0 + b1 P̄cell + b2 Ccell, Rmin) ... 10 different batteries ranging from '4S1P 1.55Ah' to '6S4P 5.2Ah' are tested with different, step-wise constant discharge profiles. ... The discharge rates range from 5 C to 70 C."

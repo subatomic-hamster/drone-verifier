@@ -1,0 +1,74 @@
+id = "tvc-gimbal-ring"
+name = "TVC gimbal, ring: pitch ring carrying the yaw servo, PLA (design of this repo)"
+category = "rocket.gimbal"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# The middle member of the two-axis gimbal (see tvc-gimbal-plate): hinged to the plate about y (its pitch horn seat at (0, 0.021, 0) is driven by the
+# pitch servo), carries the YAW servo whose output turns the cradle about x. Gimbal centre at the origin, +z towards the nose.
+[params]
+outer_radius = { value = 0.021, unit = "m", fidelity = "estimated", rationale = "Design choice: wall 3 mm over the cradle's 0.017 m outer radius + 0.75 mm clearance." }
+inner_radius = { value = 0.01775, unit = "m", fidelity = "estimated", rationale = "Design choice: 0.75 mm clearance over the cradle's 0.017 m outer radius." }
+height = { value = 0.03, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+mass = { value = 0.0173, unit = "kg", fidelity = "derived", derivation = "PLA 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 1178 kg/m3 times the volume: ring pi (0.021^2 - 0.01775^2) x 0.03 m = 1.188e-5 m3, servo arm 0.0027 x 0.024 x 0.035 m = 2.27e-6 m3, bridge 0.026 x 0.005 x 0.004 m = 5.2e-7 m3; total 1.47e-5 m3 = 0.0173 kg." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.021, 0.015]
+pos = [0.0, 0.0, 0.0]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00135, 0.012, 0.0175]
+pos = [0.04825, 0.0, 0.0075]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.013, 0.0025, 0.002]
+pos = [0.034, 0.0, 0.013]
+material = "pla"
+
+# Pitch servo output hub (the servo's output port mates here with a hinge about y).
+[[ports]]
+name = "pitch_horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl330"
+gender = "female"
+pos = [0.0, 0.021, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Ring's +y outer surface on the pitch axis; the horn thickness is the XL330 hub's 3 mm (parts/arm/robotis-xl330-m077-t)."
+
+# Yaw servo base seat on the +x arm.
+[[ports]]
+name = "yaw_servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0469, 0.0, 0.0075]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.0027
+fidelity = "estimated"
+rationale = "Inner face of the +x servo arm (0.0469 m = hub plane 0.021 + 0.0259 servo height), centred 7.5 mm along z so that the servo's output hub lands on the yaw axis."
+
+[visual]
+rationale = "Design of this repo: printed pitch ring with trunnion bosses on +-y and the yaw-servo bracket on +x."
+
+[[visual.elements]]
+gen = "tvc_gimbal"
+params = { kind = "ring" }
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

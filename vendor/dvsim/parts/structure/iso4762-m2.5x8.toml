@@ -1,0 +1,41 @@
+id = "iso4762-m2.5x8"
+name = "Socket head cap screw ISO 4762 M2.5x8, steel"
+category = "fastener"
+vendor = "generic (ISO 4762 / DIN 912)"
+part_number = "ISO 4762 M2.5x8"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+
+[params]
+mass            = { value = 4.65e-4, unit = "kg", src = "S1", fidelity = "datasheet" }
+thread_diameter = { value = 2.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+length          = { value = 8e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thread_pitch    = { value = 0.45e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+head_diameter   = { value = 4.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+head_height     = { value = 2.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+steel_density   = { value = 7850, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m2.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.008
+note = "Shank thread, axis points out of the shank tip; pos at underside of head"
+
+[[sources]]
+id = "S1"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 standard dimensions (fasten.it), approximate mass table"
+accessed = "2026-10-07"
+quote = "Approximate mass, in kg x1000 pcs, (ρ=7,85 kg/dm 3 ) - commercial items ... 8 0.14 0.255 0.465 0.8 1.65 2.45  (row l=8; columns M1.6 M2 M2.5 M3 M4 M5; M2.5 = 0.465 kg per 1000 pcs)"
+
+[[sources]]
+id = "S2"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 key dimensions table (fasten.it)"
+accessed = "2026-10-07"
+quote = "M 2.5 0.45 4.5 4.68 4.32 2.5 2.66 2 1.1 0.85 17  (d, P, dk max plain, dk max knurled, dk min, k max, k min, s nom, t min, w min, b)"

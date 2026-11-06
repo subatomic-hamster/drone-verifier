@@ -1,0 +1,83 @@
+id = "molicel-inr21700-p45b"
+name = "Molicel INR-21700-P45B 4.5 Ah 21700 Li-ion cell"
+category = "battery.cell"
+vendor = "Molicel (E-One Moli Energy)"
+part_number = "INR-21700-P45B"
+url = "https://www.kronium.cz/uploads/p45b-datasheet.pdf"
+
+# Part frame: origin at the cell centre, z along the cell axis (positive terminal at +z). Cylinder 21.4 mm diameter x 70.0 mm.
+# Datasheet: Molicel document INR21700P45B-01 Ver. 0.2 (hosted copy). Measured capacity from Battery Mooch's independent bench test (S2).
+# The datasheet gives a rate-capacity table (min. guaranteed values) but no OCV curve: use common/lipo-cell-ocv-* curves as a placeholder at
+# the model level (not the same chemistry, so only an approximation).
+
+[params]
+capacity_ah     = { value = 4.5, unit = "Ah", src = "S1", fidelity = "datasheet" }            # typical, 0.9 A discharge at 23 C
+capacity_min_ah = { value = 4.35, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity_measured_ah = { value = 4.4825, unit = "Ah", src = "S2", fidelity = "measured" }      # mean of 4477 and 4488 mAh
+capacity        = { value = 16200.0, unit = "C", fidelity = "derived", derivation = "4.5 Ah x 3600 s/h = 16200 C (coulombs)." }
+v_nominal       = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cutoff        = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }           # "Cycle life is reduced at high rates"; 80 C surface limit
+i_charge_std    = { value = 4.5, unit = "A", src = "S1", fidelity = "datasheet" }
+i_charge_max    = { value = 9.0, unit = "A", src = "S1", fidelity = "datasheet" }
+r_ac_1khz_max   = { value = 0.008, unit = "ohm", src = "S1", fidelity = "datasheet" }          # <= 8 mOhm at shipping (30% SOC)
+mass            = { value = 0.070, unit = "kg", src = "S1", fidelity = "datasheet" }          # 70.0 g maximum
+diameter        = { value = 0.0214, unit = "m", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0700, unit = "m", src = "S1", fidelity = "datasheet" }
+temp_discharge_min = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }       # -40 C
+temp_discharge_max = { value = 333.15, unit = "K", src = "S1", fidelity = "datasheet" }       # 60 C ambient
+temp_surface_max_discharge = { value = 353.15, unit = "K", src = "S1", fidelity = "datasheet" }  # 80 C cell surface
+
+[tables.capacity_vs_rate]
+# Molicel datasheet section 5.2: discharge capacity to 2.5 V after rated charge, 23 C (minimum guaranteed values)
+columns = ["i_discharge_A", "capacity_min_Ah"]
+rows = [
+  [0.9, 4.35],
+  [4.5, 4.20],
+  [10.0, 4.15],
+  [20.0, 4.10],
+]
+src = "S1"
+fidelity = "datasheet"
+
+[tables.capacity_vs_temperature]
+# Molicel datasheet section 5.2: discharge capacity at 4.5 A, charged at 23 C (minimum; the -30 C row ends at 2.0 V instead of 2.5 V)
+columns = ["temp_C", "capacity_min_Ah"]
+rows = [
+  [-30, 3.51],
+  [-20, 3.60],
+  [0, 3.85],
+  [45, 4.35],
+  [60, 4.35],
+]
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+radius = 0.0107
+length = 0.070
+
+[[ports]]
+name = "terminal"
+kind = "power"
+type = "cell-terminal"
+gender = "neutral"
+role = "source"
+v_max = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[sources]]
+id = "S1"
+url = "https://www.kronium.cz/uploads/p45b-datasheet.pdf"
+title = "Molicel - Cell Specifications of INR-21700-P45B, Document No. INR21700P45B-01 Ver. 0.2 (hosted copy)"
+accessed = "2026-10-07"
+quote = "Outline Dimensions: Diameter 21.40 ± 0.15 mm, Height 70.00 ± 0.15 mm, Weight 70.0 (Max) | Rated capacity 4.5Ah (Typical), 4.35Ah (Minimum) | Nominal voltage 3.6V | Internal resistance at shipping ≤ 8mΩ By AC 1 kHz within 3~4 hours after 30% discharge | End of charge voltage 4.20 ± 0.05V | End of discharge voltage 2.5V | Maximum continuous charging current 9A | Maximum continuous discharging current 45A Cycle life is reduced at high rates. | Discharge Capacity at 23 C: 0.9A ≥4.35Ah, 4.5A ≥4.20Ah, 10A ≥4.15Ah, 20A ≥4.10Ah"
+
+[[sources]]
+id = "S2"
+url = "https://budgetlightforum.com/t/bench-test-results-molicel-p45b-50a-4500mah-21700/70213"
+title = "Battery Mooch - Bench Test Results: Molicel P45B - 50A 4500mAh 21700 (Budget Light Forum)"
+accessed = "2026-10-07"
+quote = "The two cells I tested delivered 4477mAh and 4488mAh."

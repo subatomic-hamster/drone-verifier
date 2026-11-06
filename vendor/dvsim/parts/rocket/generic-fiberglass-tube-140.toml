@@ -1,0 +1,214 @@
+id = "generic-fiberglass-tube-140"
+name = "Generic filament-wound fiberglass airframe tube, 5.5 in (139.7 mm) OD, 0.40 m, 1.0 mm wall (illustrative, not a product)"
+category = "rocket.body-tube"
+vendor = "generic"
+part_number = "n/a (placeholder for a 5.5 in fiberglass rocketry tube)"
+url = "https://www.rocketreviews.com/"
+
+# NOT a catalogue part: every number is an estimate of a typical 5.5 in high-power rocketry tube (nominal 5.5 in OD is the trade size). 5.5 in is the smallest
+# trade size in which two 29 mm motors side by side plus two direct-drive Dynamixel XL330 gimbal servos fit (cradle 0.065 m + ring + servo bodies span 0.130 m).
+# Part frame: origin at the aft end on the axis, +z towards the nose. The thin wall is eight flat plates around the axis (an octagonal shell of the same wall
+# mass) so that roll and pitch inertia are those of a hollow tube. Used by assemblies/tvc-lander.toml.
+[visual]
+rationale = "Generic filament-wound glass tube (not a product): hollow tube of the part's own outer / inner diameter and length, glass-epoxy finish."
+
+[[visual.elements]]
+gen = "body_tube"
+
+[params]
+outer_diameter = { value = 0.1397, unit = "m", fidelity = "estimated", rationale = "Trade size 5.5 in = 139.7 mm; real tubes differ by a fraction of a millimetre between makers." }
+inner_diameter = { value = 0.1377, unit = "m", fidelity = "derived", derivation = "outer_diameter - 2 x wall_thickness = 0.1397 - 2 x 0.001 = 0.1377 m." }
+wall_thickness = { value = 0.001, unit = "m", fidelity = "estimated", rationale = "Design choice: 1.0 mm, a light filament-wound wall (commercial 5.5 in tubes run 1.0-2.0 mm); not measured." }
+length         = { value = 0.40, unit = "m", fidelity = "estimated", rationale = "Design choice: gimbal at the aft end, avionics sled and battery above, legs at 0.10 m." }
+mass           = { value = 0.3138, unit = "kg", fidelity = "derived", derivation = "Wall volume pi (0.06985^2 - 0.06885^2) x 0.40 m = 1.743e-4 m3 times an assumed 1800 kg/m3 for glass-epoxy laminate = 0.3138 kg; the density is a typical figure (E-glass fibre ~2550, epoxy ~1200 at ~50 % volume fraction), not sourced, so the mass is +-30 %: weigh the real tube." }
+
+# Eight plates, each 0.05745 m wide (octagon side at the mid-wall radius 0.06935 m), 1.0 mm thick.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [0.06935, 0.0, 0.20]
+quat = [1.0, 0.0, 0.0, 0.0]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [0.049039, 0.049039, 0.20]
+quat = [0.9238795325, 0.0, 0.0, 0.3826834324]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [0.0, 0.06935, 0.20]
+quat = [0.7071067812, 0.0, 0.0, 0.7071067812]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [-0.049039, 0.049039, 0.20]
+quat = [0.3826834324, 0.0, 0.0, 0.9238795325]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [-0.06935, 0.0, 0.20]
+quat = [0.0, 0.0, 0.0, 1.0]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [-0.049039, -0.049039, 0.20]
+quat = [-0.3826834324, 0.0, 0.0, 0.9238795325]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [0.0, -0.06935, 0.20]
+quat = [-0.7071067812, 0.0, 0.0, 0.7071067812]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0005, 0.028726, 0.20]
+pos = [0.049039, -0.049039, 0.20]
+quat = [-0.9238795325, 0.0, 0.0, 0.3826834324]
+
+[[ports]]
+name = "fore"
+kind = "mech"
+type = "tube.140"
+gender = "male"
+pos = [0.0, 0.0, 0.40]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Forward end where the nose cone shoulder joins; interface family named by the 140 mm outside diameter."
+
+[[ports]]
+name = "aft"
+kind = "mech"
+type = "tube.140"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Aft end where the gimbal plate joins."
+
+[[ports]]
+name = "fins"
+kind = "mech"
+type = "tube.140"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Aft end, outer wall: where the tail fin set (generic-printed-tail-fins-140) is bonded; a separate port from `aft` because the gimbal plate takes that one."
+
+# Avionics sled: four flat decks on threaded rods along the axis (their mass is the harness allowance, see generic-avionics-harness).
+[[ports]]
+name = "deck_battery"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.30]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Design choice: battery deck 0.30 m above the aft end."
+
+[[ports]]
+name = "deck_fc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.25]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Design choice: flight-computer deck 0.25 m above the aft end, 50 mm under the battery."
+
+[[ports]]
+name = "deck_reg"
+kind = "mech"
+type = "bolt-pattern.13.46x16.0.m2"
+gender = "neutral"
+pos = [0.0, 0.0, 0.17]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Design choice: regulator deck 0.17 m above the aft end, within reach of a 0.18 m servo cable from the gimbal plate."
+
+[[ports]]
+name = "deck_harness"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.13]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Design choice: pyro driver / harness deck 0.13 m above the aft end."
+
+# Four landing-leg brackets on the outer wall at 0.10 m, 90 deg apart; the port axis is the outward normal.
+[[ports]]
+name = "leg1"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.06985, 0.0, 0.10]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Design choice: leg bracket height 0.10 m above the aft end, so the foot spheres end 35 mm below the E16 nozzle face with the gimbal centred."
+
+[[ports]]
+name = "leg2"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.0, 0.06985, 0.10]
+axis = [0.0, 1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As leg1, 90 deg round the axis."
+
+[[ports]]
+name = "leg3"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [-0.06985, 0.0, 0.10]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As leg1, 180 deg round the axis."
+
+[[ports]]
+name = "leg4"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.0, -0.06985, 0.10]
+axis = [0.0, -1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As leg1, 270 deg round the axis."

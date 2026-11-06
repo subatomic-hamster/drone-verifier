@@ -1,0 +1,92 @@
+id = "tmotor-mn2212-v2-kv780"
+name = "T-Motor MN2212 KV780 V2.0 multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN2212 KV780 V2.0"
+url = "https://store.tmotor.com/product/mn2212-v2-motor-navigator-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, +z along the shaft towards the prop.
+# Ports as a top-level inline-table array (TOML requires it before the first [table] header).
+ports = [
+  { name = "base", kind = "mech", type = "bolt-pattern.16x19.m2.5", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 4, holes = 4 },
+  { name = "shaft", kind = "mech", type = "shaft.4", gender = "male", pos = [0.0, 0.0, 0.03], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Derived: tip height = 32.6 mm overall drawing length minus 2.6 mm rear stub = 30.0 mm (S2 drawing; inference, the drawing does not say which 2.x label is the rear stub). Shaft dia from S1." },
+  { name = "prop_adapter", kind = "mech", type = "shaft.5", gender = "male", pos = [0.0, 0.0, 0.03], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Derived: supplied M5 prop adapter (S2 drawing); shaft.5 is the library family for it; tip height as port 'shaft'." },
+  { name = "phase", pins = ["PH.1", "PH.2", "PH.3"], kind = "power", type = "motor-3phase", gender = "neutral", role = "sink", v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V (upper end of the 2-4S range, S1)." }, i_max = { value = 13.0, unit = "A", src = "S1", fidelity = "datasheet" }, note = "i_max is the 180 s current rating ('Max Continuous Current 180S'); cable is part of the motor" },
+]
+
+[params]
+mass = { value = 0.065, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Including Cables
+mass_no_cable = { value = 0.055, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Excluding Cables
+kv = { value = 780, unit = "rpm/V", src = "S1", fidelity = "datasheet" }  # from the model name
+r_winding = { value = 0.173, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Internal Resistance (mOhm on page)
+i0 = { value = 0.4, unit = "A", src = "S1", fidelity = "datasheet" }  # Idle Current@10v
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }  # test voltage from the 'Idle Current@10v' label
+i_peak = { value = 13.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Max Continuous Current 180S
+p_max = { value = 200.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Max Power (180S)
+configuration = { value = "9N12P", unit = "text", src = "S1", fidelity = "datasheet" }
+cells_min = { value = 2, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+diameter = { value = 0.0275, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+length_body = { value = 0.0265, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+stator_diameter = { value = 0.022, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height = { value = 0.013, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+lead_length = { value = 0.4, unit = "m", src = "S1", fidelity = "datasheet" }  # 20# AWG
+kt = { value = 0.012243, unit = "N*m/A", fidelity = "derived", derivation = "60 / (2*pi*Kv) with Kv = 780 rpm/V." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, prop 'T-MOTOR 9545B', 14.8 V. All printed rows. thrust_N = thrust_g*0.00980665; vendor temp at 100 % throttle: not printed.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [50, 14.8, 2.1, 31.08, 4260, 2.8733, 293, 9.43],
+  [65, 14.8, 4, 59.2, 5300, 4.668, 476, 8.04],
+  [75, 14.8, 5.6, 82.88, 5960, 5.933, 605, 7.30],
+  [85, 14.8, 7.4, 109.52, 6000, 7.2765, 742, 6.78],
+  [100, 14.8, 10.3, 152.44, 7350, 9.0025, 918, 6.02],
+]
+prop_label = "T-MOTOR 9545B"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.01375, 0.015]
+pos = [0.0, 0.0, 0.015]   # spans z = 0 .. tip height
+
+# Pin level: three 20 AWG phase leads, 400 mm (S1 'Cable Length|400mm|AWG|20#'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 20 AWG, 400 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01375, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the cable length and gauge (400mm, 20#), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 13.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 13.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 13.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn2212-v2-motor-navigator-type.html"
+title = "T-MOTOR store - MN2212 KV780 V2.0 (specification + test data)"
+accessed = "2026-10-07"
+quote = "Test Item|MN2212 KV780 V2.0|Configuration|9N12P|Internal Resistance|173mΩ|Motor Dimensions|Φ27.5×26.5mm|Shaft Diameter|4mm|Stator Height|13mm|Stator Diameter|22mm|Cable Length|400mm|AWG|20#|Weight Excluding Cables|55g|Weight Including Cables|65g|Idle Current@10v|0.4A|No.of Cells(Lipo)|2-4S|Max Continuous Current 180S|13A|Max Power (180S)|200W. Test row: MN2212 KV780 V2.0|14.8|T-MOTOR 9545B|50%|2.1|31.08|293|4260|9.43"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202606/MN2212-draw-0603-v1.jpg"
+title = "T-MOTOR MN2212 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 32.6, 3.5, 2.6, Ø27.5, Ø4, 12, 16, 19, 4-M2.5; accessory M5 prop adapter 24 long, Ø19"

@@ -1,0 +1,76 @@
+id = "aqua-signal-series-25-led-nav-light"
+name = "Aqua Signal Series 25 LED navigation light (port red / starboard green / stern white / masthead white, 12 V, 2 nm)"
+category = "light.navigation"
+vendor = "Aqua Signal (Glamox)"
+part_number = "Series 25 (e.g. port side 3520202000)"
+url = "https://outletspecialist.com/en-be/products/aqua-signal-series-25-port-side-navigation-light-red-black-3520202000"
+
+# COLREG side, stern and masthead lights of a vessel under 20 m. The figures are those a retail listing gave in a web-search summary (1 W for the LED version, 12 V, 2 nautical-mile
+# visibility, 200 g, CE and IMO COLREG 72), NOT re-fetched (the listing page returned only its title): ESTIMATED, tagged as such. One part stands for the four lights
+# (the instance `color` picks red / green / white); the masthead version of the family is a 10 W 12 V incandescent in the same search, here replaced by the LED figure.
+# Part frame: origin at the centre of the underside, z up.
+[params]
+mass        = { value = 0.20, unit = "kg", fidelity = "estimated", rationale = "Retail listing summary (not re-fetched): 200 g." }
+voltage     = { value = 12.0, unit = "V", fidelity = "estimated", rationale = "Retail listing summary: 12 V." }
+power       = { value = 1.0, unit = "W", fidelity = "estimated", rationale = "Retail listing summary: 1 W for the LED version of the red port light." }
+visibility_nm = { value = 2.0, unit = "nm", fidelity = "estimated", rationale = "Retail listing summary: 2 nautical miles (the COLREG minimum for a vessel of 12-20 m is 2 nm for the sidelights, 3 nm for the masthead light)." }
+length      = { value = 0.12, unit = "m", fidelity = "estimated", rationale = "Not published in the listing: a Series 25 side light is about 12 x 8 x 8 cm. Drawing only." }
+width       = { value = 0.08, unit = "m", fidelity = "estimated", rationale = "As length." }
+height      = { value = 0.08, unit = "m", fidelity = "estimated", rationale = "As length." }
+lead_length = { value = 3.0, unit = "m", fidelity = "estimated", rationale = "Pigtail to the 12 V distribution on the cabin wall: the lights are on the cabin roof and the rail, 1-4 m away; 3 m with slack. Inside the part's mass." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.06, 0.04, 0.04]
+pos = [0.0, 0.0, 0.04]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside on a rail or roof bracket."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+lead = { length = "lead_length" }
+pins = ["PWR.1", "PWR.2"]
+v_max = { value = 16.0, unit = "V", fidelity = "estimated", rationale = "12 V lamp: the 12 V nav-light bus of a boat runs 10.5-14.4 V." }
+i_max = { value = 0.5, unit = "A", fidelity = "estimated", rationale = "1 W at 12 V is 0.08 A; the lead is rated far above." }
+
+[[connectors]]
+id = "PWR"
+name = "two-core pigtail (+12 V, ground)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.04, 0.04]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+fidelity = "estimated"
+rationale = "Two-core pigtail (+ and -); the listing summary gives no wire colours or gauge."
+pins = [
+  { number = 1, name = "+12V", kind = "power", dir = "in", v = 12.0, v_min = 10.5, v_max = 16.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[visual]
+rationale = "Small lamp housing with a coloured lens: red, green or white per the instance colour."
+
+[[visual.elements]]
+gen = "box_device"
+colors = { body = "plastic-red", label = "plastic-white", conn = "steel" }

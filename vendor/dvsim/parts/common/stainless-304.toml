@@ -1,0 +1,30 @@
+id = "stainless-304"
+name = "Stainless steel 304 (Proto Labs CNC material data sheet)"
+category = "material"
+vendor = "Proto Labs"
+part_number = "Stainless Steel 304"
+url = "https://www.protolabs.com/media/tltj24um/2026-026-cnc-material-data-sheet_stainless-steel-304.pdf"
+
+[params.density]
+value = 7889
+unit = "kg/m3"
+src = "S1"
+fidelity = "derived"
+derivation = "Datasheet gives 0.285 lb/in3; 1 lb/in3 = 27679.9 kg/m3, so 0.285 x 27679.9 = 7888.8 kg/m3."
+
+[params.youngs_modulus]
+value = 199.9e9
+unit = "Pa"
+src = "S1"
+fidelity = "derived"
+derivation = "Datasheet gives 29 x 10^6 psi; 1 psi = 6894.757 Pa, so 29e6 x 6894.757 = 1.999e11 Pa."
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.58, 0.60, 0.62, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://www.protolabs.com/media/tltj24um/2026-026-cnc-material-data-sheet_stainless-steel-304.pdf"
+title = "Stainless Steel 304 CNC material data sheet (Proto Labs)"
+accessed = "2026-10-07"
+quote = "Density 0.285 lb/in3 ... Modulus of Elasticity 29 x 106 psi"

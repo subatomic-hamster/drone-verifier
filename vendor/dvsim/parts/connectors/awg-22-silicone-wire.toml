@@ -1,0 +1,48 @@
+id = "awg-22-silicone-wire"
+name = "22 AWG stranded copper wire (silicone-insulated class)"
+category = "wire"
+vendor = "generic"
+part_number = "22 AWG"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+
+# See awg-20-silicone-wire for the note on the table's ampacity cells for thin gauges.
+[params]
+awg                = { value = 22, unit = "AWG", src = "S1", fidelity = "literature" }
+resistance_per_m   = { value = 0.05296, unit = "ohm/m", src = "S1", fidelity = "literature" }
+conductor_area     = { value = 0.326e-6, unit = "m^2", src = "S1", fidelity = "literature" }
+conductor_diameter = { value = 0.000644, unit = "m", src = "S1", fidelity = "literature" }
+ampacity_table_60C_column = { value = 3, unit = "A", src = "S1", fidelity = "literature" }
+ampacity_table_75C_column = { value = 7, unit = "A", src = "S1", fidelity = "literature" }
+fusing_current_1s  = { value = 99, unit = "A", src = "S1", fidelity = "literature" }
+mass_per_m_copper  = { value = 0.002913, unit = "kg/m", fidelity = "derived", derivation = "Conductor area x copper density: 0.326e-6 m^2 x 8935 kg/m^3 (S2) = 0.002913 kg/m (copper only, no insulation)." }
+
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 3, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+note = "Conservative of the two table ampacity cells; the 7 A cell is the chassis (single wire in equipment) value"
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 3, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[sources]]
+id = "S1"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia) - table, solid copper at 68 F"
+accessed = "2026-10-07"
+quote = "22 | 0.0253 | 0.644 | 39.5 | 15.5 | 0.642 | 0.326 | 52.96 | 16.14 | 3 | 7 | — | 41 A | 99 A | 551 A (columns: in, mm, per in, per cm, kcmil, mm2, mOhm/m, mOhm/ft, ampacity 60C/75C/90C, fusing current Preece 10 s / 1 s / Onderdonk 32 ms)"
+
+[[sources]]
+id = "S2"
+url = "https://en.wikipedia.org/wiki/Copper"
+title = "Copper (Wikipedia) - density"
+accessed = "2026-10-07"
+quote = "Density (at 20° C) 8.935 g/cm3"

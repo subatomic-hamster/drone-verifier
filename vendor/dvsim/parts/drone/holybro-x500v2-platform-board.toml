@@ -1,0 +1,82 @@
+id = "holybro-x500v2-platform-board"
+name = "Holybro X500 V2 payload platform board V2 (#31109), 2 mm plate with GPS / companion-computer holes"
+category = "frame.plate"
+vendor = "Holybro"
+part_number = "31109"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+
+# Dimensions and volume measured on x500v2-frame.step (OpenCascade, solid PLATFORM-PLAT-X500). Part number: the X500 V2 assembly
+# guide PDF part list prints '#31109 Platform Board' (the Holybro store lists the spare as 'Payload Platform Board V2'). Material is
+# NOT stated anywhere found: carbon-fibre twill is assumed (the kit's plates are 'Full Carbon Fiber twill'), with a wider tolerance
+# than the plates because a glass-fibre (G10) board would be ~20 % heavier.
+[params.cad_volume]
+value = 9.4652e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade BRepGProp volume of the PLATFORM-PLAT-X500 solid in x500v2-frame.step (includes its holes): bbox 65.0 x 2.0 x 93.0 mm, x_STEP 66.5..131.5 mm, y_STEP -28.0..-26.0 mm, z_STEP -46.5..46.5 mm."
+
+[params.thickness]
+value = 0.002
+unit = "m"
+fidelity = "derived"
+derivation = "STEP bbox height of the platform-board solid: 2.00 mm."
+
+[params.mass]
+value = 0.014671
+unit = "kg"
+fidelity = "derived"
+derivation = "cad_volume 9.4652e-6 m3 * carbon-fibre-twill-plate estimated density 1550 kg/m3 = 14.67 g. Not weighed; material assumed (see header)."
+
+[params.mass_tol]
+value = 0.0037
+unit = "kg"
+fidelity = "estimated"
+rationale = "+-25 % of 14.7 g: Holybro does not state the board material; carbon twill at 1500-1600 kg/m3 spans +-3 %, and a glass-fibre board (about 1850 kg/m3) would be +19 %."
+
+[geometry]
+# Part frame: origin = centre of the TOP face (the face that hangs against the four rear hangers), z up, x = vehicle forward
+# (STEP -x), y = left. The box is solid (the real plate has holes); mass is carried by 'mass', not by box volume * density.
+material = "carbon-fibre-twill-plate"
+shape = "box"
+size = [0.0325, 0.0465, 0.001]
+pos = [0.0, 0.0, -0.001]
+
+[[ports]]
+name = "seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Top face centre; mates 'platform' of holybro-x500v2-bottom-plate (the real board is bolted under the four rear hangers; M2.5x12 + nylon standoff M2.5x5 + nut are in the STEP, counted in the hardware kit only for the guide's counts)."
+
+[[ports]]
+name = "mast"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "GPS mast seat: the STEP GPS mast base (GPSV5-ZHIJIA ZUO) is at x_STEP = 99.0 mm, z_STEP = 0, which is the centre of this board (66.5..131.5 mm); it stands on the top face (y_STEP = -26.0 mm)."
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs), Frame Kit Details"
+accessed = "2026-10-07"
+quote = "Platform board - With mounting holes for GPS & popular companion computer such as the Raspberry Pi 4 & Jetson Nano"
+
+[[sources]]
+id = "S2"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+title = "X500 v2 Assembly Guide (Holybro PDF), part list"
+accessed = "2026-10-07"
+quote = "#31109 Platform Board"

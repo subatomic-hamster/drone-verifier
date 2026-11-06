@@ -1,0 +1,125 @@
+id = "car4-chassis-plate-custom"
+name = "CUSTOM: 4-wheel car chassis plate, 3 mm 6061-T6 aluminium, 240 x 190 mm (not a purchased part; cut it from stock)"
+category = "plate"
+vendor = "custom (made to this drawing)"
+part_number = "none: custom part, see assemblies/car4.toml and docs/showcase/car/README.md"
+
+# CUSTOM PART, labelled as such: the one non-catalogue item of the 4-wheel car (the rover's plate, parts/structure/rover-chassis-plate-custom.toml,
+# has only two bracket seats). Frame: origin on the plate's mid-plane at the centre of the wheelbase; x = forward, y = left, z = up. Outline:
+# x in [-0.12, +0.12], y in [-0.095, +0.095], z in [-0.0015, +0.0015]. Every seat is a flat mount (no hole pattern is defined for a custom plate:
+# the holes are drilled to match the parts).
+#
+# GEOMETRY DERIVED FROM THE PART DIMENSIONS (all of them in the part files named here):
+#   * Bracket seats y = +-0.0935 and the bracket orientation (ref +x on the left, -x on the right) are the rover plate's: they put the 37D motor
+#     (68 mm body, parts/actuators/pololu-37d-19-1-12v-4751.toml) INBOARD of the bracket and the wheel outboard.
+#   * Axle x = +-0.09 (wheelbase 0.18 m). Constraint 1: the two 90 mm wheels on one side must not touch: 2 x 0.09 = 0.18 m between centres leaves
+#     0.09 m of gap (>= 0.03 m wanted). Constraint 2: the battery (107 mm long) and the controllers (48 mm) sit between the front and rear motors:
+#     the motors' inner faces are at |x| = 0.09 - 0.0185 = 0.0715 m, the battery spans |x| <= 0.0535 m, the controllers |x| <= 0.0242 m.
+#   * Plate length 0.24 m = 2 x (0.09 axle + 0.021 half bracket outline) rounded up to 2 x 0.12; width 0.19 m = the rover's.
+#   * Battery seat on the centre line; one controller seat on each side at y = +-0.06 m, clear of the 33 mm battery (|y| <= 0.0165) and of the motors'
+#     inner end faces (|y| >= 0.0225 only at |x| >= 0.0715).
+
+[params]
+thickness = { value = 0.003, unit = "m", fidelity = "estimated", rationale = "Design choice of this custom part (3 mm: a common aluminium plate gauge, as the rover's plate); the wheel / bracket heights in assemblies/car4.toml follow from it (wheel radius 0.045 m = plate 0.003 m + bracket motor-axis height 0.02168 m + 0.02032 m underside clearance)." }
+length    = { value = 0.24,  unit = "m", fidelity = "estimated", rationale = "Design choice: wheelbase 0.18 m + the 0.042 m bracket outline + margin; see the derivation block at the top of the file." }
+width     = { value = 0.19,  unit = "m", fidelity = "estimated", rationale = "Design choice: the rover's width (two 68 mm gearmotors side by side across the plate with the brackets: 2 x 68 mm + 20 mm + 2 x 6 mm = 0.19 m)." }
+density   = { value = 2700,  unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+mass      = { value = 0.36936, unit = "kg", fidelity = "derived", derivation = "density x length x width x thickness = 2700 x 0.24 x 0.19 x 0.003 = 0.36936 kg (6061-T6, ISO bolt holes and cut-outs neglected: an upper bound by a few percent)." }
+
+[geometry]
+shape = "box"
+size = [0.12, 0.095, 0.0015]
+pos = [0.0, 0.0, 0.0]
+material = "aluminium-6061"
+
+[[ports]]
+name = "bracket_fl"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.09, 0.0935, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[[ports]]
+name = "bracket_fr"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.09, -0.0935, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[[ports]]
+name = "bracket_rl"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.09, 0.0935, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[[ports]]
+name = "bracket_rr"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.09, -0.0935, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[[ports]]
+name = "battery_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[[ports]]
+name = "controller_seat_l"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.06, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[[ports]]
+name = "controller_seat_r"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, -0.06, 0.0015]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "S1"
+note = "Bare brushed 6061 aluminium plate (the material source); rounded corners from the geometry box."
+
+[[visual.elements]]
+gen = "plate_outline"
+colors = { plate = "alu-brushed" }
+
+[[sources]]
+id = "S1"
+url = "https://quickparts.com/wp-content/uploads/2024/05/Aluminum-6061.pdf"
+title = "Aluminum 6061-T6; 6061-T651 (MatWeb/ASM data sheet, printed copy hosted by Quickparts), as parts/common/aluminium-6061.toml"
+accessed = "2026-10-07"
+quote = "Density 2.7 g/cc 0.0975 lb/in³ AA; Typical"

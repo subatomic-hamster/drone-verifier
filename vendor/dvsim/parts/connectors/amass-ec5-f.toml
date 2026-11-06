@@ -1,0 +1,90 @@
+id = "amass-ec5-f"
+name = "Amass EC5-F connector (EC5 family, female, wire-solder, 5 mm bullet)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics); RS-PRO relabel"
+part_number = "EC5-F"
+url = "https://www.electrokit.com/en/stromkontakt-ec5-40a-hona"
+
+# Mating half of amass-ec5-m (same electrokit listing family). The Vetco listing of a generic EC5 pair quotes a higher 120 A rating (60 A per pin);
+# this part keeps the electrokit values that carry a continuous / momentary split and a contact resistance.
+[params]
+current_rated       = { value = 40, unit = "A", src = "S1", fidelity = "datasheet" }
+current_burst       = { value = 90, unit = "A", src = "S1", fidelity = "datasheet" }
+current_impulse     = { value = 180, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance  = { value = 0.0004, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 1000, unit = "1", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.0045, unit = "kg", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "AWG9-10", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "ec5"
+gender = "female"
+v_max = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 40, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 90, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "40 A continuous, 90 A momentary; 5 mm pins; AWG9-10 cable"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 40, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, AWG9-10"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line, solder cup n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "ec5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.011
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the part designation (2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.011
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.electrokit.com/en/stromkontakt-ec5-40a-hona"
+title = "Electrokit - Power connector EC5 40A female (Amass / RS-PRO)"
+accessed = "2026-10-07"
+quote = "Specifications: | Rated voltage: 500 VDC | Rated current: 40A continuous (90A momentary) | Short Impulse load: 180A | Pin/jack: ø5mm | Max cable dimension: AWG5 (16 mm²) | Recommended cable dimension: AWG9-10 (4-6mm²) | Contact resistance: 0.4 mOhm | Dimensions: 25x20x10 mm | Weight: 4.5g | Operating temperature -20 to 120°C | Contact: Gold plated | Use times: 1000 cycles | Manufacturer: Amass / RS-PRO"

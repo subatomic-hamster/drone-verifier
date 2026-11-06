@@ -1,0 +1,31 @@
+id = "cuas2-sensor-bar"
+name = "cuas2 sensor_bar (3D printed PETG, M5 Brio clamp and TF-Luna pocket bar, D2 dock, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "sensor_bar"
+url = "cad/cuas2/modules/sensor_head.py"
+
+# Mesh in the head frame H; bolted pair with the cradle bridge by the D2 dock (2 x M4 on 40 mm + 6 mm dowel), identity transform.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/sensor_bar.stl"
+material = "petg"
+bbox_min = [0.03, -0.055, -0.005]
+bbox_max = [0.1055, 0.055, 0.014]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

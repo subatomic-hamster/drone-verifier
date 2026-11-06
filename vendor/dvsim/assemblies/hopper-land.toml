@@ -1,0 +1,618 @@
+# COPY of assemblies/hopper.toml (the original and its replay hashes are untouched) for examples/hopper-land: the same vehicle, flown from and to terrain pads at 2500-4000 m (thin air), in wind fields, gust fronts and rain.
+# examples/hopper-land/landscene.py sets origin_alt and the GNSS alt0 per site, adds the terrain, the wind field and the rain device to the built MJCF.
+# EDF hopper: a throttleable, thrust-vectored VTVL "Grasshopper in a shoebox", built from cheap open parts. One QX-Motor 80 mm 12-blade ducted fan (QF3538 2000 KV, 6S) on a printed PETG deck,
+# a Hobbywing Platinum 120 A ESC, a Tattu 2200 mAh 6S pack, four flat aluminium JET VANES in the exhaust (one per XL330-M288-T servo, 90 degrees apart) for pitch / roll / yaw, a Teensy 4.0 flight
+# computer with an ICM-42688-P IMU, an MS5611 barometer, a GNSS module and a downward TF-Luna lidar, four splayed skid legs (the lander's). Flight software: examples/hopper/.
+# Unlike the solid-motor TVC lander (assemblies/tvc-lander.toml) the thrust is throttled (the ESC duty), so it can hover, climb, divert and land with the same propellant.
+#
+# FRAME. Origin on the vehicle axis in the TOP face of the deck, +z up. The exit tube of the duct passes through the deck opening (exit plane 0.030 m under the deck), the fan plane is 0.045 m above the
+# deck, the vane hinges 0.100 m under it (vane top edge 0.0505 m under the exit plane: inside the jet's potential core, 0.10 m lever arm to the centre of mass), the feet 0.239 m under it. The battery (+x), the ESC (-x), two regulators (+-y), the flight computer and the sensor sled are on the
+# deck; the lidar is on the underside at x = +0.095 m looking down.
+# JET VANES. Vane k (k = 1..4: +x, +y, -x, -y) turns about its radial hinge; its normal force is along the tangential direction: vane +x / -x force along y (roll about x with the lever arm below the centre of mass,
+# yaw with +-r), vane +y / -y force along x (pitch about y, yaw). The allocation is in examples/hopper/control.py (docstring). The jet_vane device is the plate's force model (schema/devices.fbs).
+# ROTOR. The fan is a Rotor device: C_T, C_Q from the QX-Motor throttle table (parts/propulsion/qx-80mm-12-blade-edf-fan), ESC + motor + battery modelled with the kernel's own devices. swirl_recovery 0.8: the stator
+# vanes take back that share of the fan's reaction torque (ESTIMATED: without a stator the vanes could not hold yaw).
+# NOT MODELLED: jet impingement on the ground (no ground effect for a ducted fan: ground_effect = false), hub-wake deficit of the jet, inlet distortion, thermal limits of the vanes, battery connector voltage drops
+# beyond the wire resistances, servo cable data bus (power only, as the lander), the ESC's BEC (unused), the Teensy / lidar supply current (about 0.2 A at 5 V = 0.05 A on the pack).
+
+[assembly]
+name = "hopper-land"
+description = "Copy of assemblies/hopper.toml for examples/hopper-land (take off and land in different places and environments: terrain at 2500-4000 m, wind, rain, moving decks); EDF VTVL hopper: 80 mm 12-blade ducted fan on 6S, four aluminium jet vanes on XL330 servos, Teensy 4.0 flight computer, lidar + baro + GNSS + IMU, four skid legs"
+base = "free"
+timestep = 0.001
+seed = 7
+
+# ---- instances ----------------------------------------------------------------------------------------------------------------------------
+[[instances]]
+id = "frame"
+part = "hopper-deck-frame-edf80"
+root = true
+group = "airframe"
+
+[[instances]]
+id = "duct"
+part = "qx-80mm-12-blade-edf-duct"
+group = "propulsion"
+
+[[instances]]
+id = "motor"
+part = "qx-qf3538-2000kv-edf-motor"
+group = "propulsion"
+
+[[instances]]
+id = "fan"
+part = "qx-80mm-12-blade-edf-fan"
+group = "propulsion"
+
+[[instances]]
+id = "esc"
+part = "hobbywing-platinum-120a-v5-esc"
+group = "propulsion"
+
+[[instances]]
+id = "batt"
+part = "tattu-2200mah-6s-95c-xt60"
+group = "power"
+pos = [0.062, 0.0148, 0.01925]  # 14.8 mm along its long axis (y): balances the y offset of the centre of mass
+rpy = [0.0, 0.0, 1.5707963267948966]
+
+[[instances]]
+id = "sv1"
+part = "robotis-xl330-m288-t"
+group = "vanes"
+params = { servo_id = { value = 1, unit = "1", fidelity = "estimated", rationale = "Bus ID chosen by the builder." }, baud = { value = 1000000, unit = "bit/s", fidelity = "estimated", rationale = "1 Mbps, as the lander." } }
+
+[[instances]]
+id = "sv2"
+part = "robotis-xl330-m288-t"
+group = "vanes"
+params = { servo_id = { value = 2, unit = "1", fidelity = "estimated", rationale = "Bus ID chosen by the builder." }, baud = { value = 1000000, unit = "bit/s", fidelity = "estimated", rationale = "1 Mbps, as the lander." } }
+
+[[instances]]
+id = "sv3"
+part = "robotis-xl330-m288-t"
+group = "vanes"
+params = { servo_id = { value = 3, unit = "1", fidelity = "estimated", rationale = "Bus ID chosen by the builder." }, baud = { value = 1000000, unit = "bit/s", fidelity = "estimated", rationale = "1 Mbps, as the lander." } }
+
+[[instances]]
+id = "sv4"
+part = "robotis-xl330-m288-t"
+group = "vanes"
+params = { servo_id = { value = 4, unit = "1", fidelity = "estimated", rationale = "Bus ID chosen by the builder." }, baud = { value = 1000000, unit = "bit/s", fidelity = "estimated", rationale = "1 Mbps, as the lander." } }
+
+[[instances]]
+id = "vane1"
+part = "generic-jet-vane-alu-45x34"
+group = "vanes"
+
+[[instances]]
+id = "vane2"
+part = "generic-jet-vane-alu-45x34"
+group = "vanes"
+
+[[instances]]
+id = "vane3"
+part = "generic-jet-vane-alu-45x34"
+group = "vanes"
+
+[[instances]]
+id = "vane4"
+part = "generic-jet-vane-alu-45x34"
+group = "vanes"
+
+[[instances]]
+id = "leg1"
+part = "generic-lander-leg-skid"
+group = "legs"
+
+[[instances]]
+id = "leg2"
+part = "generic-lander-leg-skid"
+group = "legs"
+
+[[instances]]
+id = "leg3"
+part = "generic-lander-leg-skid"
+group = "legs"
+
+[[instances]]
+id = "leg4"
+part = "generic-lander-leg-skid"
+group = "legs"
+
+[[instances]]
+id = "fc"
+part = "pjrc-teensy-4-0"
+group = "avionics"
+
+[[instances]]
+id = "reg1"
+part = "pololu-d24v50f5"
+group = "avionics"
+params = { mass = { value = 0.005, unit = "kg", fidelity = "estimated", rationale = "Pololu does not list a weight for the D24V50F5 (20.3 x 17.8 x 8.8 mm); 4-6 g, as in assemblies/tvc-lander.toml." } }
+
+[[instances]]
+id = "reg2"
+part = "pololu-d24v50f5"
+group = "avionics"
+params = { mass = { value = 0.005, unit = "kg", fidelity = "estimated", rationale = "As reg1." } }
+
+[[instances]]
+id = "harness"
+part = "generic-avionics-harness"
+group = "avionics"
+params = { mass = { value = 0.060, unit = "kg", fidelity = "estimated", rationale = "The harness allowance (parts/electronics/generic-avionics-harness, 30 g) holds an 8 g M10Q-class GNSS module; the hopper carries an RTK receiver instead: ZED-F9P breakout board (~10 g) plus a multi-band patch antenna on a short mast (~30 g), neither weighed: 30 - 8 + 40 = 62 g, 60 g taken (+-15 g)." } }
+
+[[instances]]
+id = "lidar"
+part = "benewake-tf-luna"
+group = "avionics"
+pos = [0.095, 0.0, -0.004]
+rpy = [0.0, 3.141592653589793, 0.0]
+params = { mass = { value = 0.005, unit = "kg", fidelity = "estimated", rationale = "The datasheet gives 5 g as a maximum (parts/electronics/benewake-tf-luna mass_max); the part has no typical mass, so the maximum is used." } }
+
+# Off-board data-only instances: no body, no mass. They exist so device bindings can read their params.
+[[instances]]
+id = "icm"
+part = "tdk-icm-42688-p"
+offboard = true
+
+[[instances]]
+id = "baro_chip"
+part = "te-ms5611-01ba03"
+offboard = true
+
+[[instances]]
+id = "gnss_chip"
+part = "ublox-zed-f9p"
+offboard = true
+
+[[instances]]
+id = "cable"
+part = "robotis-robot-cable-x3p-180mm"
+offboard = true
+
+# ---- mates ---------------------------------------------------------------------------------------------------------------------------
+[[mates]]
+name = "frame--duct"
+a = "frame.duct"
+b = "duct.mount"
+
+[[mates]]
+name = "duct--motor"
+a = "duct.motor_seat"
+b = "motor.base"
+
+[[mates]]
+name = "spin"
+a = "motor.shaft"
+b = "fan.hub"
+joint = { type = "hinge", spin = true }
+
+[[mates]]
+name = "frame--esc"
+a = "frame.deck_esc"
+b = "esc.base"
+
+[[mates]]
+name = "frame--reg1"
+a = "frame.deck_reg1"
+b = "reg1.base"
+
+[[mates]]
+name = "frame--reg2"
+a = "frame.deck_reg2"
+b = "reg2.base"
+
+[[mates]]
+name = "frame--fc"
+a = "frame.deck_fc"
+b = "fc.base"
+
+[[mates]]
+name = "frame--harness"
+a = "frame.deck_harness"
+b = "harness.base"
+
+[[mates]]
+name = "frame--sv1"
+a = "frame.servo_xp"
+b = "sv1.base"
+
+[[mates]]
+name = "frame--sv2"
+a = "frame.servo_yp"
+b = "sv2.base"
+
+[[mates]]
+name = "frame--sv3"
+a = "frame.servo_xn"
+b = "sv3.base"
+
+[[mates]]
+name = "frame--sv4"
+a = "frame.servo_yn"
+b = "sv4.base"
+
+[[mates]]
+name = "vane1-joint"
+a = "sv1.output"
+b = "vane1.horn_seat"
+joint = { type = "hinge", range = { value = [-0.3491, 0.3491], unit = "rad", fidelity = "estimated", rationale = "+-20 deg: the vane's travel before it would touch the neighbouring vane's wake; the flight software limits itself to +-17 deg." } }
+
+[[mates]]
+name = "vane2-joint"
+a = "sv2.output"
+b = "vane2.horn_seat"
+joint = { type = "hinge", range = { value = [-0.3491, 0.3491], unit = "rad", fidelity = "estimated", rationale = "As vane1-joint." } }
+
+[[mates]]
+name = "vane3-joint"
+a = "sv3.output"
+b = "vane3.horn_seat"
+joint = { type = "hinge", range = { value = [-0.3491, 0.3491], unit = "rad", fidelity = "estimated", rationale = "As vane1-joint." } }
+
+[[mates]]
+name = "vane4-joint"
+a = "sv4.output"
+b = "vane4.horn_seat"
+joint = { type = "hinge", range = { value = [-0.3491, 0.3491], unit = "rad", fidelity = "estimated", rationale = "As vane1-joint." } }
+
+[[mates]]
+name = "frame--leg1"
+a = "frame.leg1"
+b = "leg1.hinge"
+
+[[mates]]
+name = "frame--leg2"
+a = "frame.leg2"
+b = "leg2.hinge"
+
+[[mates]]
+name = "frame--leg3"
+a = "frame.leg3"
+b = "leg3.hinge"
+
+[[mates]]
+name = "frame--leg4"
+a = "frame.leg4"
+b = "leg4.hinge"
+
+# ---- wiring -------------------------------------------------------------------------------------------------------------------------------
+# Pack -> ESC (leads ship on the ESC, mass in its 150.4 g; 10 AWG estimated for a 120 A ESC), ESC -> motor (leads ship on the motor), pack -> the two regulators, regulators -> servos (daisy chain per
+# regulator) and flight computer / lidar.
+[[wires]]
+name = "batt_esc"
+from = "batt.power_out"
+to = "esc.power_in"
+part = "awg-10-silicone-wire"
+length = { value = 0.12, unit = "m", fidelity = "estimated", rationale = "Battery beside the duct to the ESC across it: about 0.12 m including the connector pigtails." }
+conductors = 2
+included_in = "esc"
+
+[[wires]]
+name = "esc_motor"
+from = "esc.motor_out"
+to = "motor.phase"
+part = "awg-10-silicone-wire"
+length = { value = 0.10, unit = "m", fidelity = "estimated", rationale = "ESC beside the housing to the motor in its rear cage: about 0.10 m." }
+conductors = 3
+included_in = "motor"
+
+[[wires]]
+name = "batt_reg1"
+from = "batt.power_out"
+from_pins = ["LEAD.1", "LEAD.2"]   # spliced onto the pack's discharge lead (joinable), the same net as the XT60 feeding the ESC
+to = "reg1.vin"
+part = "awg-18-silicone-wire"
+length = { value = 0.12, unit = "m", fidelity = "estimated", rationale = "Battery to the +y regulator, 0.1 m plus slack." }
+conductors = 2
+
+[[wires]]
+name = "batt_reg2"
+from = "batt.power_out"
+from_pins = ["LEAD.1", "LEAD.2"]   # spliced onto the pack's discharge lead (joinable), the same net as the XT60 feeding the ESC
+to = "reg2.vin"
+part = "awg-18-silicone-wire"
+length = { value = 0.12, unit = "m", fidelity = "estimated", rationale = "Battery to the -y regulator, 0.1 m plus slack." }
+conductors = 2
+
+[[wires]]
+name = "reg1_sv1"
+from = "reg1.vout"
+to = "sv1.port_a"
+part = "awg-22-silicone-wire"
+length = { value = 0.22, unit = "m", fidelity = "estimated", rationale = "Regulator on the +y strip down the +x bracket to servo 1: 0.15 m run plus slack." }
+conductors = 2
+
+[[wires]]
+name = "sv1_sv2"
+from = "sv1.port_b"
+to = "sv2.port_a"
+part = "robotis-robot-cable-x3p-180mm"
+length = "cable.length_default"
+conductors = 2
+
+[[wires]]
+name = "reg2_sv3"
+from = "reg2.vout"
+to = "sv3.port_a"
+part = "awg-22-silicone-wire"
+length = { value = 0.22, unit = "m", fidelity = "estimated", rationale = "Regulator on the -y strip to servo 3 on the -x bracket: 0.15 m run plus slack." }
+conductors = 2
+
+[[wires]]
+name = "sv3_sv4"
+from = "sv3.port_b"
+to = "sv4.port_a"
+part = "robotis-robot-cable-x3p-180mm"
+length = "cable.length_default"
+conductors = 2
+
+[[wires]]
+name = "reg1_fc"
+from = "reg1.vout"
+to = "fc.vin"
+part = "awg-26-silicone-wire"
+length = { value = 0.10, unit = "m", fidelity = "estimated", rationale = "Regulator to the flight computer on the same strip, 0.05 m apart: 0.10 m with a service loop." }
+conductors = 2
+
+[[wires]]
+name = "reg1_lidar"
+from = "reg1.vout"
+to = "lidar.power_in"
+part = "awg-26-silicone-wire"
+length = { value = 0.20, unit = "m", fidelity = "estimated", rationale = "Regulator across the deck edge to the underside lidar: 0.2 m." }
+conductors = 2
+
+# ---- device maps ---------------------------------------------------------------------------------------------------------------------------
+[device_maps.esc_edf]
+"motor.kv" = "motor:kv"
+"motor.r20" = "motor:r_winding"
+"motor.i0" = "motor:i0"
+"motor.rotor_inertia" = "motor:j_rotor_bell"
+"i_limit" = "current_continuous"
+"r_on" = "r_on_total"
+"sw_loss" = "switching_loss_fraction"
+"i_q" = "quiescent_current"
+
+[device_maps.edf80]
+"diameter" = "diameter"
+"j" = "@ct_cq_j.j"
+"ct" = "@ct_cq_j.ct"
+"cq" = "@ct_cq_j.cq"
+"k_h" = "k_h"
+
+[device_maps.pack6s]
+capacity_ah = "capacity_ah"
+r0 = "r_internal_pack"
+
+[device_maps.reg5v]
+voltage = "output_voltage"
+i_limit = "output_current_typ_max"
+
+[device_maps.vane]
+area = "area"
+
+[device_maps.xl330_m288]
+"motor.kv" = "kv_equivalent"
+"motor.r20" = "r_effective"
+"motor.i0" = "no_load_current_5v"
+"motor.i0_w" = "omega_noload_motor_5v"
+"motor.i0_visc" = "i0_visc"
+"motor.rotor_inertia" = "rotor_inertia_motor"
+gear_ratio = "gear_ratio"
+efficiency = "gear_efficiency"
+encoder_cpr = "encoder_resolution"
+firmware_hz = "firmware_hz"
+p = "device_p_default"
+i = "device_i_default"
+d = "device_d_default"
+pid_scale = "pid_scale"
+d_scale = "d_scale"
+deadband = "dead_zone_default"
+max_torque = "device_max_torque_default"
+min_voltage = "reg_min_voltage_limit_default"
+max_voltage = "reg_max_voltage_limit_default"
+max_temp = "reg_temperature_limit_default"
+unload_mask = "reg_shutdown_default"
+
+[device_maps.icm42688]
+"gyro.noise_density" = "gyro_noise_density"
+"gyro.full_scale" = "gyro_fs_max"
+"gyro.bits" = "gyro_adc_bits"
+"accel.noise_density" = "accel_noise_density_xy"
+"accel.full_scale" = "accel_fs_max"
+"accel.bits" = "accel_adc_bits"
+
+[device_maps.ms5611]
+"noise_std" = "pressure_rms_noise_osr4096"
+
+[device_maps.f9p]
+"vel_std" = "velocity_accuracy"
+
+[device_maps.tfluna]
+fov_h = "fov"
+fov_v = "fov"
+min_range = "range_min"
+max_range = "range_max_90pct"
+resolution = "resolution"
+rate_hz = "frame_rate_default"
+
+# ---- devices -----------------------------------------------------------------------------------------------------------------------------
+[[devices]]
+type = "battery"
+name = "battery"
+instance = "batt"
+port = "power_out"
+ocv = "lipo-cell-ocv-chen2006"
+map = "pack6s"
+
+[[devices]]
+type = "psu"
+name = "reducer1"
+instance = "reg1"
+port = "vout"
+map = "reg5v"
+set = { r_series = { value = 0.05, unit = "ohm", fidelity = "estimated", rationale = "Output impedance of a small buck module: not published for the D24V50F5; 0.05 ohm as assemblies/tvc-lander.toml." } }
+
+[[devices]]
+type = "psu"
+name = "reducer2"
+instance = "reg2"
+port = "vout"
+map = "reg5v"
+set = { r_series = { value = 0.05, unit = "ohm", fidelity = "estimated", rationale = "As reducer1." } }
+
+[[devices]]
+type = "environment"
+name = "air"
+instance = "frame"
+set = { origin_alt = { value = 0.0, unit = "m", fidelity = "estimated", rationale = "World z = 0 is sea level (ISA density 1.225 kg/m3 at the pad); not a claim about a flight site." }, w20 = { value = 0.0, unit = "m/s", fidelity = "estimated", rationale = "Calm by default; examples/hopper/scene.py rebuilds the model with the scenario's Dryden intensity (w20 = mean wind at 6.1 m) and sets the mean wind with the `wind` attribute." } }
+
+[[devices]]
+type = "esc"
+name = "esc"
+instance = "esc"
+port = "power_in"
+motor = "motor"
+joint = "spin"
+map = "esc_edf"
+set = { "motor.c_th" = { value = 134.0, unit = "J/K", fidelity = "estimated", rationale = "Lumped thermal capacity of the 335 g motor at ~0.4 J/(g K) (copper / steel / aluminium mix); no vendor value." }, "motor.r_th" = { value = 0.5, unit = "K/W", fidelity = "estimated", rationale = "No vendor value. 0.5 K/W: 60 K winding rise at the 108 W copper loss of the 105 A full-throttle row, air-cooled by the fan's own flow; only the temperature readout depends on it (a 60 s hop at about 25 A average loses 6 W)." } }
+
+[[devices]]
+type = "rotor"
+name = "rotor"
+instance = "fan"
+body = "fan"
+joint = "spin"
+stator_body = "duct"
+map = "edf80"
+dir = 1
+set = { swirl_recovery = { value = 0.8, unit = "1", fidelity = "estimated", rationale = "Share of the fan's reaction torque returned by the stator vanes. Not published for this fan. A stator that straightens the swirl returns the whole swirl momentum to the housing (value 1); real straighteners recover 70-90 % of it (estimate, no source). The hopper's yaw authority depends on it: the full Q at hover (0.17 N m) against about 0.14 N m of vane yaw authority." } }
+
+[[devices]]
+type = "body_drag"
+name = "drag"
+instance = "frame"
+body = "frame"
+set = { cd = { value = 1.0, unit = "1", fidelity = "estimated", rationale = "A bluff stack of deck, battery and housing seen side-on: Cd of order 1." }, area = { value = 0.045, unit = "m^2", fidelity = "estimated", rationale = "Side projection of the housing (0.083 x 0.10 m), battery (0.116 x 0.0385 m) and deck edge (0.2 x 0.004 m), the legs excluded: 0.0083 + 0.0045 + 0.0008 m2 plus the legs' frontal area, taken 0.045 m2 (+-50 %)." } }
+
+[[devices]]
+type = "jet_vane"
+name = "vane1"
+instance = "vane1"
+body = "vane1"
+site = "vane1"
+site_port = "aero"
+rotor = "rotor"
+duct = "duct"
+map = "vane"
+set = { exit_area = { value = 0.0034, unit = "m^2", fidelity = "derived", derivation = "Duct exit tube inner radius 0.0329 m (parts/propulsion/qx-80mm-12-blade-edf-duct exit_area)." }, cn_alpha = { value = 1.9, unit = "1/rad", fidelity = "derived", derivation = "Helmbold low-aspect-ratio wing slope a = 2 pi AR / (2 + sqrt(4 + AR^2)) per rad with the effective aspect ratio 1.33 (2 x immersed span 0.030 m / chord 0.045 m: the root plane reflects the plate): 1.90 per rad. Textbook (not looked up here); the plate is thin and stalls early." }, cn_max = { value = 1.16, unit = "1", fidelity = "estimated", rationale = "Normal-force coefficient of a stalled flat plate of aspect ratio about 1 (Hoerner's figure for a square plate is about 1.15; from memory, not re-read)." }, cd0 = { value = 0.05, unit = "1", fidelity = "estimated", rationale = "Skin friction of both faces of the plate, 2 x 0.0035 in the 5.8 kPa jet plus the edges: 0.03-0.06." }, jet_factor = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "The plate sits 4 mm under the nozzle exit in a jet that has a hub wake (the 35 mm motor behind the fan) and a boundary layer: its mean dynamic pressure at the plate is below momentum theory's; 0.9 on the speed = 0.81 on q. No measurement exists for this fan." } }
+
+[[devices]]
+type = "jet_vane"
+name = "vane2"
+instance = "vane2"
+body = "vane2"
+site = "vane2"
+site_port = "aero"
+rotor = "rotor"
+duct = "duct"
+map = "vane"
+set = { exit_area = { value = 0.0034, unit = "m^2", fidelity = "derived", derivation = "As vane1." }, cn_alpha = { value = 1.9, unit = "1/rad", fidelity = "derived", derivation = "As vane1." }, cn_max = { value = 1.16, unit = "1", fidelity = "estimated", rationale = "As vane1." }, cd0 = { value = 0.05, unit = "1", fidelity = "estimated", rationale = "As vane1." }, jet_factor = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "As vane1." } }
+
+[[devices]]
+type = "jet_vane"
+name = "vane3"
+instance = "vane3"
+body = "vane3"
+site = "vane3"
+site_port = "aero"
+rotor = "rotor"
+duct = "duct"
+map = "vane"
+set = { exit_area = { value = 0.0034, unit = "m^2", fidelity = "derived", derivation = "As vane1." }, cn_alpha = { value = 1.9, unit = "1/rad", fidelity = "derived", derivation = "As vane1." }, cn_max = { value = 1.16, unit = "1", fidelity = "estimated", rationale = "As vane1." }, cd0 = { value = 0.05, unit = "1", fidelity = "estimated", rationale = "As vane1." }, jet_factor = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "As vane1." } }
+
+[[devices]]
+type = "jet_vane"
+name = "vane4"
+instance = "vane4"
+body = "vane4"
+site = "vane4"
+site_port = "aero"
+rotor = "rotor"
+duct = "duct"
+map = "vane"
+set = { exit_area = { value = 0.0034, unit = "m^2", fidelity = "derived", derivation = "As vane1." }, cn_alpha = { value = 1.9, unit = "1/rad", fidelity = "derived", derivation = "As vane1." }, cn_max = { value = 1.16, unit = "1", fidelity = "estimated", rationale = "As vane1." }, cd0 = { value = 0.05, unit = "1", fidelity = "estimated", rationale = "As vane1." }, jet_factor = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "As vane1." } }
+
+[[devices]]
+type = "servo"
+name = "servo1"
+instance = "sv1"
+port = "port_a"
+joint = "vane1-joint"
+map = "xl330_m288"
+set = { "motor.c_th" = { value = 3.3, unit = "J/K", fidelity = "estimated", rationale = "As assemblies/tvc-lander.toml." }, "motor.r_th" = { value = 30.0, unit = "K/W", fidelity = "estimated", rationale = "As assemblies/tvc-lander.toml." } }
+
+[[devices]]
+type = "servo"
+name = "servo2"
+instance = "sv2"
+port = "port_a"
+joint = "vane2-joint"
+map = "xl330_m288"
+set = { "motor.c_th" = { value = 3.3, unit = "J/K", fidelity = "estimated", rationale = "As servo1." }, "motor.r_th" = { value = 30.0, unit = "K/W", fidelity = "estimated", rationale = "As servo1." } }
+
+[[devices]]
+type = "servo"
+name = "servo3"
+instance = "sv3"
+port = "port_a"
+joint = "vane3-joint"
+map = "xl330_m288"
+set = { "motor.c_th" = { value = 3.3, unit = "J/K", fidelity = "estimated", rationale = "As servo1." }, "motor.r_th" = { value = 30.0, unit = "K/W", fidelity = "estimated", rationale = "As servo1." } }
+
+[[devices]]
+type = "servo"
+name = "servo4"
+instance = "sv4"
+port = "port_a"
+joint = "vane4-joint"
+map = "xl330_m288"
+set = { "motor.c_th" = { value = 3.3, unit = "J/K", fidelity = "estimated", rationale = "As servo1." }, "motor.r_th" = { value = 30.0, unit = "K/W", fidelity = "estimated", rationale = "As servo1." } }
+
+[[devices]]
+type = "imu"
+name = "imu"
+instance = "icm"
+site = "fc"
+map = "icm42688"
+set = { rate_hz = { value = 500.0, unit = "Hz", fidelity = "estimated", rationale = "Simulation tick is 1 ms; 500 Hz = every 2nd tick, inside the ICM-42688-P output-data-rate range (12.5-32000 Hz datasheet). The firmware reads every second sample, at its 250 Hz control rate." } }
+
+# GNSS: a ZED-F9P RTK rover (data-only chip instance) with corrections from a base station: the second pad is 10 m from the first and the landing must be within 0.3 m of it, which the stand-alone GNSS of the
+# lander (2.5 m CEP, error drifting by ~1 m over a minute) cannot do. examples/hopper/mc.py has a sensitivity run with the M8N's accuracy to show how much of the result rests on this.
+[[devices]]
+type = "gnss"
+name = "gnss"
+instance = "gnss_chip"
+site = "fc"
+map = "f9p"
+set = { rate_hz = { value = 10.0, unit = "Hz", fidelity = "estimated", rationale = "ZED-F9P RTK navigation rate is up to 20 Hz (datasheet); 10 Hz taken (every 100th tick), a usual setting." }, latency_s = { value = 0.1, unit = "s", fidelity = "estimated", rationale = "No part publishes the receiver's output latency; 0.1 s = one sample at 10 Hz." }, lat0 = { value = 47.3769, unit = "deg", fidelity = "estimated", rationale = "Arbitrary simulation origin (the repo's test-model site); not a claim about where the vehicle flies." }, lon0 = { value = 8.5417, unit = "deg", fidelity = "estimated", rationale = "As lat0." }, alt0 = { value = 0.0, unit = "m", fidelity = "estimated", rationale = "World z = 0 at sea level, matching the environment device's origin_alt so the barometer and GNSS agree." }, horiz_std = { value = 0.02, unit = "m", fidelity = "estimated", rationale = "The ZED-F9P RTK accuracy is 0.01 m + 1 ppm CEP (parts/electronics/ublox-zed-f9p, datasheet, static; CEP 0.01 m = per-axis sigma 0.0085 m). 0.02 m (x 2.4) covers antenna motion, multipath and a float / fix mix in flight; the datasheet gives no dynamic figure." }, vert_std = { value = 0.03, unit = "m", fidelity = "estimated", rationale = "1.5 x horiz_std, as assemblies/x500v2.toml (the part publishes no vertical figure)." }, corr_time_s = { value = 20.0, unit = "s", fidelity = "estimated", rationale = "Time constant of the slowly varying part of an RTK position error (atmospheric residual, multipath): tens of seconds; no source." }, corr_frac = { value = 0.5, unit = "1", fidelity = "estimated", rationale = "Share of the position variance that is the Gauss-Markov part: half; no source." } }
+
+[[devices]]
+type = "baro"
+name = "baro"
+instance = "baro_chip"
+site = "fc"
+map = "ms5611"
+set = { rate_hz = { value = 50.0, unit = "Hz", fidelity = "estimated", rationale = "MS5611 pressure + temperature conversions take 8.22 ms each at OSR 4096 (datasheet response time), i.e. at most ~60 Hz alternating; 50 Hz (every 20th tick) is chosen. Noise is the OSR 4096 RMS figure." } }
+
+# Downward single-point lidar: a 1 x 1 pinhole rangefinder of the TF-Luna's 2 degree field. Accuracy: the datasheet gives +-6 cm to 3 m and +-2 % beyond (taken as 2 sigma). Reads 0 outside 0.2 - 8 m (the 90 % reflectivity range).
+[[devices]]
+type = "rangefinder"
+name = "lidar"
+instance = "lidar"
+site = "lidar"
+map = "tfluna"
+set = { n_h = { value = 1, unit = "px", fidelity = "estimated", rationale = "Single-point sensor: a 1 x 1 grid." }, n_v = { value = 1, unit = "px", fidelity = "estimated", rationale = "Single-point sensor: a 1 x 1 grid." }, sigma0 = { value = 0.03, unit = "m", fidelity = "derived", derivation = "Datasheet accuracy +-6 cm (S1 of benewake-tf-luna, 0.2-3 m) taken as the 2-sigma bound: sigma 0.03 m." }, sigma1 = { value = 0.01, unit = "1", fidelity = "derived", derivation = "Datasheet accuracy +-2 % beyond 3 m taken as the 2-sigma bound: sigma 1 % of the range." } }

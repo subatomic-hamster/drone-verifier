@@ -1,0 +1,143 @@
+id = "logitech-brio-4k"
+name = "Logitech BRIO 4K Ultra HD USB webcam (BRIO Ultra HD Pro, 13 MP sensor, 90 / 78 / 65 deg FOV)"
+category = "sensor.camera"
+vendor = "Logitech"
+part_number = "BRIO (960-001106 / 960-001105)"
+url = "https://www.logitech.com/en-ca/products/webcams/brio-4k-hdr-webcam.html"
+
+# Camera body with the detachable monitor clip removed. UVC device (V4L2 on Linux). The attached cable is part of the quoted 65 g and ends in the plug listed as connector USB.
+# Part frame: origin at the centre of the underside of the body, +x along the 102 mm width, +y towards the lens (front), +z up (27 mm tall, 26.5 mm deep).
+# Not in any Logitech page: the supply current, the sensor size and the lens focal length (so the pinhole model of a build must be set from the field of view).
+# No price is recorded: the Logitech page shows only 'Notify me', and the project budget excludes the camera.
+
+[params]
+mass            = { value = 0.065, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.102, unit = "m", src = "S1", fidelity = "datasheet" }   # width of the body
+width           = { value = 0.0265, unit = "m", src = "S2", fidelity = "datasheet" }   # depth
+height          = { value = 0.027, unit = "m", src = "S1", fidelity = "datasheet" }
+cable_length    = { value = 1.5, unit = "m", src = "S1", fidelity = "datasheet" }
+fov_diag_max    = { value = 1.5708, unit = "rad", src = "S2", fidelity = "datasheet" }   # 90 deg, the widest of the 90 / 78 / 65 deg settings
+fov_diag_mid    = { value = 1.3614, unit = "rad", src = "S2", fidelity = "datasheet" }   # 78 deg
+fov_diag_min    = { value = 1.1345, unit = "rad", src = "S2", fidelity = "datasheet" }   # 65 deg
+fov_h_wide      = { value = 1.4329, unit = "rad", src = "S2", fidelity = "datasheet" }   # 82.1 deg horizontal at the 90 deg setting
+fov_h_narrow    = { value = 1.2292, unit = "rad", src = "S2", fidelity = "datasheet" }   # 70.42 deg horizontal at the 65 deg setting
+fov_v_wide      = { value = 0.9111, unit = "rad", src = "S2", fidelity = "datasheet" }   # 52.2 deg vertical
+fov_vertical    = { value = 0.9111, unit = "rad", src = "S2", fidelity = "datasheet" }   # the default (90 deg diagonal) setting: what the camera device uses
+fov_v_narrow    = { value = 0.7557, unit = "rad", src = "S2", fidelity = "datasheet" }   # 43.3 deg vertical
+mode_4k_fps     = { value = 30, unit = "Hz", src = "S1", fidelity = "datasheet" }   # 4K / 30 fps, up to 4096 x 2160
+mode_1080p_fps  = { value = 60, unit = "Hz", src = "S1", fidelity = "datasheet" }   # 1080p / 60 fps
+mode_720p_fps   = { value = 90, unit = "Hz", src = "S2", fidelity = "datasheet" }   # 720p / 90 fps (the application must support 90 fps)
+uvc_formats     = { value = "YUYV, MJPG, NV12 (V4L2 pixel formats reported on a BRIO, 046d:085e)", unit = "-", src = "S4", fidelity = "literature" }
+tripod_thread   = { value = "1/4-20 UNC", unit = "-", src = "S2", fidelity = "datasheet" }
+usb_version     = { value = "USB 2.0 / 3.0 / 3.1 or Type-C (Type-C through a third-party adapter, not included)", unit = "-", src = "S2", fidelity = "datasheet" }
+
+# Envelope (collision, wire clearance): the 102 x 26.5 x 27 mm body, underside at z = 0.
+[[geometry.shapes]]
+shape = "box"
+size = [0.051, 0.01325, 0.0135]
+pos = [0.0, 0.0, 0.0135]
+
+[[ports]]
+name = "tripod"
+kind = "mech"
+type = "thread.1_4-20"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "1/4-20 tripod thread (S2). Position: underside, centred in the body width; positional estimate (the clip is the factory mount, the thread's location is not dimensioned in the sources)."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port (underside centre), for seating the part by the pose of its frame."
+
+# Camera device site: +z of the site = the optical axis (the front, +y of the part), +x = image up (+z of the part). Lens centre 8 mm behind the front face, at mid-height.
+[[ports]]
+name = "lens"
+kind = "mech"
+type = "camera-axis"
+gender = "neutral"
+pos = [0.0, 0.00525, 0.0135]
+axis = [0.0, 1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "The lens position is not in the sources; centred in width and height, about 8 mm behind the front face (the same estimate as the CAD, cad/cuas-lite manifest camera.lens_estimate_H_mm)."
+note = "Optical axis; image up is +z of the part."
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "male"
+pins = ["USB.1", "USB.2", "USB.3", "USB.4"]
+lead = { length = "cable_length" }
+note = "Permanently attached 1.5 m cable (S1); the 65 g includes it."
+
+# Pin level: the cable's USB-A plug. The Logitech pages state the plug type and cable length only; the contact order is the USB standard's (1 VBUS, 2 D-, 3 D+, 4 GND), so it is estimated.
+# The USB 3 pairs of the 9-contact plug are not listed (a BRIO also runs on USB 2.0; the 4K and 60 fps MJPEG modes need USB 3 only through the host's bandwidth, not another pin).
+[[connectors]]
+id = "USB"
+name = "USB-A plug on the 1.5 m cable"
+type = "usb-a"
+port_type = "usb"
+gender = "male"
+pos = [0.0, -0.0132, 0.0135]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.002
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the cable length and S2 the connection types; neither lists contacts. The four USB 2.0 contacts of a type-A plug are numbered 1 VBUS, 2 D-, 3 D+, 4 GND by the USB specification (not fetched)."
+pose_rationale = "Drawn at the rear of the body; the 1.5 m cable is a lead, the real plug sits at its far end (positional estimate)."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "in", v_min = 4.5, v_max = 5.5, note = "bus power; the supply current is not published" },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[visual]
+src = "V1"
+note = "Black body drawn as a generic box from the published 102 x 26.5 x 27 mm envelope (Logitech product photo); no lens detail."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.logitech.com/en-ca/products/webcams/brio-4k-hdr-webcam.html"
+title = "Logitech BRIO Webcam, product page and tech specs"
+accessed = "2026-10-11"
+quote = "Height: 27 mm | Width: 102 mm | Depth: 26.5 mm | Weight: 65 g | Length: 1.5 m | 4K/30 fps (up to 4096 x 2160 pixels), 1080p/60 fps (up to 1920x1080 pixels) or 720p/90 fps (up to 1280x720 pixels) | Detachable universal mounting clip fits monitors, LCD displays, and laptops"
+
+[[sources]]
+id = "S2"
+url = "https://hub.sync.logitech.com/brio/post/brio-brio-4k-specifications-BJKhhCqWmecRhPD"
+title = "Logitech Sync hub: Brio / Brio 4K specifications"
+accessed = "2026-10-11"
+quote = "Height 27 mm (1.06 inches) | Length 102 mm (4.02 inches) | Depth 26.5 mm (1.04 inches) | Weight 65 g (2.29 ounces) | Cable 1.5 m / 5 ft | Connection USB 2.0, 3.0, 3.1 or Type C | Frame rates 4K@30, 1080p@60, and 720p@90 (90fps must be supported by VC application.) | Diagonal 90 degree, adjustable to 78 or 65 | Horizontal 82.1 degree, adjustable to 70.42 | Vertical 52.2 degree, adjustable to 43.3 | Tripod thread Yes, 1/4\" 20 thread"
+
+[[sources]]
+id = "S4"
+url = "https://forums.developer.nvidia.com/t/unsupported-pixel-format-error-when-using-logitech-brio-4k-with-matlab-simulink-on-jetson-orin-nx/350461"
+title = "NVIDIA Developer Forums: Unsupported pixel format with Logitech BRIO 4K on Jetson Orin NX (a user's v4l2 listing)"
+accessed = "2026-10-11"
+quote = "the camera supports YUYV (YUV422), MJPG, NV12, at various resolutions including 640x480, 1280x720, 1920x1080"
+
+[[sources]]
+id = "V1"
+url = "https://www.logitech.com/en-ca/products/webcams/brio-4k-hdr-webcam.html"
+title = "Logitech BRIO product photos (appearance only)"
+accessed = "2026-10-11"
+quote = "Logitech BRIO Webcam"

@@ -1,0 +1,122 @@
+id = "feetech-sts3215-c046"
+name = "Feetech STS3215-C046 7.4V 1/147 serial bus servo"
+category = "motor.servo"
+vendor = "Feetech (Shenzhen Feite Model Co., Ltd.)"
+part_number = "STS3215-C046"
+url = "https://openelab.io/products/feetech-sts3215-c046-servo"
+
+# Frame: origin on the output axis at the horn-side (top) face of the case; +z = output axis out of the case;
+# x = long case dimension (45.2 mm), y = short (24.7 mm). Case occupies z in [-0.035, 0].
+# Fastest STS3215 variant (147:1); same case family as C001.
+
+[params]
+mass            = { value = 0.055,   unit = "kg",  src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0452,  unit = "m",   src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0247,  unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.035,   unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 147,     unit = "1",   src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "copper (metal gear train), PA+GF case", unit = "-", src = "S1", fidelity = "datasheet" }
+backlash        = { value = 0.0087266, unit = "rad", src = "S1", fidelity = "datasheet" }  # <=0.5 deg
+horn_spline     = { value = "25T, OD 5.9 mm", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }
+protocol        = { value = "Half-duplex asynchronous TTL serial, 8N1, ID 0-253", unit = "-", src = "S1", fidelity = "datasheet" }
+baud_default    = { value = 1000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 38400,   unit = "bit/s", src = "S1", fidelity = "datasheet" }
+connector       = { value = "5264-3P (GND, VCC, TTL signal)", unit = "-", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -20, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 60,  unit = "degC", src = "S1", fidelity = "datasheet" }
+
+# --- datasheet performance (kg.cm converted with g = 9.80665) ---
+v_nominal           = { value = 7.4,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_min     = { value = 5.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 8.4,    unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_7v4   = { value = 11.1404, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.094 s/60deg (106 RPM)
+no_load_current_7v4 = { value = 0.5,    unit = "A",     src = "S1", fidelity = "datasheet" }
+stall_torque_7v4    = { value = 1.4122, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 14.4 kg.cm
+stall_current_7v4   = { value = 3.3,    unit = "A",     src = "S1", fidelity = "datasheet" }
+rated_torque_7v4    = { value = 0.4707, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 4.8 kg.cm
+rated_current_7v4   = { value = 1.1,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_6v    = { value = 9.4340, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.111 s/60deg
+stall_torque_6v     = { value = 0.9022, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 9.2 kg.cm
+rated_torque_6v     = { value = 0.3040, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 3.1 kg.cm
+
+# --- DC-motor equivalent (motor side), derived from the 7.4 V point ---
+r_effective = { value = 2.242, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 7.4 V / 3.3 A = 2.242 ohm (includes H-bridge and lead resistance at stall)." }
+omega_noload_motor_7v4 = { value = 1637.7, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 147 * (pi/3 rad / 0.094 s = 11.1404 rad/s) = 1637.7 rad/s (15639 RPM)." }
+ke = { value = 0.003834, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (7.4 - 0.5*2.242)/(147*11.1404) = 6.279/1637.7 = 3.834e-3 V*s/rad. Agrees with C044 (3.817e-3) to 0.5%: same motor, different gear ratio." }
+kt_motor = { value = 0.003834, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+gear_efficiency = { value = 0.895, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 1.4122/(147*0.003834*(3.3-0.5)) = 0.895 (suspiciously high for a 147:1 steel/copper train; published stall figures may be generous, treat as upper bound)." }
+friction_torque_motor_noload = { value = 0.001917, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.003834*0.5 = 1.917e-3 N*m at the motor shaft." }
+rotor_inertia_motor = { value = 2.35e-7, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published. Borrowed from the STS3215-C001 estimate (parts/arm/feetech-sts3215-c001.toml); unverified." }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3215-base"
+gender = "neutral"
+pos = [0.0, 0.0, -0.035]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Mounting-ear / bottom hole pattern of the STS3215 case; spacing not retrievable as text, family tag is opaque."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 25
+note = "25T spline, OD 5.9 mm."
+
+[[ports]]
+name = "power_in"
+pins = ["BUS.1", "BUS.2"]
+kind = "power"
+type = "5264-3p"
+gender = "female"
+role = "sink"
+v_max = { value = 8.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.1, unit = "A", src = "S1", fidelity = "datasheet" }   # rated (continuous) current at 7.4 V
+i_peak = { value = 3.3, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 7.4 V
+
+[[ports]]
+name = "bus"
+pins = ["BUS.3"]
+kind = "signal"
+type = "feetech-ttl"
+gender = "female"
+note = "Single-wire half-duplex TTL on the 5264-3P signal pin; logic level not stated on the vendor page."
+
+# Pin level: the 5264-3P bus connector, 'GND, VCC, TTL signal' as listed in S1 (read as pin 1..3 in the listed order).
+[[connectors]]
+id = "BUS"
+name = "bus connector (5264-3P)"
+type = "5264-3p"
+port_type = "5264-3p"
+gender = "female"
+pos = [-0.02, 0.0, -0.012]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+rationale = "S1 lists the connector as '5264-3P; GND, VCC, TTL signal'; the pin order is read from that listing and the 2.54 mm pitch is the 5264 family pitch (not stated in S1)."
+pose_rationale = "Case dimensions are not in the sources, so the connector position is a positional estimate (end of the case, near the base)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VCC", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "io", note = "single-wire half-duplex TTL serial (S1)" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://openelab.io/products/feetech-sts3215-c046-servo"
+title = "OpenELAB Feetech STS3215-C046 product page, Specifications table"
+accessed = "2026-10-07"
+quote = "Input voltage range| 5-8.4 V || Performance test voltage| 7.4 V || Stall torque| 14.4 kg·cm at 7.4 V || Rated torque| 4.8 kg·cm at 7.4 V || No-load speed| 0.094 s/60° (106 RPM) at 7.4 V || No-load current| 500 mA at 7.4 V || Stall current| 3.3 A at 7.4 V || Rated current| 1100 mA at 7.4 V || Gear ratio| 147:1 || Size| 45.2 × 24.7 × 35 mm || Weight| 55 ± 1 g || Case / gears| PA+GF / copper || Output spline| 25T, OD 5.9 mm || Gear backlash| ≤0.5° || Encoder / electronic resolution| 12-bit magnetic; approximately 0.088° per step || Interface| Half-duplex asynchronous TTL serial; 8 data bits, 1 stop bit, no parity || Baud rate / IDs| 38,400 bps to 1 Mbps / 0-253 || Connector| 5264-3P; GND, VCC, TTL signal || Operating temperature| -20 to +60 °C || At 6 V: 9.2 kg·cm stall torque, 3.1 kg·cm rated torque and 0.111 s/60° no-load speed."

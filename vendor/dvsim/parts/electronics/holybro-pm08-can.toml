@@ -1,0 +1,46 @@
+id = "holybro-pm08-can"
+name = "Holybro DroneCAN PM08-CAN power module (2-14S, 200 A)"
+category = "pcb.pm"
+vendor = "Holybro"
+part_number = "PM08-CAN"
+url = "https://holybro.com/collections/power-modules-pdbs/products/dronecan-pm08-power-module-14s-200a"
+
+# Mounting hole drawing is a separate PDF (linked as 'Available' on the comparison page) and was not fetched, so no
+# mech port is declared. Weight includes the cable; dimensions exclude it.
+[params]
+mass_with_cable     = { value = 0.185, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.041, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.026, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_min   = { value = 7, unit = "V", src = "S1", fidelity = "datasheet" }
+input_voltage_max   = { value = 60, unit = "V", src = "S1", fidelity = "datasheet" }
+current_cont        = { value = 200, unit = "A", src = "S1", fidelity = "datasheet" }
+current_burst_1s    = { value = 400, unit = "A", src = "S1", fidelity = "datasheet" }
+current_sense_max   = { value = 376, unit = "A", src = "S1", fidelity = "datasheet" }
+output_voltage      = { value = 5.2, unit = "V", src = "S1", fidelity = "datasheet" }
+output_current_max  = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "battery_in"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+v_max = { value = 60, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 200, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Connector type on the battery side is not stated on the comparison page"
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "female"
+connector = "Molex CLIK-Mate 2mm 6Pin"
+note = "DroneCAN; also supplies 5.2 V / 3 A max"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module-comparison.md"
+title = "Power Module Comparison (Holybro docs), DroneCAN Power Module table"
+accessed = "2026-10-07"
+quote = "PM08-CAN ... Input Voltage 7 to 60V (2S to 14S) ... Continuous current:200A Burst current 400A @ 25℃ 1 sec 1000A @ 25℃ < 1 sec ... Max Current Sensing 376A ... Output Voltage 5.2V/3A Max ... Ports Molex CLIK-Mate 2mm 6Pin ... Communication Protocol DroneCAN ... Dimensions 45 × 41 × 26mm (Not Include Cable) ... Weight 185g (Include Cable)"

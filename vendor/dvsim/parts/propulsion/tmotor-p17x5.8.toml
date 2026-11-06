@@ -1,0 +1,46 @@
+id = "tmotor-p17x5.8"
+name = "T-Motor P17*5.8 carbon-fibre propeller (17x5.8 in, 2-blade)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "P17*5.8"
+url = "https://rcdrone.top/products/t-motor-p17-props"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# Prop used in the T-Motor MN5006-KV300 bench test (prop_label "T-MOTOR P17*5.8 CF", parts/propulsion/tmotor-mn5006-kv300.toml). Mass: "Weight 26.5+1.5g ...
+# (Single Blade)" read as one propeller (inference; see tmotor-p18x6.1). The listing text prints "Zblades-integrated" (an OCR of "2blades"), so blade_count
+# is estimated. No C_T/C_P curve: use uiuc-apce-* reference parts for J-shape.
+
+[params]
+diameter    = { value = 0.4318, unit = "m", fidelity = "derived", derivation = "Part name 'P17x5.8' / listing 'Size 17 inch': 17 in x 0.0254 m/in = 0.4318 m." }
+pitch       = { value = 0.14732, unit = "m", fidelity = "derived", derivation = "Listing model number '17*5.8\"': 5.8 in x 0.0254 m/in = 0.14732 m." }
+blade_count = { value = 2, unit = "1", fidelity = "estimated", rationale = "Listing text reads 'Zblades-integrated' (OCR of the T-Motor series line '2blades-integrated' that all sibling P/NS pages carry) and the product is sold as CW+CCW pairs." }
+mass        = { value = 0.0265, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass_tol    = { value = 0.0015, unit = "kg", src = "S1", fidelity = "datasheet" }
+material    = { value = "CF+Epoxy", unit = "text", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 73.55, unit = "N", fidelity = "derived", derivation = "'Thrust Limitation 7.5kg' (S1) x 9.80665 m/s^2 = 73.55 N." }
+rpm_opt_min = { value = 3500, unit = "rpm", src = "S1", fidelity = "datasheet" }
+rpm_opt_max = { value = 6000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+j_prop      = { value = 4.12e-4, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.0265*0.4318^2/12 = 4.12e-4 kg*m^2. Upper bound (real blades have mass nearer the hub)." }
+
+[geometry]
+shape = "cylinder"
+size = [0.2159, 0.0060]       # disc envelope: radius D/2, half-height 6 mm (blade thickness envelope, estimated)
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+fidelity = "estimated"
+rationale = "Hub bore is not published for the P-series (spare 'D-Motor Copper Adapter (06x04)' is listed in S1 for fitting the carbon props directly: 6 mm outer / 4 mm inner). 6 mm taken from that adapter and the sibling NS15*5 drawing (O6 centre hole)."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/t-motor-p17-props"
+title = "rcdrone.top (T-Motor distributor) - T-Motor P17x5.8 CF Prop"
+accessed = "2026-10-07"
+quote = "Model Number : 17*5.8\" | T-MOTOR Series Zblades-integrated Weight 26.5+1.5g Material CF+Epoxy (Single Blade) Thrust Limitation 7.5kg Ambient Temp -40C 658C Optimum RPM 3500-6000 RPM/min Storage -10FC 50PC/85% Temp/Humidity Surface Treatment Polished | Spare Parts: D-Motor Copper Adapter (06x04) - 2 pieces, designed for assembling with carbon fiber props directly."

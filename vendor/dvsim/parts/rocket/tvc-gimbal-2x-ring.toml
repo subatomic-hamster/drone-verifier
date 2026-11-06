@@ -1,0 +1,146 @@
+id = "tvc-gimbal-2x-ring"
+name = "TVC gimbal for two 29 mm motors, ring: pitch ring carrying the yaw servo, PLA (design of this repo)"
+category = "rocket.gimbal"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# The middle member of the two-axis cluster gimbal (see tvc-gimbal-2x-plate): hinged to the plate about y (its pitch horn seat at (0, 0.039, 0) is driven by the
+# pitch servo), carries the YAW servo whose output turns the cradle about x. Gimbal centre at the origin, +z towards the nose. Scaled from tvc-gimbal-ring for the
+# 0.065 m wide two-motor cradle: inner radius 0.036 m leaves 3.5 mm over the cradle's 0.0325 m radius, which a +-8 deg tilt of the 0.07 m sleeve about x uses
+# (0.0325 / cos 8 deg + 0.015 tan 8 deg = 0.0349 m at the ring's edge).
+[visual]
+rationale = "Design of this repo: printed pitch ring with trunnion bosses and the yaw-servo bracket (same generator as the 1-axis gimbal ring)."
+
+[[visual.elements]]
+gen = "tvc_gimbal"
+params = { kind = "ring" }
+
+[params]
+outer_radius = { value = 0.039, unit = "m", fidelity = "estimated", rationale = "Design choice: wall 3 mm over the inner radius." }
+inner_radius = { value = 0.036, unit = "m", fidelity = "estimated", rationale = "Design choice: the cradle's 0.0325 m radius plus the tilt sweep at +-8 deg (0.0349 m) plus 1 mm." }
+height = { value = 0.03, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+mass = { value = 0.0283, unit = "kg", fidelity = "derived", derivation = "PLA 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 1178 kg/m3 times the volume: ring pi (0.039^2 - 0.036^2) x 0.03 m = 2.12e-5 m3, servo arm 0.0027 x 0.024 x 0.035 m = 2.27e-6 m3, bridge 0.026 x 0.005 x 0.004 m = 5.2e-7 m3; total 2.40e-5 m3 = 0.0283 kg." }
+
+# The ring wall is eight flat plates around the axis (an octagonal annulus of the same wall: 3 mm thick, 0.0311 m wide at the mid-wall radius 0.0375 m, 0.03 m high) so that
+# the cradle and the motors inside it do not intersect the ring (a solid disc would put them inside the PLA for the interference check).
+# The +x plate carries the yaw axle through a 9 x 9 mm hole (the cradle's 8 mm pin): four strips around it.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.00525]
+pos = [0.0375, 0.0, 0.00975]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.00525]
+pos = [0.0375, 0.0, -0.00975]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.005515, 0.0045]
+pos = [0.0375, 0.010015, 0.0]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.005515, 0.0045]
+pos = [0.0375, -0.010015, 0.0]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [0.026517, 0.026517, 0.0]
+quat = [0.9238795325, 0.0, 0.0, 0.3826834324]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [0.0, 0.0375, 0.0]
+quat = [0.7071067812, 0.0, 0.0, 0.7071067812]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [-0.026517, 0.026517, 0.0]
+quat = [0.3826834324, 0.0, 0.0, 0.9238795325]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [-0.0375, 0.0, 0.0]
+quat = [0.0, 0.0, 0.0, 1.0]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [-0.026517, -0.026517, 0.0]
+quat = [-0.3826834324, 0.0, 0.0, 0.9238795325]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [0.0, -0.0375, 0.0]
+quat = [-0.7071067812, 0.0, 0.0, 0.7071067812]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01553, 0.015]
+pos = [0.026517, -0.026517, 0.0]
+quat = [-0.9238795325, 0.0, 0.0, 0.3826834324]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00135, 0.012, 0.0175]
+pos = [0.06355, 0.0, 0.0075]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.013, 0.0025, 0.002]
+pos = [0.052, 0.0, 0.013]
+material = "pla"
+
+# Pitch servo output hub (the servo's output port mates here with a hinge about y).
+[[ports]]
+name = "pitch_horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl330"
+gender = "female"
+pos = [0.0, 0.039, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Ring's +y outer surface on the pitch axis; the horn thickness is the XL330 hub's 3 mm (parts/arm/robotis-xl330-m077-t)."
+
+# Yaw servo base seat on the +x arm.
+[[ports]]
+name = "yaw_servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0649, 0.0, 0.0075]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.0027
+fidelity = "estimated"
+rationale = "Inner face of the +x servo arm (0.0649 m = hub plane 0.039 + 0.0259 servo height), centred 7.5 mm along z so that the servo's output hub lands on the yaw axis."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

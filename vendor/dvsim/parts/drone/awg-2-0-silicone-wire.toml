@@ -1,0 +1,42 @@
+id = "awg-2-0-silicone-wire"
+name = "2/0 AWG (00) insulated stranded copper cable (high-current battery / traction lead)"
+category = "wire"
+vendor = "generic"
+part_number = "2/0 AWG"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+
+# Same conventions as awg-8-silicone-wire: resistance is the AWG-table value for solid copper at 20 C (stranded wire is a few percent higher, not modelled). The
+# ampacity is the NEC 75 C column quoted by the same table (insulation of the 75-90 C class, enclosed wire at 30 C ambient): 175 A.
+
+[params]
+# no `awg` param: the kernel wire device takes AWG 1..60 only, so 2/0 is modelled by resistance_per_m x length x conductors
+resistance_per_m   = { value = 0.0002557, unit = "ohm/m", src = "S1", fidelity = "literature" }   # 0.2557 mOhm/m at 20 C
+conductor_area     = { value = 6.74e-5, unit = "m^2", src = "S1", fidelity = "literature" }
+conductor_diameter = { value = 0.009266, unit = "m", src = "S1", fidelity = "literature" }       # solid-equivalent
+mass_per_m_copper  = { value = 0.6022, unit = "kg/m", fidelity = "derived", derivation = "Conductor area x copper density: 6.74e-5 m^2 x 8935 kg/m^3 (8.935 g/cm3, parts/drone/awg-8-silicone-wire S3) = 0.6022 kg/m." }
+mass_per_m         = { value = 0.843, unit = "kg/m", fidelity = "estimated", rationale = "Copper 0.602 kg/m (derived) x 1.4 for insulation; the 1.4 factor comes from the 12 AWG case (awg-12-silicone-wire). Not weighed; +-20 %." }
+ampacity_nec_75c   = { value = 175, unit = "A", src = "S1", fidelity = "literature" }
+
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 175, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+note = "AWG table, 2/0: 175 A at 75 C (NFPA 70 Table 310.15(B)(16), enclosed wire at 30 C ambient)."
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 175, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[sources]]
+id = "S1"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia), table of gauges with ampacity (NFPA 70 Table 310.15(B)(16))"
+accessed = "2026-10-13"
+quote = "00 (2/0) | 9.266 | 67.4 | 0.2557 | 145 / 175 / 195 (diameter mm, area mm2, resistance mOhm/m, ampacity A at 60 / 75 / 90 C)"

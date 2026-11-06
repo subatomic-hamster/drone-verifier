@@ -1,0 +1,40 @@
+id = "electrokit-tnut-dropin-2020-m5"
+name = "Drop-in T-nut for 2020 V-slot / T-slot extrusion, M5 (electrokit HW1030NC)"
+category = "structure.tnut"
+vendor = "electrokit (OpenBuilds-style drop-in nut)"
+part_number = "HW1030NC"
+url = "https://www.electrokit.com/en/t-nut-drop-in-for-2020-m5-single"
+
+# Frame: origin at the centre of the screw face, +z out of that face (away from the slot bottom); 10.3 mm along x, 6 mm along y.
+[params]
+thread_diameter = { value = 5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+length          = { value = 10.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 4.4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0012
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published on the page. Steel (7850 kg/m3, assumed) filling about 60 % of the 6 x 10.3 x 4.4 mm envelope (272 mm3; tapped hole, chamfers and the slot-gripping teeth remove the rest): 163 mm3 -> 1.3 g, rounded to 1.2 g. About +-30 %."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+length = 0.0044
+fidelity = "estimated"
+rationale = "Tapped hole through the 4.4 mm height assumed; centred on the 10.3 mm length. Symmetry 2 (rotating 180 deg about the screw axis gives the same nut)."
+note = "Post-insertion nut: drops into the slot from the side and turns across it when the screw engages (S1)."
+
+[[sources]]
+id = "S1"
+url = "https://www.electrokit.com/en/t-nut-drop-in-for-2020-m5-single"
+title = "electrokit: T-Nut - Drop In for 2020 - M5 (Single)"
+accessed = "2026-10-07"
+quote = "Specifications: - Fits M5 Screw - 6 x 10.3 x 4.4mm ... MPN: HW1030NC"

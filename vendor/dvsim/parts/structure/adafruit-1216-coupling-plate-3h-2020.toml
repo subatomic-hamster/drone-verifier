@@ -1,0 +1,41 @@
+id = "adafruit-1216-coupling-plate-3h-2020"
+name = "Coupling plate, 3 holes, for 20x20 aluminium extrusion (Adafruit 1216)"
+category = "structure.bracket"
+vendor = "Adafruit"
+part_number = "1216"
+url = "https://www.adafruit.com/product/1216"
+
+# Frame: origin at the plate centre on the face that sits against the extrusion, +z out of the other face.
+[params]
+length         = { value = 60e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width          = { value = 18e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness      = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter  = { value = 5.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_spacing   = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.01095
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Aluminium (2700 kg/m3, assumed; alloy not stated) plate 60 x 18 x 4 mm less three 5.3 mm holes: (4320 - 265) mm3 = 4055 mm3 -> 10.95 g. About +-10 %."
+
+[[ports]]
+name = "holes"
+kind = "mech"
+type = "bolt-pattern.40x0.m5"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Three 5.3 mm holes 20 mm apart (S1: 'drill holes 20mm apart so you can use M4 or M5 screws'), assumed in one row centred on the 60 mm length: end holes 40 mm apart, centre hole on the plate centre; the M5 family name is the larger of the two screws it takes."
+note = "Plate clamped to an extrusion with M4 or M5 screws and T-nuts; 10 mm screws recommended (S1)."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1216"
+title = "Adafruit product 1216: Coupling Plate - 3 Holes - 20x20 Aluminum Extrusion"
+accessed = "2026-10-07"
+quote = "Attach various pieces of 20mm slotted aluminum extrusion together with this 3-hole plate. Measures 60mm long, 18mm wide, 4mm thick. 5.3m drill holes 20mm apart so you can use M4 or M5 screws. You'll want to use 10mm long screws to attach this to 20mm extrusion."

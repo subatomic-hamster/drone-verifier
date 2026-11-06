@@ -1,0 +1,226 @@
+id = "cuas-lite-pan-rotor-plate"
+name = "cuas-lite pan_rotor_plate (3D printed PETG, group pan, root of the pan group)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "pan_rotor_plate"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (121.74 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in its group frame B (the part frame IS frame B at pan = 0).
+# Root of the pan group: every other part that turns with the pan axis (and every bought part of that group) is seated on it by a `seat_*` port. A seat port's pose is the child's part-frame pose in
+# frame B (cad/cuas-lite manifest.json `interface`: frames, mounts, instances); mating the child's `origin` port (axis -z, ref x) reproduces that pose exactly (T_b = T_a P_a Rx(pi) P_b^-1 with P_b = Rx(pi)).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/pan_rotor_plate.stl"
+material = "petg"
+bbox_min = [-0.09, -0.09, 0.027]
+bbox_max = [0.09, 0.09, 0.035]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port (the pan joint is the mate of this port with the stator's seat_rotor)."
+
+[[ports]]
+name = "seat_pan_pulley"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "pan_pulley_100t is modelled in frame B (manifest interface.frames.pan_joint children): identity pose."
+
+[[ports]]
+name = "seat_pan_stop_tab"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "pan_stop_tab is modelled in frame B (pan_joint children, CAD 8fa7ecc): identity pose."
+
+[[ports]]
+name = "seat_cable_collar"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "cable_collar is modelled in frame B (pan_joint children): identity pose."
+
+[[ports]]
+name = "seat_yoke_left"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "yoke_left is modelled in frame B (pan_joint children): identity pose."
+
+[[ports]]
+name = "seat_yoke_right"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "yoke_right is modelled in frame B (pan_joint children): identity pose."
+
+[[ports]]
+name = "seat_tilt_motor_mount"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "tilt_motor_mount is modelled in frame B (pan_joint children): identity pose."
+
+[[ports]]
+name = "seat_lazy_susan"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.018]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Lazy-susan underside on the stator posts: z = POST_H = 18 mm (manifest mounts.lazy_susan ring1_z 18..22.5, ring2 22.5..27; params.py Z_LS0), centred on the pan axis. The CAD puts the whole bearing in the pan group (bought.py pan_items)."
+
+[[ports]]
+name = "seat_tilt_motor"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.097, 0.153839]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt NEMA 17 flange face centre (manifest mounts.tilt_motor pos_mm = (0, 97.0, 153.839)), shaft along -y, body towards +y."
+
+[[ports]]
+name = "seat_tilt_motor_pulley"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.094, 0.153839]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "20T pulley on the tilt-motor shaft: its belt port is 8 mm from its origin along the shaft, so origin y = 86 (manifest mounts.tilt_motor belt_plane_y_mm) + 8 = 94 mm."
+
+[[ports]]
+name = "seat_bearing_left"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.061, 0.202]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Left 608 (manifest mounts.bearings_608: centre (0, 64.5, 202), axis y; bought.py: y Y_C1 - 7 .. Y_C1 = 61..68 mm). The bearing part frame is its underside, axis along +y."
+
+[[ports]]
+name = "seat_bearing_right"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, -0.068, 0.202]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Right 6807ZZ (manifest mounts.bearing_6807_right: centre (0, -64.5, 202), 47 x 35 x 7 mm, y -68..-61 mm): underside at y = -68, axis along +y."
+
+[[ports]]
+name = "seat_hopper"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "hopper is modelled in frame B (pan group since CAD 987985b; manifest ball_feed.hopper frame B): identity pose."
+
+[[ports]]
+name = "seat_hopper_lid"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "hopper_lid is modelled in frame B (pan group): identity pose."
+
+[[ports]]
+name = "seat_feed_elbow"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "feed_elbow is modelled in frame B (pan group; manifest ball_feed.feed_elbow frame B, plate on the right cheek outer face y = -68): identity pose."
+
+[[ports]]
+name = "seat_hall_tilt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.06575, 0.215]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt hall sensor (manifest mounts.tilt_hall sensor_B_mm = (0, 68, 215), fixed to yoke_left): a 4.5 mm A3144 body centred on y = 68, its marked face towards +y (the magnet in the hub)."
+
+[[ports]]
+name = "seat_magnet_pan"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.08, 0.0, 0.027]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Pan hall magnet (manifest mounts.pan_hall magnet_B_mm = (-80, 0, 27), fixed to this plate): 2 mm disc with its underside on the plate underside z = 27 mm, in the pocket."

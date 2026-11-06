@@ -1,0 +1,45 @@
+id = "nsk-mr148"
+name = "NSK MR 148 deep-groove ball bearing, open, 8x14x3.5 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "MR 148"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.008, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.014, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.0035, unit = "m", src = "S1", fidelity = "datasheet" }
+chamfer_min        = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 900, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 385, unit = "N", src = "S1", fidelity = "datasheet" }
+limiting_speed_grease = { value = 38000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, grease lubrication
+mass               = { value = 0.00186, unit = "kg", src = "S1", fidelity = "datasheet" }  # open type, catalog mass in g
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.14"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, extra small and miniature ball bearings table (metric series, bore 8 mm group; open type; mass in g)"
+accessed = "2026-10-07"
+quote = "14 3.5 4.0 0.20 0.15 900 385 38 000 32 000 45 000 MR 148 MR 148 ZZ VV DD 09.6 09.2 12.4 12.8 0.20 0.15 01.86 02.16 (columns: d D B B1 r r1 Cr C0r grease-open grease-ZZ oil-open, designations, abutment dims, mass open/shielded; bore d = 8 from the grouped first column)"

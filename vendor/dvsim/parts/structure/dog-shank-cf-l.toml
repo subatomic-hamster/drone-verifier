@@ -1,0 +1,83 @@
+id = "dog-shank-cf-l"
+name = "Dog shank, left (25 x 23 mm carbon tube bonded into a 6061 CNC head with knee boss and rod-pin ear, L = 220 mm): the light distal link of the '-al' leg"
+category = "frame.machined"
+vendor = "dvsim dog (own design: Easy Composites cf-tube-25x23 cut to length + CNC 6061 head)"
+part_number = "shank_cf (left)"
+url = "docs/dog/leg-survey.md"
+
+# cad/dog/parts_al.py shank_cf(); mesh by cad/dog/build.py. Frame: origin on the knee axis, y = 0 on the tube centre line (y = 18 mm in the thigh frame), hangs along -z to the foot plane z = -220 mm.
+# Head: 28 mm knee boss 20 mm wide (8.1 mm pin bore; it runs between the thigh plates, spacer washers on the pin), 29 mm tube socket 40 mm long (bore = tube OD 25 mm, tube bonded from z = -8), rod-pin ear on the inboard side (y in [-5, 1.5], M5 bore at R2 = 30 mm, 115 deg);
+# the rod (y >= 2) and its end (y >= 3, thigh y 21-29) clear it. The tube ends at z = -220: the foot core (dog-foot-core-cf) has a spigot bonded into its bore. NOT symmetric about the XZ plane: twin dog-shank-cf-r is the true mirror image.
+# The meshes dog-shank-cf-l-vis-al.stl (head) and -vis-cf.stl (tube) are the same solid split by material for the [visual] layer.
+
+[mirror]
+opposite = "dog-shank-cf-r"
+
+[params]
+length          = { value = 0.22, unit = "m", fidelity = "estimated", rationale = "Design value L_SHANK (cad/dog/params.py), the same as the printed shank." }
+lug_radius      = { value = 0.03, unit = "m", fidelity = "estimated", rationale = "Design value KNEE_R2 = KNEE_R1 x KNEE_RATIO = 20 mm x 1.5 (cad/dog/params.py), unchanged: the knee drive ratio stays 1.5." }
+tube_outer_diameter = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+tube_inner_diameter = { value = 0.023, unit = "m", src = "S1", fidelity = "datasheet" }
+tube_youngs_modulus = { value = 64e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+tube_tensile_strength = { value = 650e6, unit = "Pa", src = "S2", fidelity = "datasheet" }
+mass            = { value = 0.0763, unit = "kg", fidelity = "derived", derivation = "Head: solid volume 18.26 cm3 (cad/dog/parts_al.py _shank_head) x 6061 2.70 g/cm3 = 49.3 g; tube: 212 mm x 113.1 g/m (cf-tube-25x23, S1) = 24.0 g; epoxy 3.0 g (estimated). Sum 76.3 g; shank_cf_mass_g() in cad/dog/parts_al.py, run by cad/dog/build.py." }
+
+[params.price]
+value = 34.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "CNC 6061 head about 25 USD at a quantity of 8 (no quote obtained; CNC benchmark of 8-85 USD per small part between quantities 100 and 1, Alibaba seller guide search result) + 212 mm of 25 x 23 tube at 31.70 EUR/m ex VAT (Easy Composites page, fetched 2026-10-19; four 212 mm shanks cut from one 1 m tube) = 6.7 EUR = about 7.4 USD at 1.10 USD/EUR (estimated rate) + adhesive about 1.5 USD; +-50 %."
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-shank-cf-l.stl"
+material = "aluminium-6061"
+bbox_min = [-0.01968, -0.0145, -0.22]
+bbox_max = [0.0145, 0.0145, 0.03419]
+
+[visual]
+rationale = "Cosmetic: 6061 head in brushed aluminium, the 25 x 23 woven-finish tube in carbon fibre; the two meshes are the same solid as [geometry], split by material (cad/dog/build.py VISUALS)."
+
+[[visual.elements]]
+mesh = "meshes/dog/dog-shank-cf-l-vis-al.stl"
+colors = { body = "alu-brushed" }
+
+[[visual.elements]]
+mesh = "meshes/dog/dog-shank-cf-l-vis-cf.stl"
+colors = { body = "carbon-fibre" }
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee axis (8.1 mm bore through the boss), tube centre line. Mates the thigh knee port (the thigh inboard plate is on the -y side for the left leg)."
+
+[[ports]]
+name = "foot"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, -0.22]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Tube end face; the foot core's spigot (22.8 mm) goes into the tube bore."
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/25mm-23mm-woven-finish-carbon-fibre-tube"
+title = "25mm (23mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table (as parts/structure/cf-tube-25x23.toml)"
+accessed = "2026-10-07"
+quote = "Outside Diameter (OD) | 25 | mm ... Inside Diameter (ID) | 23 | mm ... Weight per metre | 113.1 | g ... Tensile Modulus (lengthways) | 64 | GPa"
+
+[[sources]]
+id = "S2"
+url = "https://www.easycomposites.eu/16mm-woven-finish-carbon-fibre-tube"
+title = "16mm (14mm) Woven Finish Carbon Fibre Tube (Easy Composites): the roll-wrapped woven-finish family's strength row; the 25 mm page was not fetched, the same construction is assumed"
+accessed = "2026-10-19"
+quote = "Tensile strength (lengthways) 650 MPa ... Tensile modulus (lengthways) 64 GPa (page-fetch summary of the strength table)"

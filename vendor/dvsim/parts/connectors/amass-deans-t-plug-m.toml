@@ -1,0 +1,89 @@
+id = "amass-deans-t-plug-m"
+name = "Amass AM1015SE-M T-plug connector (Deans-type, male, wire-solder)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics); RS-PRO relabel"
+part_number = "AM1015SE-M"
+url = "https://www.electrokit.com/batterikontakt-t-plug-hane-typ-deans-25a"
+
+# Mating half of amass-deans-t-plug-f; the electrokit male page is the Swedish-language one (quote kept in Swedish). See the female file for the
+# 25 A (Amass / electrokit) versus 15 A (DigiKey forum) rating note.
+[params]
+current_rated       = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+current_burst       = { value = 50, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance  = { value = 0.00045, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 1000, unit = "1", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.0028, unit = "kg", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "12 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "deans"
+gender = "male"
+v_max = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 50, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "25 A continuous, 50 A momentary (electrokit listing of the Amass part)"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, up to 12 AWG"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line, solder cup n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "deans"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the part designation (T-plug, 2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.electrokit.com/batterikontakt-t-plug-hane-typ-deans-25a"
+title = "Electrokit - Batterikontakt T-plug hane typ Deans 25A (Amass / RS-PRO), Swedish page"
+accessed = "2026-10-07"
+quote = "Specifikationer: | Märkspänning: 500 VDC | Märkström: 25A kontinuerligt (50A kortare perioder) | Max kabelarea: 12AWG | Kontaktresistans: 0.45 mOhm | Vikt: 2.8g | Arbetstemperatur -20 till 120°C | Kontakt: Guldpläterad | In och urkopplingar, livslängd: 1000 cykler | Tillverkare: Amass / RS-PRO"

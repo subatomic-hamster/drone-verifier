@@ -1,0 +1,290 @@
+id = "robotis-xl430-w250-t"
+name = "ROBOTIS DYNAMIXEL XL430-W250-T 258.5:1 TTL smart servo (Koch v1.1 follower shoulder pan / shoulder lift)"
+category = "motor.servo"
+vendor = "ROBOTIS"
+part_number = "XL430-W250-T"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/"
+
+# Used 2x on the Koch v1.1 follower (shoulder_pan id 1, shoulder_lift id 2 in LeRobot), fed 12 V straight from the 12 V supply through the Waveshare board (S3, S5).
+# 12.0 V is the TOP of the published 6.5-12.0 V range (recommended 11.1 V): a 12 V nominal adapter that sits above 12.0 V unloaded is out of spec (v_max port rating).
+# Same file pattern as parts/arm/feetech-sts3215-c001.toml. Evidence chain: docs/research/dynamixel.md. Library entry (datasheet only): parts/actuators/robotis-dynamixel-xl430-w250.toml.
+# The e-Manual page covers both the 2018 'New' and the discontinued 'Old' XL430-W250; the numbers below are the page's single spec table.
+
+[params]
+mass            = { value = 0.0572,  unit = "kg",  src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0285,  unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0465,  unit = "m",   src = "S1", fidelity = "datasheet" }
+depth           = { value = 0.034,   unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 258.5,   unit = "1",   src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "engineering plastic gears and case; cored motor", unit = "-", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }  # 12-bit contactless absolute encoder, ams AS5601
+position_range  = { value = 6.28319, unit = "rad", src = "S1", fidelity = "datasheet" }        # Position Control Mode 0~360 deg (mode 4: +-256 rev)
+baud_min        = { value = 9600,    unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 4500000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+protocol        = { value = "DYNAMIXEL Protocol 2.0 (Protocol 1.0 selectable), TTL half-duplex asynchronous serial 8N1, 5 V logic, IDs 0-252, broadcast 254", unit = "-", src = "S1", fidelity = "datasheet" }
+model_number    = { value = 1060,    unit = "1",   src = "S2", fidelity = "datasheet" }        # control table address 0
+operating_modes_supported = { value = "1 velocity, 3 position, 4 extended position, 16 PWM (no current / current-based modes)", unit = "-", src = "S2", fidelity = "datasheet" }
+connector       = { value = "JST EHR-03 housing, JST B3B-EH-A PCB header, pins 1 GND / 2 VDD / 3 DATA", unit = "-", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -5, unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 72, unit = "degC", src = "S1", fidelity = "datasheet" }
+idle_current    = { value = 0.052,   unit = "A",   src = "S1", fidelity = "datasheet" }        # "Standby Current"
+firmware_hz     = { value = 1000,    unit = "Hz",  fidelity = "estimated", rationale = "The control loop rate is not published (the e-Manual has no sample time / kHz figure). Estimate 1 kHz: Realtime Tick has a 1 ms unit (S2), the MCU is a 72 MHz Cortex-M3 (S1), and an older copy of the manual states that the PID constants include the sampling time (S8). Unverified; the sim needs 1/(firmware_hz*dt) to be an integer." }
+
+# --- electrical / performance at the three published voltages (datasheet; rev/min converted to rad/s with 2*pi/60) ---
+v_nominal           = { value = 11.1,   unit = "V",     src = "S1", fidelity = "datasheet" }  # "Recommended : 11.1 [V]"; the Koch follower supplies 12 V
+v_operating_min     = { value = 6.5,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 12.0,   unit = "V",     src = "S1", fidelity = "datasheet" }
+stall_torque_9v     = { value = 1.0,    unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_9v    = { value = 1.0,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_9v    = { value = 4.9218, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 47 rev/min
+stall_torque_11v1   = { value = 1.4,    unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_11v1  = { value = 1.3,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_11v1  = { value = 5.9690, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 57 rev/min
+stall_torque_12v    = { value = 1.5,    unit = "N*m",   src = "S1", fidelity = "datasheet" }
+stall_current_12v   = { value = 1.4,    unit = "A",     src = "S1", fidelity = "datasheet" }
+no_load_speed_12v   = { value = 6.3879, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 61 rev/min
+kt_output_datasheet = { value = 1.077,  unit = "N*m/A", src = "S1", fidelity = "datasheet" }  # stated at the recommended 11.1 V point (1.000 at 9 V, 1.071 at 12 V)
+
+# --- DC-motor equivalent model (motor-side), derived. No published no-load current: I0 is estimated and Ke refitted with it ---
+r_effective = { value = 8.55, unit = "ohm", fidelity = "derived", derivation = "Stall points: V/I_stall = 11.1/1.3 = 8.538, 12.0/1.4 = 8.571 ohm; mean 8.55 ohm. The 9 V point (9.0/1.0 = 9.0 ohm) is excluded: its current is quoted to one digit (+-5 %). Includes H-bridge and lead resistance (library convention of parts/actuators/robotis-dynamixel-xl430-w250)." }
+no_load_current_12v = { value = 0.084, unit = "A", fidelity = "estimated", rationale = "Not published (only the 52 mA standby current, which is the electronics at rest). 0.06 x I_stall(12 V) = 0.06 x 1.4 A = 0.084 A, the STS3215 I0/I_stall ratio (0.15/2.5 at 7.4 V, feetech-sts3215-c001). Rhoban BAM's identified friction for the smaller XL330-M288 implies a ratio up to ~0.10 (robotis-xl330-m288-t), so this may be low. The published no-load speeds per volt (5.22, 5.14, 5.08 rev/min per V at 9, 11.1, 12 V) fall with voltage, the opposite of an I0*R offset, so I0 cannot be identified from them (they are rounded to integer rev/min). Unverified." }
+omega_noload_motor_12v = { value = 1651.3, unit = "rad/s", fidelity = "derived", derivation = "Motor-side no-load speed at 12 V = N * omega_out = 258.5 * 6.3879 rad/s (61 rev/min) = 1651.3 rad/s = 15769 rpm; the w0 of the loss law for the 12 V no-load current (the Koch supply)." }
+ke = { value = 0.0068, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R_eff)/(N*omega_out) with I0 = 0.06*I_stall(V), so I0*R_eff = 0.06 V: 11.1 V 10.434/(258.5*5.9690) = 6.762e-3; 12 V 11.28/(258.5*6.3879) = 6.831e-3; mean 6.797e-3 -> 6.8e-3 V*s/rad (the 9 V point gives 6.649e-3, 2 % lower, rounding of the one-digit current/speed). Neglecting I0 (parts/actuators/robotis-dynamixel-xl430-w250) gives 7.23e-3." }
+kt_motor = { value = 0.0068, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke; motor-side torque constant." }
+kv_equivalent = { value = 1405.0, unit = "rpm/V", fidelity = "derived", derivation = "Kv = 60/(2*pi*ke) = 9.5493/6.797e-3 = 1405.0 rpm/V, motor side (before the 258.5:1 gear)." }
+gear_efficiency = { value = 0.650, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) with I0 = 0.06*I_stall: 11.1 V 1.4/(258.5*6.762e-3*(1.3-0.0779)) = 0.655; 12 V 1.5/(258.5*6.831e-3*(1.4-0.0842)) = 0.646; mean 0.650 (plastic 258.5:1 train at stall). Cross-check: eta*N*Ke = 0.650*258.5*6.797e-3 = 1.142 N*m/A vs datasheet output Kt 1.071-1.077 (+6 %)." }
+i0_visc = { value = 0.69, unit = "1", fidelity = "estimated", rationale = "No no-load data. Borrowed viscous share from Rhoban BAM's identified XL330-M288 friction (0.69, robotis-xl330-m288-t) and equal to the STS3215's derived 0.6916; both small plastic-gear servos. Unverified for the XL430." }
+rotor_inertia_motor = { value = 1.3e-7, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published; the ROBOTIS 'Moment of Inertia' download (XL430/XC430) redirected to an unrelated host and could not be fetched. Scaled from the XL330-M288's 1.89e-8 kg*m^2 (Rhoban BAM identified armature 0.0015732 kg*m^2 / 288.4^2) by (57.2 g / 18 g)^(5/3) = 6.9 (geometric similarity: J ~ m r^2 ~ m^(5/3)) = 1.3e-7. Order-of-magnitude only (STS3215 estimate is 2.35e-7)." }
+stall_torque_12v_model = { value = 1.507, unit = "N*m", fidelity = "derived", derivation = "Model check: eta*N*Ke*(V/R_eff - I0) = 0.650*258.5*6.797e-3*(12/8.55 - 0.084) = 1.507 N*m vs datasheet 1.5 (+0.5 %)." }
+
+# --- servo-loop scaling for the dvsim servo device (docs/research/dynamixel.md section 10) ---
+pwm_full_scale = { value = 885, unit = "counts", src = "S2", fidelity = "datasheet" }  # PWM Limit(36) range "0(0 [%]) ~ 885(100 [%] )"; 1 count = 0.113 %
+pid_scale = { value = 113280, unit = "1", fidelity = "derived", derivation = "duty = PWM/885 with PWM = KPP*e = (P/128)*e (S2: 'KPP = KPP(TBL) / 128'; error in encoder counts and PWM output units are inferences, the e-Manual does not state them) -> duty = P*e/(128*885) -> pid_scale = 113,280. No independent measurement exists for the XL430 (Rhoban BAM measured an XL330 divisor of 256 vs the manual's 128, robotis-xl330-m288-t); plausible range 113,280-226,560." }
+d_scale = { value = 14160, unit = "1", fidelity = "derived", derivation = "KPD = D/16 (S2): duty_D = D*de/(16*885) -> d_scale = 14,160 (assumes the sim firmware step equals the real control period, the older e-Manual says the constants include sampling time, S8)." }
+i_per_reg_i = { value = 0.001953125, unit = "1", fidelity = "derived", derivation = "Device i = I_reg*pid_scale/(65536*885) = I_reg/512 (KPI = I/65536 per sample, S2); convert in the port/assembly, the schema has no i_scale. Register default I = 0 maps to 0." }
+# Device-schema views of the registers below (units the servo device field table expects: p / i / d "count", max_torque "0.1 %"); values = the e-Manual defaults, bound by assemblies/koch.toml [device_maps.xl430_w250].
+device_p_default = { value = 640, unit = "count", src = "S2", fidelity = "datasheet" }    # = reg_position_p_gain_default (addr 84)
+device_i_default = { value = 0, unit = "count", src = "S2", fidelity = "datasheet" }      # = reg_position_i_gain_default (addr 82); device i = I_reg * i_per_reg_i, inert at 0
+device_d_default = { value = 4000, unit = "count", src = "S2", fidelity = "datasheet" }   # = reg_position_d_gain_default (addr 80)
+device_max_torque_default = { value = 1000, unit = "0.1 %", fidelity = "derived", derivation = "PWM Limit(36) default 885 = 100 % duty (S2): max_torque = 1000 x 885 / 885 = 1000 (docs/research/dynamixel.md section 10.1 item 6)." }
+dead_zone_default = { value = 0, unit = "count", fidelity = "estimated", rationale = "The control table has no dead-band register (S2 table checked); 0 counts assumed." }
+
+# --- registers (e-Manual control table, S2). Physical units where the sim device expects them; raw register value in the comment ---
+reg_return_delay_time_default = { value = 250, unit = "2 us", src = "S2", fidelity = "datasheet" }  # addr 9; 250 = 500 us
+reg_baud_rate_default         = { value = 1,   unit = "index", src = "S2", fidelity = "datasheet" } # addr 8; 1 = 57,600 bps (3 = 1 Mbps, 7 = 4.5 Mbps)
+reg_id_default                = { value = 1,   unit = "1", src = "S2", fidelity = "datasheet" }    # addr 7
+reg_secondary_id_default      = { value = 255, unit = "1", src = "S2", fidelity = "datasheet" }    # addr 12 (253-255 = off)
+reg_drive_mode_default        = { value = 0,   unit = "bitmask", src = "S2", fidelity = "datasheet" } # addr 10
+reg_operating_mode_default    = { value = 3,   unit = "1", src = "S2", fidelity = "datasheet" }    # addr 11 = Position Control Mode
+reg_protocol_type_default     = { value = 2,   unit = "1", src = "S2", fidelity = "datasheet" }    # addr 13 (range 1 ~ 2)
+reg_homing_offset_default     = { value = 0,   unit = "count", src = "S2", fidelity = "datasheet" } # addr 20; Present = Actual + Homing Offset
+reg_moving_threshold_default  = { value = 10,  unit = "0.229 rev/min", src = "S2", fidelity = "datasheet" } # addr 24
+reg_temperature_limit_default = { value = 72,  unit = "degC", src = "S2", fidelity = "datasheet" } # addr 31
+reg_max_voltage_limit_default = { value = 14.0, unit = "V", src = "S2", fidelity = "datasheet" }   # addr 32, raw 140 * 0.1 V (above the 12.0 V spec maximum)
+reg_min_voltage_limit_default = { value = 6.0, unit = "V", src = "S2", fidelity = "datasheet" }    # addr 34, raw 60 * 0.1 V (the description section says range 65 ~ 140, the table 60 ~ 140)
+reg_pwm_limit_default         = { value = 885, unit = "0.113 %", src = "S2", fidelity = "datasheet" } # addr 36 (= 100 %, device max_torque 1000)
+reg_velocity_limit_default    = { value = 265, unit = "0.229 rev/min", src = "S2", fidelity = "datasheet" } # addr 44 = 60.7 rev/min
+reg_max_position_limit_default = { value = 4095, unit = "count", src = "S2", fidelity = "datasheet" } # addr 48
+reg_min_position_limit_default = { value = 0,    unit = "count", src = "S2", fidelity = "datasheet" } # addr 52
+reg_startup_configuration_default = { value = 0, unit = "bitmask", src = "S2", fidelity = "datasheet" } # addr 60
+reg_shutdown_default          = { value = 52,  unit = "bitmask", src = "S2", fidelity = "datasheet" } # addr 63; 0x34 = overheating + electrical shock + overload (input voltage NOT enabled)
+reg_torque_enable_default     = { value = 0,   unit = "1", src = "S2", fidelity = "datasheet" }    # addr 64
+reg_led_default               = { value = 0,   unit = "1", src = "S2", fidelity = "datasheet" }    # addr 65
+reg_status_return_level_default = { value = 2, unit = "1", src = "S2", fidelity = "datasheet" }    # addr 68
+reg_velocity_i_gain_default   = { value = 1000, unit = "1", src = "S2", fidelity = "datasheet" }   # addr 76, KVI = value/65536
+reg_velocity_p_gain_default   = { value = 100,  unit = "1", src = "S2", fidelity = "datasheet" }   # addr 78, KVP = value/128
+reg_position_d_gain_default   = { value = 4000, unit = "1", src = "S2", fidelity = "datasheet" }   # addr 80, KPD = value/16
+reg_position_i_gain_default   = { value = 0,    unit = "1", src = "S2", fidelity = "datasheet" }   # addr 82, KPI = value/65536
+reg_position_p_gain_default   = { value = 640,  unit = "1", src = "S2", fidelity = "datasheet" }   # addr 84, KPP = value/128
+reg_feedforward_2nd_gain_default = { value = 0, unit = "1", src = "S2", fidelity = "datasheet" }   # addr 88, value/4
+reg_feedforward_1st_gain_default = { value = 0, unit = "1", src = "S2", fidelity = "datasheet" }   # addr 90, value/4
+reg_bus_watchdog_default      = { value = 0,    unit = "20 ms", src = "S2", fidelity = "datasheet" } # addr 98 (0 = off)
+reg_profile_acceleration_default = { value = 0, unit = "214.577 rev/min^2", src = "S2", fidelity = "datasheet" } # addr 108 (0 = infinite)
+reg_profile_velocity_default  = { value = 0,    unit = "0.229 rev/min", src = "S2", fidelity = "datasheet" } # addr 112 (0 = infinite)
+reg_present_load_lsb          = { value = 0.1,  unit = "%", src = "S2", fidelity = "datasheet" }   # addr 126, signed, -1000 ~ 1000 (an inferred value from the PWM output, not a torque sensor); XL430 has NO current register
+reg_velocity_lsb              = { value = 0.0239808, unit = "rad/s", src = "S2", fidelity = "datasheet" } # 0.229 rev/min * 2*pi/60
+lerobot_koch_baud_rate        = { value = 1000000, unit = "bit/s", src = "S7", fidelity = "literature" } # DEFAULT_BAUDRATE of the LeRobot Dynamixel bus
+lerobot_koch_return_delay_time = { value = 0, unit = "2 us", src = "S7", fidelity = "literature" }  # configure_motors(return_delay_time=0)
+lerobot_koch_operating_mode   = { value = 4, unit = "1", src = "S6", fidelity = "literature" }     # EXTENDED_POSITION for every follower motor except the gripper
+
+[tables.datasheet_points]
+columns = ["voltage_V", "stall_torque_Nm", "stall_current_A", "kt_output_Nm_per_A", "no_load_rpm"]
+rows = [[9.0, 1.0, 1.0, 1.000, 47], [11.1, 1.4, 1.3, 1.077, 57], [12.0, 1.5, 1.4, 1.071, 61]]
+src = "S1"
+fidelity = "datasheet"
+
+# --- geometry + mechanical ports: merged from `python tools/koch_ports.py --servo` (stage A3 / S4) ---
+[visual]                            # cosmetic only (parts/README.md "Visual layer"); drawn in the Koch servo frame (the mesh's)
+src = "V1"
+note = "Black two-part shell with a seam, round champagne horn with an 8-hole ring and centre screw, four corner screws, X-Series label, 8-hole idler ring on the back (ROBOTIS product photos)."
+
+[[visual.elements]]
+gen = "dxl_servo"
+
+[[sources]]
+id = "V1"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/"
+title = "ROBOTIS e-Manual XL430-W250, product photo (xl430_product_new.png) and idler assembly drawing"
+accessed = "2026-10-08"
+quote = "[image] DYNAMIXEL X-Series XL430: black case, round horn with ring of eight holes and centre screw, four corner screws, idler ring with eight holes on the opposite face"
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/koch/xl430_w250_t.stl"
+bbox_min = [-0.01125, -0.01425, -0.0379]
+bbox_max = [0.03525, 0.01425, -0.0]
+# units metres; solid mesh volume 4.6658e-05 m^3. Servo frame (tools/koch_ports.py): origin on the horn axis at the outer face of the horn hub,
+# z = outward horn normal, x = along the body's long axis towards the body centre, y = z x x. The body is cut out of the Koch v1.1
+# *_motor.STL link meshes (Apache-2.0, meshes/koch/NOTICE) and replaced by its convex hull (192 triangles; the cut-out body is not
+# manifold, MuJoCo rejects it with inertia=exact); hub/horn pieces of the XL330 and screws/idler frames are not included.
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.dynamixel-xl430"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/koch_ports.py from meshes/koch/follower.urdf (s1lent4gnt/koch-v1-1 cc1a4eb): servo frame S = [origin = joint origin (on the horn axis, at the outer face of the horn hub), z = outward horn normal = -(joint axis), x = in-plane direction from the horn axis to the body centre (the body's long axis)]; the body is the largest component of the link's *_motor.STL (plus the cover shell for XL330) expressed in S; this port is S itself"
+thickness_rationale = "Horn hub height beyond the body face read from the mesh: 0.0 mm between the body's output face and the joint (horn outer face) plane for XL330; for XL430 the hub is part of the body mesh (height 37.9 mm vs the 34 mm datasheet height, 3.9 mm difference), estimated 3 mm clamped."
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl430-base"
+gender = "neutral"
+pos = [0.011999997386, 0.0, -0.037899999741]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Frame convention, not a measured hole pattern (same approach as the SO-101 servo base port): centre of the body face opposite the output (z = -0.037900 in the servo frame, centre x 0.012000, y 0.000000), axis out of that face (-z), ref along the long (x) side. The Koch parts hold the servos in pockets by several faces; the printed seats are derived so that this port reproduces the URDF placement."
+thickness_rationale = "No published wall / ear thickness; 3 mm placeholder. Estimated."
+
+# Electrical ports: two daisy-chain connectors on the same net (wiring diagram S3 shows Plug 1 / Plug 2 on every servo; pins 1 GND, 2 VDD, 3 DATA per S1).
+[[ports]]
+name = "port_a"
+kind = "power"
+type = "jst-eh.3"
+gender = "female"
+role = "passthrough"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 6.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 1.4, unit = "A", src = "S1", fidelity = "datasheet" }   # stall current at 12 V; no continuous rating is published
+pins = ["J1.1", "J1.2", "J1.3"]
+note = "Plug 1 of the daisy chain (S3). JST EHR-03 housing, pin order 1 GND / 2 VDD / 3 DATA (S1). Connector current rating not published; i_peak is the servo's own stall draw, the downstream chain current is up to the DRC."
+
+[[ports]]
+name = "port_b"
+kind = "power"
+type = "jst-eh.3"
+gender = "female"
+role = "passthrough"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 6.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 1.4, unit = "A", src = "S1", fidelity = "datasheet" }
+pins = ["J2.1", "J2.2", "J2.3"]
+note = "Plug 2 of the daisy chain (S3), same net as port_a."
+
+[[ports]]
+name = "bus"
+kind = "signal"
+type = "dynamixel-ttl"
+gender = "female"
+level = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+pins = ["J1.3"]
+note = "Single-wire half-duplex TTL on the DATA pin (3) of port_a / port_b; Protocol 2.0 (docs/research/dynamixel.md section 6); 5 V logic (S1); factory baud index 1 = 57,600 bps, LeRobot sets 1 Mbps (S7)."
+
+# Connectors: the two daisy-chain sockets (Plug 1 / Plug 2, same net). Pin table: S1 'Pinout | 1 GND | 2 VDD | 3 DATA | Housing | JST EHR-03'.
+# The pose (side wall of the body, servo frame of the ports above) is estimated: the e-Manual publishes no socket position.
+[[connectors]]
+id = "J1"
+name = "TTL plug 1"
+type = "jst-eh-3"
+gender = "female"
+pos = [0.0035, 0.01425, -0.0189]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "S1"
+fidelity = "datasheet"
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "io", v = 12.0, note = "6.5 to 12 V (S1)" },
+  { number = 3, name = "DATA", kind = "signal", dir = "io", v = 5.0, note = "TTL multidrop bus, 5 V logic (S1)" },
+]
+
+[[connectors]]
+id = "J2"
+name = "TTL plug 2"
+type = "jst-eh-3"
+gender = "female"
+pos = [0.0125, 0.01425, -0.0189]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "S1"
+fidelity = "datasheet"
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "io", v = 12.0, note = "6.5 to 12 V (S1)" },
+  { number = 3, name = "DATA", kind = "signal", dir = "io", v = 5.0, note = "TTL multidrop bus, 5 V logic (S1)" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/"
+title = "ROBOTIS e-Manual XL430-W250-T, Specifications and Connector Information"
+accessed = "2026-10-07"
+quote = "MCU | ARM CORTEX-M3 (72 [MHz], 32Bit) || Position Sensor | Contactless absolute encoder (12Bit, 360 [°]) | Maker : ams(www.ams.com), Part No : AS5601 || Motor | Cored || Resolution | 4096 [pulse/rev] || Weight | 57.2 [g] || Dimensions (W x H x D) | 28.5 x 46.5 x 34 [mm] || Gear Ratio | 258.5 : 1 || Stall Torque | 1.0 [N.m] (at 9.0 [V], 1.0 [A], 1.000 [Nm/A]) | 1.4 [N.m] (at 11.1 [V], 1.3 [A], 1.077 [Nm/A]) | 1.5 [N.m] (at 12.0 [V], 1.4 [A], 1.071 [Nm/A]) || No Load Speed | 47 [rev/min] (at 9.0 [V]) | 57 [rev/min] (at 11.1 [V]) | 61 [rev/min] (at 12.0 [V]) || Input Voltage | 6.5 ~ 12.0 [V] (Recommended : 11.1 [V]) (lithium-ion battery 3 Cell) || Physical Connection | TTL Multidrop Bus (5V Logic) || Case Material | Engineering Plastic || Gear Material | Engineering Plastic || Standby Current | 52 [mA] || Pinout | 1 GND | 2 VDD | 3 DATA || Housing | JST EHR-03 || PCB Header | JST B3B-EH-A"
+
+[[sources]]
+id = "S2"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl430-w250/"
+title = "ROBOTIS e-Manual XL430-W250-T, Control Table (EEPROM + RAM) and Control Table Description"
+accessed = "2026-10-07"
+quote = "0 | 2 | Model Number | R | 1,060 | - | - || 8 | 1 | Baud Rate | RW | 1 | 0 ~ 7 || 9 | 1 | Return Delay Time | RW | 250 | 0 ~ 254 | 2 [μsec] || 11 | 1 | Operating Mode | RW | 3 | 0 ~ 16 || 13 | 1 | Protocol Type | RW | 2 | 1 ~ 2 || 20 | 4 | Homing Offset | RW | 0 | -1,044,479 ~ 1,044,479 | 1 [pulse] || 24 | 4 | Moving Threshold | RW | 10 | 0 ~ 1,023 | 0.229 [rev/min] || 31 | 1 | Temperature Limit | RW | 72 | 0 ~ 100 | 1 [°C] || 32 | 2 | Max Voltage Limit | RW | 140 | 60 ~ 140 | 0.1 [V] || 34 | 2 | Min Voltage Limit | RW | 60 | 60 ~ 140 | 0.1 [V] || 36 | 2 | PWM Limit | RW | 885 | 0 ~ 885 | 0.113 [%] || 44 | 4 | Velocity Limit | RW | 265 | 0 ~ 1,023 | 0.229 [rev/min] || 63 | 1 | Shutdown | RW | 52 | - | - || 76 | 2 | Velocity I Gain | RW | 1,000 | 0 ~ 16,383 || 78 | 2 | Velocity P Gain | RW | 100 | 0 ~ 16,383 || 80 | 2 | Position D Gain | RW | 4,000 | 0 ~ 16,383 || 82 | 2 | Position I Gain | RW | 0 | 0 ~ 16,383 || 84 | 2 | Position P Gain | RW | 640 | 0 ~ 16,383 || 120 | 2 | Realtime Tick | R | - | 0 ~ 32,767 | 1 [msec] || 126 | 2 | Present Load | R | - | -1,000 ~ 1,000 | 0.1 [%] || KPD = KPD(TBL) / 16 || KPI = KPI(TBL) / 65,536 || KPP = KPP(TBL) / 128 || 0(0 [%]) ~ 885(100 [%] ) || 6.5 ~ 14.0 [V]"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/electrical/Wiring_Diagram_Alexander_Koch_V1.1.pdf"
+title = "Koch v1.1 wiring diagram (jess-moss/koch-v1-1, commit 1a553e1, EasyEDA, 2024-07-08), follower arm; text layer of the PDF"
+accessed = "2026-10-07"
+quote = "Follower Arm: || SERVO_DRIVER_BOARD || DYNAMIXELXL430-W250-T || Plug 1 || Plug 2 || 902-0135-000 || Robot Cable-X3P 180mm"
+
+[[sources]]
+id = "S5"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/README.md"
+title = "Koch v1.1 README (jess-moss/koch-v1-1, commit 1a553e1): follower BOM and power note"
+accessed = "2026-10-07"
+quote = "Dynamixel XL430-W250-T | 2 || and the follower arm using the 12V power supply."
+
+[[sources]]
+id = "S6"
+url = "https://github.com/huggingface/lerobot/blob/70a0bf63da117a8585dcc13abf58ac5d12c121c5/src/lerobot/robots/koch_follower/koch_follower.py"
+title = "LeRobot koch_follower.py, commit 70a0bf6 (last change to the file, 2026-09-24)"
+accessed = "2026-10-07"
+quote = "\"shoulder_pan\": Motor(1, \"xl430-w250\", norm_mode_body), || \"shoulder_lift\": Motor(2, \"xl430-w250\", norm_mode_body), || self.bus.write(\"Operating_Mode\", motor, OperatingMode.EXTENDED_POSITION.value)"
+
+[[sources]]
+id = "S7"
+url = "https://github.com/huggingface/lerobot/blob/df0763a2bc8153ae69ab360af39673a328004b33/src/lerobot/motors/dynamixel/dynamixel.py"
+title = "LeRobot motors/dynamixel/dynamixel.py, commit df0763a (last change to the file, 2026-04-12)"
+accessed = "2026-10-07"
+quote = "DEFAULT_BAUDRATE = 1_000_000 || def configure_motors(self, return_delay_time=0) -> None: || By default, Dynamixel motors have a 500µs delay response time (corresponding to a value of 250 on"
+
+[[sources]]
+id = "S8"
+url = "https://shop.pishrobot.com/wp-content/uploads/2020/01/dynamixel-xl430-w250.pdf"
+title = "ROBOTIS XL430-W250 e-Manual PDF copy (2018-2020 revision, hosted by pishrobot.com): Position PID Gain section"
+accessed = "2026-10-07"
+quote = "The constant in each equations include sampling time."

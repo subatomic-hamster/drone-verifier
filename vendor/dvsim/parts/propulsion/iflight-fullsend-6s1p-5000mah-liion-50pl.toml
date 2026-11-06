@@ -1,0 +1,79 @@
+id = "iflight-fullsend-6s1p-5000mah-liion-50pl"
+name = "iFlight Fullsend 6S1P 5000mAh 22.2V Li-ion pack (EVE INR21700-50PL), XT60H"
+category = "battery.liion"
+vendor = "iFlight"
+part_number = "FULLSEND EVE INR21700-50PL 6S1P 5000mAh"
+url = "https://rcdrone.top/products/src-iflight-2362-fullsend-6s-5000mah-li-ion-battery"
+
+# Part frame: origin at the pack centre, x along length, y along width, z up. The listing prints "Size 43*63*75mm" without axis labels; the sister
+# 6S2P 10000 mAh pack prints 43*63*148 mm (twice the 75 mm length), so 75 mm is taken as length (x), 63 mm width (y), 43 mm height (z)
+# (inference). Pack-side connector gender is a modelling convention (neutral mates either).
+
+[params]
+capacity_ah     = { value = 5.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 18000.0, unit = "C", fidelity = "derived", derivation = "5.0 Ah x 3600 s/h = 18000 C (coulombs)." }
+energy_wh       = { value = 111.0, unit = "Wh", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cell_nominal  = { value = 3.6, unit = "V", src = "S2", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", src = "S1", fidelity = "datasheet" }            # "25.2V (4.2V per cell)"
+v_cutoff_cell   = { value = 2.5, unit = "V", src = "S2", fidelity = "datasheet" }
+c_rating_cont   = { value = 25, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 125.0, unit = "A", fidelity = "derived", derivation = "25 C x 5.0 Ah = 125 A (S1 rating label); equals the cell's own 'Maximum Discharge 125A(25C)' in S2." }
+mass            = { value = 0.436, unit = "kg", src = "S1", fidelity = "datasheet" }          # 436 g (+-5 g)
+mass_tol        = { value = 0.005, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.075, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.063, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.043, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60H", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.130, unit = "m", src = "S1", fidelity = "datasheet" }     # +-8 mm
+r_internal_pack = { value = 0.042, unit = "ohm", fidelity = "estimated", rationale = "iFlight publishes no pack resistance. EVE cell spec gives 'Initial Internal Impedance <= 7 mOhm' (AC 1 kHz at shipping SOC, S2); 6 cells in series x 7 mOhm = 42 mOhm taken as the pack value. Upper bound on the AC figure; DC resistance under load is typically higher; treat as +-40%." }
+
+[geometry]
+shape = "box"
+size = [0.0375, 0.0315, 0.0215]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 125.0, unit = "A", fidelity = "derived", derivation = "25 C x 5.0 Ah = 125 A (S1 rating label); exceeds the XT60H connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug (XT60H), drawn on the +x face. S1 names the XT60H plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60H)"
+type = "xt60"
+gender = "neutral"
+pos = [0.0375, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60H plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-iflight-2362-fullsend-6s-5000mah-li-ion-battery"
+title = "rcdrone.top (iFlight listing) - Fullsend 6S 5000mAh 22.2V Li-Ion Battery (EVE INR21700-50PL)"
+accessed = "2026-10-07"
+quote = "Capacity|5000mAh|Voltage|22.2V|Max Voltage (Fully Charged)|25.2V (4.2V per cell)|Energy|111Wh|Cell Type|EVE INR21700-50PL|Cell Combination|6S1P|Discharge Rate|25C|Connector|XT60H|Discharge Wire Plug and Length|XT60H-F (AMASS) - 130(±8)mm|Size|43*63*75mm|Weight|436(±5)g"
+
+[[sources]]
+id = "S2"
+url = "https://eurolamp.ua/shop/wp-content/uploads/eve-inr21700-50pl-datasheet.pdf"
+title = "EVE Energy INR21700-50PL cell specification (hosted PDF copy)"
+accessed = "2026-10-07"
+quote = "Minimum 4800mAh Nominal 5000mAh|3.2. Nominal Voltage 3.60V|3.6. Maximum Discharge 125A(25C), 2.50V cut-off|8.2. Initial Internal Impedance Initial Internal Impedance is measured at AC 1kHz at shipping SOC. Initial Internal Impedance ≤ 7mΩ"

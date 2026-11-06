@@ -1,0 +1,80 @@
+id = "l7805-regulator-to220"
+name = "L7805CV 5 V 1.5 A linear regulator, TO-220 (cuas2 5 V logic rail for the safety ICs, from the key-switched 12 V)"
+category = "pcb.regulator"
+vendor = "STMicroelectronics (and clones)"
+part_number = "L7805CV"
+url = "https://www.digikey.ie/en/products/detail/umw/L7805CV/17635308"
+
+# Part frame: origin at the centre of the body mounting face, z up, pins towards -y (IN, GND, OUT = pins 1, 2, 3), tab = GND.
+# cuas2 deviation from spec 9 (which lists only a buck): the 74HCT ICs need a 5 V rail that is alive whenever the key is on, independent of the relay-switched weapon rail, so a
+# 5 V linear regulator hangs on the key output. Load: two 74HCT123 and two 74HCT4017, well under 20 mA; dissipation (12 - 5) V x 0.02 A = 0.14 W.
+
+[params]
+mass       = { value = 0.002, unit = "kg", fidelity = "estimated", rationale = "TO-220 package, about 2 g (package standard)." }
+v_in_max   = { value = 35.0, unit = "V", fidelity = "estimated", rationale = "L78 series absolute maximum input 35 V (ST L78 data sheet class)." }
+v_out      = { value = 5.0, unit = "V", fidelity = "estimated", rationale = "L7805: 5 V +-4 %." }
+i_out_max  = { value = 1.0, unit = "A", fidelity = "estimated", rationale = "L78 series 1.5 A peak, 1.0 A continuous before thermal limit (class)." }
+price      = { value = 1.00, unit = "USD", fidelity = "derived", derivation = "Adafruit 7805 (ADA2164) at Core Electronics AUD 1.50 ex GST (search snippet) x an assumed 0.66 USD/AUD = 0.99, rounded to 1.00; rate assumed, not looked up." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0078, 0.005, 0.00225]
+pos = [0.0, 0.0, 0.00225]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["REG.1", "REG.2"]
+v_max = { value = 35.0, unit = "V", fidelity = "estimated", rationale = "Absolute maximum input." }
+v_min = { value = 7.0, unit = "V", fidelity = "estimated", rationale = "Dropout: input at least about 7 V for 5 V out." }
+note = "IN (pin 1) and GND (pin 2)."
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+pins = ["REG.3", "REG.2"]
+i_max = { value = 1.0, unit = "A", fidelity = "estimated", rationale = "Continuous output limit." }
+note = "OUT (pin 3) and GND (pin 2)."
+
+[[connectors]]
+id = "REG"
+name = "TO-220 leads (IN, GND, OUT)"
+type = "to-220-3"
+gender = "male"
+joinable = true
+pos = [0.0, -0.005, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+fidelity = "estimated"
+rationale = "L78 pin-out (not fetched; the standard 78xx order):1 INPUT, 2 GROUND, 3 OUTPUT; lead pitch is the TO-220 standard."
+pins = [
+  { number = 1, name = "IN", kind = "power", dir = "in", v_min = 7.0, v_max = 35.0 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "OUT", kind = "power", dir = "out", v = 5.0, i_max = 1.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.digikey.ie/en/products/detail/umw/L7805CV/17635308"
+title = "Digi-Key (UMW) L7805CV, TO-220 (search snippet: EUR 0.62 each; Core Electronics Adafruit 7805 AUD 1.50 ex GST)"
+accessed = "2026-10-27"
+quote = "Linear Voltage Regulator IC Positive Fixed 1 Output 1.2A TO-220 ... EUR 0.62 for one"

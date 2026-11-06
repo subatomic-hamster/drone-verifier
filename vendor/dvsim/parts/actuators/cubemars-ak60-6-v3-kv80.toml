@@ -1,0 +1,128 @@
+id = "cubemars-ak60-6-v3-kv80"
+name = "CubeMars AK60-6 V3.0 KV80 robotic actuator (6:1 QDD-class)"
+category = "actuator.bldc.qdd"
+vendor = "CubeMars"
+part_number = "AK60-6 V3.0 KV80"
+url = "https://www.cubemars.com/product/ak60-6-v3-0-kv80-robotic-actuator.html"
+
+# Frame: origin on the output axis at the output face; +z = out of the output face (output axis); cylindrical body, diameter 79 mm, length 43 mm, occupies z in [-0.043, 0].
+# Which end carries the output flange, and the flange/mounting hole patterns, are in CubeMars' drawings (not retrieved); ports below are opaque family tags.
+# Two supply variants are listed as "24/48": values given with a slash are stored for the 48 V variant where a single number is needed, with the 24 V value in a comment.
+# Efficiency is NOT derivable: "Peak current" is DC bus current (ADC) and no gearbox efficiency is published.
+
+[params]
+mass               = { value = 0.380,   unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_diameter      = { value = 0.079,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_length        = { value = 0.043,   unit = "m",      src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 6.0,     unit = "1",      src = "S1", fidelity = "datasheet" }
+v_rated_low        = { value = 24.0,    unit = "V",      src = "S1", fidelity = "datasheet" }  # "24/48"
+v_rated_high       = { value = 48.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+torque_rated       = { value = 3.0,     unit = "N*m",    src = "S1", fidelity = "datasheet" }
+torque_peak        = { value = 9.0,     unit = "N*m",    src = "S1", fidelity = "datasheet" }
+speed_rated_48v    = { value = 51.313,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 490 rpm; 233 rpm (24.40 rad/s) at 24 V
+speed_no_load_48v  = { value = 67.021,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 640 rpm; 320 rpm (33.510 rad/s) at 24 V, output side
+current_rated      = { value = 3.8,     unit = "A",      src = "S1", fidelity = "datasheet" }  # ADC
+current_peak_48v   = { value = 11.2,    unit = "A",      src = "S1", fidelity = "datasheet" }  # ADC; 10.3 A at 24 V (slash order assumed 24/48)
+power_rated_48v    = { value = 125.0,   unit = "W",      src = "S1", fidelity = "datasheet" }  # 60 W at 24 V
+kv                 = { value = 80.0,    unit = "rpm/V",  src = "S1", fidelity = "datasheet" }
+kt_motor_published = { value = 0.135,   unit = "N*m/A",  src = "S1", fidelity = "datasheet" }  # motor side
+ke_published       = { value = 12.5,    unit = "V/krpm", src = "S1", fidelity = "datasheet" }
+r_phase_to_phase   = { value = 0.595,   unit = "ohm",    src = "S1", fidelity = "datasheet" }
+l_phase_to_phase   = { value = 6.76e-4, unit = "H",      src = "S1", fidelity = "datasheet" }
+rotor_inertia      = { value = 2.435e-5, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }  # 243.5 g.cm^2, motor-side rotor assumed
+motor_constant_km  = { value = 0.15,    unit = "N*m/sqrt(W)", src = "S1", fidelity = "datasheet" }
+back_drive_torque  = { value = 0.2,     unit = "N*m",    src = "S1", fidelity = "datasheet" }
+tau_mechanical     = { value = 8.1e-4,  unit = "s",      src = "S1", fidelity = "datasheet" }  # 0.81 ms
+tau_electrical     = { value = 6.9e-4,  unit = "s",      src = "S1", fidelity = "datasheet" }  # 0.69 ms
+pole_pairs         = { value = 14,      unit = "1",      src = "S1", fidelity = "datasheet" }
+slots              = { value = 24,      unit = "1",      src = "S1", fidelity = "datasheet" }
+winding            = { value = "star",  unit = "-",      src = "S1", fidelity = "datasheet" }
+encoder_inner      = { value = "magnetic, 21 bit", unit = "-", src = "S1", fidelity = "datasheet" }
+
+# --- derived electrical model ---
+ke_si = { value = 0.11937, unit = "V*s/rad", fidelity = "derived", derivation = "KE = 12.5 V/krpm = 12.5/104.72 = 0.11937 V*s/rad (line-to-line, motor side), equal to 60/(2*pi*KV) = 60/(2*pi*80) = 0.11937. NOTE: published KT is 0.135 N*m/A, 13 % above KE in SI; the two should be equal, so the source is inconsistent. Both are kept; use ke_si for back-EMF and kt_motor_published for torque only if matching CubeMars' own numbers." }
+r_phase_equivalent_wye = { value = 0.2975, unit = "ohm", fidelity = "derived", derivation = "Equivalent-wye phase resistance = R_phase_to_phase / 2 = 0.595/2 = 0.2975 ohm (star winding)." }
+kt_output_ideal = { value = 0.810, unit = "N*m/A", fidelity = "derived", derivation = "KT_motor_published * N = 0.135 * 6 = 0.81 N*m per A (lossless gearbox). Check: 11.2 A * 0.81 = 9.07 N*m vs published 9 N*m peak (ratio 1.01; this agreement supports the published KT over KE)." }
+j_reflected_output = { value = 8.766e-4, unit = "kg*m^2", fidelity = "estimated", rationale = "J_rotor * N^2 = 2.435e-5 * 36. CubeMars does not state whether the published inertia is rotor-only or reflected; rotor-only is the usual convention for this field." }
+noload_speed_check = { value = 640.0, unit = "rpm", fidelity = "derived", derivation = "48 V * KV 80 / 6 = 640 rpm (and 24 V gives 320 rpm), matching the published 320/640 no-load speeds." }
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.cubemars-ak60-6-v3-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Body mounting pattern is in CubeMars' drawings (not retrieved); opaque family tag. Symmetry 1 is the conservative default."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "flange.cubemars-ak60-6-v3-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Output flange pattern is in CubeMars' drawings (not retrieved); opaque family tag."
+
+[[ports]]
+name = "power"
+pins = ["PWR.1", "PWR.2"]
+kind = "power"
+type = "power-can-cable"
+gender = "male"
+role = "sink"
+v_max = { value = 48.0, unit = "V", src = "S1", fidelity = "datasheet" }  # highest listed rated voltage ("24/48"); absolute maximum not published on the page
+v_min = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }  # lowest listed rated voltage; not a documented minimum operating voltage
+i_max = { value = 3.8, unit = "A", src = "S1", fidelity = "datasheet" }  # rated ADC
+i_peak = { value = 11.2, unit = "A", src = "S1", fidelity = "datasheet" }  # peak ADC (48 V variant)
+note = "Connector type is not named on the page text; the wiring pack lists 'Power CAN cable x1 + Serial cable x1'."
+
+[[ports]]
+name = "can"
+pins = ["PWR.3", "PWR.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN via the supplied Power CAN cable (S1 packing list). Bit rate and logic levels are in the product manual, not retrieved."
+
+# Pin level (estimated): the AK60-6 page names no connector, only a supplied "Power CAN cable"; pin order is assumed equal to the other AK V3 actuators (P1 driver-board manual).
+[[connectors]]
+id = "PWR"
+name = "Power CAN cable (power + CAN)"
+type = "power-can-cable"
+port_type = "power-can-cable"
+gender = "male"
+pos = [0.025, 0.0, -0.043]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+src = "P1"
+fidelity = "estimated"
+rows = 1
+cols = 4
+pitch = 0.0025
+rationale = "Pitch 2.5 mm is a guess. The AK60-6 page does not name its connector; V+, GND, CAN_H, CAN_L in that order is carried over from the AK V3 driver-board manual (P1) that documents the XT30PW(2+2) used on sibling AK V3 actuators."
+pose_rationale = "Rear-face placement at z = -body_length, offset 25 mm, is a positional estimate."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_min = 24.0, v_max = 48.0, i_max = 3.8, note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io", note = "white" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io", note = "blue" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.cubemars.com/images/file/202511/AK54-4810-1C-A2%20Driver%20Installation%20Instructions.pdf"
+title = "CubeMars AK54-4810-1C-A2 Driver Installation Instructions V1.0.0, 4.2 Driver Interface Pin Definitions"
+accessed = "2026-10-09"
+quote = "Power input and CAN communication: 1 Positive Pole (+) Red; 2 Negative Pole (-) Black; 3 CAN communication high side (CAN_H) White; 4 CAN communication low side (CAN_L) Blue. Onboard interface model: XT30PW(2+2)-M (AMASS)."
+
+[[sources]]
+id = "S1"
+url = "https://www.cubemars.com/product/ak60-6-v3-0-kv80-robotic-actuator.html"
+title = "CubeMars AK60-6 V3.0 KV80 product page, Specification table and packing list"
+accessed = "2026-10-07"
+quote = "Motor Dimensions| Ф79*43mm| Motor Weight| 380g| Peak Torque| 9Nm| No-load Speed| 640rpm || Specification | Application| Foot Robots, Exoskeleton Robots, AGV| Rated Voltage (v)| 24/48| Control Method| FOC| No-load speed (rpm)| 320/640| Temperature Range| -20~50℃| Rated Torque (Nm)| 3| Winding Type| star| Rated Speed (rpm)| 233/490| Insulation Level| C| Rated Current (ADC)| 3.8| Insulation Voltage Withstand| 500V 5mA/2s| Rated Power (W)| 60/125| Insulation Resistance| 500V 10MΩ| Peak Torque (Nm)| 9| Pole Pairs| 14| Peak Current (ADC)| 10.3/11.2| Reduction Ratio| 6∶1| KV (rpm/V)| 80| Number of Slots| 24| KT (Nm/A)| 0.135| Temperature Sensor| NTC MF51B 103F3950| KE V/krpm| 12.5| Back-drive Torque (Nm)| 0.2| Phase to phase Resistance mΩ| 595| Electrical Time Constant (ms)| 0.69| Phase to phase Inductance μH| 676| Motor Weight (g)| 380| Rotor Inertia (gcm²)| 243.5| Maximum Torque Density(Nm/kg)| 23.68| Motor constant(Nm/√W)| 0.15| Inner Ring Encoder Type| Magnetic| Mechanical Time Constant (ms)| 0.81| Inner Ring Encoder Resolution| 21bit || Wiring Pack:| Power CAN cable ×1 + Serial cable ×1"

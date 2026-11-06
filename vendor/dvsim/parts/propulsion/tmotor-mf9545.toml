@@ -1,0 +1,31 @@
+id = "tmotor-mf9545"
+name = "T-Motor MF9545 plastic propeller (AIR Gear 355 set, ~9.5x4.5 in)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "MF9545"
+url = "https://store.tmotor.com/product/air-gear-355-combo-set.html"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction).
+# GAP: the source states neither diameter/pitch nor the hub bore; "MF9545" is read as 9.5 x 4.5 in by the usual naming convention
+# (estimated below) and no hub port is declared. The source weight "3.36g" is printed as-is (it looks low for a 9.5 in nylon prop).
+# The AIR2213 drawing (tmotor-air2213-kv1000 S2) shows a 20 mm clamp-plate hole spacing for the prop clamp on this set (not modelled).
+
+[params]
+diameter    = { value = 0.2413, unit = "m", fidelity = "estimated", rationale = "Size is not printed in the spec table; 'MF9545' read as 9.5 in diameter x 4.5 in pitch by the common 4-digit propeller naming convention (cf. Holybro T1045 = 10 x 4.5). Unverified." }
+pitch       = { value = 0.1143, unit = "m", fidelity = "estimated", rationale = "Same naming-convention reading as diameter: 4.5 in. Unverified." }
+mass        = { value = 0.00336, unit = "kg", src = "S1", fidelity = "datasheet" }          # "Weight (Single Propeller) 3.36g"
+material    = { value = "Nylon+Glass fiber", unit = "text", src = "S1", fidelity = "datasheet" }
+optimum_rpm_min = { value = 6000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+optimum_rpm_max = { value = 7000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 14.710, unit = "N", src = "S1", fidelity = "datasheet" }          # "Thrust Limitation 1.5kg" x 9.80665
+
+[geometry]
+shape = "cylinder"
+size = [0.12065, 0.002]        # disc envelope from the estimated diameter; thickness approximate
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/air-gear-355-combo-set.html"
+title = "T-MOTOR store - AIR GEAR 355 combo set (MF9545 propeller specification block)"
+accessed = "2026-10-07"
+quote = "MF9545-Specifications|Plastic Propeller|MF9545|working Temp|-10℃  40℃|Weight (Single Propeller)|3.36g|Material|Nylon+Glass fiber|Surface Treatment|Matte Technology|Optimum RPM|6000-7000RPM/min|Propeller Type|Polymer Propeller|Thrust Limitation|1.5kg"

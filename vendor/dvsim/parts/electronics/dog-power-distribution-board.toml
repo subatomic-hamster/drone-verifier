@@ -1,0 +1,217 @@
+id = "dog-power-distribution-board"
+name = "Dog power distribution board (custom 2 oz PCB: 1 XT90 battery input, 4 XT60 leg outputs, 1 XT30 aux output, bus capacitor bank)"
+category = "pcb.pdb"
+vendor = "dvsim dog (own design, fabricated by a PCB house)"
+part_number = "dog-pdb-v1"
+url = "docs/dog/actuator-study.md"
+
+# No off-the-shelf board covers an 8S (33.6 V) bus with four 50 A-class leg feeds (the Matek PDB-XT60 class stops at 4S, 18 V), so the distribution board is a custom part. EVERYTHING here is an estimate of a design not yet drawn.
+# Part frame: origin at the board centre, z up.
+
+[params]
+mass         = { value = 0.060, unit = "kg", fidelity = "estimated", rationale = "80 x 60 mm 2 oz board (~25 g) + 5 XT60 + 1 XT30 receptacles (~6 g each) + two 470 uF 50 V electrolytics (~6 g each) ~ 60 g." }
+length       = { value = 0.080, unit = "m", fidelity = "estimated", rationale = "Layout not drawn; 80 mm fits four XT60 pairs along the edges." }
+width        = { value = 0.060, unit = "m", fidelity = "estimated", rationale = "As length." }
+height       = { value = 0.016, unit = "m", fidelity = "estimated", rationale = "XT60PW-M height class and capacitor can height." }
+i_bus_max    = { value = 90.0, unit = "A", fidelity = "estimated", rationale = "Sized for the study's 87 A simultaneous peak (two 70 A packs in parallel behind a 100 A contactor): an XT90 input (40 A continuous / 90 A burst class) and a 2 oz, 12 mm-wide pour for ~90 A bursts; IPC-2152 rise not computed." }
+v_max        = { value = 42.0, unit = "V", fidelity = "estimated", rationale = "33.6 V full pack plus regenerative bus rise margin; 50 V capacitors and XT60 contacts both allow it." }
+c_bus        = { value = 9.4e-4, unit = "F", fidelity = "estimated", rationale = "Two 470 uF / 50 V aluminium capacitors to absorb regenerative current from the 12 actuators; sizing from ripple current not computed." }
+r_path       = { value = 0.003, unit = "ohm", fidelity = "estimated", rationale = "Input to one leg output, supply path only: 60 mm x 10 mm trace on 2 oz (70 um) copper = 1.72e-8 ohm m x 0.06 m / (0.01 m x 70e-6 m) = 1.5 mOhm, plus the XT90 and XT60 contact pairs (about 0.5 mOhm each, estimated) = 2.5 mOhm, rounded up to 3 mOhm." }
+
+[params.price]
+value = 22.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "No quote taken. 5 prototype boards from a Chinese PCB house cost about 10-20 USD for a 2-layer 80 x 60 mm 2 oz board; connectors and capacitors add about 12 USD. 22 USD per board (+-50 %)."
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.04, 0.03, 0.008]
+pos = [0.0, 0.0, 0.008]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Underside of the board: standoffs / tape on a deck."
+
+[[ports]]
+name = "bat_in"
+pins = ["BAT.1", "BAT.2"]
+kind = "power"
+type = "xt90"
+gender = "female"
+role = "sink"
+v_max = { value = 42.0, unit = "V", fidelity = "estimated", rationale = "As the part's v_max." }
+i_max = { value = 90.0, unit = "A", fidelity = "estimated", rationale = "As the part's i_bus_max (the plan's XT60 input could not carry the 87 A study peak)." }
+
+[[ports]]
+name = "leg_fr"
+pins = ["FR.1", "FR.2"]
+kind = "power"
+type = "xt60"
+gender = "female"
+role = "source"
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "Three actuators per leg at a few A each in the foot-force worst case; the study uses 3 x 22 A / 8 duty = ~30 A as the simultaneous-peak feed; XT60 continuous rating is 30 A." }
+
+[[ports]]
+name = "leg_fl"
+pins = ["FL.1", "FL.2"]
+kind = "power"
+type = "xt60"
+gender = "female"
+role = "source"
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "As leg_fr." }
+
+[[ports]]
+name = "leg_rr"
+pins = ["RR.1", "RR.2"]
+kind = "power"
+type = "xt60"
+gender = "female"
+role = "source"
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "As leg_fr." }
+
+[[ports]]
+name = "leg_rl"
+pins = ["RL.1", "RL.2"]
+kind = "power"
+type = "xt60"
+gender = "female"
+role = "source"
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "As leg_fr." }
+
+[[ports]]
+name = "aux"
+pins = ["AUX.1", "AUX.2"]
+kind = "power"
+type = "xt30"
+gender = "female"
+role = "source"
+i_max = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "Feeds the two 2.2 A DC-DC modules (12 V Jetson, 12 V lidar) and the 5 V module: < 60 W / 24 V = 2.5 A at the lowest bus; 5 A leaves margin." }
+
+[[connectors]]
+id = "BAT"
+name = "battery input (XT90, battery side)"
+type = "xt90"
+gender = "female"
+pos = [-0.04, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0102
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design: contact order + then - and an XT90 contact spacing of ~10 mm assumed."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_max = 42.0, i_max = 90.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "FR"
+name = "front-right leg feed (XT60)"
+type = "xt60"
+gender = "female"
+pos = [0.04, 0.02, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design; placement on the +x edge."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 30.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "FL"
+name = "front-left leg feed (XT60)"
+type = "xt60"
+gender = "female"
+pos = [0.04, -0.02, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design; placement on the +x edge."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 30.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "RR"
+name = "rear-right leg feed (XT60)"
+type = "xt60"
+gender = "female"
+pos = [-0.04, 0.02, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design; placement on the -x edge."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 30.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "RL"
+name = "rear-left leg feed (XT60)"
+type = "xt60"
+gender = "female"
+pos = [-0.04, -0.02, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design; placement on the -x edge."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 30.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "AUX"
+name = "auxiliary feed to the DC-DC modules (XT30)"
+type = "xt30"
+gender = "female"
+pos = [0.0, 0.03, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "DESIGN"
+fidelity = "estimated"
+rationale = "Own design; XT30 contact spacing 5 mm assumed."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", v = 33.6, i_max = 5.0 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "DESIGN"
+url = "docs/dog/actuator-study.md"
+title = "Own design of this repo (no external source): the dog power architecture, see the study's power section"
+accessed = "2026-10-16"
+quote = "own design, not yet drawn: every value on this part is an estimate with its rationale"

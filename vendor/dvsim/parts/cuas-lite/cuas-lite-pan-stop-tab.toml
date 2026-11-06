@@ -1,0 +1,33 @@
+id = "cuas-lite-pan-stop-tab"
+name = "cuas-lite pan_stop_tab (3D printed PETG, group pan)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "pan_stop_tab"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (1.18 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in frame B (pan group): the part frame IS frame B.
+# Pan hard stop (CAD 8fa7ecc): a tab on the rotor-plate underside, held by 2 countersunk M3 screws into 2 inserts, that meets one M3 x 14 stud in a heat-set insert of the stator at +-177.9 deg of pan.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/pan_stop_tab.stl"
+material = "petg"
+bbox_min = [-0.012, 0.08, 0.003]
+bbox_max = [0.012, 0.092, 0.027]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the rotor plate's seat port mates here."

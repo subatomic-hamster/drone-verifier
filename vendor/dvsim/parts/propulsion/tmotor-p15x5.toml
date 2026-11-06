@@ -1,0 +1,45 @@
+id = "tmotor-p15x5"
+name = "T-Motor P15*5 carbon-fibre propeller (15x5 in, 2-blade)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "P15*5"
+url = "https://rcdrone.top/products/t-motor-p15x5-carbon-fiber-propellers-for-multicopter"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# Prop used by the T-Motor MN4004-KV300 / MN4006-KV380 bench tests (prop_label "T-MOTOR 15*5 CF"). Distinct from tmotor-ns15x5 (3rd-gen NS series, 13 g).
+# Mass: "Weight 21+1.5g (Single Blade)" read as one propeller (inference; see tmotor-p18x6.1). No C_T/C_P curve: use uiuc-apce-* reference parts.
+
+[params]
+diameter    = { value = 0.381, unit = "m", src = "S1", fidelity = "datasheet" }
+pitch       = { value = 0.127, unit = "m", src = "S1", fidelity = "datasheet" }
+blade_count = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }                  # title: "(pairs CW+CCW 2 blades)"
+mass        = { value = 0.021, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass_tol    = { value = 0.0015, unit = "kg", src = "S1", fidelity = "datasheet" }
+material    = { value = "CF+Epoxy", unit = "text", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 58.84, unit = "N", fidelity = "derived", derivation = "'Thrust Limitation 6kg' (S1) x 9.80665 m/s^2 = 58.84 N." }
+rpm_opt_min = { value = 5200, unit = "rpm", src = "S1", fidelity = "datasheet" }
+rpm_opt_max = { value = 7000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+j_prop      = { value = 2.54e-4, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.021*0.381^2/12 = 2.54e-4 kg*m^2. Upper bound (real blades have mass nearer the hub)." }
+
+[geometry]
+shape = "cylinder"
+size = [0.1905, 0.0060]       # disc envelope: radius D/2, half-height 6 mm (blade thickness envelope, estimated)
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+fidelity = "estimated"
+rationale = "Hub bore is not published for the P-series. 6 mm taken from the sibling NS15*5 drawing (O6 centre hole, parts/propulsion/tmotor-ns15x5.toml S2) and the M6 prop-adapter thread of the MN4004/MN4006 motors."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/t-motor-p15x5-carbon-fiber-propellers-for-multicopter"
+title = "rcdrone.top (T-Motor distributor) - T-Motor P15x5 Prop (pairs CW+CCW 2 blades) CF multicopter propellers"
+accessed = "2026-10-07"
+quote = "Specifications Model NO 15*5(381mm*127mm) T-MOTOR Series Zblades-integrated Weight 21+1.5g Material CF+Epoxy (Single Blade) Thrust Limitation 6kg Ambient Temp -40'C 658C Optimum RPM 5200-7000 RPM/min Storage -1OFC 50PC/85% Temp/Humidity Surface Treatment Polished"

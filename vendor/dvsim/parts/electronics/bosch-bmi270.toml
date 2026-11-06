@@ -1,0 +1,45 @@
+id = "bosch-bmi270"
+name = "Bosch Sensortec BMI270 6-axis IMU (Kakute H7 v2 / many FPV FCs)"
+category = "sensor.imu"
+vendor = "Bosch Sensortec"
+part_number = "BMI270"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+
+# Conversions from datasheet units: 1 deg/s = 0.0174533 rad/s; 1 mg = 9.80665e-3 m/s2; 1 uA = 1e-6 A.
+[params]
+supply_voltage_min   = { value = 1.71, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max   = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_normal_mode = { value = 685e-6, unit = "A", src = "S1", fidelity = "datasheet" }
+gyro_noise_density   = { value = 1.2217e-4, unit = "rad/s/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+gyro_zro_initial     = { value = 8.727e-3, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_sensitivity_at_2000dps = { value = 16.384, unit = "LSB/(deg/s)", src = "S1", fidelity = "datasheet" }
+gyro_odr_max         = { value = 6400, unit = "Hz", src = "S1", fidelity = "datasheet" }
+gyro_odr_min         = { value = 25, unit = "Hz", src = "S1", fidelity = "datasheet" }
+accel_noise_density  = { value = 1.5691e-3, unit = "m/s2/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+accel_sensitivity_at_2g = { value = 16384, unit = "LSB/g", src = "S1", fidelity = "datasheet" }
+accel_odr_max        = { value = 1600, unit = "Hz", src = "S1", fidelity = "datasheet" }
+accel_odr_min        = { value = 0.78, unit = "Hz", src = "S1", fidelity = "datasheet" }
+package_length       = { value = 3.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+package_width        = { value = 2.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+package_height       = { value = 0.83e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+level = { value = 1.8, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "spi"
+kind = "signal"
+type = "spi"
+gender = "neutral"
+level = { value = 1.8, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[sources]]
+id = "S1"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi270-ds000.pdf"
+title = "BMI270 Datasheet (Bosch Sensortec)"
+accessed = "2026-10-07"
+quote = "compact standard size LGA mold package, 14 pins, footprint 2.5x3.0mm², height 0.83mm ... Output data rates (ODR): 25 Hz … 6.4 kHz (gyroscope) and 0.78 Hz … 1.6 kHz (accelerometer) ... Wide power supply range: Analog VDD 1.71V … 3.6V and independent VDDIO 1.2V…3.6V ... typ. 685 µA ... Sensitivity S2g gFS2g, TA=25°C 16384 ... Output Noise nA,nd ... 0.16 mg/√Hz ... Sensitivity RFS2000 Ta=25°C 16.384 ... Zero-rate Offset TA=25°C, nominal VDD ±0.5 dps ... Output Noise nG,nd Performance mode 0.007 dps /√Hz"

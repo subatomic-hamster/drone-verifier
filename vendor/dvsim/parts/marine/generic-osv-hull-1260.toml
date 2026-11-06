@@ -1,0 +1,175 @@
+id = "generic-osv-hull-1260"
+name = "Generic 12.6 m aluminium crew-boat / offshore support vessel hull (sized after the Damen Fast Crew Supplier 1204; illustrative, not a product)"
+category = "hull.monohull"
+vendor = "generic"
+part_number = "n/a (sized after Damen FCS 1204)"
+url = "https://medialibrary.damen.com/m/471c1f7842832c80/original/fcs-1204-for-sale-damen-trading-07675.pdf"
+
+# THE REFERENCE. Damen Fast Crew Supplier 1204 (Damen Trading folio 07675, built 2020): "Dimensions 12.60 x 3.80 x 1.70 mtrs", "Draft 0.80 mtr", aluminium hull, FRP
+# superstructure, "Propulsion 2x Ultrajet 340", "Speed +-35 knots", "Maximum deck load 0.5 tonnes", "Tonnage 2.5 tonnes max. deadweight" (S1). The sheet states no
+# displacement and no lines. This part is NOT that boat: it is a 12.6 m x 3.8 m x 1.7 m deep-V work boat whose OUTER dimensions follow the sheet and whose
+# underwater form, mass and hydrodynamics are ESTIMATED (below), run at the 0-8 kn this simulation needs (the real boat plans at 35 kn on waterjets; here it is a
+# displacement-speed vessel on two propellers, see torqeedo-deep-blue-50i-1200).
+# DRAFT. The sheet's 0.80 m is the maximum draft (it includes the waterjet intakes / keel appendages and the loaded condition). The simulated hull floats at the
+# design waterline z_w = 0.70 m with the design mass of assemblies/osv.toml (the build report gives the figure); a tank, `test_ship.py::test_floats_at_design_draft`,
+# checks the settled draft against the displacement of the hull sections below.
+# UNDERWATER FORM. The vessel device samples solid boxes into buoyancy cells, so the deep-V is four stacked boxes (full extents x length, width, height; section 1 is the
+# keel / deadrise region, section 4 the topsides). Waterline z_w = 0.70 m cuts section 3 (L 11.8 m x B 2.4 m, waterplane 28.3 m2). Hull sections:
+#   1  z 0.00-0.25   L  9.0 m  B 0.6 m     keel and bottom of the V
+#   2  z 0.25-0.55   L 10.6 m  B 1.4 m     lower V
+#   3  z 0.55-0.85   L 11.8 m  B 2.4 m     waterline (chine) region
+#   4  z 0.85-1.70   L 12.6 m  B 3.7 m     flared topsides to the deck (the deck edge is 3.8 m in the drawing, 3.7 m of it is hull volume)
+# Displacement at z_w = 0.70: V = 9.0*0.6*0.25 + 10.6*1.4*0.30 + 11.8*2.4*0.15 = 10.05 m3 = 10.3 t in sea water (1025 kg/m3); KB = 0.45 m, BM = 1.35 m, KM = 1.8 m.
+# GM = KM - KG; the design KG (build report) is about 0.95 m, GM about 0.85 m: a stiff small craft (rolling period about 3 s, T = 2 pi k / sqrt(g GM)).
+# HULL MASS. 8.4 t: aluminium structure (an estimated 3.5 t for a 12.6 m hull) PLUS the systems this model does not list as parts (two ~330 kW diesels, gearboxes and
+# waterjets, fuel, outfit, ballast, ~5 persons) that the real boat carries and a displacement-speed electric version replaces with the batteries and drives listed in
+# the assembly; the lump is the difference between the estimated displacement (10.3 t) and the listed parts. ESTIMATED: the sheet publishes no lightship weight.
+# Part frame (= the vessel's body frame): origin at mid-length on the centreline at the keel level, x forward, y to port, z up.
+[params]
+length         = { value = 12.6, unit = "m", src = "S1", fidelity = "datasheet" }
+beam           = { value = 3.8, unit = "m", src = "S1", fidelity = "datasheet" }
+depth          = { value = 1.7, unit = "m", src = "S1", fidelity = "datasheet" }
+draft_max      = { value = 0.80, unit = "m", src = "S1", fidelity = "datasheet" }
+deadweight     = { value = 2500.0, unit = "kg", src = "S1", fidelity = "datasheet" }
+z_w            = { value = 0.70, unit = "m", fidelity = "estimated", rationale = "Design waterline (keel to still water): the sheet gives 0.80 m maximum draft; 0.70 m is the draft of the estimated 10.3 t displacement on the sections in the header, with the simulated systems (batteries, drives) instead of diesels. Moves 0.04 m per 1 t of mass (waterplane 28.3 m2)." }
+chine_z        = { value = 0.85, unit = "m", fidelity = "estimated", rationale = "Height of the chine above the keel (visual only): the section-3/4 boundary of the buoyancy boxes." }
+mass_keel      = { value = 1600.0, unit = "kg", fidelity = "estimated", rationale = "Keel / bottom region of the lumped hull mass (section 1: ballast, engine-bed structure, lower tanks). Sets the hull's centre of gravity low." }
+mass_lower     = { value = 2500.0, unit = "kg", fidelity = "estimated", rationale = "Lower V (section 2): bottom plating, frames, machinery-space outfit, batteries' tray." }
+mass_chine     = { value = 2400.0, unit = "kg", fidelity = "estimated", rationale = "Waterline region (section 3): side plating, tanks, outfit." }
+mass_topsides  = { value = 1900.0, unit = "kg", fidelity = "estimated", rationale = "Topsides and main deck (section 4): deck plating 5 mm over 40 m2 (540 kg), side plating, rails, bollards, fendering, deck outfit. The deckhouse, helipad, equipment and cables are separate parts." }
+mass           = { value = 8400.0, unit = "kg", fidelity = "estimated", rationale = "Sum of the four section masses (1600 + 2500 + 2400 + 1900). See the header: a 3.5 t aluminium structure plus the lumped systems and ballast the real boat's diesels, tanks and outfit stand for; the sheet publishes no lightship weight, so the total is chosen to float the simulated parts at the estimated displacement." }
+
+# Four stacked boxes (half extents) sampled into buoyancy cells (cells = [along x, along y, along z]).
+[[geometry.shapes]]
+shape = "box"
+size = [4.5, 0.3, 0.125]
+pos = [0.0, 0.0, 0.125]
+cells = [18, 2, 5]
+mass_param = "mass_keel"
+
+[[geometry.shapes]]
+shape = "box"
+size = [5.3, 0.7, 0.15]
+pos = [0.0, 0.0, 0.40]
+cells = [21, 4, 6]
+mass_param = "mass_lower"
+
+[[geometry.shapes]]
+shape = "box"
+size = [5.9, 1.2, 0.15]
+pos = [0.0, 0.0, 0.70]
+cells = [24, 6, 6]
+mass_param = "mass_chine"
+
+[[geometry.shapes]]
+shape = "box"
+size = [6.3, 1.85, 0.425]
+pos = [0.0, 0.0, 1.275]
+cells = [25, 8, 8]
+mass_param = "mass_topsides"
+
+# Fossen diagonal coefficients of the whole vehicle at the design waterline, order surge, sway, heave, roll, pitch, yaw. The hull's added mass and damping are
+# ESTIMATES by strip theory and rules of thumb (rationale below); a model test or a seakeeping code would replace them.
+[tables.hydro]
+columns = ["added_mass", "damp_lin", "damp_quad"]
+rows = [
+  [1000.0,   200.0,    330.0],
+  [16000.0,  3000.0,   4100.0],
+  [21000.0,  56600.0,  14500.0],
+  [4500.0,   30000.0,  8000.0],
+  [60000.0,  254000.0, 80000.0],
+  [40000.0,  30000.0,  30000.0],
+]
+fidelity = "estimated"
+rationale = "Added mass: surge 0.1 x the 10.3 t displaced (slender body, 0.05-0.1); sway rho pi T^2 L Cb k = 1025 x pi x 0.7^2 x 11.8 x 0.9 x 1.0 = 16 t (2-D Lewis-section result for beam / draft near 3 and a free-surface mirror, 11.8 m of waterline); heave rho pi (B/2)^2 / 2 per metre x 11.8 m x 0.8 = 21 t (flat waterplane of beam 2.4 m); roll 25 % of the roll inertia m (0.35 B)^2 = 18.2 t m2 -> 4.5 t m2; pitch 60 t m2 (about 0.6 of the pitch inertia m (L/4)^2 = 102 t m2 plus the heave added mass at the ends); yaw 40 t m2 (sway added mass x L^2 / 12 x 0.3). Quadratic damping: surge R(8 kn = 4.12 m/s) = 6.4 kN, i.e. (6.4e3 - 200 x 4.12) / 4.12^2 = 330 N s2/m2 plus the linear term (R / Displacement 0.063 at Froude number 0.38, mid-range of semi-displacement hulls; ESTIMATE, no tank data for this hull); sway 0.5 rho Cd (lateral area L T = 11.8 x 0.7, about 8 m2) with Cd 1.0 (cross-flow on a slender body) = 4100; heave 0.5 rho 1.0 x A_wp 28.3 m2 = 14.5e3; roll and pitch from the strip-theory flat-plate analogy (8 and 80 kN m s2 /rad2, order of magnitude). Linear damping: heave 2 zeta sqrt(rho g A_wp (m + A33)) with zeta = 0.3 (flat-bottomed hulls radiate strongly in heave; 0.2-0.4): 56.6 kN s/m; roll 30 kN m s (zeta ~0.3: a first value, zeta 0.12 = 10.9 kN m s with the stiffness rho g V GM = 91 kN m (GM 0.9 m) and (I + A) = 22.7 t m2, gave a 9.8 deg rms roll in Hs 1.5 m beam seas in the simulation, resonant at the 2.1 s natural period, far above the 2-4 deg of a real 12 m boat; chines, fenders, bilge keels and the radiation damping of a narrow hull put real roll zeta at 0.2-0.3); pitch zeta 0.2 with C55 = rho g V GM_L (GM_L 25 m) = 2.5e6 N m: 254 kN m s; surge 200 and sway 3000 N s/m are small viscous terms at low speed; yaw 30 kN m s. Roll damping includes the bilge chine / fender of the real boat."
+
+# Skegs: a fin pair under the stern (device vessel `fins`): x y z of the fin centre, side area, depth, lift-curve slope, cross-flow Cd. Directional-stability aid (the
+# strip-theory table has no hull lift); same role as the skegs of the 1.2 m ASV.
+[tables.fins]
+columns = ["x", "y", "z", "area", "span", "cl_alpha", "cd_cross"]
+rows = [
+  [-4.5,  0.5, 0.05, 1.8, 0.5, 2.0, 1.1],
+  [-4.5, -0.5, 0.05, 1.8, 0.5, 2.0, 1.1],
+]
+fidelity = "estimated"
+rationale = "The side force of the AFT hull (skegs, transom, deadwood) lumped into two fins 4.5 m aft of mid-length: area 1.8 m2 each, lift slope 2.0 / rad each. CALIBRATED, not derived: the device has no hull lift, and the bare hull's Munk moment ((A11 - A22) u v = -15 t x u v) is destabilising; a real deep-V work boat is course-stable in displacement mode because its aft lateral area carries the side force. The sum A x CL_alpha = 7.2 m2 gives a restoring moment 0.5 rho (A CL_alpha) 4.6 m u v = 17 t x u v, a little more than the Munk term, so the open-loop yaw is stable at all speeds but weakly (and the yaw damping the fins add, 0.5 rho (A CL_alpha) (4.6 m)^2 u, keeps the differential-thrust turn rate low at speed) (a 1.8 m chord x 0.5 m skeg alone: Helmbold CL_alpha = 2 pi AR / (2 + sqrt(4 + AR^2)) = 0.86 with AR = 2 x 0.5^2 / 1.0, a quarter of what is used here). Cross-flow Cd 1.1 (flat plate of low aspect ratio; Hoerner, Fluid-Dynamic Drag, recalled). The autopilot still does the heading control."
+
+# Seats. Stern drive seats (the drive hangs on the transom: a transom-mounted electric outboard / pod), the deckhouse, the helipad and the MRU on the main deck.
+[[ports]]
+name = "drive_port"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-5.3, 0.9, 0.32]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Aft face of the lower V (section 2 ends at x = -5.3 m) 0.9 m to port, 0.32 m above the keel plane: the 0.55 m propeller (hub 0.32 m high, disc from 0.045 m to 0.595 m above the keel plane, so the blades stay above the lowest point of the vessel as the design rule PROP_CLEARANCE wants) has its hub 0.38 m under the 0.70 m waterline: immersion factor 1 (the rotor device) at rest, the disc top 0.1 m under the surface, so it loses thrust in a wave trough, as a real stern drive ventilates."
+
+[[ports]]
+name = "drive_starboard"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-5.3, -0.9, 0.32]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "As drive_port on the starboard side."
+
+[[ports]]
+name = "deckhouse_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [1.8, 0.0, 1.7]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Main deck, centred 1.8 m forward of mid-length: the wheelhouse spans x = 0 .. 3.6 m, leaving 2.7 m of foredeck and the aft deck for the helipad (a crew boat has the wheelhouse forward of amidships)."
+
+[[ports]]
+name = "pad_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-3.9, 0.0, 1.7]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Aft deck centred 3.9 m aft of mid-length: the 3 x 3 m pad covers x = -5.4 .. -2.4 m, 0.9 m clear of the transom and 2.4 m aft of the wheelhouse back (x = 0), on the centreline, near the stern where the vessel's heave and pitch are largest but away from the wheelhouse's wake (a real helideck would be forward of the superstructure)."
+
+[[ports]]
+name = "mru_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.6, 0.0, 1.7]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Main deck on the centreline 0.6 m aft of mid-length, outside the wheelhouse, near the centre of motion (the lever arm to the pad is applied in software)."
+
+[visual]
+src = "S1"
+note = "Crew-boat look: deep-V aluminium hull, dark-blue bottom, orange topsides, grey non-skid deck, black D-fender (generated; the Damen sheet has no drawings in its text)."
+
+[[visual.elements]]
+gen = "osv_hull"
+
+[[sources]]
+id = "S1"
+url = "https://medialibrary.damen.com/m/471c1f7842832c80/original/fcs-1204-for-sale-damen-trading-07675.pdf"
+title = "Damen Trading & Chartering, FOLIO 07675, Damen Fast Crew Supplier 1204 (sales sheet)"
+accessed = "2026-10-13"
+quote = "Dimensions 12.60 x 3.80 x 1.70 mtrs | Draft 0.80 mtr | Hull material Aluminium | Superstructure material FRP | Tonnage 2.5 tonnes max. deadweight | Maximum deck load 0.5 tonnes | Propulsion 2x Ultrajet 340 | Speed +- 35 knots"

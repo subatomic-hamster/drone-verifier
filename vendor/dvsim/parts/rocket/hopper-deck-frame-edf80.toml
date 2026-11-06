@@ -1,0 +1,287 @@
+id = "hopper-deck-frame-edf80"
+name = "EDF hopper deck frame: 0.20 m printed PETG deck with duct hole, four leg arms and four servo brackets (design of this repo)"
+category = "rocket.frame"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://www.3dprintergear.com.au/assets/files/technical-data-sheet%20(1).pdf"
+
+# The structure of the EDF hopper (examples/hopper): one printed plate that carries everything. Part frame: origin on the vehicle axis in the TOP face of the deck,
+# +z up. A 0.20 m square deck (4 mm thick) with a 75 mm square opening for the exit tube of the EDF (the housing's 41.5 mm shoulder rests on the strips
+# around it), four diagonal arms out to the leg hinges at 0.145 m from the axis, and four servo brackets hanging 0.1125 m from the deck underside at 0.0674 m from the axis on the x / y axes
+# (3 mm PETG plates 32 mm wide: flimsy for their height, a rib or a carbon strip would be added), one per jet vane. Top face: battery (+x), ESC (-x), two regulators (+y, -y), flight computer, sensor sled. Underside: lidar and the legs.
+# The deck and strips are modelled as boxes so that the exit tube and vanes pass through the opening without touching the plastic.
+
+[params]
+side        = { value = 0.20, unit = "m", fidelity = "estimated", rationale = "Design choice: the battery (116 x 34 mm) and the ESC (83 x 37 mm) go either side of the 83 mm duct, the regulators and the flight computer in the gaps." }
+thickness   = { value = 0.004, unit = "m", fidelity = "estimated", rationale = "Design choice: 4 mm PETG deck, stiff enough for 100 N leg loads at the arm roots when ribbed." }
+duct_hole_radius = { value = 0.0375, unit = "m", fidelity = "estimated", rationale = "Design choice: 1.6 mm over the exit tube's outer radius (35.9 mm)." }
+volume      = { value = 1.975e-4, unit = "m^3", fidelity = "derived", derivation = "Deck 0.20 x 0.20 m minus the 0.075 x 0.075 m opening = 0.034375 m2 x 4 mm = 1.375e-4 m3; four arms 0.057 x 0.02 x 0.004 m = 1.82e-5 m3; four brackets 0.003 x 0.032 x 0.1085 m = 4.17e-5 m3 (sum 1.975e-4 m3)." }
+infill_equivalent = { value = 0.40, unit = "1", fidelity = "estimated", rationale = "Solid-material fraction of an FDM part with 3 perimeters, 20 % gyroid infill and lightening holes (not modelled): 0.35-0.5." }
+mass        = { value = 0.100, unit = "kg", fidelity = "derived", derivation = "PETG 1270 kg/m3 (parts/common/petg, S1 of that part) x volume 1.975e-4 m3 x equivalent solid fraction 0.40 = 0.1003 kg." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.1, 0.03125, 0.002]
+pos = [0.0, 0.06875, -0.002]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.1, 0.03125, 0.002]
+pos = [0.0, -0.06875, -0.002]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.03125, 0.0375, 0.002]
+pos = [0.06875, 0.0, -0.002]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.03125, 0.0375, 0.002]
+pos = [-0.06875, 0.0, -0.002]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0285, 0.01, 0.002]
+pos = [0.08415, 0.08415, -0.002]
+quat = [0.9238795, 0.0, 0.0, 0.3826834]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0285, 0.01, 0.002]
+pos = [-0.08415, 0.08415, -0.002]
+quat = [0.3826834, 0.0, 0.0, 0.9238795]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0285, 0.01, 0.002]
+pos = [-0.08415, -0.08415, -0.002]
+quat = [-0.3826834, 0.0, 0.0, 0.9238795]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0285, 0.01, 0.002]
+pos = [0.08415, -0.08415, -0.002]
+quat = [-0.9238795, 0.0, 0.0, 0.3826834]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.016, 0.05425]
+pos = [0.0674, 0.0, -0.05825]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.016, 0.05425]
+pos = [-0.0674, 0.0, -0.05825]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.016, 0.0015, 0.05425]
+pos = [0.0, 0.0674, -0.05825]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.016, 0.0015, 0.05425]
+pos = [0.0, -0.0674, -0.05825]
+material = "petg"
+
+[visual]
+rationale = "Printed PETG deck, orange (the usual hobby filament), with the duct opening, arms and servo brackets."
+
+[[visual.elements]]
+gen = "hopper_frame"
+
+# ---- ports: the duct, the top-face components ------------------------------------------------------------------------
+[[ports]]
+name = "duct"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Deck top face at the opening; the housing's shoulder rests here (zip ties / two printed straps are not modelled)."
+
+[[ports]]
+name = "deck_esc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.085, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "ESC on the -x strip with its 83 mm length along y, as far out as the deck allows (x from -0.1036 to -0.0665 m: 3.6 mm over the edge) to balance the battery on the +x strip: the centre of mass is then 5 mm off the axis instead of 9 mm (a lead weight is the alternative, not used)."
+
+[[ports]]
+name = "deck_reg1"
+kind = "mech"
+type = "bolt-pattern.13.46x16.0.m2"
+gender = "neutral"
+pos = [-0.03, 0.06, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Regulator for servos 1 and 2 on the +y strip."
+
+[[ports]]
+name = "deck_reg2"
+kind = "mech"
+type = "bolt-pattern.13.46x16.0.m2"
+gender = "neutral"
+pos = [-0.03, -0.058, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Regulator for servos 3 and 4 on the -y strip."
+
+[[ports]]
+name = "deck_fc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.03, 0.088, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Flight computer (Teensy 4.0) near the +y edge on the -x side (balances the battery); the IMU sits at the Teensy's origin, about 0.09 m from the vehicle's centre of mass."
+
+[[ports]]
+name = "deck_harness"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.08, -0.084, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.004
+fidelity = "estimated"
+rationale = "RTK breakout, antenna lead and wiring allowance on the -y edge, at the -x end of the deck (clear of the ESC's footprint, y within +-0.0415) to balance the battery: moves the centre of mass 2.3 mm towards -x."
+
+# ---- four servo seats (one per jet vane): inner face of each bracket, hub on the vane hinge 0.045 m below the deck top ----
+[[ports]]
+name = "servo_xp"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0659, 0.0, -0.0925]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Inner face of the +x bracket (0.0674 - 0.0015 m); the XL330's base centre is 0.0259 m from the horn plane and 7.5 mm off the horn axis along the servo's x: the horn hub lands at r = 0.040 m, z = -0.100 m below the deck top: the vane's top edge is 0.0505 m below the 0.030 m exit tube (about 0.77 exit diameters downstream, inside the free jet's potential core, which is several diameters long), which puts the lever arm to the centre of mass at about 0.10 m instead of 0.04 m: 2.3 times the roll / pitch authority per newton."
+
+[[ports]]
+name = "servo_yp"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0, 0.0659, -0.0925]
+axis = [0.0, -1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As servo_xp, on the +y bracket."
+
+[[ports]]
+name = "servo_xn"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [-0.0659, 0.0, -0.0925]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As servo_xp, on the -x bracket."
+
+[[ports]]
+name = "servo_yn"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0, -0.0659, -0.0925]
+axis = [0.0, 1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As servo_xp, on the -y bracket."
+
+# ---- four leg hinges at the arm tips (radius 0.145 m, 45 deg diagonals), under the arm ----
+[[ports]]
+name = "leg1"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.10253, 0.10253, -0.004]
+axis = [0.70710678, 0.70710678, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Under the +x +y arm tip; the port axis is the outward normal as on the lander tube (parts/rocket/generic-fiberglass-tube-140)."
+
+[[ports]]
+name = "leg2"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [-0.10253, 0.10253, -0.004]
+axis = [-0.70710678, 0.70710678, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As leg1, -x +y."
+
+[[ports]]
+name = "leg3"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [-0.10253, -0.10253, -0.004]
+axis = [-0.70710678, -0.70710678, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As leg1, -x -y."
+
+[[ports]]
+name = "leg4"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.10253, -0.10253, -0.004]
+axis = [0.70710678, -0.70710678, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "As leg1, +x -y."

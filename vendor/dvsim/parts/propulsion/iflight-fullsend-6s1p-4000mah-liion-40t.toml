@@ -1,0 +1,77 @@
+id = "iflight-fullsend-6s1p-4000mah-liion-40t"
+name = "iFlight Fullsend 6S1P 4000mAh 22.2V Li-ion pack (Samsung INR21700-40T), XT60H"
+category = "battery.liion"
+vendor = "iFlight"
+part_number = "FULLSEND INR21700-40T 6S1P 4000mAh"
+url = "https://rcdrone.top/products/iflight-fullsend-6s-4000mah-battery"
+
+# Part frame: origin at the pack centre, x along the 77 mm dimension, y along the 64 mm dimension, z up (43 mm). The listing prints the size
+# twice in different orders ("77*43mm" header, "77*64*43mm" in SPECS); 77 x 64 x 43 mm is used. Pack-side connector gender is a modelling
+# convention (neutral mates either). No C rating is listed for this pack; the current limit comes from the cell datasheet (S2).
+
+[params]
+capacity_ah     = { value = 4.0, unit = "Ah", src = "S1", fidelity = "datasheet" }            # from the product name; cell minimum 4,000 mAh (S2)
+capacity        = { value = 14400.0, unit = "C", fidelity = "derived", derivation = "4.0 Ah x 3600 s/h = 14400 C (coulombs)." }
+energy_wh       = { value = 88.8, unit = "Wh", fidelity = "derived", derivation = "22.2 V nominal (S1) x 4.0 Ah = 88.8 Wh." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cell_nominal  = { value = 3.6, unit = "V", src = "S2", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.20 V/cell charge limit (S2: 'Charge : ... 4.20 V') = 25.2 V." }
+v_cutoff_cell   = { value = 2.5, unit = "V", src = "S2", fidelity = "datasheet" }
+i_max_continuous = { value = 35.0, unit = "A", src = "S2", fidelity = "datasheet" }          # cell: Max. continuous discharge 35A (without temperature cut); 6S1P series string carries the same current
+i_max_peak      = { value = 45.0, unit = "A", src = "S2", fidelity = "datasheet" }            # cell: 45A with 80 C temperature cut
+mass            = { value = 0.4335, unit = "kg", src = "S1", fidelity = "datasheet" }         # 433.5 g
+length          = { value = 0.077, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.064, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.043, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60H", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.072, unit = "ohm", fidelity = "estimated", rationale = "iFlight publishes no pack resistance. Samsung SDI cell spec gives initial internal impedance <= 12 mOhm (AC 1 kHz, after rated charge, S2); 6 cells in series x 12 mOhm = 72 mOhm taken as the pack value. That is an upper bound on the AC figure; DC resistance under load is typically higher and wiring adds a little; treat as +-40%." }
+
+[geometry]
+shape = "box"
+size = [0.0385, 0.032, 0.0215]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 35.0, unit = "A", src = "S2", fidelity = "datasheet" }
+
+# Pin level: the main discharge plug (XT60H), drawn on the +x face. S1 names the XT60H plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60H)"
+type = "xt60"
+gender = "neutral"
+pos = [0.0385, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60H plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/iflight-fullsend-6s-4000mah-battery"
+title = "rcdrone.top (iFlight listing) - FULLSEND 6S 4000mAh Battery (INR21700-40T 6S1P, XT60H)"
+accessed = "2026-10-07"
+quote = "Our new iFlight FULLSEND INR21700-40T 6S1P 4000mAh 22.2V Li-Ion Battery - XT60H plug|Samsung INR21700-40T|Cell combination: 6S1P|SPECS:|Size: 77*64*43mm|Weight: 433.5g|Voltage: 22.2V|Connector: AmassXT60H"
+
+[[sources]]
+id = "S2"
+url = "https://piekarz.pl/pdf/50840"
+title = "Samsung SDI cell specification INR21700-40T, Spec. No. INR21700-40T, Version 0.0 (hosted copy)"
+accessed = "2026-10-07"
+quote = "3.3 Nominal voltage 3.6V|3.7 Max. continuous discharge (Surface temperature) 35A(Without temperature cut) 45A(With 80℃ temperature cut)|3.8 Discharge cut-off voltage 2.5V (End of discharge)|7.5 Initial internal impedance Initial internal impedance measured at AC 1kHz after Rated charge Initial internal impedance ≤ 12mΩ"

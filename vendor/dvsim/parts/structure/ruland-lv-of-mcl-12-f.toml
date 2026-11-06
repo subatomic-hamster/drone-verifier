@@ -1,0 +1,36 @@
+id = "ruland-lv-of-mcl-12-f"
+name = "Ruland LV-OF-MCL-12-F one-piece shaft collar with clamping lever, 12 mm bore, 28 mm OD, 13 mm wide"
+category = "structure.shaft-collar"
+vendor = "Ruland Manufacturing"
+part_number = "LV-OF-MCL-12-F"
+url = "https://cdn.eicom.ru/media/PDF24/353828.pdf"
+
+# Frame: origin on the bore axis at the bore-end face, +z along the axis through the width. Tool-free lever clamp: the lever replaces the
+# clamp screw (collar OF-MCL-12-F + lever LF30-CL-M4:12-ZS).
+[params]
+bore_diameter    = { value = 12e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter   = { value = 28e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width            = { value = 13e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+lever_length     = { value = 30e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+center_to_lever_top = { value = 32.2e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+seating_torque   = { value = 4.6, unit = "N*m", src = "S1", fidelity = "datasheet" }
+mass             = { value = 0.062913, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.12"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.013
+note = "12 mm clamped bore (+0.050 / +0.012 mm)."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.eicom.ru/media/PDF24/353828.pdf"
+title = "Ruland LV-OF-MCL-12-F datasheet (eicom mirror of the Ruland sheet)"
+accessed = "2026-10-07"
+quote = "Ruland LV-OF-MCL-12-F, 12mm Mountable One-Piece Shaft Collar with Clamping Lever, Steel Collar with Zinc Plated Lever, 28mm OD, 11mm Width ... Bore (B1) 12 mm ... Outer Diameter (OD) 28 mm Center to Lever Top H1 32.2 mm Width (W) 13 mm ... Lever Length L1 30 mm ... Seating Torque 4.6 Nm ... Weight (lbs) 0.138700"

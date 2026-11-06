@@ -1,0 +1,113 @@
+id = "allegro-a3144-hall-switch"
+name = "Allegro A3144 unipolar Hall-effect switch, TO-92 (UA package), open-collector output (homing sensor)"
+category = "sensor.hall"
+vendor = "Allegro MicroSystems (the part is cloned by many makers; sold e.g. as '3144 Hall effect sensor' by Tinytronics)"
+part_number = "A3144EUA-T"
+url = "https://www.allegromicro.com/-/media/files/datasheets/a3141-2-3-4-datasheet.pdf"
+
+# Homing sensor: a small magnet on the rotating part switches the output low when the field at the sensor exceeds the operate point (the sheet describes a unipolar switching characteristic, 'ideal with a simple bar or rod magnet').
+# Supply 4.5-24 V: it does NOT run from the Pico's 3.3 V; power it from the 5 V rail and pull the open-collector output up to the Pico's 3.3 V (the output leakage is specified at 24 V off-state), a pull-up of a few kohm.
+# Operate / release points of the A3144: 70-350 G operate and 50-330 G release at 25 degC (min..max), hysteresis >= 20 G; the field of the chosen magnet at the chosen gap is not in this data sheet and must be checked on the bench.
+# Part frame: origin at the centre of the package, leads pointing to -z.
+
+[params]
+v_cc_min          = { value = 4.5, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cc_max          = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }   # operating; absolute maximum 28 V
+v_cc_abs_max      = { value = 28.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_out_max         = { value = 0.025, unit = "A", src = "S1", fidelity = "datasheet" }   # open-collector, continuous
+v_out_sat         = { value = 0.175, unit = "V", src = "S1", fidelity = "datasheet" }   # typ. at IOUT = 20 mA (max 0.4 V)
+i_cc              = { value = 0.0044, unit = "A", src = "S1", fidelity = "datasheet" }   # typ. supply current (max 9 mA)
+b_op_min          = { value = 0.0070, unit = "T", src = "S1", fidelity = "datasheet" }   # 70 G at 25 degC
+b_op_max          = { value = 0.0350, unit = "T", src = "S1", fidelity = "datasheet" }   # 350 G at 25 degC
+b_rp_min          = { value = 0.0050, unit = "T", src = "S1", fidelity = "datasheet" }   # 50 G at 25 degC
+b_rp_max          = { value = 0.0330, unit = "T", src = "S1", fidelity = "datasheet" }   # 330 G at 25 degC
+b_hys_min         = { value = 0.0020, unit = "T", src = "S1", fidelity = "datasheet" }   # >= 20 G
+t_op_min          = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }   # E suffix: -40 degC
+t_op_max          = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }   # E suffix: +85 degC
+mass              = { value = 0.0003, unit = "kg", fidelity = "estimated", rationale = "The data sheet gives no weight; a TO-92 package with its leads weighs 0.2-0.3 g (typical for the package)." }
+length            = { value = 0.0045, unit = "m", fidelity = "estimated", rationale = "TO-92 body about 4.5 mm wide (package standard); the UA package drawing of S1 is an image." }
+width             = { value = 0.0035, unit = "m", fidelity = "estimated", rationale = "TO-92 body about 3.5 mm deep (package standard)." }
+height            = { value = 0.0045, unit = "m", fidelity = "estimated", rationale = "TO-92 body about 4.5 mm tall above the leads (package standard)." }
+price_eur         = { value = 0.45, unit = "EUR", src = "S2", fidelity = "datasheet" }   # Tinytronics 3144 Hall Effect Sensor (compatible version of the A3144), incl. VAT, 2026-10-11
+price         = { value = 0.52, unit = "USD", fidelity = "derived", derivation = "0.45 EUR incl. VAT (S2) x an assumed 1.15 USD/EUR = 0.52 USD; exchange rate assumed, not looked up." }
+
+[[ports]]
+name = "power"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["H.1", "H.2"]
+v_max = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.5, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "Supply (pin 1) and ground (pin 2)."
+
+[[ports]]
+name = "out"
+kind = "signal"
+type = "open-collector"
+gender = "neutral"
+pins = ["H.3", "H.2"]
+level_max = { value = 24.0, unit = "V", src = "S1", fidelity = "datasheet" }   # output leakage specified at 24 V
+note = "Open-collector output: low when a south pole faces the branded face (operate point), high otherwise."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port, for seating the part by the pose of its frame."
+
+# Pin order: the data sheet's pin drawing numbers the three leads 1, 2, 3 and labels them SUPPLY, GROUND, OUTPUT.
+[[connectors]]
+id = "H"
+name = "3 leads (TO-92 UA)"
+type = "to-92-3"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.002]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00127
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Leads leave the flat bottom of the package at the standard TO-92 1.27 mm spacing (positional estimate for the origin)."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "in", v_min = 4.5, v_max = 24.0, note = "supply, 4.5-24 V" },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "OUT", kind = "signal", dir = "out", v_max = 24.0, i_max = 0.025, note = "open collector, sinks up to 25 mA, needs a pull-up resistor" },
+]
+
+[visual]
+src = "V1"
+note = "Small black TO-92 body with a flat branded face and three leads (generic package drawing); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.allegromicro.com/-/media/files/datasheets/a3141-2-3-4-datasheet.pdf"
+title = "Allegro A3141, A3142, A3143 and A3144 sensitive Hall-effect switches for high-temperature operation (data sheet)"
+accessed = "2026-10-11"
+quote = "Each device includes a voltage regulator for operation with supply voltages of 4.5 to 24 volts, reverse battery protection diode ... and an open-collector output to sink up to 25 mA. ... SUPPLY GROUND OUTPUT ... Supply Voltage VCC Operating 4.5 24 V ... Output Saturation Voltage VOUT(SAT) IOUT = 20 mA, B > BOP 175 mV (typ) 400 (max) ... Supply Current ICC 4.4 typ 9.0 max mA ... A3144: BOP at TA = 25°C 70 — 350; BRP at TA = 25°C 50 — 330; Bhys 20 55 ... Supply Voltage, VCC 28 V ... Continuous Output Current, IOUT 25 mA ... Suffix 'E–' is for ... -40°C to +85°C"
+
+[[sources]]
+id = "S2"
+url = "https://www.tinytronics.nl/en/sensors/magnetic-field/3144-hall-effect-switch"
+title = "Tinytronics: 3144 Hall Effect Sensor (SKU 000756)"
+accessed = "2026-10-11"
+quote = "3144 Hall Effect Sensor ... the compatible version of the A3144 hall sensor from Allegro ... €0.45 (incl. tax), €0.37 excluding tax ... €0.25 for 100 or more"
+
+[[sources]]
+id = "V1"
+url = "https://www.allegromicro.com/-/media/files/datasheets/a3141-2-3-4-datasheet.pdf"
+title = "Allegro A3141-A3144 package drawing (appearance only)"
+accessed = "2026-10-11"
+quote = "SENSITIVE HALL-EFFECT SWITCHES"

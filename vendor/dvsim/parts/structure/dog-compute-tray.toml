@@ -1,0 +1,126 @@
+id = "dog-compute-tray"
+name = "Dog compute tray (3D printed PLA, 250 x 160 mm): Jetson, RTK board, antenna, IMU and four CAN adapters"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "compute_tray"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py compute_tray(); mesh by cad/dog/build.py. Frame: origin at the floor underside centre (floor z in [0, 3] mm), +x forward; 12 mm side walls at y = +-78.5 mm. Board seats sit on the
+# floor top (z = 3 mm): Jetson devkit (-58, 0), antenna (80, 0), RTK board (16, -48), MinIMU (12, 20), four CANables along y = +60 (x = -95, -50, -5, 40). Symmetric about the XZ plane.
+
+[mirror]
+symmetry = "xz"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+mass            = { value = 0.145, unit = "kg", fidelity = "derived", derivation = "Mesh volume 133.5 cm3 x PLA 1.24 g/cm3, shell = min(V, area x 3 walls x 0.4 mm), 30 % infill elsewhere (assemblies/README.md 'Mass properties'), by cad/dog/build.py (thin 3 mm floor: the shell model prints it solid)." }
+price           = { value = 2.9, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.145 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-compute-tray.stl"
+material = "pla"
+bbox_min = [-0.125, -0.08, 0.0]
+bbox_max = [0.125, 0.08, 0.012]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Underside of the floor: lies on the top deck."
+
+[[ports]]
+name = "jetson"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.058, 0.0, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Jetson Orin Nano devkit seat (103 x 90.5 mm kit)."
+
+[[ports]]
+name = "rtk"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.016, -0.048, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "SparkFun RTK board seat (43.5 x 43.2 mm)."
+
+[[ports]]
+name = "antenna"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.08, 0.0, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "u-blox ANN-MB patch antenna pad (82 x 60 mm)."
+
+[[ports]]
+name = "imu"
+kind = "mech"
+type = "board.20x13-header"
+gender = "neutral"
+pos = [0.012, 0.02, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "MinIMU-9 v6 seat (20 x 13 mm)."
+
+[[ports]]
+name = "can_fl"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.095, 0.06, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "CAN adapter seat, front-left leg bus (CANable 45 x 22 mm)."
+
+[[ports]]
+name = "can_fr"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.05, 0.06, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "CAN adapter seat, front-right leg bus."
+
+[[ports]]
+name = "can_rl"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.005, 0.06, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "CAN adapter seat, rear-left leg bus."
+
+[[ports]]
+name = "can_rr"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.04, 0.06, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "CAN adapter seat, rear-right leg bus."

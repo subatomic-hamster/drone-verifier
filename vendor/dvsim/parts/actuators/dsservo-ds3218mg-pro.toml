@@ -1,0 +1,98 @@
+id = "dsservo-ds3218mg-pro"
+name = "DSSERVO DS3218MG Pro 20kg digital PWM servo (brushed, copper/aluminium gears)"
+category = "motor.servo"
+vendor = "DSSERVO (listing by rcdrone.top)"
+part_number = "DS3218MG pro"
+url = "https://rcdrone.top/products/dsservo-ds3218-pro-20kg-servo"
+
+# Frame: origin on the output axis at the horn-seat (top) face of the case; +z = output axis out of the case;
+# case 40.5 x 40 x 20 mm as listed; the listing does not say which dimension is the height, so the 40.5 x 20 face is taken as the footprint (x = 40.5, y = 20)
+# and 40 mm as the height along z (inference), z in [-0.040, 0]. Output-axis offset along x is not published and is left at the origin.
+# No current figures are published on the retrieved listing, so no electrical DC-motor model can be derived.
+# Torque figures are those of the 'Pro' variant; the non-Pro DS3218 (21.5 kg/cm at 6.8 V per other listings) is a different part.
+
+[params]
+mass            = { value = 0.060,   unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0405,  unit = "m",  src = "S1", fidelity = "datasheet" }
+width           = { value = 0.020,   unit = "m",  src = "S1", fidelity = "datasheet" }
+height          = { value = 0.040,   unit = "m",  src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "copper and aluminium gears, carbon brush motor", unit = "-", src = "S1", fidelity = "datasheet" }
+horn_spline     = { value = "25T (metal servo arm included in package)", unit = "-", src = "S1", fidelity = "datasheet" }
+protocol        = { value = "PWM, 1520 us neutral / 333 Hz working frequency, 3 us dead band", unit = "-", src = "S1", fidelity = "datasheet" }
+position_range  = { value = 3.1416, unit = "rad", src = "S1", fidelity = "datasheet" }  # 180 deg (270 deg optional version exists)
+v_operating_min     = { value = 5.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+v_operating_max     = { value = 6.8,    unit = "V",     src = "S1", fidelity = "datasheet" }
+no_load_speed_5v    = { value = 8.727,  unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.12 s/60deg
+no_load_speed_6v8   = { value = 11.636, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.09 s/60deg
+stall_torque_5v     = { value = 2.0594, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 21 kg/cm
+stall_torque_6v8    = { value = 2.3045, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 23.5 kg/cm
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.servo-standard-ears"
+gender = "neutral"
+pos = [0.0, 0.0, -0.040]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Standard-size hobby servo mounting ears; hole spacing not published on the listing, opaque family tag shared with other standard-size servos."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 25
+note = "25T spline; OD not stated."
+
+[[ports]]
+name = "power_in"
+pins = ["SRV.1", "SRV.2"]
+kind = "power"
+type = "servo-3pin"
+gender = "female"
+role = "sink"
+v_max = { value = 6.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "Power shares the 3-pin servo connector with the signal; no current rating published."
+
+[[ports]]
+name = "signal"
+pins = ["SRV.3"]
+kind = "signal"
+type = "pwm"
+gender = "female"
+
+# Pin level: the 3-pin servo lead. S1 does not describe the lead, so the layout is the RC-servo convention.
+[[connectors]]
+id = "SRV"
+name = "servo lead (3-pin JR-style plug)"
+type = "servo-lead-3"
+port_type = "servo-3pin"
+gender = "female"
+pos = [-0.02, 0.0, -0.02]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives no wire colours, plug style or pin order: the port type servo-3pin and the standard RC servo lead (ground, +V, signal at 0.1 in pitch) are assumed."
+pose_rationale = "Servo case dimensions are not in the sources, so the lead exit is a positional estimate: at the -x end of a standard-size case, lead pointing out along -x."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "V+", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "in" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/dsservo-ds3218-pro-20kg-servo"
+title = "rcdrone.top DSSERVO DS3218MG pro 20kg servo listing, Specifications"
+accessed = "2026-10-07"
+quote = "Model: DS3218MG pro| Item Name: DS3218MG pro Digital Servo| Rotation angle:180 degree,270 degree optional| Dead Band: 3μsec| Operating Voltage: 5.0V~6.8V| Operating Speed (5V): 0.12sec / 60° at no load| Operating Speed (6.8V): 0.09sec / 60° at no load| Stall Torque (5V): 21 kg/cm| Stall Torque (6.8V): 23.5 kg/cm| Motor Type: Carban Brush Motor| Gear Type: Copper & Aluminum| Working Frequency: 1520μs / 333hz| Size: 40.5 * 40 * 20mm| Weight: 60g| Package included:| 1 x DS3218MG pro Digital Servo| 1 x 25T Metal Servo Arm"

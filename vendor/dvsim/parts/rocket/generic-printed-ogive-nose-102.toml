@@ -1,0 +1,64 @@
+id = "generic-printed-ogive-nose-102"
+name = "3D-printed tangent-ogive nose cone for a 4 in (101.6 mm) tube, 0.30 m long, 1.2 mm PLA shell (design of this repo)"
+category = "rocket.nose-cone"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# Part frame: origin on the axis at the base plane (the tube's forward end), +z towards the tip. A design of this repo, not a product: the dimensions
+# are choices, the mass is derived from the PLA datasheet density. The collision / mass shape is four stacked solid cylinders following the ogive
+# radius at each slice's mid-height (a shell split by solid volume gives the lower slices ~10 % too little mass: negligible for a 90 g part).
+[params]
+base_diameter  = { value = 0.1016, unit = "m", fidelity = "estimated", rationale = "Design choice: the outside diameter of parts/rocket/generic-fiberglass-tube-102 it caps." }
+length         = { value = 0.30, unit = "m", fidelity = "estimated", rationale = "Design choice: fineness ratio 3 (length / base diameter), a common model-rocket nose." }
+wall_thickness = { value = 0.0012, unit = "m", fidelity = "estimated", rationale = "Design choice: three perimeters of a 0.4 mm FDM nozzle." }
+mass = { value = 0.0918, unit = "kg", fidelity = "derived", derivation = "Tangent ogive radius profile r(x) = sqrt(rho^2 - (L - x)^2) + R - rho, rho = (R^2 + L^2) / (2R), R = 0.0508 m, L = 0.30 m; shell area 2 pi int r ds = 0.06493 m2 (numeric); mass = area x wall 0.0012 m x PLA density 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 (estimated in that part) = 0.0918 kg. The base lip / shoulder is not counted." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.05, 0.0375]
+pos = [0.0, 0.0, 0.0375]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0438, 0.0375]
+pos = [0.0, 0.0, 0.1125]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0313, 0.0375]
+pos = [0.0, 0.0, 0.1875]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0122, 0.0375]
+pos = [0.0, 0.0, 0.2625]
+material = "pla"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "tube.102"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Base plane on the tube's forward end (shoulder fit not modelled)."
+
+[visual]
+rationale = "Design of this repo: the tangent-ogive profile of the part's derivation (R, L, wall) revolved as a hollow printed shell, white PLA."
+
+[[visual.elements]]
+gen = "ogive_nose"
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

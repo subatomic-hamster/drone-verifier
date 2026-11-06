@@ -1,0 +1,52 @@
+id = "fold-corner-r"
+name = "fold drone corner block, roll-servo type (corners 2 and 4): printed U-joint clevis + M3 shoulder shaft; carries the STS3032 of the roll"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "corner_r"
+url = "cad/fold/modules/corner.py"
+
+# Frame = the reference pose of block 2 (corner p2 = (0.2, 0, 0)). Block 4 is this part turned 180 deg about the loop centre.
+# Ports: h = the hinge axis (vertical), r = the roll axis (along the link, 15 mm above the loop plane), servo = the STS3032 seat (horn toward the link).
+# Mass: clevis 6.041 + shaft 1.0.
+
+[params]
+mass = { value = 0.007041, unit = "kg", fidelity = "derived", derivation = "CAD manifest block_clevis 6.041 g (printed, 2 walls + 20 % infill PA12-CF [est]) + block_shaft 1.0 g (M3 shoulder shaft, listed) of cad/fold/build.py." }
+mass_tol = { value = 0.0007, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/block_clevis_block2.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/block_shaft_block2.stl"
+
+[[ports]]
+name = "h"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.2, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "r"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.2, 0.0, 0.015]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "servo"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3032-base"
+gender = "neutral"
+pos = [0.2, -0.0005, 0.015]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 1

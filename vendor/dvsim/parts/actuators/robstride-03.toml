@@ -1,0 +1,149 @@
+id = "robstride-03"
+name = "RobStride 03 (RS03) QDD joint actuator, 60 N*m peak, with integrated CAN driver (9:1)"
+category = "actuator.bldc.qdd"
+vendor = "RobStride"
+part_number = "ROBSTRIDE 03"
+url = "https://aifitlab.com/products/robstride-03-motor"
+
+# Leg study part (docs/dog/leg-study.md). Frame: origin on the output axis at the output face; +z = out of the output face (output axis); cylindrical body, 106 mm
+# across, 56 mm long, occupies z in [-0.056, 0]. The retailer table gives 106 x 106 x 56 mm and a 98 mm (8 x M4) mounting circle; which end carries the output flange is
+# not stated. SIDE CONVENTION: torque_*, speed_*, kv_output, kt_output_published are OUTPUT-shaft values (after the 9:1 gearbox); kt_motor / ke_si / kv / rotor_inertia /
+# r_* are MOTOR-side. Currents are PEAK phase amplitudes (Apk) as the vendor tabulates them; the Qdd model's DC-equivalent winding current is the RMS value (Apk / sqrt 2).
+# Vendor tables disagree on the rated speed (100 rpm at one retailer, 180 rpm at another) and on the weight (880 g vs 1.5 kg "net weight" = shipping weight): 880 g used.
+
+[mirror]
+symmetry = "xz"  # cylindrical body, connectors on the x axis (y = 0): the mirrored copy is the same part
+
+[params]
+mass               = { value = 0.880,   unit = "kg",     src = "S1", fidelity = "datasheet" }  # 880 g +-20 g
+body_diameter      = { value = 0.106,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_length        = { value = 0.056,   unit = "m",      src = "S1", fidelity = "datasheet" }
+gear_ratio         = { value = 9.0,     unit = "1",      src = "S1", fidelity = "datasheet" }
+v_rated            = { value = 48.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+v_min              = { value = 15.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+v_max              = { value = 60.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+torque_rated       = { value = 20.0,    unit = "N*m",    src = "S1", fidelity = "datasheet" }  # output side
+torque_peak        = { value = 60.0,    unit = "N*m",    src = "S1", fidelity = "datasheet" }  # output side
+speed_no_load      = { value = 20.420,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 195 rpm +-10 %, output side, at 48 V
+current_rated      = { value = 12.0,    unit = "A",      src = "S1", fidelity = "datasheet" }  # peak phase amplitude at rated load
+current_peak       = { value = 43.0,    unit = "A",      src = "S1", fidelity = "datasheet" }  # peak phase amplitude, +-10 %
+kt_output_published = { value = 2.36,   unit = "N*m/A",  src = "S1", fidelity = "datasheet" }  # "Torque Constant 2.36 N.m/Arms", output side
+r_phase_to_phase   = { value = 0.39,    unit = "ohm",    src = "S1", fidelity = "datasheet" }  # "Terminal Resistance", +-10 %
+l_phase_to_phase   = { value = 2.75e-4, unit = "H",      src = "S1", fidelity = "datasheet" }  # "Terminal Inductance" 0.275 mH
+pole_pairs         = { value = 21,      unit = "1",      src = "S1", fidelity = "datasheet" }  # 42 poles
+encoder_driver     = { value = "2 magnetic encoders", unit = "-", src = "S1", fidelity = "datasheet" }
+insulation_class   = { value = "B", unit = "-",          src = "S1", fidelity = "datasheet" }
+
+# --- derived electrical model (Qdd builder inputs: Kt, N, eta, R, Ke) ---
+kv = { value = 36.56, unit = "rpm/V", fidelity = "derived", derivation = "Motor-side KV = no-load output speed 195 rpm x N 9 / 48 V = 36.56 rpm/V (the retailer's 'Back-EMF 17 Vrms/krpm' has no stated winding convention and is not used)." }
+kv_output = { value = 4.0625, unit = "rpm/V", fidelity = "derived", derivation = "195 rpm / 48 V." }
+ke_si = { value = 0.26125, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = 60 / (2 pi KV_motor) = 60 / (2 pi 36.56) = 0.2612 V*s/rad (motor side)." }
+kt_motor = { value = 0.26125, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke (0.2612 N*m/A). Check: Kt N = 0.2612 x 9 = 2.351 N*m/A against the published output Kt 2.36 N*m/Arms (0.4 % apart), so the published Kt is the lossless output constant." }
+efficiency = { value = 0.836, unit = "1", fidelity = "derived", derivation = "eta = torque_peak / (kt_output_published x I_rms) = 60 / (2.36 x 43 / sqrt 2) = 0.836: the peak phase amplitude 43 Apk is 30.4 Arms; gearbox loss lumped with the vendor's current convention (compare 0.855 derived for the CubeMars AK70-9)." }
+rotor_inertia = { value = 1.4e-4, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published (RS03 listings give none). The CubeMars AK10-9 (98 x 61.7 mm, 940 g, same 21 pole pairs) publishes 1.002e-4 kg*m^2 motor-side; the RS03 is 8 % wider, so 1.4e-4 taken (+-50 %). Reflected at the output: J N^2 = 1.1e-2 kg*m^2." }
+i_limit_phase = { value = 30.4, unit = "A", fidelity = "derived", derivation = "= current_peak 43 Apk / sqrt 2 = 30.4 Arms (the Qdd winding current is the DC-equivalent RMS value): Kt N eta i_limit = 0.26125 x 9 x 0.836 x 30.4 = 59.7 N*m = torque_peak." }
+c_th_winding = { value = 100.0, unit = "J/K", fidelity = "estimated", rationale = "Not published. The GIM8108-8 file takes 60 J/K for a 378 g motor; this actuator is 880 g with a 106 mm outrunner, so about 1.7 x: 100 J/K (+-50 %)." }
+r_th_winding = { value = 1.58, unit = "K/W", fidelity = "derived", derivation = "current_rated 12 Apk = 8.49 Arms must settle at 80 degC from 25 degC under the Qdd thermal law (docs/models.md 'Qdd'; same method as the GIM8108-8 file): R(80) = 0.39 x 1.236 = 0.482 ohm, P = 8.49^2 x 0.482 = 34.7 W, R_th = 55 K / 34.7 W = 1.58 K/W." }
+encoder_cpr = { value = 65536, unit = "1", fidelity = "estimated", rationale = "Two magnetic encoders (S1), resolution not stated; the 16 bit of the MIT-style protocols taken." }
+can_cmd_hz = { value = 1000.0, unit = "Hz", fidelity = "estimated", rationale = "Driver command processing rate; MIT-mode drivers of this class process CAN frames at 1 kHz or more. The dog sends 500 Hz (spec s6). RobStride lists a 1 Mbps CAN bus (S2); its MIT-style 'motion control' mode is assumed, not verified." }
+can_latency = { value = 0.001, unit = "s", fidelity = "estimated", rationale = "One CAN frame at 1 Mbit/s (~0.13 ms) + driver loop; 1 ms (one physics tick) taken." }
+mit_kp_max = { value = 500.0, unit = "N*m/rad", fidelity = "estimated", rationale = "MIT-mode protocol range convention (KP 0..500)." }
+mit_kd_max = { value = 5.0, unit = "N*m*s/rad", fidelity = "estimated", rationale = "MIT-mode protocol range convention (KD 0..5)." }
+mit_tau_ff_max = { value = 60.0, unit = "N*m", fidelity = "derived", derivation = "= torque_peak (output side): a larger feed-forward is saturated by i_limit_phase anyway." }
+can_timeout = { value = 0.1, unit = "s", fidelity = "estimated", rationale = "Command-loss watchdog of the driver; 0.1 s = 50 missed 500 Hz frames." }
+kd_timeout = { value = 1.0, unit = "N*m*s/rad", fidelity = "estimated", rationale = "Damping-mode gain on command loss (timeout_mode 0): soft enough not to slam a falling leg." }
+temp_fault = { value = 100.0, unit = "degC", fidelity = "estimated", rationale = "Driver over-temperature threshold not retrieved; 100 degC as for the GIM8108-8 file." }
+temp_derate_start = { value = 80.0, unit = "degC", fidelity = "estimated", rationale = "20 K below temp_fault (linear current derate, docs/models.md 'Qdd')." }
+
+[params.price]
+value = 245.0
+unit = "USD"
+fidelity = "datasheet"
+src = "S3"
+rationale = "Robotics Center listing, merchandise price 245 USD, backorder (4-6 weeks), ex shipping; aifitlab lists 225 USD (212 each for 5+), also backorder. The higher listing is used. The motor-only version has no USB-CAN module."
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.robstride-03-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Body mounting circle 98 mm, 8 x M4 (S1); opaque family tag, which face carries it is not stated."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "flange.robstride-03-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Output flange: the retailer gives 'Flange Mounting Hole Pattern 30.35 x 9 x 6 mm (M4)' (S1), not read further; opaque family tag."
+
+[[ports]]
+name = "power"
+pins = ["PWR.1", "PWR.2"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "male"
+role = "sink"
+v_max = { value = 60.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 8.5, unit = "A", fidelity = "derived", derivation = "current_rated 12 Apk / sqrt 2 = 8.5 Arms." }
+i_peak = { value = 30.4, unit = "A", fidelity = "derived", derivation = "current_peak 43 Apk / sqrt 2 = 30.4 Arms." }
+note = "The retailer lists 'XT30 + GH1.25' connectors (S1); an XT30 (2+2) combined power + CAN terminal like the CubeMars V3 is ASSUMED, not stated."
+
+[[ports]]
+name = "can"
+pins = ["PWR.3", "PWR.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN, 1 Mbps (S2). Assumed on the same 2+2 terminal as the power pins (not stated)."
+
+[[connectors]]
+id = "PWR"
+name = "XT30 (2+2) power + CAN (assumed)"
+type = "xt30pw-2+2"
+port_type = "xt30pw-2+2"
+gender = "male"
+pos = [0.035, 0.0, -0.056]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+src = "S1"
+fidelity = "estimated"
+rows = 1
+cols = 4
+pitch = 0.0025
+rationale = "S1 names XT30 and GH1.25 connectors without a pin table or a location. The 2+2 layout, V+/GND/CAN_H/CAN_L pin order, the 2.5 mm pitch and the 35 mm rear-cover offset are assumed from the CubeMars V3 / GIM8108-8 files. VERIFY against the RobStride manual before wiring a real unit."
+pose_rationale = "Rear-cover placement offset 35 mm from the axis is a positional estimate; no drawing retrieved."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_max = 60.0, i_max = 8.5 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://aifitlab.com/products/robstride-03-motor"
+title = "AIFitLab ROBSTRIDE 03 Motor product page, specification table and price"
+accessed = "2026-10-18"
+quote = "Rated Voltage 48 VDC | Operating Voltage Range 15 to 60 VDC | Dimensions 106 x 106 x 56 mm | Mounting Hole Pattern 98 x 8 x 8 mm (M4) | Weight 880 g +-20 g | Electrical Connectors XT30 + GH1.25 | No-Load Speed 195 rpm +-10% | Rated Torque 20 N.m | Rated Speed (at Rated Torque) 180 rpm +-10% | Phase Current at Rated Load (Peak) 12 Apk | Peak Torque 60 N.m | Maximum Phase Current (Peak) 43 Apk +-10% | Motor Back-EMF Constant 17 Vrms/krpm | Torque Constant 2.36 N.m/Arms | Number of Poles 42 | Gear Ratio 9:1 | Terminal Resistance 0.39 Ohm +-10% | Terminal Inductance 0.275 mH +-10% | Price $225.00 USD (regular), Only Motor version backordered (text from a page-fetch summary, not verbatim)"
+
+[[sources]]
+id = "S2"
+url = "https://openelab.io/it/blogs/learn/what-is-robstride03-qdd-60n-m-actuator"
+title = "OpenELAB 'What Is ROBSTRIDE03' guide, specification summary"
+accessed = "2026-10-18"
+quote = "48 V nominal (15-60 V listed range) | 21 N.m at 100 rpm rated | 60 N.m peak | 9:1 | 195 rpm no-load (+-10%) | 900 g +-20 g | two magnetic encoders | a 1 Mbps CAN bus (text from a page-fetch summary, not verbatim)"
+
+[[sources]]
+id = "S3"
+url = "https://www.roboticscenter.ai/ar/store/product/robstride-03"
+title = "Robotics Center RS-03 Actuator listing, price"
+accessed = "2026-10-18"
+quote = "Rated torque 20 N.m | Peak torque 60 N.m | Gear ratio 9:1 | Weight 880 g | Net weight 1.5 kg | Dimensions 106 x 106 x 56 mm | IP52 | Price $245.00 USD (merchandise), Backorder, standard delivery 4-6 weeks (text from a page-fetch summary, not verbatim)"

@@ -1,0 +1,78 @@
+id = "ws2812b-5050"
+name = "WS2812B 5050 addressable RGB LED (cuas2 status LED on GP15, PIO1)"
+category = "sensor.led"
+vendor = "Worldsemi (SparkFun COM-24837 cut tape)"
+part_number = "WS2812B"
+url = "https://www.sparkfun.com/products/24837"
+
+# Part frame: origin at the centre of the 5 x 5 mm package underside, z up. 4 signal pins in this model (VDD, DOUT, VSS, DIN); DOUT is not wired (single LED).
+# Level note: the data sheet asks for VIH = 0.7 VDD (3.5 V at 5 V). The Pico drives 3.3 V and the LED is powered from the 3V3 pin so VIH = 2.3 V is met, at the cost of running
+# VDD at 3.3 V (below the 3.7 V data-sheet minimum; many WS2812B work, some clones do not) [est, bench item]. Colour and brightness are firmware-limited.
+
+[params]
+mass       = { value = 0.0001, unit = "kg", fidelity = "estimated", rationale = "A 5050 SMD LED weighs about 0.1 g." }
+v_dd_min   = { value = 3.0, unit = "V", fidelity = "estimated", rationale = "Out-of-spec low end taken for a 3.3 V supply; the data sheet minimum is 3.7 V." }
+v_dd_max   = { value = 5.3, unit = "V", fidelity = "estimated", rationale = "WS2812B data sheet maximum 5.3 V (class)." }
+i_max_leds = { value = 0.012, unit = "A", fidelity = "estimated", rationale = "Firmware-limited to a dim colour: about 12 mA." }
+price      = { value = 0.75, unit = "USD", src = "S1", fidelity = "datasheet" }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0025, 0.0025, 0.00085]
+pos = [0.0, 0.0, 0.00085]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["L.1", "L.3"]
+v_max = { value = 5.3, unit = "V", fidelity = "estimated", rationale = "WS2812B maximum supply." }
+v_min = { value = 3.0, unit = "V", fidelity = "estimated", rationale = "As v_dd_min." }
+i_max = { value = 0.012, unit = "A", fidelity = "estimated", rationale = "As i_max_leds." }
+note = "VDD (pin 1) and VSS (pin 3). Signal-kind at port level because the supply is the Pico 3V3 pin (a 'signal' rail in this library, like the pull-up resistors' rail ports)."
+
+[[ports]]
+name = "din"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["L.4"]
+
+[[connectors]]
+id = "L"
+name = "WS2812B pads (VDD, DOUT, VSS, DIN)"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.002
+fidelity = "estimated"
+rationale = "WS2812B pad order (not fetched):1 VDD, 2 DOUT, 3 VSS, 4 DIN; positions are estimates."
+pins = [
+  { number = 1, name = "VDD", kind = "power", dir = "in", v_min = 3.0, v_max = 5.3 },
+  { number = 2, name = "DOUT", kind = "signal", dir = "out", v = 3.3 },
+  { number = 3, name = "VSS", kind = "ground" },
+  { number = 4, name = "DIN", kind = "signal", dir = "in", v_min = 2.3, v_max = 5.3 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.sparkfun.com/products/24837"
+title = "SparkFun: WS2812B 5050 5x5mm SMD addressable RGB LED (cut tape), search snippet USD 0.75"
+accessed = "2026-10-27"
+quote = "WS2812B 5050 5x5mm SMD addressable RGB LED (Cut Tape) ... $0.75"

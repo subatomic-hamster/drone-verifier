@@ -1,0 +1,21 @@
+id = "aluminium-6061"
+name = "Aluminium 6061-T6 / T651"
+category = "material"
+vendor = "generic (Aluminum Association alloy)"
+part_number = "UNS A96061"
+url = "https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=ma6061t6"
+
+[params]
+density         = { value = 2700, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 68.9e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+shear_modulus   = { value = 26e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.72, 0.74, 0.77, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://quickparts.com/wp-content/uploads/2024/05/Aluminum-6061.pdf"
+title = "Aluminum 6061-T6; 6061-T651 (MatWeb/ASM data sheet, printed copy hosted by Quickparts)"
+accessed = "2026-10-07"
+quote = "Density 2.7 g/cc 0.0975 lb/in³ AA; Typical"

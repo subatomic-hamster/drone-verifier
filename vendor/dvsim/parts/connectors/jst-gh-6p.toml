@@ -1,0 +1,102 @@
+id = "jst-gh-6p"
+name = "JST GH 1.25 mm wire-to-board connector, 6 positions (Pixhawk-standard port)"
+category = "connector"
+vendor = "JST"
+part_number = "GHR-06V-S housing / SM06B-GHS-TB header (series ratings)"
+url = "https://www.jst-mfg.com/product/pdf/eng/eGH.pdf"
+
+# Series datasheet: ratings apply to every GH position count (2-15); jst-gh.<n> is the port family name. The datasheet text
+# does not state a mating-cycle count or part mass. Matek calls the pitch '1.27 mm' on some pages, JST says 1.25 mm.
+[params]
+pitch               = { value = 1.25e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+current_rated       = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 50, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_initial_max = { value = 0.030, unit = "ohm", src = "S1", fidelity = "datasheet" }
+contact_resistance_after_test_max = { value = 0.050, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 1e8, unit = "ohm", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 378.15, unit = "K", src = "S1", fidelity = "datasheet" }
+wire_awg_min        = { value = 30, unit = "AWG", src = "S1", fidelity = "datasheet" }
+wire_awg_max        = { value = 26, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.00015
+unit = "kg"
+fidelity = "estimated"
+rationale = "JST publishes no mass (eGH.pdf has none; distributor pages found list none). Cable-side plug = housing GHR-06V-S + 6 crimp contacts SSHL-002T-P0.2. Estimate from the JST drawing: housing envelope 8.75 (B, 'GHR-06V-S 6.25 8.75') x 4.15 x 5.7 mm = 207 mm3, assumed ~35 % solid (latch, walls) PA (heat-resistant polyamide per the datasheet, 1140 kg/m3 as PA66) = 0.083 g, plus six tin-plated copper-alloy contacts of about 9 mg each (assumed ~4.8 mm x 1 mm x 0.2 mm of 8900 kg/m3) = 0.05 g: 0.14 g, rounded to 0.15 g. The solid fraction and contact size are assumptions."
+
+[params.mass_tol]
+value = 0.0001
+unit = "kg"
+fidelity = "estimated"
+rationale = "+-0.1 g (about +-65 %): the solid fraction of the housing and the contact volume are assumptions; the mass is negligible against any airframe or arm budget."
+
+[[ports]]
+name = "housing"
+pins = ["HOUSING.1", "HOUSING.2", "HOUSING.3", "HOUSING.4", "HOUSING.5", "HOUSING.6"]
+kind = "power"
+type = "jst-gh.6"
+gender = "female"
+v_max = { value = 50, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Cable-side crimp housing; the 1.0 A rating is for AWG #26 wire"
+
+[[ports]]
+name = "header"
+pins = ["HEADER.1", "HEADER.2", "HEADER.3", "HEADER.4", "HEADER.5", "HEADER.6"]
+kind = "power"
+type = "jst-gh.6"
+gender = "male"
+v_max = { value = 50, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Board-side header"
+
+# Pin level (derived): 6 circuits in one row, numbered 1..6; the function of each contact is defined by the board that uses it, not by the connector.
+[[connectors]]
+id = "HOUSING"
+name = "cable-side crimp housing (6 circuits)"
+type = "jst-gh.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S1"
+fidelity = "derived"
+derivation = "Contact count is the part designation (6 positions); pitch is the S1 series value (1.25 mm); numbering 1..6 along the row is assumed."
+pose_rationale = "A catalogue connector has no board frame: mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" },
+  { number = 4, name = "4", kind = "power" }, { number = 5, name = "5", kind = "power" }, { number = 6, name = "6", kind = "power" },
+]
+
+[[connectors]]
+id = "HEADER"
+name = "board-side header (6 circuits)"
+type = "jst-gh.6"
+gender = "male"
+pos = [0.03, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S1"
+fidelity = "derived"
+derivation = "As HOUSING."
+pose_rationale = "Placed 30 mm to the side of the housing so the halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" },
+  { number = 4, name = "4", kind = "power" }, { number = 5, name = "5", kind = "power" }, { number = 6, name = "6", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.jst-mfg.com/product/pdf/eng/eGH.pdf"
+title = "GH CONNECTOR 1.25 mm pitch Wire-to-Board connectors (JST datasheet)"
+accessed = "2026-10-07"
+quote = "Current rating: 1.0 A AC/DC（AWG #26） Voltage rating: 50 V AC/DC Temperature range: ‑40 ℃ to +105 ℃ (including temperature rise in applying electrical current) Contact resistance: Initial value/ 30 mΩ max. After test/ 50 mΩ max. Insulation resistance: 100 MΩ min. ... Conductor size/ AWG #30 to AWG #26"

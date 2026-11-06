@@ -1,0 +1,123 @@
+id = "tmotor-mn5008-kv340"
+name = "T-Motor MN5008 KV340 Antigravity multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN5008 KV340"
+url = "https://store.tmotor.com/product/mn5008-kv340-motor-antigravity-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop; body length 32 mm along +z (Motor Size 55.6 x 32 mm).
+# The product page covers KV170 / KV340 / KV400 with shared geometry; KV340 values used here. S1 "Shaft Diameter IN: 6mm" is the inner
+# shaft; the S2 drawing shows the output shaft as O4 -> 4 mm used for the prop-side shaft port.
+
+[params]
+mass            = { value = 0.135, unit = "kg", src = "S1", fidelity = "datasheet" }          # KV340 Motor Weight incl. cable
+kv              = { value = 340, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.055, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 55 mOhm
+i0              = { value = 0.9, unit = "A", src = "S1", fidelity = "datasheet" }             # idle current at 22 V
+i0_voltage      = { value = 22.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 35.0, unit = "A", src = "S1", fidelity = "datasheet" }            # 180 s
+p_max           = { value = 760.0, unit = "W", src = "S1", fidelity = "datasheet" }           # 180 s
+cells_min       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "24N28P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0556, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.032, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.004, unit = "m", src = "S2", fidelity = "datasheet" }
+mount_circle    = { value = 0.025, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing "4-M3, O25"
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+lead_length     = { value = 0.08, unit = "m", src = "S1", fidelity = "datasheet" }
+kt              = { value = 0.028086, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*340) = 0.028086 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR "P18*6.1 CF" prop, ~23 V (per-row voltage as printed). 40-100 % throttle, all printed rows.
+# Vendor columns: Current(A), Power(W), RPM, Torque(N*m), Thrust(g), Efficiency(g/W); thrust_N = thrust_g * 0.00980665. Temperature 88 C.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [40, 23.44, 3.76, 88, 2958, 0.21, 9.7674, 996, 11.29],
+  [45, 23.39, 5.12, 120, 3314, 0.27, 12.1406, 1238, 10.34],
+  [50, 23.33, 6.93, 162, 3677, 0.32, 15.112, 1541, 9.54],
+  [55, 23.26, 8.95, 208, 4013, 0.38, 17.8677, 1822, 8.75],
+  [60, 23.19, 11.12, 258, 4303, 0.45, 20.7901, 2120, 8.22],
+  [65, 23.11, 13.46, 311, 4579, 0.5, 23.4771, 2394, 7.7],
+  [70, 23.04, 16.01, 369, 4846, 0.56, 26.2328, 2675, 7.26],
+  [75, 22.95, 18.83, 432, 5111, 0.62, 29.0865, 2966, 6.86],
+  [80, 22.86, 22.02, 503, 5370, 0.7, 31.9893, 3262, 6.48],
+  [90, 22.63, 29.46, 667, 5842, 0.83, 38.3342, 3909, 5.86],
+  [100, 22.51, 33.5, 754, 6049, 0.89, 41.335, 4215, 5.59],
+]
+prop_label = "T-MOTOR P18*6.1 CF"
+prop = "tmotor-ns18x6"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0278, 0.016]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.032]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (rated voltage 6S for KV340, S1)." }
+i_max = { value = 35.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 80 mm phase leads (S1 'Lead Cable|80mm'; no gauge or connector stated, so bare / solder ends).
+# Lead exit and phase naming are conventions (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 80 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0278, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives only the lead length (80mm), not gauge, connector, lead positions or phase labels: leads drawn side by side at the base, 4 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 35.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 35.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 35.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn5008-kv340-motor-antigravity-type.html"
+title = "T-MOTOR store - MN5008 Antigravity type motor (specification + test data)"
+accessed = "2026-10-07"
+quote = "Motor Size|Φ55.6*32mm|Configuration|24N28P|Shaft Diameter|IN：6mm|Lead Cable|80mm|KV|340|Rated Voltage（Lipo）|6S|Idle Current（22V）|0.9A|Peak Current（180s）|35A|Max. Power（180s）|760W|Motor Weight（Incl. Cable）|135g|Internal Resistance|55mΩ. Test: MN5008 KV340|T-MOTOR P18*6.1” CF 40%|23.44|3.76|88|2958|0.21|996|11.29|88 ... 100%|22.51|33.50|754|6049|0.89|4215|5.59"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/161723791516281923.jpg"
+title = "T-MOTOR MN5008 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 32, 27, 8,25, Ø4, Ø55.6, 8-M3, Ø12, Ø18, Ø4, 4-M3, Ø25"

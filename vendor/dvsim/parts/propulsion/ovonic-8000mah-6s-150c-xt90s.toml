@@ -1,0 +1,66 @@
+id = "ovonic-8000mah-6s-150c-xt90s"
+name = "Ovonic Roam Series 8000mAh 6S 22.2V 150C LiPo pack, XT90-S"
+category = "battery.lipo"
+vendor = "Ovonic"
+part_number = "O-150C-8000-6S1P-XT90-S"
+url = "https://www.ovonicshop.com/products/ovonic-roam-series-6s-lipo-battery-8000mah-6s1p-150c-22-2v-lipo-battery-with-xt90-s-anti-spark-plug-for-dji-uav-drone-x-class-6s-hd-cinelifter-long-range"
+
+# Part frame: origin at the pack centre, x along length (168 mm), y along width (65 mm), z up (46 mm). Softcase pack. Wire gauge and resistance not published.
+
+[params]
+capacity_ah     = { value = 8.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 28800.0, unit = "C", fidelity = "derived", derivation = "8.0 Ah x 3600 s/h = 28800 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 150, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 300, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 1200.0, unit = "A", fidelity = "derived", derivation = "150 C x 8.0 Ah = 1200 A (rating label only; a marketing figure well above what a 6S 8 Ah pack can deliver without sagging)." }
+mass            = { value = 1.023, unit = "kg", src = "S1", fidelity = "datasheet" }          # 1023 g (+-20 g)
+length          = { value = 0.168, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.046, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT90-S", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0195, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/8.0 = 3.25 mOhm/cell x 6 cells = 19.5 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.084, 0.0325, 0.023]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt90"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 1200.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 150 C x 8.0 Ah = 1200 A (S1 label); far above the XT90-S connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug (XT90-S anti-spark), drawn on the +x face. S1 names the XT90-S plug but not its polarity or contact spacing: + then -, an assumed 10 mm spacing for the XT90 family; the anti-spark resistor path is not modelled. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT90-S)"
+type = "xt90"
+gender = "neutral"
+pos = [0.084, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.010
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT90-S plug but not its polarity or contact spacing: + then -, an assumed 10 mm centre distance for the XT90 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.ovonicshop.com/products/ovonic-roam-series-6s-lipo-battery-8000mah-6s1p-150c-22-2v-lipo-battery-with-xt90-s-anti-spark-plug-for-dji-uav-drone-x-class-6s-hd-cinelifter-long-range"
+title = "Ovonic shop - Ovonic Roam Series 6S 8000mAh 6S1P 150C 22.2V, XT90-S"
+accessed = "2026-10-07"
+quote = "Capacity: 8000mAh | Voltage: 22.2V (6S) | Continuous Discharge Rate: 150C | Max Burst Discharge Rate: 300C | Charge Plug: JST-XHR-7P | Pack: Softcase | Discharge Plug: XT90-S Anti Spark Plug | Net Weight (with ±20g variance): 1023g / 2.26 lb | Size (with ±5mm variance): 168x65x46 mm / 6.6x2.6x1.8 inch (L x W x H)"

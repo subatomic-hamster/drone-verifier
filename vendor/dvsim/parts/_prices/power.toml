@@ -1,0 +1,438 @@
+# Single-unit retail prices, USD, 2026, before tax and shipping. Estimated from memory unless the rationale names a
+# seller: fidelity "datasheet" = read off that seller's page on 2026-11-06, "retail snapshot" = from a web search listing
+# the same day, not opened (still "estimated").
+# Wire entries are per 1 m of cable. Props sold in pairs or packs are priced per single prop.
+
+[prices]
+# --- wire (per metre) ---
+"awg-10-silicone-wire" = { price_per_m = 3.0, fidelity = "estimated", rationale = "class: silicone wire, per 1 m" }
+"awg-12-silicone-wire" = { price_per_m = 2.5, fidelity = "estimated", rationale = "class: silicone wire, per 1 m" }
+"awg-14-silicone-wire" = { price_per_m = 2.0, fidelity = "estimated", rationale = "class: silicone wire, per 1 m" }
+"awg-16-silicone-wire" = { price_per_m = 1.5, fidelity = "estimated", rationale = "class: silicone wire, per 1 m" }
+"awg-18-silicone-wire" = { price_per_m = 1.2, fidelity = "estimated", rationale = "class: silicone wire, per 1 m" }
+"awg-2-0-silicone-wire" = { price_per_m = 12.0, fidelity = "estimated", rationale = "class: welding-grade 2/0 cable, per 1 m" }
+"awg-8-silicone-wire" = { price_per_m = 4.0, fidelity = "estimated", rationale = "class: silicone wire, per 1 m" }
+"robotis-robot-cable-x3p-180mm" = { value = 1.5, fidelity = "estimated", rationale = "known list price ~2024, bundled 3-pin cable" }
+"sts3215-servo-cable-3pin" = { value = 0.8, fidelity = "estimated", rationale = "class: 3-pin servo cable with connectors" }
+
+# --- sensors, chips ---
+"bosch-bmi088" = { value = 8.0, fidelity = "estimated", rationale = "class: MEMS IMU chip, single qty" }
+"bosch-bmi270" = { value = 5.0, fidelity = "estimated", rationale = "class: MEMS IMU chip, single qty" }
+"bosch-bmp388" = { value = 4.0, fidelity = "estimated", rationale = "class: baro chip, single qty" }
+"isentek-ist8310" = { value = 3.0, fidelity = "estimated", rationale = "class: magnetometer chip" }
+"tdk-icm-42688-p" = { value = 6.0, fidelity = "estimated", rationale = "class: MEMS IMU chip, single qty" }
+"te-ms5611-01ba03" = { value = 6.0, fidelity = "estimated", rationale = "class: baro chip, single qty" }
+"ublox-neo-m8n" = { value = 15.0, fidelity = "estimated", rationale = "class: GNSS receiver chip" }
+"tdk-icm-20948" = { value = 6.0, fidelity = "estimated", rationale = "class: 9-axis MEMS chip" }
+"ublox-zed-f9p" = { value = 160.0, fidelity = "estimated", rationale = "class: multiband RTK GNSS module, rough" }
+"vectornav-vn-100-rugged" = { value = 1100.0, fidelity = "estimated", rationale = "known list price ~2023, rough" }
+"benewake-tf-luna" = { value = 24.86, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, RobotShop USA on reach.dog; robotshop.com sale 20.96" }
+"benewake-tfmini-s" = { value = 72.95, fidelity = "datasheet", rationale = "sparkfun.com/tfmini-s-micro-lidar-module.html, in stock, 2026-11-06" }
+"pololu-altimu-10-v6" = { value = 20.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-lps25hb-carrier" = { value = 10.0, fidelity = "estimated", rationale = "class: Pololu baro carrier" }
+"pololu-vl53l0x-carrier" = { value = 8.0, fidelity = "estimated", rationale = "class: Pololu ToF carrier" }
+"pololu-vl53l1x-carrier" = { value = 22.95, fidelity = "datasheet", rationale = "pololu.com/product/3415, 2026-11-06" }
+"pololu-vl53l3cx-carrier" = { value = 17.0, fidelity = "estimated", rationale = "class: Pololu ToF carrier, multi-target" }
+"pololu-vl53l5cx-carrier" = { value = 22.0, fidelity = "estimated", rationale = "class: Pololu 8x8 ToF carrier" }
+"pololu-vl53l7cx-carrier" = { value = 25.0, fidelity = "estimated", rationale = "class: Pololu 8x8 wide-FOV ToF carrier" }
+"pololu-vl53l8cx-carrier" = { value = 22.0, fidelity = "estimated", rationale = "class: Pololu 8x8 ToF carrier" }
+"logitech-brio-4k" = { value = 130.0, fidelity = "estimated", rationale = "known street price ~2024" }
+"raspberry-pi-camera-module-3" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2024" }
+
+# --- flight controllers, GPS, power modules, radios ---
+"holybro-pixhawk-6c" = { value = 215.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pixhawk-6c-mini" = { value = 230.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pixhawk-6x" = { value = 320.0, fidelity = "estimated", rationale = "class: Pixhawk 6X module only, rough" }
+"cuav-v5-plus" = { value = 250.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"holybro-kakute-h7-v2" = { value = 95.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-kakute-h743-wing" = { value = 110.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"matek-h743-slim-v4" = { value = 65.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"matek-h743-wlite" = { value = 60.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"speedybee-f405-v4" = { value = 55.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-m8n-gps" = { value = 35.0, fidelity = "estimated", rationale = "class: M8N GPS+compass" }
+"holybro-m9n-gps" = { value = 50.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-m10-gps" = { value = 45.0, fidelity = "estimated", rationale = "class: M10 GPS+compass" }
+"matek-m10q-5883" = { value = 44.84, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, US shop, sold out; others 39.99-51.99" }
+"matek-m9n-5883" = { value = 55.0, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, flyingtech.co.uk GBP 43.90 inc VAT, about USD 55" }
+"holybro-pdb-60a" = { value = 15.0, fidelity = "estimated", rationale = "class: PDB with XT30" }
+"holybro-pm02-v3" = { value = 20.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pm02d" = { value = 35.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pm03d" = { value = 40.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pm06-v2" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pm06d" = { value = 35.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pm07" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"holybro-pm08-can" = { value = 150.0, fidelity = "estimated", rationale = "class: DroneCAN power module 200 A, rough" }
+"matek-pm12s-3" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"matek-bec12s-pro" = { value = 20.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"matek-elrs-r24-s" = { value = 20.0, fidelity = "estimated", rationale = "class: ELRS 2.4 GHz receiver" }
+"holybro-sik-telemetry-radio-v3" = { value = 50.0, fidelity = "estimated", rationale = "sold as air+ground pair ~100; per unit" }
+"generic-avionics-harness" = { value = 15.0, fidelity = "estimated", rationale = "class: small breakouts and wiring allowance" }
+"basicmicro-roboclaw-2x7a-3682" = { value = 65.0, fidelity = "estimated", rationale = "known list price ~2024" }
+
+# --- computers ---
+"nvidia-jetson-orin-nano-8gb-module" = { value = 250.0, fidelity = "estimated", rationale = "known list price ~2025, module only" }
+"raspberry-pi-5" = { value = 85.0, fidelity = "estimated", rationale = "known list price ~2025, 8GB leaning, RAM prices up" }
+"raspberry-pi-zero-2-w" = { value = 15.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pjrc-teensy-4-0" = { value = 23.80, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, Mouser 474-DEV-15583" }
+
+# --- Pololu regulators ---
+"pololu-d24v5f5" = { value = 6.0, fidelity = "estimated", rationale = "class: Pololu 0.5 A buck" }
+"pololu-d24v5f6" = { value = 6.0, fidelity = "estimated", rationale = "class: Pololu 0.5 A buck" }
+"pololu-d24v5f9" = { value = 6.0, fidelity = "estimated", rationale = "class: Pololu 0.5 A buck" }
+"pololu-d24v5f12" = { value = 6.0, fidelity = "estimated", rationale = "class: Pololu 0.5 A buck" }
+"pololu-d24v10f5" = { value = 13.95, fidelity = "datasheet", rationale = "pololu.com/product/2831, 2026-11-06" }
+"pololu-d24v10f6" = { value = 8.0, fidelity = "estimated", rationale = "class: Pololu 1 A buck" }
+"pololu-d24v10f9" = { value = 8.0, fidelity = "estimated", rationale = "class: Pololu 1 A buck" }
+"pololu-d24v10f12" = { value = 8.0, fidelity = "estimated", rationale = "class: Pololu 1 A buck" }
+"pololu-d24v22f6" = { value = 13.0, fidelity = "estimated", rationale = "class: Pololu 2.5 A buck" }
+"pololu-d24v22f9" = { value = 13.0, fidelity = "estimated", rationale = "class: Pololu 2.5 A buck" }
+"pololu-d24v25f5" = { value = 25.95, fidelity = "datasheet", rationale = "pololu.com/product/2850, 2026-11-06" }
+"pololu-d24v25f6" = { value = 13.0, fidelity = "estimated", rationale = "class: Pololu 2.5 A buck" }
+"pololu-d24v25f7" = { value = 13.0, fidelity = "estimated", rationale = "class: Pololu 2.5 A buck" }
+"pololu-d24v25f9" = { value = 13.0, fidelity = "estimated", rationale = "class: Pololu 2.5 A buck" }
+"pololu-d24v50f5" = { value = 32.95, fidelity = "datasheet", rationale = "pololu.com/product/2851, 2026-11-06" }
+"pololu-d24v60f5" = { value = 28.0, fidelity = "estimated", rationale = "class: Pololu 6 A buck" }
+"pololu-d24v90f5" = { value = 45.0, fidelity = "estimated", rationale = "class: Pololu 9 A buck" }
+
+# --- Holybro X500 V2 parts (kit 150; spares priced per piece) ---
+"holybro-x500v2-frame-kit" = { value = 150.0, fidelity = "estimated", rationale = "known list price ~2024, frame only" }
+"holybro-x500v2-arm-connectors" = { value = 8.0, fidelity = "estimated", rationale = "class: spare nylon parts" }
+"holybro-x500v2-arm-tube" = { value = 7.0, fidelity = "estimated", rationale = "class: spare carbon tube" }
+"holybro-x500v2-battery-mount" = { value = 12.0, fidelity = "estimated", rationale = "class: spare mount board" }
+"holybro-x500v2-bottom-plate" = { value = 15.0, fidelity = "estimated", rationale = "class: spare carbon plate" }
+"holybro-x500v2-top-plate" = { value = 15.0, fidelity = "estimated", rationale = "class: spare carbon plate" }
+"holybro-x500v2-platform-board" = { value = 10.0, fidelity = "estimated", rationale = "class: spare board" }
+"holybro-x500v2-gps-mast" = { value = 6.0, fidelity = "estimated", rationale = "class: spare mount set" }
+"holybro-x500v2-hanger" = { value = 3.0, fidelity = "estimated", rationale = "class: small spare" }
+"holybro-x500v2-hardware-kit" = { value = 8.0, fidelity = "estimated", rationale = "class: screw bag" }
+"holybro-x500v2-landing-gear" = { value = 8.0, fidelity = "estimated", rationale = "class: spare leg, one unit" }
+"holybro-x500v2-rail-rod" = { value = 5.0, fidelity = "estimated", rationale = "class: rod, one unit" }
+"holybro-x500v2-esc-blheli-s-20a" = { value = 15.0, fidelity = "estimated", rationale = "class: 20A BLHeli_S ESC" }
+"holybro-2216-kv920" = { value = 25.0, fidelity = "estimated", rationale = "class: 2216 multirotor motor" }
+"holybro-1045-prop" = { value = 2.5, fidelity = "estimated", rationale = "sold in pairs ~5; per prop" }
+
+# --- ESCs ---
+"hobbywing-platinum-120a-v5-esc" = { value = 149.90, fidelity = "datasheet", rationale = "originhobbies.com, in stock, 2026-11-06" }
+"hobbywing-xrotor-40a-esc" = { value = 28.0, fidelity = "estimated", rationale = "class: 40A single ESC" }
+"hobbywing-xrotor-45a-4in1-20x20" = { value = 55.0, fidelity = "estimated", rationale = "class: 4-in-1 45A 20x20" }
+"hobbywing-xrotor-65a-4in1-am32" = { value = 85.0, fidelity = "estimated", rationale = "class: 4-in-1 65A" }
+"hobbywing-xrotor-micro-30a-esc" = { value = 20.0, fidelity = "estimated", rationale = "class: 30A micro ESC" }
+"hobbywing-xrotor-pro-40a-esc" = { value = 50.0, fidelity = "estimated", rationale = "class: 40A single ESC, pro" }
+"hobbywing-xrotor-pro-50a-esc" = { value = 65.0, fidelity = "estimated", rationale = "class: 50A single ESC, pro" }
+"holybro-tekko32-f4-4in1-50a-am32" = { value = 65.0, fidelity = "estimated", rationale = "class: 4-in-1 50A" }
+"iflight-blitz-e55-4in1" = { value = 60.0, fidelity = "estimated", rationale = "class: 4-in-1 55A" }
+"iflight-blitz-e55r-4in1" = { value = 55.0, fidelity = "estimated", rationale = "class: 4-in-1 55A 20x20" }
+"iflight-blitz-e55s-4in1" = { value = 50.0, fidelity = "estimated", rationale = "class: 4-in-1 55A BLHeli_S" }
+"iflight-blitz-e80-single" = { value = 69.99, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, shop.iflight.com" }
+"tmotor-air-20a-4s" = { value = 25.0, fidelity = "estimated", rationale = "sold in a set; per-ESC share" }
+"tmotor-alpha-40a-6s" = { value = 70.0, fidelity = "estimated", rationale = "class: 40A 6S ESC, T-Motor" }
+"tmotor-alpha-60a-6s" = { value = 69.99, fidelity = "datasheet", rationale = "store.tmotor.com/product/alpha-60a-6s-esc.html, 2026-11-06" }
+"tmotor-f55a-pro-ii-4in1" = { value = 100.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"tmotor-f55a-pro-iii-4in1" = { value = 120.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"tmotor-p60a-v2-4in1" = { value = 110.0, fidelity = "estimated", rationale = "class: 4-in-1 60A" }
+"hobbywing-seaking-60a-v3-1" = { value = 90.0, fidelity = "estimated", rationale = "known list price ~2023" }
+
+# --- motors, multirotor and FPV ---
+"emax-eco2-2807-1300kv" = { value = 22.0, fidelity = "estimated", rationale = "class: 2807 FPV motor" }
+"iflight-xing2-1404" = { value = 18.0, fidelity = "estimated", rationale = "class: 1404 micro motor" }
+"iflight-xing2-1806-2500kv" = { value = 22.0, fidelity = "estimated", rationale = "class: 1806 FPV motor" }
+"iflight-xing2-2207-1855kv" = { value = 28.0, fidelity = "estimated", rationale = "class: 2207 FPV motor" }
+"iflight-xing2-2207-2755kv" = { value = 28.0, fidelity = "estimated", rationale = "class: 2207 FPV motor" }
+"sunnysky-x2212-kv980" = { value = 15.0, fidelity = "estimated", rationale = "class: 2212 budget motor" }
+"kde-10218xf-105" = { value = 450.0, fidelity = "estimated", rationale = "known list price ~2023, heavy-lift" }
+"kde-2315xf-885" = { value = 55.0, fidelity = "estimated", rationale = "class: KDE 23xx" }
+"kde-2315xf-965" = { value = 55.0, fidelity = "estimated", rationale = "class: KDE 23xx" }
+"kde-2814xf-515" = { value = 70.0, fidelity = "estimated", rationale = "class: KDE 28xx" }
+"kde-2814xf-775" = { value = 70.0, fidelity = "estimated", rationale = "class: KDE 28xx" }
+"kde-3510xf-475" = { value = 85.0, fidelity = "estimated", rationale = "class: KDE 35xx" }
+"kde-3510xf-715" = { value = 85.0, fidelity = "estimated", rationale = "class: KDE 35xx" }
+"kde-3520xf-400" = { value = 90.0, fidelity = "estimated", rationale = "class: KDE 35xx" }
+"kde-4012xf-400" = { value = 95.0, fidelity = "estimated", rationale = "class: KDE 40xx" }
+"kde-4014xf-380" = { value = 100.0, fidelity = "estimated", rationale = "class: KDE 40xx" }
+"kde-4213xf-360" = { value = 105.0, fidelity = "estimated", rationale = "class: KDE 42xx" }
+"kde-4215xf-465" = { value = 110.0, fidelity = "estimated", rationale = "class: KDE 42xx" }
+"kde-5215xf-220" = { value = 130.0, fidelity = "estimated", rationale = "class: KDE 52xx" }
+"kde-5215xf-330" = { value = 130.0, fidelity = "estimated", rationale = "class: KDE 52xx" }
+"kde-5215xf-435" = { value = 130.0, fidelity = "estimated", rationale = "class: KDE 52xx" }
+"kde-6213xf-108" = { value = 150.0, fidelity = "estimated", rationale = "class: KDE 62xx" }
+"kde-6213xf-185" = { value = 150.0, fidelity = "estimated", rationale = "class: KDE 62xx" }
+"kde-6815xf-205" = { value = 190.0, fidelity = "estimated", rationale = "class: KDE 68xx" }
+"kde-7215xf-135" = { value = 220.0, fidelity = "estimated", rationale = "class: KDE 72xx" }
+"kde-8218xf-120" = { value = 300.0, fidelity = "estimated", rationale = "class: KDE 82xx" }
+"tmotor-2807-kv1250" = { value = 55.0, fidelity = "estimated", rationale = "class: T-Motor 2807" }
+"tmotor-2814-kv900" = { value = 60.0, fidelity = "estimated", rationale = "class: T-Motor 2814" }
+"tmotor-3110-kv1580" = { value = 50.0, fidelity = "estimated", rationale = "class: T-Motor 3110" }
+"tmotor-4214-kv380" = { value = 85.0, fidelity = "estimated", rationale = "class: T-Motor 4214" }
+"tmotor-air2213-kv1000" = { value = 40.0, fidelity = "estimated", rationale = "sold in AIR Gear set; per-motor share" }
+"tmotor-mn2212-v2-kv780" = { value = 40.0, fidelity = "estimated", rationale = "class: T-Motor MN2212" }
+"tmotor-mn2212-v2-kv920" = { value = 40.0, fidelity = "estimated", rationale = "class: T-Motor MN2212" }
+"tmotor-mn2806-kv400" = { value = 65.0, fidelity = "estimated", rationale = "class: T-Motor Antigravity 28xx" }
+"tmotor-mn3110-kv470" = { value = 65.0, fidelity = "estimated", rationale = "class: T-Motor MN3110" }
+"tmotor-mn3110-kv700" = { value = 65.0, fidelity = "estimated", rationale = "class: T-Motor MN3110" }
+"tmotor-mn3110-kv780" = { value = 65.0, fidelity = "estimated", rationale = "class: T-Motor MN3110" }
+"tmotor-mn3508-kv700" = { value = 72.0, fidelity = "estimated", rationale = "class: T-Motor MN3508" }
+"tmotor-mn3510-kv360" = { value = 80.0, fidelity = "estimated", rationale = "class: T-Motor MN3510" }
+"tmotor-mn3510-kv630" = { value = 80.0, fidelity = "estimated", rationale = "class: T-Motor MN3510" }
+"tmotor-mn3510-kv700" = { value = 80.0, fidelity = "estimated", rationale = "class: T-Motor MN3510" }
+"tmotor-mn3515-kv400" = { value = 90.0, fidelity = "estimated", rationale = "class: T-Motor MN3515" }
+"tmotor-mn3520-kv400" = { value = 95.0, fidelity = "estimated", rationale = "class: T-Motor MN3520" }
+"tmotor-mn4004-kv300" = { value = 80.0, fidelity = "estimated", rationale = "class: T-Motor Antigravity 40xx" }
+"tmotor-mn4006-kv380" = { value = 90.0, fidelity = "estimated", rationale = "class: T-Motor Antigravity 40xx" }
+"tmotor-mn4010-kv370" = { value = 100.0, fidelity = "estimated", rationale = "class: T-Motor MN4010" }
+"tmotor-mn4010-kv475" = { value = 100.0, fidelity = "estimated", rationale = "class: T-Motor MN4010" }
+"tmotor-mn4010-kv580" = { value = 100.0, fidelity = "estimated", rationale = "class: T-Motor MN4010" }
+"tmotor-mn4012-kv340" = { value = 105.0, fidelity = "estimated", rationale = "class: T-Motor MN4012" }
+"tmotor-mn4012-kv400" = { value = 105.0, fidelity = "estimated", rationale = "class: T-Motor MN4012" }
+"tmotor-mn4012-kv480" = { value = 105.0, fidelity = "estimated", rationale = "class: T-Motor MN4012" }
+"tmotor-mn4014-kv330" = { value = 110.0, fidelity = "estimated", rationale = "class: T-Motor MN4014" }
+"tmotor-mn4014-kv400" = { value = 110.0, fidelity = "estimated", rationale = "class: T-Motor MN4014" }
+"tmotor-mn4110-kv340" = { value = 110.0, fidelity = "estimated", rationale = "class: T-Motor Navigator 41xx" }
+"tmotor-mn5006-kv300" = { value = 110.0, fidelity = "estimated", rationale = "class: T-Motor Antigravity 50xx" }
+"tmotor-mn5008-kv340" = { value = 125.0, fidelity = "estimated", rationale = "class: T-Motor Antigravity 50xx" }
+"tmotor-mn5208-kv340" = { value = 125.0, fidelity = "estimated", rationale = "class: T-Motor MN5208" }
+"tmotor-mn5212-kv340" = { value = 140.0, fidelity = "estimated", rationale = "class: T-Motor MN5212" }
+"tmotor-mn5212-kv420" = { value = 140.0, fidelity = "estimated", rationale = "class: T-Motor MN5212" }
+"qx-qf3538-2000kv-edf-motor" = { value = 40.0, fidelity = "estimated", rationale = "class: 80 mm EDF inrunner" }
+"bluerobotics-t200-thruster" = { value = 230.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"torqeedo-deep-blue-50i-1200" = { value = 12000.0, fidelity = "estimated", rationale = "class: 50 kW marine inboard, rough" }
+"torqeedo-deep-blue-50i-controller" = { value = 2500.0, fidelity = "estimated", rationale = "class: marine inverter, rough" }
+
+# --- props ---
+"gemfan-hurricane-51466" = { value = 0.6, fidelity = "estimated", rationale = "sold 4-pack ~2.5; per prop" }
+"hqprop-5x4.3x3-v2s" = { value = 0.7, fidelity = "estimated", rationale = "sold 4-pack ~3; per prop" }
+"tmotor-mf9545" = { value = 6.0, fidelity = "estimated", rationale = "sold with AIR Gear set; per prop" }
+"tmotor-ns14x4.8" = { value = 40.0, fidelity = "estimated", rationale = "pair ~80; per prop" }
+"tmotor-ns15x5" = { value = 45.0, fidelity = "estimated", rationale = "pair ~90; per prop" }
+"tmotor-ns16x5.4" = { value = 50.0, fidelity = "estimated", rationale = "pair ~100; per prop" }
+"tmotor-ns17x5.8" = { value = 55.0, fidelity = "estimated", rationale = "pair ~110; per prop" }
+"tmotor-ns18x6" = { value = 60.0, fidelity = "estimated", rationale = "pair ~120; per prop" }
+"tmotor-p12x4" = { value = 28.0, fidelity = "estimated", rationale = "class: CF prop, per prop" }
+"tmotor-p13x4.4" = { value = 32.0, fidelity = "estimated", rationale = "class: CF prop, per prop" }
+"tmotor-p15x5" = { value = 38.0, fidelity = "estimated", rationale = "class: CF prop, per prop" }
+"tmotor-p17x5.8" = { value = 45.0, fidelity = "estimated", rationale = "class: CF prop, per prop" }
+"tmotor-p18x6.1" = { value = 52.0, fidelity = "estimated", rationale = "class: polished CF prop, per prop" }
+"tmotor-p21x6.3" = { value = 70.0, fidelity = "estimated", rationale = "class: large CF prop, per prop" }
+"bluerobotics-t200-propeller" = { value = 10.0, fidelity = "estimated", rationale = "sold as CW/CCW set; per prop" }
+"qx-80mm-12-blade-edf-fan" = { value = 15.0, fidelity = "estimated", rationale = "class: 80 mm EDF rotor" }
+"qx-80mm-12-blade-edf-duct" = { value = 15.0, fidelity = "estimated", rationale = "class: 80 mm EDF housing" }
+"generic-4blade-propeller-550" = { value = 2500.0, fidelity = "estimated", rationale = "scaled from mass: 22 kg bronze marine prop" }
+
+# --- batteries, LiPo / LiHV ---
+"cnhl-2400mah-4s-lihv-120c-xt60" = { value = 38.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 2400 mAh LiHV" }
+"cnhl-3200mah-3s-lihv-120c-xt60" = { value = 36.0, fidelity = "estimated", rationale = "scaled from capacity: 3S 3200 mAh LiHV" }
+"cnhl-5200mah-6s-90c-ec5" = { value = 85.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 5200 mAh LiPo" }
+"cnhl-6200mah-3s2p-100c-ec5" = { value = 60.0, fidelity = "estimated", rationale = "scaled from capacity: 3S 6200 mAh hardcase" }
+"cnhl-6200mah-4s2p-100c-ec5" = { value = 75.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 6200 mAh hardcase" }
+"cnhl-6200mah-6s-90c-xt90" = { value = 100.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 6200 mAh LiPo" }
+"cnhl-6700mah-6s-lihv-120c-xt90" = { value = 110.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 6700 mAh LiHV" }
+"cnhl-7800mah-6s-lihv-120c-xt90" = { value = 130.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 7800 mAh LiHV" }
+"cnhl-8500mah-4s-lihv-120c-xt90" = { value = 100.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 8500 mAh LiHV" }
+"cnhl-8500mah-6s-lihv-120c-xt90" = { value = 150.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 8500 mAh LiHV" }
+"gensace-5300mah-3s-60c-ec5" = { value = 38.0, fidelity = "estimated", rationale = "scaled from capacity: 3S 5300 mAh" }
+"gnb-3000mah-4s-100c-xt60" = { value = 40.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 3000 mAh" }
+"gnb-4000mah-6s-70c-tplug" = { value = 82.44, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, rcdrone.top from-price; rotorama EUR 79.49" }
+"gnb-5200mah-6s-110c-xt90s" = { value = 100.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 5200 mAh" }
+"gnb-6500mah-4s-hv-70c-xt90" = { value = 65.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 6500 mAh LiHV" }
+"gnb-8000mah-6s2p-hv-70c-xt90" = { value = 140.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 8000 mAh LiHV" }
+"ovonic-2200mah-4s-120c-xt60" = { value = 25.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 2200 mAh" }
+"ovonic-2200mah-4s-130c-tplug" = { value = 23.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 2200 mAh shorty" }
+"ovonic-3500mah-4s-130c-xt60" = { value = 36.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 3500 mAh" }
+"ovonic-4000mah-4s-130c-xt60" = { value = 42.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 4000 mAh hardcase" }
+"ovonic-4000mah-6s-60c-ec5" = { value = 65.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 4000 mAh" }
+"ovonic-5000mah-3s-120c-xt60" = { value = 40.0, fidelity = "estimated", rationale = "scaled from capacity: 3S 5000 mAh" }
+"ovonic-5200mah-4s-130c-ec5" = { value = 50.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 5200 mAh" }
+"ovonic-6500mah-6s-150c-xt90s" = { value = 100.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 6500 mAh" }
+"ovonic-8000mah-3s-130c-ec5" = { value = 60.0, fidelity = "estimated", rationale = "scaled from capacity: 3S 8000 mAh" }
+"ovonic-8000mah-6s-150c-xt90s" = { value = 120.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 8000 mAh" }
+"tattu-4s-5200mah-35c" = { value = 45.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"tattu-10000mah-4s-25c-noplug" = { value = 90.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 10000 mAh" }
+"tattu-10000mah-6s-25c-xt90" = { value = 150.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 10000 mAh" }
+"tattu-1050mah-4s-95c-xt60" = { value = 22.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 1050 mAh R-Line" }
+"tattu-11000mah-6s-hv-25c-xt90s" = { value = 190.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 11000 mAh HV" }
+"tattu-1300mah-6s-100c-funfly-xt60" = { value = 35.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 1300 mAh" }
+"tattu-1300mah-6s-160c-rline6-xt60" = { value = 45.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 1300 mAh R-Line" }
+"tattu-1400mah-6s-150c-xt60" = { value = 42.99, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, Asylum Xtreme on reach.dog; sellers 40.99-55.49" }
+"tattu-1800mah-4s-75c-xt60" = { value = 28.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 1800 mAh" }
+"tattu-2200mah-6s-150c-rline5-xt60" = { value = 70.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 2200 mAh R-Line" }
+"tattu-2200mah-6s-95c-xt60" = { value = 51.99, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, newbeedrone.com, hobby-addicts.com" }
+"tattu-2s-450mah-75c-jst-syp" = { value = 8.0, fidelity = "estimated", rationale = "scaled from capacity: 2S 450 mAh" }
+"tattu-4500mah-6s-25c-xt60" = { value = 85.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 4500 mAh" }
+"tattu-6000mah-6s-35c-xt60" = { value = 120.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 6000 mAh" }
+"tattu-650mah-3s-75c-xt30" = { value = 12.0, fidelity = "estimated", rationale = "scaled from capacity: 3S 650 mAh" }
+"tattu-8000mah-6s-25c-xt60" = { value = 130.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 8000 mAh G-Tech" }
+"tattu-850mah-4s-95c-xt30" = { value = 20.0, fidelity = "estimated", rationale = "scaled from capacity: 4S 850 mAh R-Line" }
+"tattu-plus-10000mah-6s-25c-as150" = { value = 220.0, fidelity = "estimated", rationale = "scaled from capacity: 6S 10000 mAh smart pack" }
+"torqeedo-deep-blue-battery-40" = { value = 28000.0, fidelity = "estimated", rationale = "class: 38 kWh marine battery, rough" }
+
+# --- batteries, Li-ion packs and cells ---
+"cnhl-12700mah-6s2p-liion-xt90" = { value = 230.0, fidelity = "estimated", rationale = "scaled from Wh: 6S2P 21700 pack" }
+"cnhl-5000mah-4s-liion-xt90" = { value = 70.0, fidelity = "estimated", rationale = "scaled from Wh: 4S 21700 pack" }
+"cnhl-6350mah-6s-liion-xt90" = { value = 130.0, fidelity = "estimated", rationale = "scaled from Wh: 6S 21700 pack" }
+"iflight-fullsend-6s1p-4000mah-liion-40t" = { value = 85.0, fidelity = "estimated", rationale = "scaled from Wh: 6S1P 21700 pack" }
+"iflight-fullsend-6s1p-5000mah-liion-50pl" = { value = 100.0, fidelity = "estimated", rationale = "scaled from Wh: 6S1P 21700 pack" }
+"iflight-fullsend-6s2p-10000mah-liion-50pl" = { value = 190.0, fidelity = "estimated", rationale = "scaled from Wh: 6S2P 21700 pack" }
+"molicel-inr21700-p42a" = { value = 6.0, fidelity = "estimated", rationale = "class: 21700 power cell" }
+"molicel-inr21700-p45b" = { value = 7.0, fidelity = "estimated", rationale = "class: 21700 power cell" }
+"samsung-inr21700-40t" = { value = 5.0, fidelity = "estimated", rationale = "class: 21700 power cell" }
+"sony-us18650vtc6" = { value = 6.0, fidelity = "estimated", rationale = "class: 18650 power cell" }
+
+# --- rocketry ---
+"estes-2302-starter" = { value = 0.6, fidelity = "estimated", rationale = "sold in multi-pack; per igniter" }
+"estes-c6" = { value = 4.7, fidelity = "estimated", rationale = "3-pack ~14; per motor" }
+"estes-e16" = { value = 13.5, fidelity = "estimated", rationale = "2-pack ~27; per motor" }
+"estes-f15" = { value = 19.0, fidelity = "estimated", rationale = "2-pack ~38; per motor" }
+"estes-g40" = { value = 35.0, fidelity = "estimated", rationale = "class: G composite motor, single" }
+"generic-fiberglass-tube-102" = { value = 45.0, fidelity = "estimated", rationale = "class: 4 in fiberglass airframe tube" }
+"generic-fiberglass-tube-140" = { value = 55.0, fidelity = "estimated", rationale = "class: 5.5 in fiberglass airframe tube" }
+"generic-lead-nose-weight-140" = { value = 12.0, fidelity = "estimated", rationale = "scaled from mass: 520 g lead casting" }
+
+# --- marine structure, nav ---
+"aqua-signal-series-25-led-nav-light" = { value = 95.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"generic-catamaran-hull-1200" = { value = 300.0, fidelity = "estimated", rationale = "class: small plastic catamaran hull pair" }
+"generic-catamaran-hull-1200-skeg" = { value = 330.0, fidelity = "estimated", rationale = "class: catamaran hull plus skegs" }
+"generic-helipad-deck-3m" = { value = 4500.0, fidelity = "estimated", rationale = "scaled from mass: 180 kg aluminium deck" }
+"generic-osv-deckhouse" = { value = 15000.0, fidelity = "estimated", rationale = "scaled from mass: 900 kg FRP wheelhouse" }
+"generic-osv-hull-1260" = { value = 110000.0, fidelity = "estimated", rationale = "scaled from mass: 8.4 t aluminium hull" }
+"generic-sensor-mast-300" = { value = 8.0, fidelity = "estimated", rationale = "class: 25 mm aluminium tube cut piece" }
+"generic-sensor-mast-450" = { value = 10.0, fidelity = "estimated", rationale = "class: 25 mm aluminium tube cut piece" }
+
+# --- servos, actuators ---
+"cubemars-ak60-6-v3-kv80" = { value = 330.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"cubemars-ake60-8-kv80" = { value = 250.0, fidelity = "estimated", rationale = "class: QDD actuator no driver" }
+"dsservo-ds3218mg-pro" = { value = 14.0, fidelity = "estimated", rationale = "class: 20 kg budget servo" }
+"feetech-fs0307" = { value = 8.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"feetech-fs0403" = { value = 10.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"feetech-hl3606" = { value = 22.0, fidelity = "estimated", rationale = "class: Feetech HL bus servo" }
+"feetech-hl3612" = { value = 40.0, fidelity = "estimated", rationale = "class: Feetech HL bus servo" }
+"feetech-scs15-c022" = { value = 25.0, fidelity = "estimated", rationale = "class: Feetech SCS bus servo" }
+"feetech-sts3215-c018" = { value = 17.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"feetech-sts3215-c044" = { value = 15.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"feetech-sts3215-c046" = { value = 15.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"feetech-sts3215-c001" = { value = 15.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"feetech-sts3250" = { value = 38.0, fidelity = "estimated", rationale = "class: Feetech 50 kg.cm bus servo" }
+"hitec-hs-225mg" = { value = 28.0, fidelity = "estimated", rationale = "class: Hitec mini MG servo" }
+"hitec-hs-311" = { value = 14.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-322hd" = { value = 14.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-422" = { value = 17.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-425bb" = { value = 22.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-485hb" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-5055mg" = { value = 22.0, fidelity = "estimated", rationale = "class: Hitec sub-micro MG servo" }
+"hitec-hs-5065mg" = { value = 33.0, fidelity = "estimated", rationale = "class: Hitec sub-micro digital MG" }
+"hitec-hs-5245mg" = { value = 38.0, fidelity = "estimated", rationale = "class: Hitec mini digital MG" }
+"hitec-hs-5585mh" = { value = 60.0, fidelity = "estimated", rationale = "class: Hitec HV digital standard" }
+"hitec-hs-625mg" = { value = 38.0, fidelity = "estimated", rationale = "class: Hitec standard digital MG" }
+"hitec-hs-645mg" = { value = 40.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-65hb" = { value = 20.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-65mg" = { value = 26.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-7245mh" = { value = 70.0, fidelity = "estimated", rationale = "class: Hitec HV digital mini" }
+"hitec-hs-755hb" = { value = 38.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-7950th" = { value = 90.0, fidelity = "estimated", rationale = "class: Hitec HV titanium-gear digital" }
+"hitec-hs-7955tg" = { value = 100.0, fidelity = "estimated", rationale = "class: Hitec HV titanium-gear digital" }
+"hitec-hs-805bb" = { value = 60.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"hitec-hs-82mg" = { value = 20.0, fidelity = "estimated", rationale = "known list price ~2023" }
+"savox-sb-2290sg" = { value = 145.0, fidelity = "estimated", rationale = "class: Savox HV brushless servo" }
+"towerpro-mg996r" = { value = 6.0, fidelity = "estimated", rationale = "class: budget metal-gear servo" }
+"robotis-dynamixel-xc430-w150" = { value = 130.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xl330-m077" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xl330-m288" = { value = 25.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xl430-w250" = { value = 50.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xm430-w210" = { value = 250.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xm430-w350" = { value = 270.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xm540-w150" = { value = 430.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-dynamixel-xm540-w270" = { value = 430.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-xl330-m077-t" = { value = 27.49, fidelity = "estimated", rationale = "retail snapshot 2026-11-06, robotis.us" }
+"robotis-xl330-m288-t" = { value = 27.49, fidelity = "estimated", rationale = "same price as the M077-T on robotis.us; this model's page not read" }
+"robotis-xl430-w250-t" = { value = 50.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"robotis-u2d2" = { value = 35.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"waveshare-bus-servo-adapter-a" = { value = 8.0, fidelity = "estimated", rationale = "class: bus servo adapter board" }
+
+# --- steppers, gearmotors, drivers ---
+"pololu-1206-nema11-28x45" = { value = 17.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-1207-nema14-35x26" = { value = 14.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-2268-nema17-42x38-leadscrew-28cm" = { value = 50.0, fidelity = "estimated", rationale = "class: NEMA17 with lead screw" }
+"pololu-2689-nema17-42x38-leadscrew-18cm" = { value = 47.0, fidelity = "estimated", rationale = "class: NEMA17 with lead screw" }
+"pololu-2690-nema17-42x38-leadscrew-38cm" = { value = 53.0, fidelity = "estimated", rationale = "class: NEMA17 with lead screw" }
+"pololu-2278-sanyo-pancake-42x24.5-enc" = { value = 120.0, fidelity = "estimated", rationale = "class: Sanyo pancake stepper with encoder" }
+"pololu-2279-sanyo-pancake-42x31.5-enc" = { value = 140.0, fidelity = "estimated", rationale = "class: Sanyo pancake stepper with encoder" }
+"pololu-2296-sanyo-pancake-42x18.6" = { value = 45.0, fidelity = "estimated", rationale = "class: Sanyo pancake stepper" }
+"pololu-2297-sanyo-pancake-50x11" = { value = 40.0, fidelity = "estimated", rationale = "class: Sanyo pancake stepper" }
+"pololu-2298-sanyo-pancake-42x11.6" = { value = 40.0, fidelity = "estimated", rationale = "class: Sanyo pancake stepper" }
+"pololu-2299-sanyo-pancake-50x16" = { value = 45.0, fidelity = "estimated", rationale = "class: Sanyo pancake stepper" }
+"soyo-sy20sth30-0604a-nema8" = { value = 12.0, fidelity = "estimated", rationale = "class: NEMA8 stepper" }
+"soyo-sy28sth32-0674a-nema11" = { value = 12.0, fidelity = "estimated", rationale = "class: NEMA11 stepper" }
+"soyo-sy35st28-0504a-nema14" = { value = 12.0, fidelity = "estimated", rationale = "class: NEMA14 stepper" }
+"soyo-sy35st36-1004a-nema14" = { value = 14.0, fidelity = "estimated", rationale = "class: NEMA14 stepper" }
+"soyo-sy42sth38-1684a-nema17" = { value = 12.0, fidelity = "estimated", rationale = "class: NEMA17 stepper, cheap" }
+"soyo-sy42sth47-1206a-nema17" = { value = 15.0, fidelity = "estimated", rationale = "class: NEMA17 stepper, cheap" }
+"soyo-sy57sth41-1006a-nema23" = { value = 23.0, fidelity = "estimated", rationale = "class: NEMA23 stepper, cheap" }
+"soyo-sy57sth56-2006a-nema23" = { value = 29.0, fidelity = "estimated", rationale = "class: NEMA23 stepper, cheap" }
+"trinamic-qsh4218-35-10-027" = { value = 27.0, fidelity = "estimated", rationale = "class: Trinamic NEMA17" }
+"trinamic-qsh4218-41-10-035" = { value = 30.0, fidelity = "estimated", rationale = "class: Trinamic NEMA17" }
+"trinamic-qsh4218-51-10-049" = { value = 33.0, fidelity = "estimated", rationale = "class: Trinamic NEMA17" }
+"pololu-25d-34-1-hp-12v-3204" = { value = 45.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-25d-99-1-mp-12v-3231" = { value = 38.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-37d-131-1-12v-4746" = { value = 55.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-37d-19-1-12v-4741" = { value = 48.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-37d-19-1-12v-4751" = { value = 60.0, fidelity = "estimated", rationale = "class: 37D with encoder" }
+"pololu-37d-30-1-12v-4742" = { value = 48.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-micro-metal-hp-6v-100-1" = { value = 17.0, fidelity = "estimated", rationale = "class: Pololu micro metal HP" }
+"pololu-micro-metal-hp-6v-298-1" = { value = 17.0, fidelity = "estimated", rationale = "class: Pololu micro metal HP" }
+"pololu-micro-metal-hp-6v-30-1" = { value = 17.0, fidelity = "estimated", rationale = "class: Pololu micro metal HP" }
+"pololu-micro-metal-hp-6v-50-1" = { value = 17.0, fidelity = "estimated", rationale = "class: Pololu micro metal HP" }
+"pololu-micro-metal-hpcb-12v-100-1" = { value = 19.0, fidelity = "estimated", rationale = "class: Pololu micro metal HPCB" }
+"pololu-micro-metal-lp-6v-100-1" = { value = 15.0, fidelity = "estimated", rationale = "class: Pololu micro metal LP" }
+"pololu-micro-metal-mp-6v-100-1" = { value = 15.0, fidelity = "estimated", rationale = "class: Pololu micro metal MP" }
+"pololu-a4988-carrier" = { value = 6.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-drv8825-carrier" = { value = 9.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-drv8833-carrier" = { value = 5.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"pololu-tb6612fng-carrier" = { value = 5.0, fidelity = "estimated", rationale = "known list price ~2024" }
+"trinamic-tmc2209" = { value = 3.5, fidelity = "estimated", rationale = "class: stepper driver IC, single qty" }
+"trinamic-tmc2226" = { value = 3.0, fidelity = "estimated", rationale = "class: stepper driver IC, single qty" }
+
+# --- misc small ---
+"eplzon-12v-5v-reducer" = { value = 8.0, fidelity = "estimated", rationale = "class: generic buck module" }
+"facmogu-5v-4a-psu" = { value = 10.0, fidelity = "estimated", rationale = "class: 5V 4A wall adapter" }
+"so101-screw-m2x6" = { value = 0.03, fidelity = "estimated", rationale = "class: single small screw, bulk-pack share" }
+"so101-screw-m3x6" = { value = 0.04, fidelity = "estimated", rationale = "class: single small screw, bulk-pack share" }
+
+# --- not purchasable: reference data ---
+"lipo-cell-ocv" = { not_for_sale = true, rationale = "battery.cell_curve reference data" }
+"uiuc-apc-sf-10x4.7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-10x5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-10x7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-11x10" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-11x5.5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-11x7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-11x8" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-12x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-12x8" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-13x6.5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-14x12" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-14x7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-16x10" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-16x8" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-17x12" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-18x10" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-19x12" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-20x10" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-21x13" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-8x4" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-8x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-8x8" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-9x4.5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-9x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apce-9x7.5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-10x7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-11x4.7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-11x7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-8x3.8" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-8x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-9x4.7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-9x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsf-9x7.5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsp-10x5" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-apcsp-9x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-grcp-10x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-grcp-9x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-ma-9x6" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }
+"uiuc-mas-10x7" = { not_for_sale = true, rationale = "UIUC prop wind-tunnel reference table" }

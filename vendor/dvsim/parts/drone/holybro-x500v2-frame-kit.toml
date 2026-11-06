@@ -1,0 +1,64 @@
+id = "holybro-x500v2-frame-kit"
+ports_note = "Aggregate record of published kit numbers (wheelbase, weight, flight-time targets); it is not instantiated, the vehicle is assembled from its parts (bottom/top plate, arm connectors, arm tubes, landing gear, rail rods), so it has no ports."
+name = "Holybro X500 V2 frame kit (SKU 30120)"
+category = "frame"
+vendor = "Holybro"
+part_number = "30120"
+url = "https://shop.holybro.com/x500-v2-kit_p1288.html"
+
+# Notes: 'Weight 610 g' is listed by Holybro under the frame-kit Mechanical Specification and is ambiguous
+# (frame only vs. frame plus pre-installed motors/ESCs/PDB); see docs/research/x500v2-airframe.md.
+# Flight time / payload are Holybro's published numbers and serve as validation targets.
+[params]
+wheelbase            = { value = 0.5, unit = "m", src = "S1", fidelity = "datasheet" }
+frame_body_size      = { value = 0.144, unit = "m", src = "S1", fidelity = "datasheet" }
+plate_thickness      = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+plate_spacing        = { value = 0.028, unit = "m", src = "S1", fidelity = "datasheet" }
+landing_gear_height  = { value = 0.215, unit = "m", src = "S1", fidelity = "datasheet" }
+motor_mount_pattern  = { value = 0.016, unit = "m", src = "S1", fidelity = "datasheet" }
+rail_rod_diameter    = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+rail_rod_length      = { value = 0.250, unit = "m", src = "S1", fidelity = "datasheet" }
+published_weight     = { value = 0.610, unit = "kg", src = "S1", fidelity = "datasheet" }
+validation_hover_flight_time = { value = 1080, unit = "s", src = "S1", fidelity = "datasheet" }
+validation_hover_battery_capacity = { value = 18000, unit = "C", src = "S1", fidelity = "datasheet" }
+max_payload          = { value = 1.0, unit = "kg", src = "S1", fidelity = "datasheet" }
+frame_kit_shipping_weight = { value = 0.8, unit = "kg", src = "S2", fidelity = "datasheet" }
+arf_kit_shipping_weight   = { value = 1.5, unit = "kg", src = "S2", fidelity = "datasheet" }
+
+[params.motor_mount_pattern_alt]
+value = 0.019
+unit = "m"
+src = "S2"
+fidelity = "datasheet"
+
+[params.motor_xy_offset]
+value = 0.17678
+unit = "m"
+fidelity = "derived"
+derivation = "Square X quad: each motor sits on a diagonal at wheelbase/2 = 0.25 m from the centre, so |x| = |y| = 0.25 / sqrt(2) = 0.17678 m. Cross-check: vendor STEP motor solids at x,z = +-177.1 mm (OpenCascade centre of mass)."
+
+[params.recommended_battery_capacity_min]
+value = 10800
+unit = "C"
+src = "S2"
+fidelity = "datasheet"
+
+[params.recommended_battery_capacity_max]
+value = 18000
+unit = "C"
+src = "S2"
+fidelity = "datasheet"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs), Mechanical Specification"
+accessed = "2026-10-06"
+quote = "Wheelbase: 500mm * Motor mount pattern: 16x16mm * Frame Body: 144x144mm, 2mm thick * Landing gear height: 215mm * Space between top and bottom plates: 28mm * Weight: 610g * Flight time: ~18 minutes hover with no additional payload. Tested with a 5000mAh Battery. * Max payload: ~1kg (w/ 4S 5000 mAh battery @70% Throttle)"
+
+[[sources]]
+id = "S2"
+url = "https://shop.holybro.com/x500-v2-kit_p1288.html"
+title = "X500 V2 Kits shop page (Holybro store): X500 V2 Frame Kit Details and Mechanical Specification"
+accessed = "2026-10-06"
+quote = "Motor mount pattern: 16x16mm & 19x19mm ... Payload: 1500g (without Battery, 70% Throttle) ... Battery Recommendation: 4S 3000-5000mAh 20C+ with XT60 Lipo Battery (Not Included) ... Dual 10mm Ø rod x 250 mm long rail mounting system  (shipping weights are the Shopify variant weights in grams: Frame Kit SKU 30120 \"weight\":800, ARF Kit SKU 30125 \"weight\":1500)"

@@ -1,0 +1,76 @@
+id = "generic-printed-tail-fins-140"
+name = "Four small swept tail fins for a 5.5 in (139.7 mm) tube, 1.5 mm PLA, root chord 0.10 m, span 0.07 m (design of this repo)"
+category = "rocket.fin-set"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# Part frame: origin on the axis at the root chord's trailing-edge plane (the tube's aft end), +z towards the nose. Fin k points radially at 45 deg + k x 90 deg
+# (between the four landing legs). Trapezoid: root chord Cr = 0.10 m (z in [0, 0.10]), tip chord Ct = 0.05 m, span s = 0.07 m, tip leading edge swept 0.05 m behind the
+# root's. Purpose: NOT to make the rocket stable but to bring the aerodynamic centre of pressure of the nose-plus-fins vehicle back to within a centimetre of the centre of
+# gravity (python/dvsim/design/barrowman.fins: CNa = 2.50 / rad on the 5.5 in body area, fin CP 0.0583 m above the tube's aft end), so that the unpowered coast between the
+# ascent burnout and the landing burn, nose-first and then tail-first, is nearly neutral: without the fins the nose-first weathercock torque in a 1.5 m/s wind turned the
+# vehicle by 20-35 deg before the landing motor lit (docs/lander.md). The collision / mass shape is one rectangle of the same area per fin.
+[params]
+fin_count     = { value = 4, unit = "1", fidelity = "estimated", rationale = "Design choice: four fins, the common layout, one between each pair of legs." }
+root_chord    = { value = 0.10, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+tip_chord     = { value = 0.05, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+span          = { value = 0.07, unit = "m", fidelity = "estimated", rationale = "Design choice: half a body diameter; sized with the fin CNa so that the centre of pressure falls at the centre of gravity (see above), and short enough to stay inside the 0.155 m radius of the landing feet." }
+sweep         = { value = 0.05, unit = "m", fidelity = "estimated", rationale = "Design choice: leading-edge offset of the tip chord behind the root chord's leading edge." }
+thickness     = { value = 0.0015, unit = "m", fidelity = "estimated", rationale = "Design choice: 1.5 mm printed plate (flutter is not modelled)." }
+mass = { value = 0.0371, unit = "kg", fidelity = "derived", derivation = "Fin area (0.10 + 0.05) / 2 x 0.07 m = 0.00525 m2, x 1.5 mm = 7.875e-6 m3, x PLA density 1240 kg/m3 (src S1) x printed factor 0.95 (infill / perimeter allowance, estimated as in parts/rocket/generic-printed-fin-set-4) = 0.00928 kg per fin, x 4 = 0.0371 kg." }
+
+# One rectangle per fin: span 0.07 m radially (from the tube wall at 0.06985 m), mean chord 0.075 m, centred on the fin's centroid height z = 0.05 m. Fins at 45, 135, 225, 315 deg.
+[[geometry.shapes]]
+shape = "box"
+size = [0.035, 0.00075, 0.0375]
+pos = [0.0741, 0.0741, 0.05]
+quat = [0.9238795325, 0.0, 0.0, 0.3826834324]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.035, 0.00075, 0.0375]
+pos = [-0.0741, 0.0741, 0.05]
+quat = [0.3826834324, 0.0, 0.0, 0.9238795325]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.035, 0.00075, 0.0375]
+pos = [-0.0741, -0.0741, 0.05]
+quat = [-0.3826834324, 0.0, 0.0, 0.9238795325]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.035, 0.00075, 0.0375]
+pos = [0.0741, -0.0741, 0.05]
+quat = [-0.9238795325, 0.0, 0.0, 0.3826834324]
+material = "pla"
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "tube.140"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+fidelity = "estimated"
+rationale = "Root-chord trailing-edge plane on the tube's aft end (the fins are bonded to the tube wall; fillets not modelled)."
+
+[visual]
+rationale = "Design of this repo: swept trapezoidal fins from the part's own root / tip chord, span, sweep and thickness, bonded to a thin printed collar over the tube (the collar is cosmetic, outside the mass model)."
+
+[[visual.elements]]
+gen = "fin_set"
+params = { tube_radius = 0.06985 }
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

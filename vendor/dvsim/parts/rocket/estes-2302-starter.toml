@@ -1,0 +1,40 @@
+id = "estes-2302-starter"
+name = "Estes Model Rocket Starter 2302 (electric igniter, formerly 2301)"
+category = "rocket.igniter"
+vendor = "Estes Industries"
+part_number = "2302"
+url = "https://protinkertoys.com/products/model-rocket-starters-2302-estes"
+
+# One igniter per motor, pushed into the nozzle and held by a plug. The lander's pyro channel is a logic-level N-FET from the 2S pack through the igniter: with the pack
+# at 7.4 V and the 0.69 ohm igniter (lead wires included) the current is about 7.4 / (0.69 + 0.116 pack + 0.05 FET and wiring) = 8.6 A, above the 2 A all-fire figure.
+# Part frame: origin at the igniter tip, +z along the wire.
+[visual]
+rationale = "Placeholder: a small black strip the size of the igniter's head and lead-in (60 x 6 x 2 mm, estimated); the part has no [geometry]."
+
+[[visual.elements]]
+gen = "box_device"
+params = { length = 0.06, width = 0.006, height = 0.002 }
+
+[params]
+mass                = { value = 0.001, unit = "kg", fidelity = "estimated", rationale = "Two lead strips and the bridge: about 1 g (not published); counted as one igniter with its plug." }
+voltage_min         = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+voltage_max         = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+no_fire_current     = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }
+all_fire_current    = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+resistance          = { value = 0.6904, unit = "ohm", src = "S1", fidelity = "datasheet" }
+pulse_time          = { value = 0.5, unit = "s", fidelity = "estimated", rationale = "No firing time is published. The firmware holds the FET on for 0.5 s: a pulse a few times longer than the typical hobby launch controller's contact time is enough for a bridgewire at 8 A; the motor's own command-to-thrust delay (estes-e16 ignition_delay) is a separate figure." }
+
+[[ports]]
+name = "leads"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[sources]]
+id = "S1"
+url = "https://protinkertoys.com/products/model-rocket-starters-2302-estes"
+title = "Pro Tinker Toys - Model Rocket Starters 2302 (Estes), product page"
+accessed = "2026-10-08"
+quote = "Requires 6 to 12 volts. Maximum no-fire current: 500mA. Minimum all-fire current: 2 A. Resistance including lead wires: 0.6904"

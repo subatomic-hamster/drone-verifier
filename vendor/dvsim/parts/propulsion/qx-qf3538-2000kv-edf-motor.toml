@@ -1,0 +1,106 @@
+id = "qx-qf3538-2000kv-edf-motor"
+name = "QX-Motor QF3538 2000KV inrunner (12N10P, 6S) for 80 mm EDFs"
+category = "motor.bldc"
+vendor = "QX-Motor"
+part_number = "QF3538-2000KV"
+url = "https://www.qx-motor.com/products/80mm-ducted-fan-edf-jet-12-blade-cw-ccw-with-qx-motor-6s-12s-motor-engine-power-120a-esc-for-fms-freewing-rc-airplane-model"
+
+# The motor of the 80 mm 12-blade ducted fan sold as one set (parts/propulsion/qx-80mm-12-blade-edf-fan, -duct). Part frame: origin at the centre of the
+# rear mounting face, +z along the shaft towards the fan; the can spans z = 0 .. 0.038 (the '3538' length by naming convention, estimated), the shaft
+# stub ends at 0.043. Only kv, mass, diameter, shaft, configuration and the maximum current / power are published by the vendor; the winding
+# resistance, no-load current and rotor inertia are estimates (tagged below). The vendor's throttle table (qx-80mm-12-blade-edf-fan) constrains
+# them together with the fan.
+
+[visual]
+rationale = "Inrunner can inside the duct (hidden when the duct is opaque); the generic brushless-motor family is drawn at the part's diameter and length."
+
+[[visual.elements]]
+gen = "bldc_outrunner"
+
+[params]
+mass          = { value = 0.335, unit = "kg", src = "S1", fidelity = "datasheet" }        # "Weight 335g"
+kv            = { value = 2000, unit = "rpm/V", src = "S1", fidelity = "datasheet" }       # "KV (rpm) 2000KV"
+diameter      = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }          # "Motor diameter 35mm"
+length_body   = { value = 0.038, unit = "m", fidelity = "estimated", rationale = "The vendor lists no motor length. '3538' follows the usual stator diameter x length naming of hobby motors (35 mm x 38 mm); the can may be a little longer than the stator. Not verified against a teardown." }
+shaft_diameter = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }         # "Shaft diameter 5.0mm"
+poles_config  = { value = "12N10P", unit = "text", src = "S1", fidelity = "datasheet" }
+p_max_cont    = { value = 2800.0, unit = "W", src = "S1", fidelity = "datasheet" }         # "Max continuous power/10S 2800W" (the column header is the vendor's, see the note on S1)
+i_max_cont    = { value = 112.0, unit = "A", src = "S1", fidelity = "datasheet" }          # "Max continuous current/10S 112A"
+esc_recommended = { value = 120.0, unit = "A", src = "S1", fidelity = "datasheet" }        # "Recommended ESC 120A"
+kt            = { value = 0.0047746, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2 pi Kv) = 60 / (2 pi 2000) = 0.0047746 N*m/A (SI torque constant equals 1/Kv with Kv in rad/s per V)." }
+r_winding     = { value = 0.010, unit = "ohm", fidelity = "estimated", rationale = "Not published. 10 mOhm line-to-line (the DC-equivalent winding resistance of the device model) is the order of 35 mm 12N10P 2000 KV inrunners; it is the one free parameter of the vendor's throttle table, because at 105 A the I R drop of 1.05 V moves the fan speed 4.6 % and so the derived C_T by 9 % (qx-80mm-12-blade-edf-fan, derivation of ct_static). +-30 %." }
+i0            = { value = 2.0, unit = "A", fidelity = "estimated", rationale = "Not published. Bearing and iron loss of a 35 mm inrunner at 24 V: 1.5-3 A (the fan's windage is in the fan's C_Q, not here). Unverified; 2 A x 22 V = 44 W is 1.8 % of the 2.5 kW full-throttle input, so the throttle table cannot resolve it." }
+j_rotor_bell  = { value = 4.0e-6, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published. Inrunner rotor (magnet sleeve + shaft, ~55 g at an effective radius of 8.5 mm: 1/2 m r^2 = 2.0e-6, doubled for the sleeve and balancing disc). The fan carries ten times this inertia (qx-80mm-12-blade-edf-fan)." }
+
+[geometry]
+shape = "cylinder"
+size = [0.0175, 0.019]
+pos = [0.0, 0.0, 0.019]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Rear face seat: the motor is pressed into the duct's rear motor cage (the vendor's page shows no hole pattern); a flat seat on the duct's motor_seat port."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.5"
+gender = "male"
+pos = [0.0, 0.0, 0.043]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Shaft diameter 5.0 mm is the vendor's; the 5 mm stub beyond the 38 mm can (fan hub seat) is an estimate."
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+lead = {}   # the three phase leads ship on the motor and are in the 335 g; length not published
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V from S1 '6SLipo'." }
+i_max = { value = 112.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "i_max is the vendor's maximum continuous current; the three leads go to the ESC motor_out."
+
+# Pin level: three phase leads. S1 does not describe the leads (gauge, length, connector).
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0175, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives no lead gauge, length, connector or phase labels: three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention (swapping two reverses the motor)."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 112.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 112.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 112.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.qx-motor.com/products/80mm-ducted-fan-edf-jet-12-blade-cw-ccw-with-qx-motor-6s-12s-motor-engine-power-120a-esc-for-fms-freewing-rc-airplane-model"
+title = "QX-Motor - 80mm Ducted Fan EDF Jet 12 blade CW CCW With QX-MOTOR 6S 12S Motor (product page, specification table)"
+accessed = "2026-10-08"
+quote = "Model QF3538 | KV (rpm) 2000KV | Configuration 12N10P | Shaft diameter 5.0mm | Motor diameter 35mm | Weight 335g | No. of cells 6SLipo | Max continuous power/10S 2800W | Max continuous current/10S 112A | Recommended ESC 120A"

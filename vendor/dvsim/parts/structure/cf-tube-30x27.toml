@@ -1,0 +1,37 @@
+id = "cf-tube-30x27"
+name = "Carbon fibre tube 30 mm OD x 27 mm ID (1.5 mm wall), woven-finish roll-wrapped (Easy Composites)"
+category = "structure.tube"
+vendor = "Easy Composites"
+part_number = "30mm Woven Finish Carbon Fibre Tube"
+url = "https://www.easycomposites.eu/30mm-woven-finish-carbon-fibre-tube"
+
+[params]
+outer_diameter   = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+inner_diameter   = { value = 0.027, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_thickness   = { value = 0.0015, unit = "m", src = "S1", fidelity = "datasheet" }
+mass_per_m       = { value = 0.1938, unit = "kg/m", src = "S1", fidelity = "datasheet" }
+youngs_modulus_axial = { value = 64e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[params.second_moment_area]
+value = 1.3674e-8
+unit = "m^4"
+fidelity = "derived"
+derivation = "Hollow circular section I = pi/64 x (OD^4 - ID^4) with OD = 0.030 m and ID = 0.027 m from S1 (nominal dimensions)."
+
+[[ports]]
+name = "tube"
+kind = "mech"
+type = "tube.30"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Axisymmetric (360 = discrete stand-in for continuous)"
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/30mm-woven-finish-carbon-fibre-tube"
+title = "30mm Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table"
+accessed = "2026-10-07"
+quote = "Length | 1000 | mm ... Wall Thickness | 1.5 | mm ... Outside Diameter (OD) | 30 | mm ... Inside Diameter (ID) | 27 | mm ... Weight per metre | 193.8 | g ... Tensile Modulus (lengthways) | 64 | GPa"

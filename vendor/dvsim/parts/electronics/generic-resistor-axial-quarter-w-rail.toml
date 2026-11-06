@@ -1,0 +1,64 @@
+id = "generic-resistor-axial-quarter-w-rail"
+name = "Axial 1/4 W resistor, rail-side lead on a power port (top resistor of the key / E-stop sense dividers of cuas-lite; value set per instance)"
+category = "passive.resistor"
+vendor = "generic (resistor assortment)"
+part_number = "1/4 W axial resistor"
+url = "https://www.adafruit.com/product/2784"
+
+# The same physical resistor as parts/electronics/generic-resistor-axial-quarter-w.toml, with its rail-side lead (pin UP.1) on a POWER-kind port so that it can be wired to a power port (the key switch and E-stop
+# contacts, 12 V) while the signal-side lead (UP.2) is a signal port. The design rules join ports of one kind only, and an instance whose power ports are all unwired is an error, so the general resistor keeps
+# signal-kind ports and this part carries the two uses that tap a 12 V node. The instance sets `resistance`.
+# Part frame: origin at the body centre, axis along z, leads leave at +-z.
+
+[params]
+resistance  = { value = 33000.0, unit = "ohm", fidelity = "estimated", rationale = "Default value (33 k, the top resistor of a 33 k / 10 k divider); every instance sets its own." }
+power_rating = { value = 0.25, unit = "W", fidelity = "estimated", rationale = "Typical axial through-hole rating (1/4 W); not read from a data sheet." }
+mass        = { value = 0.0002, unit = "kg", fidelity = "estimated", rationale = "A 1/4 W axial resistor weighs a few tenths of a gram (typical); not measured." }
+length      = { value = 0.0063, unit = "m", fidelity = "estimated", rationale = "Typical body length of a 1/4 W axial resistor." }
+width       = { value = 0.0024, unit = "m", fidelity = "estimated", rationale = "Typical body diameter." }
+height      = { value = 0.0024, unit = "m", fidelity = "estimated", rationale = "Typical body diameter." }
+price   = { value = 0.05, unit = "USD", fidelity = "estimated", rationale = "About 0.05 USD each in a 1/4 W assortment kit or a 100-pack from a hobby vendor; the listing was not fetched." }
+
+[[ports]]
+name = "rail"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["UP.1"]
+v_max = { value = 200.0, unit = "V", fidelity = "estimated", rationale = "Typical working voltage of a 1/4 W axial resistor (about 200-250 V); not read from a data sheet." }
+note = "Rail-side lead: the 12 V node being sensed."
+
+[[ports]]
+name = "node"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["UP.2"]
+note = "Signal-side lead: the divider midpoint."
+
+[[connectors]]
+id = "UP"
+name = "axial leads, rail-side view (rail, signal)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.0032]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0063
+fidelity = "estimated"
+rationale = "Generic axial part: two leads, interchangeable, one at each body end."
+pose_rationale = "Both leads drawn at the body ends 6.3 mm apart (typical 1/4 W body length)."
+pins = [
+  { number = 1, name = "RAIL", kind = "power", dir = "in" },
+  { number = 2, name = "SIG", kind = "signal", dir = "io" },
+]
+
+[visual]
+rationale = "Tan axial resistor body drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"

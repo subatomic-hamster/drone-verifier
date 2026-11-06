@@ -1,0 +1,87 @@
+id = "estes-f15"
+name = "Estes F15 black-powder model rocket motor (29 x 114 mm)"
+category = "motor.solid"
+vendor = "Estes Industries"
+part_number = "F15"
+url = "https://www.thrustcurve.org/motors/Estes/F15/"
+
+# Part frame: origin on the motor axis at the nozzle (aft) face, +z = thrust direction (towards the rocket's nose). The nozzle port's axis is
+# the thrust direction (the solid_motor device's site +z), like the launcher's muzzle port.
+# Thrust curve: NAR certification data as a RASP .eng file (thrustcurve.org simfile, source "cert"); the curve is the file's 26 points,
+# thrust ramps from (0 s, 0 N) to the first point. Delivered impulse of the table (trapezoid) = 49.61 N s.
+[params]
+mass                = { value = 0.103, unit = "kg", src = "S1", fidelity = "datasheet" }
+propellant_mass     = { value = 0.060, unit = "kg", src = "S1", fidelity = "datasheet" }
+diameter            = { value = 0.029, unit = "m", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.114, unit = "m", src = "S1", fidelity = "datasheet" }
+total_impulse_cert  = { value = 49.6, unit = "N*s", src = "S2", fidelity = "datasheet" }
+avg_thrust_cert     = { value = 14.4, unit = "N", src = "S2", fidelity = "datasheet" }
+max_thrust_cert     = { value = 25.3, unit = "N", src = "S2", fidelity = "datasheet" }
+burn_time_cert      = { value = 3.5, unit = "s", src = "S2", fidelity = "datasheet" }
+ignition_delay      = { value = 0.3, unit = "s", fidelity = "estimated", rationale = "No published value. Estes Solar igniters light a black-powder motor within a fraction of a second of the launch-controller current; 0.3 s is a design choice for the command-to-first-thrust time (the curve itself starts at 0.148 s)." }
+
+[tables.thrust_curve]
+columns = ["time_s", "thrust_N"]
+rows = [
+  [0.148, 7.638], [0.228, 12.253], [0.294, 16.391], [0.353, 20.210], [0.382, 22.756], [0.419, 25.260],
+  [0.477, 23.074], [0.520, 20.845], [0.593, 19.093], [0.688, 17.500], [0.855, 16.225], [1.037, 15.427],
+  [1.205, 14.948], [1.423, 14.627], [1.452, 15.741], [1.503, 14.785], [1.736, 14.623], [1.955, 14.303],
+  [2.210, 14.141], [2.494, 13.819], [2.763, 13.338], [3.120, 13.334], [3.382, 13.013], [3.404, 9.352],
+  [3.418, 4.895], [3.450, 0.000],
+]
+src = "S1"
+fidelity = "datasheet"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0145, 0.057]
+pos = [0.0, 0.0, 0.057]
+zaxis = [0.0, 0.0, 1.0]
+
+# Case seat: the motor sits in a motor-mount tube / gimbal cradle of this bore.
+[[ports]]
+name = "case"
+kind = "mech"
+type = "tube.29"
+gender = "male"
+pos = [0.0, 0.0, 0.057]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "datasheet"
+src = "S1"
+rationale = "Round casing, 29 mm diameter (the RASP header gives the diameter)."
+
+# Nozzle: the solid_motor device's site takes this port's pose (site +z = thrust direction).
+[[ports]]
+name = "nozzle"
+kind = "mech"
+type = "motor-nozzle-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "datasheet"
+src = "S1"
+rationale = "Aft face of the casing on the motor axis; thrust acts along the axis towards the nose."
+
+[visual]
+rationale = "Generic model-rocket motor look from the part's own diameter and length: paper casing, label band, recessed ceramic nozzle (label colours are not sourced)."
+
+[[visual.elements]]
+gen = "solid_motor"
+
+[[sources]]
+id = "S1"
+url = "https://www.thrustcurve.org/simfiles/5f4294d20002e900000007e5/"
+title = "thrustcurve.org: Estes F15 RASP simulation file (NAR certification data), the .eng file as downloaded"
+accessed = "2026-10-08"
+quote = "; Estes F15 RASP.ENG file made from NAR published data ... F15 29 114 0-4-6-8 .0600 .10300 E 0.148 7.638 0.228 12.253 0.294 16.391 0.353 20.210 0.382 22.756 0.419 25.260 ... 3.404 9.352 3.418 4.895 3.450 0.000 (RASP header: name, diameter mm, length mm, delays, propellant kg, loaded kg)"
+
+[[sources]]
+id = "S2"
+url = "https://www.thrustcurve.org/motors/Estes/F15/"
+title = "thrustcurve.org: Estes F15 motor details (certified values)"
+accessed = "2026-10-08"
+quote = "Total Impulse: 49.6 Ns  Average Thrust: 14.4 N  Maximum Thrust: 25.3 N  Burn Time: 3.5 s  Total Weight: 102 g  Propellant Weight (Prop. Weight): 60 g  Diameter: 29 mm  Length: 114 mm  Delays: 0, 4, 6, 8"

@@ -1,0 +1,125 @@
+id = "raspberry-pi-camera-module-3"
+name = "Raspberry Pi Camera Module 3 (Sony IMX708, standard lens, autofocus)"
+category = "sensor.camera"
+vendor = "Raspberry Pi Ltd"
+part_number = "Camera Module 3"
+url = "https://datasheets.raspberrypi.com/camera/camera-module-3-product-brief.pdf"
+
+# Standard-lens values recorded. The Wide variant has 102 x 67 deg FOV and 12.4 mm height (S1/S2).
+[params]
+sensor_pixels_h     = { value = 4608, unit = "px", src = "S1", fidelity = "datasheet" }
+sensor_pixels_v     = { value = 2592, unit = "px", src = "S1", fidelity = "datasheet" }
+pixel_size          = { value = 1.4e-6, unit = "m", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.024, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.0115, unit = "m", src = "S1", fidelity = "datasheet" }
+ribbon_cable_length = { value = 0.2, unit = "m", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 273.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 323.15, unit = "K", src = "S1", fidelity = "datasheet" }
+fov_horizontal      = { value = 1.152, unit = "rad", src = "S2", fidelity = "datasheet" }
+fov_vertical        = { value = 0.7156, unit = "rad", src = "S2", fidelity = "datasheet" }
+focal_length        = { value = 4.74e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+mass                = { value = 0.004, unit = "kg", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "csi"
+kind = "signal"
+type = "csi"
+gender = "male"
+connector = "15 x 1 mm FPC, 200 mm ribbon"
+pins = ["FPC.1", "FPC.2", "FPC.3", "FPC.4", "FPC.5", "FPC.6", "FPC.7", "FPC.8", "FPC.9", "FPC.10", "FPC.11", "FPC.12", "FPC.13", "FPC.14", "FPC.15"]
+
+# Pin level: the 15-way 1.0 mm FPC socket on the back edge (opposite the lens, S1 / V1). S1 states '15 x 1mm FPC'; the signal order is the
+# standard Raspberry Pi 15-pin CSI-2 camera pinout (2 data lanes, clock, I2C, two camera GPIOs, 3V3), not text of S1: estimated. Pose: top edge of
+# the 25 mm board, centred (the module is mounted on its lower edge, the ribbon leaves upwards).
+[[connectors]]
+id = "FPC"
+name = "Camera FPC (15-pin 1 mm)"
+type = "fpc-15-1.0mm"
+gender = "male"
+pos = [-0.0045, 0.0, 0.0125]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 15
+pitch = 0.001
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives only 'Cable connector: 15 x 1mm FPC'. Pin order = the standard Raspberry Pi 15-pin camera connector (pin 1 GND, D0 pair, D1 pair, clock pair with GND between, CAM_IO0 / CAM_IO1, SCL, SDA, 3V3); the module schematic could not be fetched, so verify before building a cable."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "CAM_D0_N", kind = "signal", dir = "out" },
+  { number = 3, name = "CAM_D0_P", kind = "signal", dir = "out" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "CAM_D1_N", kind = "signal", dir = "out" },
+  { number = 6, name = "CAM_D1_P", kind = "signal", dir = "out" },
+  { number = 7, name = "GND", kind = "ground" },
+  { number = 8, name = "CAM_CK_N", kind = "signal", dir = "out" },
+  { number = 9, name = "CAM_CK_P", kind = "signal", dir = "out" },
+  { number = 10, name = "GND", kind = "ground" },
+  { number = 11, name = "CAM_IO0", kind = "signal", dir = "in", v = 3.3 },
+  { number = 12, name = "CAM_IO1", kind = "signal", dir = "in", v = 3.3 },
+  { number = 13, name = "CAM_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 14, name = "CAM_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 15, name = "CAM_3V3", kind = "power", dir = "in", v = 3.3 },
+]
+
+# Mechanical frame (added for the counter-UAS turret): origin at the board centre, +x = the viewing direction (lens axis), +z = image up,
+# board plane = y-z (24 mm wide, 25 mm high), x extent = the 11.5 mm height with the lens. `seat` is the bottom edge, `lens` the front.
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "V1"
+note = "Green 25 x 24 mm board, square sensor block with a round black barrel and bright front ring, FFC socket on the back edge; drawn with the lens along +x (the mechanical frame below). Gen frame: PCB underside at z = 0, lens +z; rpy = [pi, -pi/2, 0] sends gen z to +x and the FFC socket to the bottom edge."
+
+[[visual.elements]]
+gen = "camera_module"
+pos = [-0.00575, 0.0, 0.0]
+rpy = [3.141592653589793, -1.5707963267948966, 0.0]
+
+[[sources]]
+id = "V1"
+url = "https://www.raspberrypi.com/documentation/accessories/camera.html"
+title = "Raspberry Pi documentation: Camera hardware (Camera Module 3 size and connector)"
+accessed = "2026-10-08"
+quote = "The camera connector is on the opposite side of the board to the camera lens. || Board dimensions and mounting-hole positions for Camera Module 3 are identical to Camera Module 2."
+
+[geometry]
+shape = "box"
+size = [0.00575, 0.012, 0.0125]
+
+[[ports]]
+name = "seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0125]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Bottom edge of the 25 mm tall board (S1 dimensions 25 x 24 x 11.5 mm), centred; the module is mounted on its lower edge with the lens forward."
+
+[[ports]]
+name = "lens"
+kind = "mech"
+type = "optical-axis"
+gender = "neutral"
+pos = [0.00575, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Front of the 11.5 mm deep module (S1 height with lens), on the board centre; axis = viewing direction, ref = image up (the camera device takes site +z as optical axis and site +x as up)."
+
+[[sources]]
+id = "S1"
+url = "https://datasheets.raspberrypi.com/camera/camera-module-3-product-brief.pdf"
+title = "Raspberry Pi Camera Module 3 Product Brief (Raspberry Pi Ltd)"
+accessed = "2026-10-07"
+quote = "Sensor: Sony IMX708 Resolution: 11.9 megapixels ... Pixel size: 1.4μm × 1.4μm Horizontal/vertical: 4608 × 2592 pixels ... Dimensions: 25 × 24 × 11.5mm (12.4mm height for Wide variants) Ribbon cable length: 200mm Cable connector: 15 × 1mm FPC Operating temperature: 0°C to 50°C"
+
+[[sources]]
+id = "S2"
+url = "https://www.raspberrypi.com/documentation/accessories/camera.html"
+title = "Raspberry Pi Camera hardware (Raspberry Pi documentation), Camera Module 3 specification table"
+accessed = "2026-10-07"
+quote = "Camera Module 3 (standard): Horizontal field of view 66 degrees, Vertical field of view 41 degrees, Focal length 4.74 mm, Focal ratio (F-Stop) F1.8, Weight 4 g (values read through a page summariser; the page itself returned HTTP 403 to a direct scripted fetch)"

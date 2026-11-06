@@ -1,0 +1,90 @@
+id = "tvc-gimbal-2x-cradle"
+name = "TVC gimbal for two 29 mm motors, cradle: twin motor sleeve turned by the yaw servo, PLA (design of this repo)"
+category = "rocket.gimbal"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# The innermost member of the two-motor cluster gimbal (see tvc-gimbal-2x-plate): two 70 mm sleeves side by side ON THE DIAGONAL for 29 mm motor casings (bore 0.0295 m,
+# axes 0.0305 m apart at (+-0.01078, +-0.01078)), hinged to the ring about x by the yaw servo (yaw horn seat at (0.039, 0, 0); the stub passes through the ring wall).
+# Gimbal centre at the origin, +z towards the nose. Each motor seat sits 5 mm below the centre, so an E16 casing (114 mm) spans z in [-0.062, 0.052]: the nozzles
+# are 0.062 m below the gimbal centre. The two thrust axes are 0.01525 m off the gimbal centre line: a firing motor loads BOTH servos (0.707 x T x 0.01525 m each: 0.19 N m
+# at the E16's 17 N sustained thrust, 0.28 N m at its 26.4 N peak against the XL330-M288's 0.52 N m stall) and the vehicle must trim the offset (see examples/lander).
+[visual]
+rationale = "Design of this repo: printed motor sleeve with a base flange and the horn boss (same generator as the 1-axis gimbal cradle; drawn as one sleeve, the twin-motor shape is in the collision geometry)."
+
+[[visual.elements]]
+gen = "tvc_gimbal"
+params = { kind = "cradle" }
+
+[params]
+bore = { value = 0.0295, unit = "m", fidelity = "estimated", rationale = "Design choice: 0.5 mm over the 29 mm motor casing (parts/rocket/estes-e16 diameter)." }
+motor_spacing = { value = 0.0305, unit = "m", fidelity = "estimated", rationale = "Design choice: bore 0.0295 + 1 mm web between two casings." }
+outer_radius = { value = 0.0325, unit = "m", fidelity = "derived", derivation = "Half the spacing 0.01525 + bore radius 0.01475 + wall 2.5 mm = 0.0325 m." }
+height = { value = 0.07, unit = "m", fidelity = "estimated", rationale = "Design choice: 70 mm sleeves, z in [-0.04, 0.03]." }
+mass = { value = 0.0437, unit = "kg", fidelity = "derived", derivation = "PLA 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 1178 kg/m3 times the volume: two sleeves 2 x pi (0.01725^2 - 0.01475^2) x 0.07 m = 3.52e-5 m3 (the sleeves' 0.0305 m spacing is less than their 0.0345 m outer diameter: they fuse, the overlap is ignored) plus the two stubs 2 x pi 0.004^2 x 0.004 m = 4e-7 m3 and a 1 mm web; total 3.71e-5 m3 = 0.0437 kg." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.01725, 0.035]
+pos = [0.01078, 0.01078, -0.005]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.01725, 0.035]
+pos = [-0.01078, -0.01078, -0.005]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.004, 0.00325]
+pos = [0.03575, 0.0, 0.0]
+zaxis = [1.0, 0.0, 0.0]
+material = "pla"
+
+# Yaw servo output hub (the servo's output port mates here with a hinge about x).
+[[ports]]
+name = "yaw_horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl330"
+gender = "female"
+pos = [0.039, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Stub end at the ring's outer surface on the yaw axis; the horn thickness is the XL330 hub's 3 mm."
+
+# The two motor sleeves: each motor's case port (middle of the casing) mates 5 mm below the gimbal centre.
+[[ports]]
+name = "motor_seat_a"
+kind = "mech"
+type = "tube-clamp.29"
+gender = "female"
+pos = [0.01078, 0.01078, -0.005]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Mid-height of the (+x, +y) sleeve; thrust axis = the sleeve axis. Holds the ascent motor."
+
+[[ports]]
+name = "motor_seat_b"
+kind = "mech"
+type = "tube-clamp.29"
+gender = "female"
+pos = [-0.01078, -0.01078, -0.005]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Mid-height of the (-x, -y) sleeve. Holds the landing motor."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

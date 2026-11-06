@@ -1,0 +1,63 @@
+id = "generic-capacitor-radial"
+name = "Radial aluminium electrolytic capacitor, 16 V (timing capacitors of the cuas2 shot limiter and supervisor, power-on reset capacitor; value set per instance)"
+category = "passive.capacitor"
+vendor = "generic (capacitor assortment)"
+part_number = "radial electrolytic 16 V"
+url = "https://www.adafruit.com/product/2784"
+
+# Part frame: origin at the centre of the underside, z up, leads towards -z. Value per instance. Electrolytic tolerance is +-20 %, so the monostable pulse widths are +-25 % [est];
+# the bench item is to trim R (or swap a value) until the measured pulse widths sit inside 250 / 330 ms (spec 5.4).
+
+[params]
+capacitance = { value = 1.0e-5, unit = "F", fidelity = "estimated", rationale = "Default 10 uF; every instance sets its own." }
+v_rating    = { value = 16.0, unit = "V", fidelity = "estimated", rationale = "Common 16 V radial; the circuit sees 5 V." }
+mass        = { value = 0.0008, unit = "kg", fidelity = "estimated", rationale = "A 5 x 11 mm radial electrolytic weighs about 0.5-1 g." }
+price       = { value = 0.10, unit = "USD", fidelity = "estimated", rationale = "Allowance: 0.05-0.15 USD each in an assortment or 10-pack; no listing fetched." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0025, 0.0055]
+pos = [0.0, 0.0, 0.0055]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "plus"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["C.1"]
+
+[[ports]]
+name = "minus"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["C.2"]
+
+[[connectors]]
+id = "C"
+name = "radial leads (+, -)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.002
+fidelity = "estimated"
+rationale = "2 mm lead spacing of a 5 mm radial electrolytic; the longer lead is +."
+pins = [
+  { number = 1, name = "+", kind = "signal", dir = "io", v_max = 16.0 },
+  { number = 2, name = "-", kind = "signal", dir = "io", v_max = 16.0 },
+]

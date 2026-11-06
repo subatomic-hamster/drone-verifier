@@ -1,0 +1,285 @@
+id = "holybro-x500v2-landing-gear"
+name = "Holybro X500 V2 landing gear leg with plastic connectors (#31063 'Carbon Fiber Landing Gear with Plastic Connectors (Single Leg)': vertical pole, upper clamp, foot tee, cross bar, 2 foam grips, 2 end caps)"
+category = "frame.landing_gear"
+vendor = "Holybro"
+part_number = "31063"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+
+# Two legs per vehicle. Every dimension below was measured on x500v2-frame.step with OpenCascade (STEP is Y-up, mm; the plate
+# underside is y = 0). STEP solid names: GUAN-CHENG = pole, JIA-LIANJIE = upper clamp, JIAO-LIANJIE = foot tee, CARBON-FIBER-TUBE (V 7012
+# mm3) = cross bar, JIAO-EVA = foam grip, MAO-JIAO = end cap. Which tube is the landing-gear bar and which the rail rod was
+# identified from POSITION (see holybro-x500v2-rail-rod): the 7012 mm3 / OD 10 / 248 mm tube lies at y = -205.8 mm inside the two foam
+# grips and end caps; the 4783 mm3 / OD 9.4 / 250 mm tube lies at y = -13 mm through the rail hangers. (N3' had the two swapped.)
+[params]
+overall_height = { value = 0.215, unit = "m", src = "S1", fidelity = "datasheet" }
+nominal_pole_diameter = { value = 0.016, unit = "m", src = "S1", fidelity = "datasheet" }
+nominal_crossbar_diameter = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.pole_cad_outer_diameter]
+value = 0.016
+unit = "m"
+fidelity = "derived"
+derivation = "Outer cylinder face radius 8.0 mm of the vertical-pole solid (volume 9315 mm3, bbox 16.00 x 193.58 x 75.10 mm) in x500v2-frame.step."
+
+[params.pole_cad_inner_diameter]
+value = 0.014
+unit = "m"
+fidelity = "derived"
+derivation = "Inner cylinder face radius 7.0 mm of the same solid."
+
+[params.pole_cad_length]
+value = 0.1977
+unit = "m"
+fidelity = "derived"
+derivation = "Volume 9315 mm3 = pi*(8^2-7^2)*L gives L = 197.7 mm; cross-check lateral area 9937 mm2 / (2*pi*8) = 197.7 mm. Pole axis direction (0, -0.95, -0.30): leans outward ~17.5 deg from vertical."
+
+[params.crossbar_cad_outer_diameter]
+value = 0.010
+unit = "m"
+fidelity = "derived"
+derivation = "Outer cylinder face radius 5.0 mm of the cross-bar solid (volume 7012 mm3, bbox 248.00 x 10.00 x 10.00 mm, centre y = -205.8 mm, z = +-120 mm) in x500v2-frame.step. Equals Holybro's '10mm diameter carbon fiber tubes' (landing gear)."
+
+[params.crossbar_cad_inner_diameter]
+value = 0.008
+unit = "m"
+fidelity = "derived"
+derivation = "Inner cylinder face radius 4.0 mm of the same solid."
+
+[params.crossbar_cad_length]
+value = 0.248
+unit = "m"
+fidelity = "derived"
+derivation = "Volume 7012 mm3 = pi*(5.0^2-4.0^2)*L gives L = 248.0 mm, equal to the bbox 248.00 mm."
+
+[params.pole_mass]
+value = 0.01444
+unit = "kg"
+fidelity = "derived"
+derivation = "pole volume 9.315e-6 m3 * carbon-fibre-epoxy-ud estimated density 1550 kg/m3 = 14.4 g per pole; two poles per vehicle. Not weighed."
+
+[params.crossbar_mass]
+value = 0.010869
+unit = "kg"
+fidelity = "derived"
+derivation = "cross-bar volume 7.012e-6 m3 * carbon-fibre-epoxy-ud estimated density 1550 kg/m3 = 10.87 g per bar; two bars per vehicle. Not weighed (it could be aluminium: Holybro does not state the tube material)."
+
+[params.upper_clamp_cad_volume]
+value = 4.3337e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade BRepGProp volume of the upper pole clamp solid JIA-LIANJIE (bbox 33.8 x 25.8 x 32.5 mm, y from -22.0 to +3.7 mm, centre z = +-55.5 mm) in x500v2-frame.step; 2 off. Role (clamp that holds the pole top under the bottom plate, screwed with the guide's step-4 M3x8 x8) inferred from its position and name."
+
+[params.foot_tee_cad_volume]
+value = 5.2595e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of the foot tee solid JIAO-LIANJIE (bbox 40.0 x 35.1 x 28.3 mm, y from -215.0 to -179.9 mm, centre z = +-117.6 mm) in x500v2-frame.step; 2 off. It joins the pole bottom end to the cross bar; its lowest point is exactly y = -215.0 mm."
+
+[params.foam_grip_cad_volume]
+value = 1.82736e-5
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of the foam grip solid JIAO-EVA (bbox 93.0 x 20.6 x 20.6 mm, x from 21 to 114 mm each side of the centre, axis y = -205.8 mm); 4 off per vehicle = 2 per leg. The solid is a hollow sleeve (bore larger than the 10 mm bar)."
+
+[params.end_cap_cad_volume]
+value = 5.344e-7
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of the bar end cap solid MAO-JIAO (bbox 13.0 x 12.6 x 12.6 mm at x = +-121.3 mm) in x500v2-frame.step; 4 off per vehicle = 2 per leg."
+
+[params.plastic_density]
+value = 1300
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Holybro says only 'strengthened & improved plastic tee connectors'. Same 1300 kg/m3 as the fibre-reinforced nylon arm connectors (holybro-x500v2-arm-connectors density): unfilled PA66 is 1140 kg/m3 (nylon-pa66), glass-filled grades 1.3-1.4 g/cc."
+
+[params.foam_density]
+value = 200
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "No vendor data: the foam grade of the grips (STEP name 'EVA') is not published. Closed-cell EVA foams are commercially made from tens of kg/m3 (soft) up to a few hundred (firm grip foam); 200 kg/m3 is an order-of-magnitude placeholder with +-100 % carried in mass_tol."
+
+[params.cap_density]
+value = 1220
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "End cap material not stated (a rubber foot cap is assumed); TPU 95A specific gravity 1.22 g/cm3 (parts/common/tpu-95a) is used as the elastomer stand-in."
+
+[params.mass_upper_clamp]
+value = 0.005634
+unit = "kg"
+fidelity = "derived"
+derivation = "upper_clamp_cad_volume 4.3337e-6 m3 * plastic_density 1300 kg/m3 (estimated) = 5.634e-3 kg."
+
+[params.mass_foot_tee]
+value = 0.006837
+unit = "kg"
+fidelity = "derived"
+derivation = "foot_tee_cad_volume 5.2595e-6 m3 * plastic_density 1300 kg/m3 (estimated) = 6.837e-3 kg."
+
+[params.mass_foam_grip]
+value = 0.003655
+unit = "kg"
+fidelity = "derived"
+derivation = "foam_grip_cad_volume 1.82736e-5 m3 * foam_density 200 kg/m3 (estimated) = 3.655e-3 kg per grip."
+
+[params.mass_end_cap]
+value = 0.000652
+unit = "kg"
+fidelity = "derived"
+derivation = "end_cap_cad_volume 5.344e-7 m3 * cap_density 1220 kg/m3 (estimated, TPU stand-in) = 6.52e-4 kg per cap."
+
+[params.mass]
+value = 0.046394
+unit = "kg"
+fidelity = "derived"
+derivation = "Per leg (the builder instantiates the part twice): pole_mass 0.01444 + crossbar_mass 0.010869 + mass_upper_clamp 0.005634 + mass_foot_tee 0.006837 + 2 x mass_foam_grip 0.003655 + 2 x mass_end_cap 0.000652 = 0.046394 kg. Mounting screws (M3x8, 4 per leg) are counted on the mate."
+
+[params.mass_tol]
+value = 0.0118
+unit = "kg"
+fidelity = "estimated"
+rationale = "Sum of per-component tolerances: pole + bar +-10 % of 25.3 g (CAD volume x estimated UD carbon density 1550 kg/m3) = 2.5 g; clamp + tee +-13 % of 12.5 g (nylon-grade spread, see plastic_density) = 1.6 g; foam grips +-100 % of 7.3 g (grade unknown) = 7.3 g; end caps +-30 % of 1.3 g = 0.4 g. Total 11.8 g, dominated by the foam. Nothing has been weighed."
+
+[params.lean_angle]
+value = 0.3054
+unit = "rad"
+fidelity = "derived"
+derivation = "Pole axis direction (0, -0.95, -0.30) in the Y-up STEP (pole_cad_length derivation): lean from vertical = atan(0.30/0.95) = 17.5 deg = 0.3054 rad, outward. Pole top end to bottom end: vertical 0.1977*cos(17.5 deg) = 0.18855 m, horizontal 0.1977*sin(17.5 deg) = 0.05945 m."
+
+[params.pole_top_below_plate]
+value = 0.0065
+unit = "m"
+fidelity = "derived"
+derivation = "STEP pole solid max y = -4.1 mm (bbox top of the tilted top end face); the end-face centre is r*sin(lean) = 8.0 * 0.3007 = 2.4 mm lower: y = -6.5 mm, with the plate underside at y = 0.0 (bottom-plate solid y 0.0 to 2.0 mm). The pole top end is 6.5 mm BELOW the plate underside (it sits inside the upper clamp JIA-LIANJIE)."
+
+[params.bar_below_pole_end]
+value = 0.01075
+unit = "m"
+fidelity = "derived"
+derivation = "STEP bar axis y = -205.8 mm minus pole bottom-end centre y = (-197.7 + 2.4) = -195.3 mm (pole solid min y -197.7 mm plus r*sin(lean) 2.4 mm; = -6.5 - 188.55 = -195.05 by the length/lean figures): the foot tee holds the bar 10.5-10.8 mm BELOW the pole end, not on it. 10.75 mm used."
+
+[params.bar_outboard_of_pole_end]
+value = 0.0035
+unit = "m"
+fidelity = "derived"
+derivation = "STEP bar z = +-120.0 mm minus pole bottom-end centre z (124.3 - 8.0*cos(17.5 deg) = 116.7 mm): the bar sits 3.3-3.5 mm further outboard than the pole end. 3.5 mm used (pole top end z = +-57.0 mm)."
+
+[params.height_to_foam_bottom]
+value = 0.2161
+unit = "m"
+fidelity = "derived"
+derivation = "Plate underside (y = 0.0) to the lowest point of the foam grips (y = -216.1 mm; grip bbox y from -216.1 to -195.5 mm) in x500v2-frame.step. The foot tee bottom is y = -215.0 mm: Holybro's 'Landing gear height: 215mm' matches the tee bottom to the underside of the bottom plate; the foam grips add 1.1 mm."
+
+# Part frame (one leg): origin = the centre of the pole's TOP end on the pole axis, z up when installed, +y = the direction the pole
+# leans (outward from the vehicle), x along the cross bar. The plate underside is 6.5 mm ABOVE this origin (the port below).
+# Pole axis direction (0, sin17.5deg, -cos17.5deg) = (0, 0.30071, -0.95372); pole centre = 0.09885 * that = (0, 0.029726, -0.094275);
+# pole bottom end (0, 0.059452, -0.188551). Bar axis = bottom end + (0.0035 outboard, 0.01075 down) = (y 0.062952, z -0.199301).
+# Upper clamp centre: STEP z = 55.5 mm -> y = 55.5 - 57.0 = -1.5 mm; y_STEP centre -9.15 -> z = -9.15 + 6.5 = -2.65 mm.
+# Foot tee centre: z_STEP 117.35 -> y = 60.35 mm; y_STEP -197.45 -> z = -190.95 mm.
+# Lowest point of the leg (foam grip bottom): bar axis z - foam radius = -0.199301 - 0.0103 = -0.209601 m below the pole top, i.e.
+# 0.2161 m below the plate underside.
+[geometry]
+material = "carbon-fibre-epoxy-ud"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.008, 0.09885]                       # radius 8.0 mm, half of the 197.7 mm pole length (pole_cad_length)
+pos = [0.0, 0.029726, -0.094275]
+zaxis = [0.0, 0.30071, -0.95372]
+mass_param = "pole_mass"
+note = "vertical pole, leans outward 17.5 deg"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.005, 0.124]                         # radius 5.0 mm, half of the 248.0 mm cross-bar length
+pos = [0.0, 0.062952, -0.199301]
+zaxis = [1.0, 0.0, 0.0]
+mass_param = "crossbar_mass"
+note = "foot cross bar, horizontal, along x, held 10.75 mm below the pole end by the foot tee"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0169, 0.0163, 0.011]                # STEP bbox 33.8 x 32.5 mm in plan, 22.0 mm below the plate underside (the 1.7 mm that the STEP clamp
+pos = [0.0, -0.0015, -0.0045]                 # shows ABOVE the plate top is cut off so the box ends at the underside, z = +0.0065)
+mass_param = "mass_upper_clamp"
+note = "upper pole clamp under the bottom plate (JIA-LIANJIE); solid box, exceeds the CAD volume, mass is by mass_param"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.020, 0.01415, 0.01755]              # STEP bbox 40.0 x 28.3 x 35.1 mm (y/z swapped to leg frame)
+pos = [0.0, 0.06035, -0.19095]
+mass_param = "mass_foot_tee"
+note = "foot tee (JIAO-LIANJIE): pole bottom end to cross bar"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0103, 0.0465]                       # radius 10.3 mm, half of the 93.0 mm grip length
+pos = [0.0675, 0.062952, -0.199301]
+zaxis = [1.0, 0.0, 0.0]
+mass_param = "mass_foam_grip"
+note = "foam grip on the bar (JIAO-EVA), x = +67.5 mm"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0103, 0.0465]
+pos = [-0.0675, 0.062952, -0.199301]
+zaxis = [1.0, 0.0, 0.0]
+mass_param = "mass_foam_grip"
+note = "foam grip on the bar (JIAO-EVA), x = -67.5 mm"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0063, 0.0065]                       # radius 6.3 mm, half of the 13.0 mm cap length
+pos = [0.1213, 0.062952, -0.199301]
+zaxis = [1.0, 0.0, 0.0]
+mass_param = "mass_end_cap"
+note = "bar end cap (MAO-JIAO), x = +121.3 mm"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0063, 0.0065]
+pos = [-0.1213, 0.062952, -0.199301]
+zaxis = [1.0, 0.0, 0.0]
+mass_param = "mass_end_cap"
+note = "bar end cap (MAO-JIAO), x = -121.3 mm"
+
+[[ports]]
+name = "plate"
+kind = "mech"
+type = "mount.x500v2-landing-gear"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0065]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+holes = 4
+thread = "m3"
+tapped = true
+thread_depth = 0.0062
+hole_pos = [[0.0135, -0.014], [-0.0135, -0.014], [0.0135, 0.011], [-0.0135, 0.011]]
+fidelity = "derived"
+derivation = "Underside of the bottom plate, 6.5 mm above the pole top end centre (pole_top_below_plate). The 4 screws per leg are the guide's step-4 'Socket Cap Screw M3*8 8pcs' (4 per leg): in the STEP they are 8 GB70-M3-8 at x = +-13.5 mm, z = 43 and 68 mm (= -14 / +11 mm from the pole top end centre along the lean), screwing up through the plate into the clamp (shank tip 6.2 mm below the plate underside: thread_depth 0.0062, tapped into the clamp; re-measured with OpenCascade on x500v2-frame.step: the 8 GB70-M3-8-DING solids have bbox y = -6.2 .. +4.7 mm with the plate underside at y = 0 and the 2.0 mm plate at y = 0 .. 2.0, i.e. head 2.7 mm on the plate top (4.7 - 2.0), plate 2.0 mm, 6.2 mm of shank below the underside; an earlier 4.6 mm value was wrong and implied a 3.4 mm clamped thickness, while the plate port thickness is 2.0 mm). The 'mount.x500v2-landing-gear' family has no other hole data."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "V1"
+note = "Carbon pole and cross bar, black plastic clamp / foot tee / caps, black foam grips (kit photo). Slot sK = geometry shape K."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "plastic-black", s0 = "carbon-fibre", s1 = "carbon-fibre", s4 = "rubber", s5 = "rubber" }
+
+[[sources]]
+id = "V1"
+url = "https://holybro.com/products/x500-v2-kits"
+title = "Holybro X500 V2 kits product page (landing gear photo, appearance only)"
+accessed = "2026-10-07"
+quote = "X500 V2 Kits"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs)"
+accessed = "2026-10-06"
+quote = "Landing gear - 16mm & 10mm diameter carbon fiber tubes with strengthened & improved plastic tee connectors. ... Landing gear height: 215mm"

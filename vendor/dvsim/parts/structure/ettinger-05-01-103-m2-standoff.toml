@@ -1,0 +1,44 @@
+id = "ettinger-05-01-103-m2-standoff"
+name = "Ettinger 05.01.103 hex standoff M2 female-female, brass, 10 mm"
+category = "structure.standoff"
+vendor = "Ettinger"
+part_number = "05.01.103"
+url = "https://www.element14.cn/en-CN/ettinger/05-01-103/standoff-hex-female-brass-10mm/dp/2494574"
+
+[params]
+thread_diameter = { value = 2e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 10e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+overall_length  = { value = 10e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 9.98e-4, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread_a"
+kind = "mech"
+type = "thread.m2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.010
+note = "Full-length threaded bore, opening on the bottom face"
+
+[[ports]]
+name = "thread_b"
+kind = "mech"
+type = "thread.m2"
+gender = "female"
+pos = [0.0, 0.0, 0.010]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.010
+note = "Same bore, opening on the top face"
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/ettinger/05-01-103/standoff-hex-female-brass-10mm/dp/2494574"
+title = "Ettinger 05.01.103 Standoff, Brass, M2, Hex Female, 10 mm, 10 mm (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Brass; Standoff Type Hex Female; Thread Size - Metric M2; Body Length 10mm; Overall Length 10mm; External Width 4mm; Weight (kg): .000998 ... The 05.01.103 is a full-length threaded M2 female to female Hex Standoff made of brass with nickel plated finish."

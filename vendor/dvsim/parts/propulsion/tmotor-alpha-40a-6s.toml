@@ -1,0 +1,131 @@
+id = "tmotor-alpha-40a-6s"
+name = "T-Motor ALPHA 40A 6S multirotor ESC"
+category = "esc"
+vendor = "T-Motor"
+part_number = "ALPHA 40A 6S"
+url = "https://store.tmotor.com/product/alpha-40a-6s-esc.html"
+
+# Part frame: origin at the centre of the ESC body's underside, z up; body 64.5 x 29.4 x 14.7 mm (L along x, W along y). Single-channel ESC
+# with wire leads (no mounting holes); lead end positions are not published, so ports carry no pos.
+# NOTE: the product is named "40A" but the spec table prints Con. Current 20A / Peak Current(10s) 40A (the name follows the peak rating);
+# the printed table values are used. The page does not name a firmware/protocol; throttle is a PWM-type 1100-1940 us signal at 500 Hz refresh.
+
+[params]
+mass            = { value = 0.0545, unit = "kg", src = "S1", fidelity = "datasheet" }         # incl. cables
+length          = { value = 0.0645, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0294, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0147, unit = "m", src = "S1", fidelity = "datasheet" }
+v_min           = { value = 18.0, unit = "V", src = "S1", fidelity = "datasheet" }            # Support Voltage(6S) 18-25.2V
+v_max           = { value = 25.2, unit = "V", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+i_cont          = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }            # "Con. Current"
+i_burst         = { value = 40.0, unit = "A", src = "S1", fidelity = "datasheet" }            # "Peak Current(10s)"
+burst_duration  = { value = 10.0, unit = "s", src = "S1", fidelity = "datasheet" }
+bec             = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+throttle_pulse_min = { value = 1.1e-3, unit = "s", src = "S1", fidelity = "datasheet" }       # Throttle Pos. Range 1100-1940 us
+throttle_pulse_max = { value = 1.94e-3, unit = "s", src = "S1", fidelity = "datasheet" }
+throttle_refresh = { value = 500, unit = "Hz", src = "S1", fidelity = "datasheet" }
+firmware_protocol = { value = "PWM throttle, 1100-1940 us, 500 Hz refresh", unit = "text", src = "S1", fidelity = "datasheet" }
+power_cable_awg = { value = 14, unit = "AWG", src = "S1", fidelity = "datasheet" }
+motor_cable_awg = { value = 16, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.03225, 0.0147, 0.00735]
+
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1: 'Power Cable: Silicone wire-red/black-14AWG-150MM', 'Motor Cable: Silicone wire-deep orange-16AWG-65MM*3PCS', 'BEC NO'. The
+# throttle lead is not described. Leads are drawn at the ends (battery in on -x, motor and throttle out on +x).
+[[connectors]]
+id = "IN"
+name = "power cable (14 AWG x 150 mm)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [-0.03225, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "S1 gives two leads (red / black), gauge and length; the exit end and spacing are estimated."
+pins = [
+  { number = 1, name = "BAT+ (red)", kind = "power", dir = "in", v_max = 25.2, i_max = 20.0 },
+  { number = 2, name = "BAT- (black)", kind = "ground", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor cable (3 x 16 AWG x 65 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.03225, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.005
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "S1 gives three identical deep-orange wires (so the phase labels A B C are a convention: swapping two reverses the motor); the exit end and spacing are estimated."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 20.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 20.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "throttle signal lead"
+type = "servo-lead-2"
+gender = "neutral"
+pos = [0.03225, 0.009, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the throttle range / refresh only ('BEC NO'); a throttle signal + ground pair is the minimum a PWM input needs."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/alpha-40a-6s-esc.html"
+title = "T-MOTOR store - ALPHA 40A 6S ESC (Specification)"
+accessed = "2026-10-07"
+quote = "Size|64.5*29.4*14.7mm（L*W*H）|Power Cable|Silicone wire-red/black-14AWG-150MM|Weight(Incl. cables)|54.5g|Motor Cable|Silicone wire-deep orange-16AWG-65MM*3PCS|Support Voltage(6S)|18-25.2V|BEC|NO|Con. Current|20A|Throttle Pos. Range|1100-1940μs|Peak Current(10s)|40A|Throttle Refresh Frequency|500Hz|Standby Consumption|≤50mA"

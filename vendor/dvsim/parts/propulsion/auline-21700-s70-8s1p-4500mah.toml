@@ -1,0 +1,119 @@
+id = "auline-21700-s70-8s1p-4500mah"
+name = "Auline 21700 S70 8S1P 4500 mAh 29.6 V 70 A Li-ion pack, XT60"
+category = "battery.liion"
+vendor = "Auline"
+part_number = "S70 8S1P 4500mAh (SKU 23410)"
+url = "https://www.racedayquads.com/products/auline-21700-s70-8s1p-4500mah-29-6v-70a-li-ion-battery-xt60"
+
+# Dog main battery option (33.6 V bus). Part frame: origin at the pack centre, x along length (86 mm), y along width (79 mm), z up (43 mm).
+# The listing states no BMS: the pack is a bare 8-cell stack. Protection is the job of the separate BMS part (parts/electronics/daly-k-series-smart-bms-8s-60a.toml), whose 60 A is BELOW this pack's 70 A rating.
+# Peak draw check (docs/dog/actuator-study.md): 12 joints x peak bus current is far above 70 A if every joint peaked at once; the study states the margin against the simultaneous-peak estimate.
+
+[params]
+capacity_ah      = { value = 4.5,   unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity         = { value = 16200.0, unit = "C", fidelity = "derived", derivation = "4.5 Ah x 3600 s/h = 16200 C." }
+energy_wh        = { value = 133.2, unit = "Wh", fidelity = "derived", derivation = "4.5 Ah x 29.6 V nominal = 133.2 Wh." }
+cells_series     = { value = 8,     unit = "1",  src = "S1", fidelity = "datasheet" }
+cells_parallel   = { value = 1,     unit = "1",  src = "S1", fidelity = "datasheet" }
+v_nominal        = { value = 29.6,  unit = "V",  src = "S1", fidelity = "datasheet" }
+v_full           = { value = 33.6,  unit = "V",  fidelity = "derived", derivation = "8S x 4.2 V/cell Li-ion charge limit = 33.6 V." }
+mass             = { value = 0.570, unit = "kg", src = "S1", fidelity = "datasheet" }
+length           = { value = 0.086, unit = "m",  src = "S1", fidelity = "datasheet" }
+width            = { value = 0.079, unit = "m",  src = "S1", fidelity = "datasheet" }
+height           = { value = 0.043, unit = "m",  src = "S1", fidelity = "datasheet" }
+main_connector   = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 70.0,  unit = "A",  src = "S1", fidelity = "datasheet" }  # "70A continuous discharge" (FPV-drone rating)
+charge_rate_c    = { value = 1.0,   unit = "1",  src = "S1", fidelity = "datasheet" }  # "1C recommended"
+r_internal_pack  = { value = 0.060, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. 21700 power cells run ~10-15 mOhm AC impedance (cf. Molicel P42A < 15 mOhm); 8 cells x 12 mOhm = 96 mOhm would sag 5 V at 50 A, which a '70 A' pack should not; 60 mOhm taken (+-50 %)." }
+
+[params.price]
+value = 134.99
+unit = "USD"
+fidelity = "datasheet"
+src = "S1"
+rationale = "RaceDayQuads (US) list price seen 2026-10-16 (USD, ex shipping; getfpv.com lists the same pack). Lithium shipping surcharges not included."
+
+[geometry]
+shape = "box"
+size = [0.043, 0.0395, 0.0215]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0215]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Underside of the pack (the origin is the pack centre, so the underside is 21.5 mm below it): lies on the floor of a tray or a deck, held with foam / a strap."
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V." }
+i_max = { value = 70.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "balance"
+kind = "signal"
+type = "jst-xh.9"
+gender = "neutral"
+pins = ["BAL.1", "BAL.2", "BAL.3", "BAL.4", "BAL.5", "BAL.6", "BAL.7", "BAL.8", "BAL.9"]
+note = "The listing does not mention a balance lead; an 8S pack needs a 9-pin sense lead for the BMS. JST-XH 9-pin is the usual fitting and is ASSUMED (estimated)."
+
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.043, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 connector only. Polarity (+ then -) and the 7.2 mm contact spacing of the XT60 family are assumed; no drawing read."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 33.6, i_max = 70.0, note = "v = full-charge" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[connectors]]
+id = "BAL"
+name = "balance / sense lead (JST-XH 9P, assumed)"
+type = "jst-xh.9"
+gender = "neutral"
+pos = [0.043, 0.02, -0.01]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 9
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "Not in the listing. 8S packs carry 9 sense wires: pin 1 = pack minus (B0), pins 2..9 = cell-1 .. cell-8 positive taps (B1 .. B8). Connector family JST-XH (2.5 mm pitch) assumed."
+pins = [
+  { number = 1, name = "B0", kind = "ground" },
+  { number = 2, name = "B1", kind = "power", dir = "out", v = 4.2 },
+  { number = 3, name = "B2", kind = "power", dir = "out", v = 8.4 },
+  { number = 4, name = "B3", kind = "power", dir = "out", v = 12.6 },
+  { number = 5, name = "B4", kind = "power", dir = "out", v = 16.8 },
+  { number = 6, name = "B5", kind = "power", dir = "out", v = 21.0 },
+  { number = 7, name = "B6", kind = "power", dir = "out", v = 25.2 },
+  { number = 8, name = "B7", kind = "power", dir = "out", v = 29.4 },
+  { number = 9, name = "B8", kind = "power", dir = "out", v = 33.6 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.racedayquads.com/products/auline-21700-s70-8s1p-4500mah-29-6v-70a-li-ion-battery-xt60"
+title = "RaceDayQuads - Auline 21700 S70 8S1P 4500mAh 29.6V 70A Li-ion Battery - XT60"
+accessed = "2026-10-16"
+quote = "Battery Type: Li-ion Cell Configuration: 8S1P Nominal Voltage: 29.6V Capacity: 4500mAh Continuous Discharge: 70A Cell Type: 21700 Connector: XT60 Dimensions: 86mm x 79mm x 43mm Weight: 570g Charge Rate: 1C recommended ... $134.99"

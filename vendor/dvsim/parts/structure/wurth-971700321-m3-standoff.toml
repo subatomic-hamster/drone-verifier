@@ -1,0 +1,53 @@
+id = "wurth-971700321-m3-standoff"
+name = "Wurth Elektronik 971700321 hex standoff M3 male-female, steel, 70 mm body / 76 mm overall"
+category = "structure.standoff"
+vendor = "Wurth Elektronik"
+part_number = "971700321"
+url = "https://www.element14.cn/en-CN/wurth-elektronik/971700321/standoff-hex-male-female-70mm/dp/2884489"
+
+# WA-SSTIE series, gloss-zinc steel. Frame: origin on the axis at the female (bottom) face, +z toward the stud.
+[params]
+thread_diameter = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 70e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+overall_length  = { value = 76e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 5.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 13.458e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[params.stud_length]
+value = 6e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Overall length 76 mm minus body length 70 mm (both S1)."
+
+[[ports]]
+name = "thread_female"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.007
+fidelity = "estimated"
+rationale = "The 70 mm datasheet PDF could not be read (the download returned an HTML page); 7 mm taken from the 35-60 mm siblings of the same WA-SSTIE series, whose datasheets all state 'Inner Thread Length Tli 7 mm'."
+note = "Internal M3 thread, bottom face."
+
+[[ports]]
+name = "thread_male"
+kind = "mech"
+type = "thread.m3"
+gender = "male"
+pos = [0.0, 0.0, 0.076]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.006
+note = "External M3 stud, length = overall minus body (6 mm, as every WA-SSTIE sibling datasheet 'Outer Thread Length Tlo 6 mm')."
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/wurth-elektronik/971700321/standoff-hex-male-female-70mm/dp/2884489"
+title = "Wurth Elektronik 971700321 WA-SSTIE standoff (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Steel Thread Size - Metric M3 Standoff Type Hex Male-Female Body Length 70mm Overall Length 76mm External Width 5.5mm Product Range WA-SSTIE ... Weight (kg): .013458"

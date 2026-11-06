@@ -1,0 +1,39 @@
+id = "ruthex-insert-m3x5.7"
+name = "ruthex M3 heat-set threaded insert RX-M3x5.7, 5.7 mm long, brass"
+category = "fastener.insert"
+vendor = "ruthex"
+part_number = "RX-M3x5.7"
+url = "https://www.3djake.com/ruthex/threaded-insert-m3-100-pieces"
+
+# Frame: origin at the open (screw-side) face on the axis, +z out of the face; the insert body extends to z = -L.
+[params]
+length          = { value = 5.7e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter  = { value = 4.6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+centre_diameter = { value = 3.9e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter   = { value = 4.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+min_wall        = { value = 1.6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.00059
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Brass tube of the stated outer diameter (4.6 mm) and length, bore = M3 minor diameter 2.4 mm (nominal - 1.082 x 0.5 mm pitch), density 8500 kg/m3 (typical brass, assumed): pi/4*(4.6^2-2.4^2)*5.7 = 68.9 mm3 -> 0.59 g, knurl ignored; about +-30 %."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.0057
+note = "Internal M3 thread over the full 5.7 mm length (assumed through-threaded). Melt it into a 4.0 mm hole (S1 D3)."
+
+[[sources]]
+id = "S1"
+url = "https://www.3djake.com/ruthex/threaded-insert-m3-100-pieces"
+title = "ruthex Threaded Insert M3 (100 pieces), M3x5.7 (3DJake product page)"
+accessed = "2026-10-07"
+quote = "Technical specifications:| Thread size| ⌀ D1| ⌀ D2| ⌀ D3| L| W (min.)| M3| 4.6| 3.9| 4.0| 5.7| 1.6"

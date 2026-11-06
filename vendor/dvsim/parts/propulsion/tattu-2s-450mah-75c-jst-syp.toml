@@ -1,0 +1,57 @@
+id = "tattu-2s-450mah-75c-jst-syp"
+name = "Tattu 7.4 V 2S 450 mAh 75C LiPo micro pack (JST-SYP)"
+category = "battery.lipo"
+vendor = "Tattu (Gens Ace)"
+part_number = "Tattu 450 mAh 2S 75C JST-SYP"
+url = "https://www.myfpvstore.com/batteries/tattu-7-4v-2s-450mah-75c-lipo-micro-battery-jst-syp/"
+
+# Avionics and pyro supply of assemblies/tvc-lander.toml. Part frame: origin at the pack centre, x along length (44 mm), y along width (25 mm), z up (14 mm).
+# No pack resistance is published: see r_internal_pack.
+[params]
+capacity_ah     = { value = 0.45, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 1620.0, unit = "C", fidelity = "derived", derivation = "0.45 Ah x 3600 s/h = 1620 C (coulombs)." }
+cells_series    = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 7.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 8.4, unit = "V", fidelity = "derived", derivation = "2S x 4.2 V/cell full-charge LiPo limit = 8.4 V." }
+c_rating_cont   = { value = 75, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 150, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 33.75, unit = "A", fidelity = "derived", derivation = "75 C x 0.45 Ah = 33.75 A (rating label; vendor C ratings of micro packs are optimistic)." }
+mass            = { value = 0.029, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.044, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.025, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.014, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.116, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. The R_cell = 0.026 ohm*Ah / capacity rule of parts/propulsion/tattu-1800mah-4s-75c-xt60 gives 57.8 mOhm per cell, x 2 cells = 0.116 ohm for this 0.45 Ah pack (sets the sag under the ~8 A igniter pulse: about 0.9 V)." }
+
+[geometry]
+shape = "box"
+size = [0.022, 0.0125, 0.007]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.007]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.0
+note = "Underside of the pack (strap / hook-and-loop seat); no hole pattern."
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+v_max = { value = 8.4, unit = "V", fidelity = "derived", derivation = "2S x 4.2 V/cell = 8.4 V." }
+i_max = { value = 33.75, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 75 C x 0.45 Ah (S1 label)." }
+note = "Main lead with the JST-SYP plug; lead length not published (the pack mass includes it)."
+
+[[sources]]
+id = "S1"
+url = "https://www.myfpvstore.com/batteries/tattu-7-4v-2s-450mah-75c-lipo-micro-battery-jst-syp/"
+title = "MyFPVStore - Tattu 7.4V 2S 450mAh 75C LiPo micro battery JST-SYP, product specification"
+accessed = "2026-10-08"
+quote = "Capacity: 450mAh ... Voltage: 7.4V (2S) ... Discharge Rate: 75C Constant / 150C Burst ... Weight: 29g (±20g) ... Dimensions: 44mm x 25mm x 14mm"

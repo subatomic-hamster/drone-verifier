@@ -1,0 +1,123 @@
+id = "tmotor-mn5006-kv300"
+name = "T-Motor MN5006 KV300 Antigravity multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN5006 KV300"
+url = "https://store.tmotor.com/product/mn5006-kv300-motor-antigravity-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop; body length 30 mm along +z (Motor Size 55.6 x 30 mm).
+# S1 text says "Shaft Diameter IN: 6mm" (inner shaft, bearing side); the S2 drawing shows the output shaft as O4 -> 4 mm used for the prop-side shaft port.
+# Drawing also shows 8-M3 on O12/O18 circles on the bell face (prop adapter / accessory seat) - not modelled as a port.
+
+[params]
+mass            = { value = 0.108, unit = "kg", src = "S1", fidelity = "datasheet" }          # Motor Weight incl. cable, KV300
+kv              = { value = 300, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.125, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 125 mOhm
+i0              = { value = 0.6, unit = "A", src = "S1", fidelity = "datasheet" }             # idle current at 22 V
+i0_voltage      = { value = 22.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }            # 180 s
+p_max           = { value = 500.0, unit = "W", src = "S1", fidelity = "datasheet" }           # 180 s
+cells_min       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "24N28P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0556, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.004, unit = "m", src = "S2", fidelity = "datasheet" }
+mount_circle    = { value = 0.025, unit = "m", src = "S2", fidelity = "datasheet" }           # drawing "4-M3, O25"
+mount_screw     = { value = "M3", unit = "thread", src = "S2", fidelity = "datasheet" }
+lead_length     = { value = 0.08, unit = "m", src = "S1", fidelity = "datasheet" }
+kt              = { value = 0.031831, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*300) = 0.031831 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR "P17*5.8 CF" prop, ~23 V (per-row voltage as printed). 40-100 % throttle, all printed rows.
+# Vendor columns: Current(A), Power(W), RPM, Torque(N*m), Thrust(g), Efficiency(g/W); thrust_N = thrust_g * 0.00980665. Temperature 67 C.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [40, 23.7, 1.63, 39, 2481, 0.1, 4.9131, 501, 13.02],
+  [45, 23.67, 2.21, 52, 2790, 0.13, 6.2763, 640, 12.24],
+  [50, 23.64, 2.88, 68, 3103, 0.15, 7.6884, 784, 11.5],
+  [55, 23.61, 3.71, 88, 3410, 0.19, 9.2379, 942, 10.75],
+  [60, 23.57, 4.66, 110, 3689, 0.22, 10.9736, 1119, 10.18],
+  [65, 23.54, 5.68, 134, 3947, 0.25, 12.6408, 1289, 9.64],
+  [70, 23.5, 6.78, 159, 4203, 0.29, 14.2589, 1454, 9.13],
+  [75, 23.46, 8, 188, 4442, 0.32, 15.9946, 1631, 8.69],
+  [80, 23.42, 9.28, 217, 4664, 0.35, 17.6324, 1798, 8.28],
+  [90, 23.32, 12.31, 287, 5105, 0.43, 21.4373, 2186, 7.62],
+  [100, 23.22, 15.41, 358, 5491, 0.5, 24.8893, 2538, 7.09],
+]
+prop_label = "T-MOTOR P17*5.8 CF"
+prop = "tmotor-ns17x5.8"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0278, 0.015]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.030]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (upper end of the 4-6S rated range, S1)." }
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 80 mm phase leads (S1 'Lead Cable|80mm'; no gauge or connector stated, so bare / solder ends).
+# Lead exit and phase naming are conventions (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 80 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0278, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives only the lead length (80mm), not gauge, connector, lead positions or phase labels: leads drawn side by side at the base, 4 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 20.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 20.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 20.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn5006-kv300-motor-antigravity-type.html"
+title = "T-MOTOR store - MN5006 Antigravity type motor (specification + test data)"
+accessed = "2026-10-07"
+quote = "Motor Size|Φ55.6*30mm|Configuration|24N28P|Shaft Diameter|IN：6mm|Lead Cable|80mm|KV|300|Rated Voltage（Lipo）|4-6S|Idle Current（22V）|0.6A|Peak Current（180s）|20A|Max. Power（180s）|500W|Motor Weight（Incl. Cable）|108g|Internal Resistance|125mΩ. Test: MN5006 KV300|T-MOTOR P17*5.8” CF 40%|23.70|1.63|39|2481|0.10|501|13.02|67 ... 100%|23.22|15.41|358|5491|0.50|2538|7.09"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/161723791227534273.jpg"
+title = "T-MOTOR MN5006 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 30, 25, 8,25, Ø4, Ø55.6, 4-M3, Ø25, 8-M3, Ø12, Ø18, Ø4"

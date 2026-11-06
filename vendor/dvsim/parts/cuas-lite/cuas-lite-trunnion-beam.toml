@@ -1,0 +1,33 @@
+id = "cuas-lite-trunnion-beam"
+name = "cuas-lite trunnion_beam (3D printed PETG, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "trunnion_beam"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (51.03 g, supports: yes). The mesh is the CAD's dvsim mesh (m), already in the head frame H (tilt group): the part frame IS frame H.
+# Hollow 35 mm tube that turns in the right cheek's 6807 bearing, takes the balls from the feed elbow spigot and drops them down a chute to the breech; carries the left 8 mm rod seat.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/trunnion_beam.stl"
+material = "petg"
+bbox_min = [-0.05, -0.0675, -0.0215]
+bbox_max = [0.027, 0.057, 0.0175]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the chassis's seat port mates here."

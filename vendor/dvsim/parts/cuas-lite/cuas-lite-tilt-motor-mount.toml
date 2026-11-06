@@ -1,0 +1,32 @@
+id = "cuas-lite-tilt-motor-mount"
+name = "cuas-lite tilt_motor_mount (3D printed PETG, group pan)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "tilt_motor_mount"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (23.55 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in its group frame (B static/pan, head frame H tilt): the part frame IS that frame.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/tilt_motor_mount.stl"
+material = "petg"
+bbox_min = [-0.038, 0.068, 0.121839]
+bbox_max = [0.038, 0.097, 0.214]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the rotor plate's seat port mates here."

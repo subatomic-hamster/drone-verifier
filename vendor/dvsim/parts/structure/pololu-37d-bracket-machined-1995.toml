@@ -1,0 +1,62 @@
+id = "pololu-37d-bracket-machined-1995"
+name = "Pololu Machined Aluminum Bracket for 37D mm Metal Gearmotors (item 1995)"
+category = "bracket"
+vendor = "Pololu"
+part_number = "Pololu 1995"
+url = "https://www.pololu.com/product/1995"
+
+# Frame: origin on the bracket's base surface (the mounting surface, z = 0), centred on the motor axis in x; +z up; the tombstone's vertical plate
+# occupies y in [0, thickness]; its inboard face (y = 0) takes the motor's face plate, the shaft passes through to y > 0. The motor axis is
+# `motor_axis_height` above the base. Published: mass and the interface (six holes on the face matching the gearbox's six, three tapped M3 holes
+# on the bottom, nine M3 screws included). The dimension drawing is an image, so the outline below is ESTIMATED (see the params).
+
+[params]
+mass              = { value = 0.014,   unit = "kg", src = "S1", fidelity = "datasheet" }
+motor_axis_height = { value = 0.02168, unit = "m",  fidelity = "estimated", rationale = "Not in the retrieved text (dimension diagram is an image). A 37 mm motor (radius 18.5 mm) on a tombstone with ~3.2 mm of material below it would sit at ~21.7 mm. The value is the one that puts the 90 mm wheel's lowest point level with the 0.8 inch ball caster of the rover (assemblies/rover.toml: 0.045 m wheel radius - 0.003 m plate - 0.02032 m caster height = 0.02168 m)." }
+thickness         = { value = 0.006,   unit = "m",  fidelity = "estimated", rationale = "Not in the retrieved text. A machined 6 mm plate; must be less than the hub seat of the gearmotor (6.8 mm from the face plate) so the hub clears the bracket." }
+outline_width     = { value = 0.042,   unit = "m",  fidelity = "estimated", rationale = "Not in the retrieved text; a little wider than the 37 mm motor body. Only the collision / interference boxes depend on it." }
+outline_height    = { value = 0.0405,  unit = "m",  fidelity = "estimated", rationale = "Not in the retrieved text; flush with the top of the 37 mm motor above the axis (0.02168 + 0.0185 = 0.0402 m)." }
+
+[geometry]
+shape = "box"
+size = [0.021, 0.003, 0.02025]
+pos = [0.0, 0.003, 0.02025]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.003, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.0
+note = "Three tapped M3 holes on the bottom (S1); their spacing is not in the retrieved text, so no bolt pattern is recorded."
+
+[[ports]]
+name = "motor_face"
+kind = "mech"
+type = "bolt-circle.31.6.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.02168]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 6
+thickness = 0.006
+note = "'The six holes on the bracket face line up with the six mounting holes on the 37D gearbox' (S1); six M3 screws included."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "S1"
+note = "Machined aluminium (title); bare brushed finish as in the product photo. Drawn from the geometry box."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "alu-brushed" }
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1995/specs"
+title = "Pololu item 1995 (Machined Aluminum Bracket for 37D mm Metal Gearmotors), description and Specs tab"
+accessed = "2026-10-07"
+quote = "This machined aluminum gearmotor bracket lets you securely mount Pololu’s 37D mm metal gearmotors to your project. The six holes on the bracket face line up with the six mounting holes on the 37D gearbox, and the bracket features three tapped M3 holes on the bottom that can be used to mount it to a surface. The bracket includes nine M3 screws: three for mounting the bracket to a surface and six for mounting it to the gearmotor. || Weight: 14 g"

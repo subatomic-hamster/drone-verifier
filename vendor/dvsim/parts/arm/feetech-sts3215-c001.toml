@@ -1,0 +1,306 @@
+id = "feetech-sts3215-c001"
+name = "Feetech STS3215 7.4V 1/345 serial bus servo (C001), SO-101 follower joint servo"
+category = "motor.servo"
+vendor = "Feetech (Shenzhen Feite Model Co., Ltd.)"
+part_number = "STS3215-C001"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md#sourcing-parts"
+
+# Used 6x on the SO-101 follower (all six joints). The 12V variants (C018/C047) are an optional upgrade, not the BOM default.
+# Datasheet numbers below are for the 7.4V 1/345 STS3215 (Feetech spec "7.4V 19KG.CM plastic shell metal tooth magnetic coding dual-axis TTL serial servo").
+
+[params]
+mass            = { value = 0.055,   unit = "kg",  src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0452,  unit = "m",   src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0247,  unit = "m",   src = "S1", fidelity = "datasheet" }
+height          = { value = 0.035,   unit = "m",   src = "S1", fidelity = "datasheet" }
+gear_ratio      = { value = 345,     unit = "1",   src = "S1", fidelity = "datasheet" }
+gear_material   = { value = "copper (metal gear train)", unit = "-", src = "S8", fidelity = "datasheet" }
+backlash        = { value = 0.0087266, unit = "rad", src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 4096, unit = "counts/rev", src = "S1", fidelity = "datasheet" }
+position_range  = { value = 6.28319, unit = "rad", src = "S1", fidelity = "datasheet" }
+baud_default    = { value = 1000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+baud_min        = { value = 38400,   unit = "bit/s", src = "S1", fidelity = "datasheet" }
+protocol        = { value = "Feetech half-duplex asynchronous serial, 8N1, 1 Mbps TTL single-wire, ID 0-253", unit = "-", src = "S1", fidelity = "datasheet" }
+position_update_period = { value = 0.001, unit = "s", src = "S1", fidelity = "datasheet" }
+firmware_hz     = { value = 1000, unit = "Hz", fidelity = "derived", derivation = "1 / position_update_period = 1 / 0.001 s = 1000 Hz (datasheet 11 'Maximum position update rate | 1 ms'; the real firmware loop rate is not published, this is the update-rate bound)." }
+
+# --- electrical / performance, 7.4 V point (datasheet; kg.cm converted with g = 9.80665) ---
+v_nominal       = { value = 7.4,     unit = "V",   src = "S1", fidelity = "datasheet" }
+v_operating_min = { value = 4.0,     unit = "V",   src = "S1", fidelity = "datasheet" }
+v_operating_max = { value = 7.4,     unit = "V",   src = "S1", fidelity = "datasheet" }
+no_load_speed_7v4   = { value = 5.4542, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.192 s/60deg (52 RPM)
+no_load_current_7v4 = { value = 0.15,   unit = "A",     src = "S1", fidelity = "datasheet" }
+stall_torque_7v4    = { value = 1.9123, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 19.5 kg.cm
+stall_current_7v4   = { value = 2.5,    unit = "A",     src = "S1", fidelity = "datasheet" }
+rated_torque_7v4    = { value = 0.4903, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 5 kg.cm
+rated_current_7v4   = { value = 0.65,   unit = "A",     src = "S1", fidelity = "datasheet" }
+# 6 V point
+no_load_speed_6v    = { value = 4.4000, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.238 s/60deg (42 RPM)
+no_load_current_6v  = { value = 0.13,   unit = "A",     src = "S1", fidelity = "datasheet" }
+stall_torque_6v     = { value = 1.6181, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 16.5 kg.cm
+stall_current_6v    = { value = 2.0,    unit = "A",     src = "S1", fidelity = "datasheet" }
+rated_torque_6v     = { value = 0.3923, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 4 kg.cm
+rated_current_6v    = { value = 0.5,    unit = "A",     src = "S1", fidelity = "datasheet" }
+idle_current        = { value = 0.006,  unit = "A",     src = "S1", fidelity = "datasheet" }
+r_terminal          = { value = 2.5,    unit = "ohm",   src = "S1", fidelity = "datasheet" }  # motor terminal resistance
+kt_output_datasheet = { value = 0.78453, unit = "N*m/A", src = "S1", fidelity = "datasheet" } # 8 kg.cm/A at the output shaft
+
+# --- DC-motor equivalent model (motor-side), derived ---
+r_effective = { value = 2.98, unit = "ohm", fidelity = "derived", derivation ="Stall points give V/I_stall = 6 V/2.0 A = 3.00 ohm and 7.4 V/2.5 A = 2.96 ohm; mean = 2.98 ohm. This is the datasheet terminal resistance (2.5 ohm) plus ~0.48 ohm of H-bridge, connector and lead resistance seen at stall." }
+r_driver_extra = { value = 0.48, unit = "ohm", fidelity = "derived", derivation ="r_effective - r_terminal = 2.98 - 2.5 ohm (series H-bridge + wiring inside the servo)." }
+omega_noload_motor_7v4 = { value = 1881.68, unit = "rad/s", fidelity = "derived", derivation ="Motor-side speed = N * omega_out = 345 * 5.4542 rad/s (0.192 s per 60 deg) = 1881.7 rad/s = 17969 RPM." }
+ke = { value = 0.003695, unit = "V*s/rad", fidelity = "derived", derivation ="Back-EMF constant from the no-load point: Ke = (V - I0*R_eff)/(N*omega_out) = (7.4 - 0.15*2.98)/(345*5.4542) = 3.695e-3 V*s/rad. The 6 V point gives (6 - 0.13*2.98)/(345*4.400) = 3.697e-3, i.e. the two voltages agree to 0.06%." }
+kt_motor = { value = 0.003695, unit = "N*m/A", fidelity = "derived", derivation ="SI identity Kt = Ke (V*s/rad = N*m/A) for an ideal DC motor; motor-side torque constant." }
+kv_equivalent = { value = 2584.38, unit = "rpm/V", fidelity = "derived", derivation ="Kv = 60/(2*pi*ke) = 60/(2*pi*0.003695 V*s/rad) = 2584.38 rpm/V, motor side (before the 345:1 gear); tracks the ke estimate above (tools/so101_ports.py prints the same number)." }
+gear_efficiency = { value = 0.658, unit = "1", fidelity = "derived", derivation ="eta = tau_stall_out / (N * Kt * (I_stall - I0)). 7.4 V: 1.9123/(345*0.003695*(2.5-0.15)) = 0.638; 6 V: 1.6181/(345*0.003695*(2.0-0.13)) = 0.678; mean = 0.658 (stall efficiency of the 345:1 train). Cross-check: datasheet Kt 8 kg.cm/A = 0.7845 N*m/A at the output implies eta = 0.7845/(345*0.003695) = 0.615." }
+friction_torque_motor_noload = { value = 0.000554, unit = "N*m", fidelity = "derived", derivation ="Total no-load loss reflected to the motor shaft = Kt * I0 = 0.003695 * 0.15 A = 5.54e-4 N*m (rotor + gear friction at 17969 RPM motor speed)." }
+i0_visc = { value = 0.6916, unit = "1", fidelity = "derived", derivation ="Viscous share of the no-load loss torque (schema MotorParams i0_visc, docs/models.md loss law tau_f = Kt i0 [(1 - v - q) tanh(w/w_s) + v w/w0 + q w|w|/w0^2], w0 = omega_noload_motor_7v4 = 1881.7 rad/s, the motor speed at which the 7.4 V i0 = 0.15 A was measured), from the TWO datasheet no-load currents. At no load the motor torque equals the loss, so i(V) = i0 [(1 - v - q) + v x + q x^2] with x = w(V)/w0 and w(V) = (V - R i)/Ke (R = r_effective 2.98 ohm, Ke = 3.695e-3). The 7.4 V point is x = 1 (it only defines i0), the 6 V point (0.13 A) gives ONE equation: x(6 V) = 0.8072 self-consistently, 0.13/0.15 = 1 - v (1 - 0.8072) - q (1 - 0.8072^2) -> 0.1928 v + 0.3484 q = 0.1333. Two points identify one number, not the split: v alone = 0.6916 (q = 0), q alone = 0.3827 (v = 0), any mix in between fits both points equally (5 V prediction 0.1157 A vs 0.1182 A, 2 % apart: not distinguishable by the datasheet). v-only is chosen (q = 0): a grease-lubricated gear train + coreless motor is Coulomb + viscous (BAM's identified STS3215 friction law has exactly friction_base + friction_viscous terms, no w|w| term), and the cross-check below discriminates the two ends (q-only would leave a Coulomb share of 0.617, an output-side 0.118 N*m, 2.3x BAM's 0.0515). Residual Coulomb share 1 - v = 0.3084. Consequence: standstill friction drops to 31 % of the old constant-i0 model, so holding torque costs more duty (SO-101 zero-pose shoulder_lift sag 4.4 -> 6.5 deg at LeRobot gains). Cross-check, NOT an input (BAM bam/params/feetech_sts3215_7_4V/m1.json, https://github.com/Rhoban/bam, 2026-10-07): output-side Coulomb friction here = n Kt i0 (1 - v) = 345 * 3.695e-3 * 0.15 * 0.3084 = 0.059 N*m vs BAM friction_base 0.0515 (+15 %); viscous output coefficient n^2 Kt i0 v / w0 = 0.0242 N*m*s/rad vs BAM friction_viscous 0.0599 (BAM fits kt, R and friction jointly, see docs/research/sts3215-calibration.md 1.2, so this is only an order-of-magnitude agreement). The 5 V arm no-load current under this law is 0.1157 A (the part's older linear scaling said 0.101 A)." }
+d_scale = { value = 8000, unit = "1", fidelity = "derived", derivation ="Register units -> duty for the D term: official Feetech memory table (S10) addr 22 'Position loop D (derivative) coefficient ... Derivative coefficient controlling the motor (1/8)' against addr 21 P '(1/4)', output unit 0.1 % duty (addr 16 max torque 0..1000 = 0.1 %, addr 60 present load 0.1 % duty): output = (D/8) de_counts in 0.1 % units -> duty = D de / (8 * 1000) -> d_scale = 8 * 1000 = 8000 (pid_scale = 4 * 1000 = 4000 for P, docs/research/sts3215-calibration.md 1.4). Inference, not measured: the time base of de (per firmware step in the sim) is unpublished, so the D term's absolute size is as uncertain as that; only the 2:1 ratio to the P scale is documented. Before this param the sim used pid_scale (4000) for D too, i.e. a D twice the table's." }
+stall_torque_5v = { value = 1.323, unit = "N*m", fidelity = "derived", derivation ="Model prediction at the 5 V supply the SO-101 BOM actually uses: I_stall = 5/2.98 = 1.678 A; I0 scaled with V = 0.15*5/7.4 = 0.101 A; tau = eta*N*Kt*(I_stall - I0) = 0.658*345*0.003695*(1.678-0.101) = 1.32 N*m (13.5 kg.cm). The same model reproduces the datasheet 6 V stall torque to -1.9% and the 7.4 V value to +2.4%; no published 5 V torque exists (README only says 'likely slightly less')." }
+no_load_speed_5v = { value = 3.685, unit = "rad/s", fidelity = "derived", derivation ="omega_out = (V - I0*R_eff)/(N*Ke) = (5 - 0.101*2.98)/(345*0.003695) = 3.685 rad/s = 35.2 RPM (0.284 s/60deg). No published 5 V figure." }
+rotor_inertia_motor = { value = 2.35e-7, unit = "kg*m^2", fidelity = "estimated", rationale ="Not published. SO-ARM100 MJCF joints_properties.xml uses armature=0.028 kg*m^2 (reflected, joint side; adapted from Open Duck Mini, gear variant not stated); divided by N^2 = 345^2 gives 2.35e-7 kg*m^2 at the motor. Order of magnitude plausible for a 24 mm-class coreless motor but unverified. Independent support: Rhoban BAM's identified STS3215 armature (bam/params/feetech_sts3215_7_4V/m1.json, \"armature\": 0.02608291141307205 kg*m^2, reflected; https://github.com/Rhoban/bam, accessed 2026-10-07, docs/research/sts3215-calibration.md 1.2) is 7 % below the 0.028 used. Value unchanged." }
+joint_damping_mjcf = { value = 0.60, unit = "N*m*s/rad", src = "S7", fidelity = "literature" }
+joint_frictionloss_mjcf = { value = 0.052, unit = "N*m", src = "S7", fidelity = "literature" }
+joint_armature_mjcf = { value = 0.028, unit = "kg*m^2", src = "S7", fidelity = "literature" }
+
+# --- deadband / backlash / registers (Feetech memory table) ---
+dead_zone_cw_default  = { value = 1, unit = "count", src = "S4", fidelity = "datasheet" }  # 1 count = 0.087 deg; range 0-16
+dead_zone_ccw_default = { value = 1, unit = "count", src = "S4", fidelity = "datasheet" }
+reg_p_coefficient_default = { value = 32, unit = "count", src = "S5", fidelity = "literature" }  # addr 21 (0x15)
+reg_i_coefficient_default = { value = 0,  unit = "count", src = "S4", fidelity = "datasheet" }   # addr 23 (0x17)
+reg_d_coefficient_default = { value = 32, unit = "count", fidelity = "estimated", rationale ="Addr 22 (0x16). Retrieved memory table lists no default for Kp/Kd; LeRobot states the P default is 32 and writes D=32 for SO-101 (S6). D=32 assumed to be the factory value; unverified." }
+reg_p_lerobot_so101 = { value = 16, unit = "count", src = "S6", fidelity = "literature" }
+reg_i_lerobot_so101 = { value = 0,  unit = "count", src = "S6", fidelity = "literature" }
+reg_d_lerobot_so101 = { value = 32, unit = "count", src = "S6", fidelity = "literature" }
+reg_max_torque_limit_default = { value = 1000, unit = "0.1 %", src = "S4", fidelity = "datasheet" }  # addr 16 (0x10); copied to Torque_Limit addr 48 at power-on
+reg_torque_limit_default     = { value = 1000, unit = "0.1 %", src = "S4", fidelity = "datasheet" }  # addr 48 (0x30)
+reg_protection_current_default = { value = 511, unit = "6.5 mA", src = "S4", fidelity = "datasheet" } # addr 28 (0x1C); 511*6.5 mA = 3.32 A
+reg_overload_torque_default  = { value = 80, unit = "%", src = "S4", fidelity = "datasheet" }        # addr 36 (0x24)
+reg_protection_time_default  = { value = 200, unit = "10 ms", src = "S4", fidelity = "datasheet" }   # addr 35 (0x23) = 2 s
+reg_holding_torque_after_overload_default = { value = 20, unit = "%", src = "S4", fidelity = "datasheet" } # addr 34 (0x22)
+reg_overcurrent_protection_time_default = { value = 200, unit = "10 ms", src = "S4", fidelity = "datasheet" } # addr 38 (0x26)
+reg_max_temperature_default  = { value = 70, unit = "degC", src = "S4", fidelity = "datasheet" }     # addr 13 (0x0D)
+reg_min_input_voltage_default = { value = 4.0, unit = "V", src = "S4", fidelity = "datasheet" }      # addr 15 (0x0F), raw 40 * 0.1 V
+reg_max_input_voltage_default = { value = 8.0, unit = "V", fidelity = "estimated", rationale = "Addr 14 (0x0E). The official memory table (S10) and the third-party transcription (S4) list NO default for Maximum input voltage (cell '-'); python/dvsim/feetech.py has always assumed 80 (8.0 V), just above the 7.4 V top of the datasheet's 4-7.4 V operating range. Unverified." }
+reg_unloading_condition_default = { value = 36, unit = "bitmask", fidelity = "estimated", rationale = "Addr 19 (0x13), bits: 1 voltage, 2 magnetic encoder, 4 overheat, 8 overcurrent, 32 load overload (S10 section 3.3). The table gives no default (cell '-'); 36 = overheat + overload is the sim's long-standing assumption (the two protections the model can act on; voltage is only reported). Unverified." }
+reg_homing_offset_default = { value = 0, unit = "count", src = "S10", fidelity = "datasheet" }  # addr 31-32 (0x1F), 2 bytes, sign-magnitude bit 11 (LeRobot STS_SMS_SERIES_ENCODINGS_TABLE "Homing_Offset": 11, S11); factory 0
+reg_present_current_lsb ={ value = 0.0065, unit = "A", src = "S4", fidelity = "datasheet" }         # addr 69 (0x45)
+reg_acceleration_lsb = { value = 8.7, unit = "deg/s^2", src = "S4", fidelity = "datasheet" }         # addr 41 (0x29), 0 = max acceleration
+lerobot_gripper_max_torque_limit = { value = 500, unit = "0.1 %", src = "S6", fidelity = "literature" }
+lerobot_gripper_protection_current = { value = 250, unit = "6.5 mA", src = "S6", fidelity = "literature" }
+lerobot_gripper_overload_torque = { value = 25, unit = "%", src = "S6", fidelity = "literature" }
+lerobot_max_acceleration = { value = 254, unit = "8.7 deg/s^2", src = "S6", fidelity = "literature" }
+lerobot_acceleration = { value = 254, unit = "8.7 deg/s^2", src = "S6", fidelity = "literature" }
+
+[tables.datasheet_points]
+columns = ["voltage_V", "no_load_s_per_60deg", "no_load_rpm", "no_load_current_A", "stall_torque_kgcm", "stall_current_A", "rated_torque_kgcm", "rated_current_A"]
+rows = [[6.0, 0.238, 42, 0.13, 16.5, 2.0, 4.0, 0.5], [7.4, 0.192, 52, 0.15, 19.5, 2.5, 5.0, 0.65]]
+src = "S1"
+fidelity = "datasheet"
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer"); the generator's Koch-style servo frame is placed on the mesh frame
+src = "V1"
+note = "Black case, silver output horn disc with four holes, inset black cover, label on the side, two three-pin ports in the end (Feetech / SO-ARM100 photos). Mesh frame: shaft at x = +12.5 mm, horn face at z = -17.7 mm facing -z."
+
+[[visual.elements]]
+gen = "bus_servo"
+pos = [0.0125, 0.0, -0.0177]
+rpy = [0.0, 3.141592653589793, 0.0]
+
+[[sources]]
+id = "V1"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "SO-ARM100 / SO-101 README (build photos of the STS3215 servos in the arm)"
+accessed = "2026-10-08"
+quote = "[image] SO-101 arm assembled from STS3215 servos: black rectangular case with a round silver horn"
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/so101/sts3215_03a_v1.stl"
+mesh_no_horn = "meshes/so101/sts3215_03a_no_horn_v1.stl"
+# mesh units: metres. bbox x[-0.0227,0.0227] y[-0.0124,0.0124] z[-0.0194,0.0202]; solid mesh volume 3.622e-5 m^3 (no_horn 3.566e-5)
+# Mesh frame: output shaft line at x = 0.0125, y = 0 (parallel to z). The 20 mm horn disc (vertices only in the horn mesh) is on the -z side, outer face z = -0.0177;
+# the other end of the (dual-axis) shaft is a short spline stub at z = +0.0202. The 6 servos of the arm all use this one mesh frame; the wrist_roll servo is drawn with mesh_no_horn.
+
+# Ports. output/base derived or chosen by tools/so101_ports.py (closure check: python tools/so101_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame.
+# output: same frame for all 6 joints of the arm (spread: origin 1.1e-7 m, axis 6.7e-6 rad, both URDF rounding); the child horn seats absorb the per-joint rotation about z. Mate k = 0, no reverse needed.
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "male"
+pos = [0.012500022257, 6.4538e-08, -0.0177]
+axis = [6.11468e-07, 6.41993e-07, -1.0]
+ref = [1.0, 0.0, 6.11468e-07]
+symmetry = 25
+thickness = 0.0021
+thread = "m3"
+tapped = true
+thread_note = "Fastener tags added by the SO-101 assembly stage (not read from the mesh): the horn is fixed by the single M3x6 'top horn' screw of the LeRobot assembly (S1 of so101-screw-m3x6), modelled as threading into the output shaft (tapped, depth = the builder's 1.5 d rule), which is an assumption."
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): P_out = frame at the mean over the 6 joints of inv(T_servo_i) @ J_i (servo mesh frame), moved along the axis to the outer face of the horn disc (z = -0.0177 in the servo mesh; horn disc = vertices only in sts3215_03a_v1.stl and not in sts3215_03a_no_horn_v1.stl); axis = outward horn normal = joint z axis here (the horn lies on the -z side of the servo mesh)"
+thickness_rationale = "Horn disc thickness read from the servo mesh (horn-only vertices span 2.1 mm in z). No published value; estimated as the clamped stack."
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3215-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0159]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.0015
+thread = "m2"
+tapped = true
+thread_note = "Tags added by the SO-101 assembly stage: the datasheet lists '8-PA2.0 self-tapping' mounting screws (S1 as summarised in docs/research/so101.md), so the servo case is the tapped side of the M2 mounting joint (screw length vs the printed seat thickness is then checked by the builder)."
+fidelity = "estimated"
+rationale = "Frame convention, not a measured hole pattern: centre of the outer case plane opposite the horn (z = +0.0159 in the servo mesh; the horn disc is on the -z side), axis out of that face (+z), ref along the long (x) side. The matching seats on the printed parts are derived so that this port reproduces the URDF placement."
+thickness_rationale = "No published ear/lid thickness. The servo mesh shows a 1.5 mm slab between z = 0.0144 and 0.0159 spanning the case outline; estimated."
+
+[[ports]]
+name = "port_a"
+pins = ["J1.1", "J1.2", "J1.3"]
+kind = "power"
+type = "5264-3p"
+gender = "female"
+role = "passthrough"
+v_max = { value = 7.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.65, unit = "A", src = "S1", fidelity = "datasheet" }   # rated current at 7.4 V (servo's own draw)
+i_peak = { value = 2.5, unit = "A", src = "S1", fidelity = "datasheet" }  # stall current at 7.4 V
+note = "Two interfaces per servo, usable in series (daisy chain), per S9; the two connectors carry the same GND / Vcc / signal pins (pin order 1 GND, 2 Vcc, 3 signal per the datasheet). Per-connector current rating is not published; the limits above are the servo's own draw, the daisy-chained downstream current is up to the DRC."
+
+[[ports]]
+name = "port_b"
+pins = ["J2.1", "J2.2", "J2.3"]
+kind = "power"
+type = "5264-3p"
+gender = "female"
+role = "passthrough"
+v_max = { value = 7.4, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.65, unit = "A", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 2.5, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Second daisy-chain interface, same net as port_a (S9)."
+
+[[ports]]
+name = "bus"
+pins = ["J1.3"]
+kind = "signal"
+type = "feetech-ttl"
+gender = "female"
+note = "Single-wire half-duplex TTL on the signal pin (pin 3) of port_a / port_b; 1 Mbps default (baud_default param), ID 0-253."
+
+# ---- Connectors (pin level): the two daisy-chain sockets, both 5264-3P, 1 GND / 2 Vcc / 3 Signal-TTL (S1 '6-7 Connector and Cable': 'Type
+# 5264-3P ... pin definition 1 GND, 2 Vcc, 3 Signal/TTL'; the two interfaces 'can be used in series', S9). The pose is estimated: the
+# datasheet gives no socket location, so they are drawn on the two short side faces of the case.
+[[connectors]]
+id = "J1"
+name = "bus socket 1 (5264-3P)"
+type = "5264-3p"
+gender = "female"
+pos = [-0.0227, 0.0, -0.012]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Estimated (case end face); S1 lists the connector type and pin order, not where it sits. The 2.54 mm pitch is the 5264 family's (S9: '5264/2.54 3P')."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "Vcc", kind = "power", dir = "io", v_min = 4.0, v_max = 7.4, note = "operating voltage 6 V / 7.4 V (S1); the port limits above" },
+  { number = 3, name = "Signal/TTL", kind = "signal", dir = "io", v_min = 2.0, v_max = 5.0, note = "S1 section 11: signal high level 2 V - 5 V, low level 0 - 0.45 V; single-wire half-duplex" },
+]
+
+[[connectors]]
+id = "J2"
+name = "bus socket 2 (5264-3P)"
+type = "5264-3p"
+gender = "female"
+pos = [0.0227, 0.0, -0.012]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "As J1."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "Vcc", kind = "power", dir = "io", v_min = 4.0, v_max = 7.4 },
+  { number = 3, name = "Signal/TTL", kind = "signal", dir = "io", v_min = 2.0, v_max = 5.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://core-electronics.com.au/attachments/uploads/sts3215-smart-servo-datasheet-translated.pdf"
+title = "Feetech STS3215 product specification A/0 (2020-04-10), machine-translated copy (image-based PDF, pages 3-4)"
+accessed = "2026-10-06"
+quote = "5-1 Typical operating voltage Operating Voltage | 6V | 7.4V || 5-2 No Load Speed | 0.238sec/60° (42RPM) | 0.192sec/60° (52RPM) || 5-3 Running Current (no load) | 130mA | 150mA || 5-4 Stall Torque (at locked) | 16.5kg.cm | 19.5kg.cm || 5-5 Stall current | 2a | 2.5A || 5-6 Idle Current (at stopped) | 6mA | 6mA || 5-7 Working Voltage Input Voltage | 4V-7.4V || 5-8 Rated Torque | 4kg.cm | 5kg.cm || 5-9 Rated Current | 500mA | 650mA || 5-10 Motor internal resistance Terminal resistance | 2.5Ω || 5-11 Kt constant | 8kg.cm/A || 6-1 Appearance Size | 45.2X24.7X35 || 6-8 The Weight | 55±1g || 6-10 Gear Ratio | 1/345 || 6-11 Back Lash | ≤0.5° || 7-2 Protocol Type | Half Duplex Asynchronous Serial Communication || 7-3 ID range | 0-253 || 7-4 Communication Baud Rate | 38400bps 1 Mbps (factory default 1Mbps) || 7-7 Rotation angle Running degree | 360°(when 0~4096) || 7-8 Electronic resolution | 0.088°(360°/4096) || 11 Maximum position update rate | 1 ms"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "TheRobotStudio SO-ARM100 README (SO-101 BOM), commit a758567"
+accessed = "2026-10-06"
+quote = "The 7.4V has a stall torque of 16.5kg.cm at 6V (and likely slightly less for a 5V power supply). The 12V version has a stall torque of 30kg.cm."
+
+[[sources]]
+id = "S4"
+url = "https://aifitlab-wiki.super.site/feetech-servo-motor-docs/feetech-sts-servo-memory-table-analysis"
+title = "FEETECH STS Servo - Memory Table Analysis (third-party transcription of the Feetech STS/SMS manual memory table)"
+accessed = "2026-10-06"
+quote = "26 | 0x1A | Positive Dead Zone | 1 | 1 | RW | 0 ~ 16 | 0.087 degrees | Minimum unit equals minimum resolvable angle || 28 | 0x1C | Protection Current | 2 | 511 | RW | 0 ~ 2047 | 6.5 mA || 36 | 0x24 | Overload Torque Threshold | 1 | 80 | RW | 0 ~ 254 | 1 % || 35 | 0x23 | Protection Time | 1 | 200 | RW | 0 ~ 254 | 10 ms || 23 | 0x17 | Position Loop Integral Gain (Ki) | 1 | 0 | RW | 0 ~ 254 || 16 | 0x10 | Maximum Torque | 2 | 1000 | RW | 0 ~ 1000 | 0.1 %"
+
+[[sources]]
+id = "S5"
+url = "https://github.com/huggingface/lerobot/blob/200ee53596d464bd28f6595cdb31be69a2b5e379/src/lerobot/robots/lekiwi/lekiwi.py"
+title = "LeRobot lekiwi.py (STS3215 motors), commit 200ee53, line 196"
+accessed = "2026-10-06"
+quote = "# Set P_Coefficient to lower value to avoid shakiness (Default is 32)"
+
+[[sources]]
+id = "S6"
+url = "https://github.com/huggingface/lerobot/blob/200ee53596d464bd28f6595cdb31be69a2b5e379/src/lerobot/robots/so_follower/config_so_follower.py"
+title = "LeRobot SO-follower config and so_follower.py (same commit)"
+accessed = "2026-10-06"
+quote = "position_p_coefficient: int = 16 || position_i_coefficient: int = 0 || position_d_coefficient: int = 32 || self.bus.write(\"Max_Torque_Limit\", motor, 500)  # 50% of max torque to avoid burnout || self.bus.write(\"Protection_Current\", motor, 250)  # 50% of max current to avoid burnout || self.bus.write(\"Overload_Torque\", motor, 25)  # 25% torque when overloaded || def configure_motors(self, return_delay_time=0, maximum_acceleration=254, acceleration=254)"
+
+[[sources]]
+id = "S7"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/joints_properties.xml"
+title = "SO-ARM100 repo Simulation/SO101/joints_properties.xml, commit a758567"
+accessed = "2026-10-06"
+quote = "<joint damping=\"0.60\" frictionloss=\"0.052\" armature=\"0.028\"/>"
+
+[[sources]]
+id = "S8"
+url = "https://openelab.io/products/feetech-sts3215-c044-servo-7"
+title = "Feetech STS3215-C044 product page (same STS3215 family, 1/191 variant), gear and case material"
+accessed = "2026-10-06"
+quote = "Copper gears, ball bearings and a 25T output spline sit inside a P"
+
+[[sources]]
+id = "S9"
+url = "https://www.waveshare.com/wiki/ST3215_Servo"
+title = "Waveshare ST3215 Servo wiki (ST3215 = same servo family), connectors"
+accessed = "2026-10-07"
+quote = "There are two interfaces on each servo, which can be used in series. || Question: What is the precise connector type of ST3215 Servo? Answer: It is 5264/2.54 3P connector."
+
+[[sources]]
+id = "S10"
+url = "https://github.com/ftservo/ftservo-wiki/blob/f1387d3/docs/en/reference/parameter/memory-sts.md"
+title = "Feetech official wiki (ftservo/ftservo-wiki), STS memory table, commit f1387d3 (2026-10-05)"
+accessed = "2026-10-07"
+quote = "| 14 | 0x0E | Maximum input voltage | 1 | - | R/W | 0~254 | 0.1V | || 19 | 0x13 | Unload condition | 1 | - | R/W | 0~254 | None | Set bit to 1 to enable the corresponding protection || 21 | 0x15 | Position loop P (proportional) coefficient | ... | Proportional coefficient controlling the motor (1/4) || 22 | 0x16 | Position loop D (derivative) coefficient | ... | Derivative coefficient controlling the motor (1/8) || 31 | 0x1F | Position offset | 2 | 0 | R/W | 0~8191 | 0.087 deg | 0~2047 represents 0~2047; 2048~4095 represents 0~-2047; 4096~6143 represents -2048~-4095; 6144~8191 represents -2048~-4095 (bias -4095~4095)"
+
+[[sources]]
+id = "S11"
+url = "https://github.com/huggingface/lerobot/blob/200ee53596d464bd28f6595cdb31be69a2b5e379/src/lerobot/motors/feetech/feetech.py"
+title = "LeRobot motors/feetech/feetech.py and tables.py (same commit), Homing_Offset semantics"
+accessed = "2026-10-07"
+quote = "def _get_half_turn_homings(self, positions): \"\"\"On Feetech Motors: Present_Position = Actual_Position - Homing_Offset\"\"\" ... half_turn_homings[motor] = pos - int(max_res / 2) || tables.py: \"Homing_Offset\": (31, 2) and STS_SMS_SERIES_ENCODINGS_TABLE {\"Homing_Offset\": 11, \"Goal_Position\": 15, \"Present_Position\": 15}"

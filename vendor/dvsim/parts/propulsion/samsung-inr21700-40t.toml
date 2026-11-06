@@ -1,0 +1,41 @@
+id = "samsung-inr21700-40t"
+name = "Samsung SDI INR21700-40T 4.0 Ah 21700 Li-ion cell"
+category = "battery.cell"
+vendor = "Samsung SDI"
+part_number = "INR21700-40T"
+url = "https://piekarz.pl/pdf/50840"
+
+# Part frame: origin at the cell centre, z along the cell axis (positive terminal at +z). Same cell as in parts/propulsion/iflight-fullsend-6s1p-4000mah-liion-40t.toml.
+# Samsung specification Version 0.0 (hosted copy). Only the lines quoted in S1 were retrieved verbatim; mass/dimensions are not in the quote and so are not set.
+
+[params]
+v_nominal       = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cutoff        = { value = 2.5, unit = "V", src = "S1", fidelity = "datasheet" }
+capacity_ah     = { value = 4.0, unit = "Ah", fidelity = "estimated", rationale = "The 'T' model suffix and the iFlight pack listing denote the 4000 mAh class (iflight-fullsend-6s1p-4000mah-liion-40t); the capacity line is not in the S1 quote retrieved, so it is not tagged datasheet." }
+capacity        = { value = 14400.0, unit = "C", fidelity = "derived", derivation = "4.0 Ah x 3600 s/h = 14400 C (coulombs)." }
+i_max_continuous = { value = 35.0, unit = "A", src = "S1", fidelity = "datasheet" }           # without temperature cut
+i_max_peak      = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }            # with 80 C temperature cut
+r_ac_1khz_max   = { value = 0.012, unit = "ohm", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "cylinder"
+radius = 0.0105
+length = 0.0700   # ttsr nominal 21700 format size (21 x 70 mm class); not from S1
+
+[[ports]]
+name = "terminal"
+kind = "power"
+type = "cell-terminal"
+gender = "neutral"
+role = "source"
+v_max = { value = 4.2, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 35.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[sources]]
+id = "S1"
+url = "https://piekarz.pl/pdf/50840"
+title = "Samsung SDI cell specification INR21700-40T, Spec. No. INR21700-40T, Version 0.0 (hosted copy)"
+accessed = "2026-10-07"
+quote = "3.3 Nominal voltage 3.6V|3.7 Max. continuous discharge (Surface temperature) 35A(Without temperature cut) 45A(With 80℃ temperature cut)|3.8 Discharge cut-off voltage 2.5V (End of discharge)|7.5 Initial internal impedance Initial internal impedance measured at AC 1kHz after Rated charge Initial internal impedance ≤ 12mΩ"

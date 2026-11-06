@@ -1,0 +1,66 @@
+id = "awg-12-silicone-wire"
+name = "12 AWG silicone-insulated stranded copper wire (PM02 V3 pre-soldered leads)"
+category = "wire"
+vendor = "generic (Holybro PM02 V3 specifies 12 AWG)"
+part_number = "12 AWG"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+
+# Used by: PM02 V3 pre-soldered leads (S2). Resistance is the AWG-table value for solid copper at 20 C; fine-strand silicone
+# wire is typically a few percent higher (strand lay), not modelled. Temperature coefficient not included.
+
+[params]
+awg                = { value = 12, unit = "AWG", src = "S2", fidelity = "datasheet" }
+resistance_per_m   = { value = 0.005211, unit = "ohm/m", src = "S1", fidelity = "literature" }   # 5.211 mOhm/m at 20 C
+conductor_area     = { value = 3.31e-6, unit = "m^2", src = "S1", fidelity = "literature" }
+conductor_diameter = { value = 0.002053, unit = "m", src = "S1", fidelity = "literature" }       # solid-equivalent
+outer_diameter     = { value = 0.0045, unit = "m", fidelity = "estimated", rationale = "Holybro does not publish the PM02 lead OD. 4.5 mm is the OD of a typical 680 x 0.08 mm strand 12 AWG silicone wire from another vendor (S3)." }
+mass_per_m_copper  = { value = 0.02957, unit = "kg/m", fidelity = "derived", derivation = "Conductor area x copper density: 3.31e-6 m^2 x 8935 kg/m^3 (S4, 8.935 g/cm^3 at 20 C) = 0.02957 kg/m." }
+mass_per_m         = { value = 0.0414, unit = "kg/m", fidelity = "estimated", rationale = "Copper 29.6 g/m (derived) plus silicone insulation: OD 4.5 mm (S3) with ~2.6 mm strand bundle gives ~10.6 mm^2 of insulation x ~1.2 g/cm^3 (typical silicone rubber, not sourced here) = ~12.7 g/m, total ~42 g/m. Not weighed; +-15%." }
+ampacity_chassis_60c = { value = 20.0, unit = "A", src = "S1", fidelity = "literature" }          # 60 C rating column for 12 AWG in the table
+
+# Two end ports of family wire-lead (the family the other wire files in parts/connectors use; solder cups and pads join them).
+# Per-instance mass = mass_per_m * length, resistance = resistance_per_m * length; the part has no fixed length or geometry.
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+note = "60 C ampacity column of the AWG table (chassis wiring); the PM02 pre-soldered XT60 + 12 AWG lead is rated 30 A continuous by Holybro (S2) with a higher temperature rating."
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "literature" }
+role = "passthrough"
+
+[[sources]]
+id = "S1"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia) - table, solid copper at 68 F"
+accessed = "2026-10-06"
+quote = "12 || 0.0808 || 2.053 || 12.4 || 4.87 || 6.53 || 3.31 || 5.211 || 1.588 || 20 || 25 || 30 (columns: in, mm, per in, per cm, kcmil, mm2, mOhm/m, mOhm/ft, ampacity 60/75/90 C)"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module/connector-and-wire-rating.md"
+title = "Holybro docs - Connector & Wire Rating"
+accessed = "2026-10-06"
+quote = "The XT60 plug and 12AWG wire that are pre-soldered on Holybro Power module are rated for 30A continuous current and 60A instantaneous current (<1 minute)."
+
+[[sources]]
+id = "S3"
+url = "https://protosupplies.com/product/silicone-wire-12-gauge-ultra-flexible/"
+title = "ProtoSupplies - Silicone wire 12 gauge ultra flexible (a typical 12 AWG silicone wire, not the Holybro one)"
+accessed = "2026-10-06"
+quote = "680 strands of 0.08 mm tinned copper wire 4.5mm diameter"
+
+[[sources]]
+id = "S4"
+url = "https://en.wikipedia.org/wiki/Copper"
+title = "Copper (Wikipedia) - density"
+accessed = "2026-10-06"
+quote = "Density (at 20° C) 8.935 g/cm3"

@@ -1,0 +1,93 @@
+id = "trinamic-qsh4218-41-10-035"
+name = "Trinamic QMot QSH4218-41-10-035 NEMA 17 stepper, 0.35 N*m, 1 A, 38 mm"
+category = "motor.stepper"
+vendor = "Trinamic"
+part_number = "QSH4218-41-10-035"
+url = "https://static.mercateo.com/90/6996b3ad28464d939bc17e037ed63c99/pdf/QSH4218_eng_tds.pdf"
+
+# Frame: origin on the shaft axis at the front flange face, +z = shaft direction, body in z in [-0.038, 0]. The short datasheet has no drawing text and no
+# torque-vs-speed data (curves are not in this document).
+[params]
+mass             = { value = 0.28, unit = "kg", src = "S1", fidelity = "datasheet" }
+flange_size      = { value = 0.0422, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length      = { value = 0.038, unit = "m", src = "S1", fidelity = "datasheet" }
+steps_per_rev    = { value = 200, unit = "1", src = "S1", fidelity = "datasheet" }
+phases           = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+leads            = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+rated_current    = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+phase_resistance = { value = 4.5, unit = "ohm", src = "S1", fidelity = "datasheet" }
+phase_inductance = { value = 0.0075, unit = "H", src = "S1", fidelity = "datasheet" }
+holding_torque   = { value = 0.35, unit = "N*m", src = "S1", fidelity = "datasheet" }
+detent_torque    = { value = 0.016, unit = "N*m", src = "S1", fidelity = "datasheet" }
+rotor_inertia    = { value = 5.4e-6, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }
+shaft_diameter   = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_length     = { value = 0.024, unit = "m", src = "S1", fidelity = "datasheet" }
+max_voltage      = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.31x31.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+fidelity = "estimated"
+rationale = "Datasheet says 'NEMA 17 mounting configuration' and 'flange max. 42.2 mm * 42.2 mm' but has no hole drawing in its text; the NEMA 17 31 mm square M3 pattern of soyo-sy42sth38-1684a-nema17 (manufacturer drawing) is assumed."
+note = "NEMA 17 front face."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.024
+note = "'5 mm axis diameter, 24 mm length' (S1); shaft flat not stated, treated as round."
+
+[[ports]]
+name = "phases"
+pins = ["PH.1", "PH.2", "PH.3", "PH.4"]
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "sink"
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+v_max = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "4-wire connection; 'Rated phase current 1.0 A'; 'up to 40V operating voltage'."
+
+# Pin level: the 4-wire connection of the datasheet; its text gives no connector, wire colours or coil pairing (those are in the drawing, not retrievable as text).
+[[connectors]]
+id = "PH"
+name = "phase leads (4)"
+type = "wire-lead"
+port_type = "stepper-bipolar-4wire"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.038]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 says only '4 wire connection': four leads in two coils (A1 A2 / B1 B2, first two = one coil) are assumed; wire colours, connector and lead length are not in the retrievable text."
+pose_rationale = "Lead exit is not in the retrievable text: drawn at the centre of the rear face, 3 mm apart (positional estimate); motor length 38 mm from the datasheet table."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", i_max = 1.0 },
+  { number = 2, name = "A2", kind = "power", dir = "in", i_max = 1.0 },
+  { number = 3, name = "B1", kind = "power", dir = "in", i_max = 1.0 },
+  { number = 4, name = "B2", kind = "power", dir = "in", i_max = 1.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://static.mercateo.com/90/6996b3ad28464d939bc17e037ed63c99/pdf/QSH4218_eng_tds.pdf"
+title = "Trinamic QSH4218 short datasheet (mercateo mirror), 42 mm / NEMA 17 1.8 deg hybrid stepper"
+accessed = "2026-10-07"
+quote = "NEMA 17 mounting configuration • flange max. 42.2 mm * 42.2 mm • 5 mm axis diameter, 24 mm length • Step angle: 1.8˚ • up to 40V operating voltage • 4 wire connection ... SPECIFICATIONS -41-10-035 Rated phase current A 1.0 Ph. resistance at 20°C 4.5 Ph. inductance (typ.) mH 7.5 Holding torque (typ.) Ncm 35 Detent torque Ncm 1.6 Rotor inertia gcm2 54 Weight (mass) kg 0.28 Motor length mm 38"

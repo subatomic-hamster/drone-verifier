@@ -1,0 +1,22 @@
+id = "aluminium-7075"
+name = "Aluminium 7075-T6 (wrought, ASM data sheet typical values)"
+category = "material"
+vendor = "generic (ASM / Aluminum Association)"
+part_number = "7075-T6"
+url = "https://quickparts.com/wp-content/uploads/2024/05/Aluminum-7075.pdf"
+
+[params]
+density         = { value = 2810, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 71.7e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+shear_modulus   = { value = 26.9e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+poisson_ratio   = { value = 0.33, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.66, 0.68, 0.72, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://quickparts.com/wp-content/uploads/2024/05/Aluminum-7075.pdf"
+title = "Aluminum 7075 data sheet (ASM Material Data Sheet, hosted by Quickparts)"
+accessed = "2026-10-07"
+quote = "Density 2.81 g/cc 0.102 lb/in³ AA; Typical ... Modulus of Elasticity 71.7 GPa 10400 ksi AA; Typical; Average of tension and compression. ... Poisson's Ratio 0.33 0.33 ... Shear Modulus 26.9 GPa 3900 ksi"

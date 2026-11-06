@@ -1,0 +1,92 @@
+id = "amass-as150u24-f"
+name = "Amass AS150U(2+4)-F connector (AS150 power pins + 4 signal pins, female)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "AS150U(2+4)-F"
+url = "https://www.china-amass.net/as150u24-f-product/"
+
+# Page lists 75 A at 8 AWG (85 K rise) for the 2 power pins and 1 A at 24 AWG for the signal pins; rated voltage 80 V DC (not 150 V as on the
+# plain AS150 page). The 4 signal pins are not modelled as ports (no signal-pin assignment on the page). No mass published.
+[params]
+current_rated       = { value = 75, unit = "A", src = "S1", fidelity = "datasheet" }
+signal_pin_current  = { value = 1, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0008, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 100, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "8 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "as150u24"
+gender = "female"
+v_max = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 75, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "75 A on 8 AWG at a temperature rise <= 85 K, power pins only"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 75, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup of a power pin, 8 AWG"
+
+# Pin level (estimated): AS150U(2+4): 2 power contacts (1, 2) and 4 signal contacts (3..6); numbering and layout are not in S1. The signal contacts have no port, so they form the synthetic port "mate".
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2 power + 4 signal)"
+type = "as150u24"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.006
+src = "S1"
+fidelity = "estimated"
+rationale = "The 2+4 split comes from the part designation and the S1 specs (power-pin rating, signal-pin rating of 1 A on 24 AWG); the contact numbering, layout and spacing are not published, so a 1x6 line numbered power first is assumed."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "P1", kind = "power" },
+  { number = 2, name = "P2", kind = "power" },
+  { number = 3, name = "S1", kind = "signal", i_max = 1.0 },
+  { number = 4, name = "S2", kind = "signal", i_max = 1.0 },
+  { number = 5, name = "S3", kind = "signal", i_max = 1.0 },
+  { number = 6, name = "S4", kind = "signal", i_max = 1.0 },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "power solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per power contact (S1 'Solder cup of a power pin'); cup n joins power contact n. The signal-pin terminations are not described and are not listed."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "P1", kind = "power" },
+  { number = 2, name = "P2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/as150u24-f-product/"
+title = "AMASS AS150U(2+4)-F product page (Amass), electrical SPEC"
+accessed = "2026-10-07"
+quote = "Electrical specifications | Current rating | 75A (8AWG△≤85K) | Signa pin 24AWG 1A | Rated voltage | 80V DC | Insulation Resistance | ≥2000MΩ | Contact Resistance | ≤0.8mΩ | Mechanical characteristics | Plug Life. | 100 times | Environmental resistance | Work Temperature | -20℃ to 120℃"

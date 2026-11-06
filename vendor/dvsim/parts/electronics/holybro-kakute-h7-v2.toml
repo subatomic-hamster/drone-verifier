@@ -1,0 +1,202 @@
+id = "holybro-kakute-h7-v2"
+name = "Holybro Kakute H7 v2 flight controller (30.5x30.5, BMI270, Bluetooth)"
+category = "pcb.fc"
+vendor = "Holybro"
+part_number = "Kakute H7 v2"
+url = "https://docs.holybro.com/autopilot/kakute-h7-v1-v2-mini/kakute-h7-v2/overview.md"
+
+# IMU: BMI270 (part bosch-bmi270); barometer: BMP280; OSD AT7456E; Bluetooth ESP32-C3.
+[params]
+mass            = { value = 0.008, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+grommet_diameter    = { value = 0.003, unit = "m", src = "S1", fidelity = "datasheet" }
+vbat_min_cells  = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+vbat_max_cells  = { value = 8, unit = "S", src = "S1", fidelity = "datasheet" }
+bec_5v_current_cont = { value = 2, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_9v_current_cont = { value = 1.5, unit = "A", src = "S1", fidelity = "datasheet" }
+uart_count      = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+pwm_outputs     = { value = 9, unit = "1", src = "S1", fidelity = "datasheet" }
+mcu_clock       = { value = 480e6, unit = "Hz", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.30.5x30.5.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "Φ4 mm holes with Φ3 mm grommets per S1, so M3 screws"
+
+[[ports]]
+name = "vbat_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+note = "Battery input 3S-8S (S1); no upper voltage in volts is published on the page"
+
+[[ports]]
+name = "esc_a"
+kind = "power"
+type = "jst-sh.8"
+gender = "male"
+role = "source"
+note = "1 of 2x JST-SH1.0 8-pin 4-in-1 ESC ports (power + signal), x8/octocopter compatible"
+
+[[ports]]
+name = "hd_vtx"
+kind = "power"
+type = "jst-gh.6"
+gender = "male"
+role = "source"
+note = "1x JST-GH1.5 6-pin for HD systems (9 V pit-switch rail); S1 writes the pitch as GH1.5"
+
+[[ports]]
+name = "serial"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 6
+
+[[ports]]
+name = "motor_out"
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+count = 8
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+note = "SDA and SCL pads for external GPS/magnetometers"
+
+# ---- Connectors (pin level). Pin tables: S2 (Holybro Kakute H7 V2 "Pinout" page). The two ESC ports are the 8-pin JST-SH 1.0 ports named in S1; the
+# VTX port is the 6-pin GH port named in S1. Pin order is the table's. Poses are estimates on the 35 x 35 mm board (the page has pictures, no drawing).
+[[connectors]]
+id = "ESC1"
+name = "ESC port 1 (8-pin JST-SH)"
+type = "jst-sh-8"
+gender = "male"
+pos = [0.0, -0.0175, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; position on the board estimated."
+pins = [
+  { number = 1, name = "B+", kind = "power", dir = "in", v_max = 33.6, fidelity = "derived", derivation = "S2: 'Battery positive voltage (2S-8S)'; 8S x 4.2 V/cell = 33.6 V full-charge limit." },
+  { number = 2, name = "R7", kind = "signal", dir = "in", v = 3.3, alt = ["UART7_RX"], note = "UART7 RX (ESC telemetry)" },
+  { number = 3, name = "GND", kind = "ground" },
+  { number = 4, name = "CURRENT", kind = "signal", dir = "in", v = 3.3, fidelity = "estimated", rationale = "S2 lists the pin name 'CURRENT' with no voltage; the MCU ADC range 3.3 V is assumed." },
+  { number = 5, name = "M1", kind = "signal", dir = "out", v = 3.3 },
+  { number = 6, name = "M2", kind = "signal", dir = "out", v = 3.3 },
+  { number = 7, name = "M3", kind = "signal", dir = "out", v = 3.3 },
+  { number = 8, name = "M4", kind = "signal", dir = "out", v = 3.3 },
+]
+
+[[connectors]]
+id = "ESC2"
+name = "ESC port 2 (8-pin JST-SH)"
+type = "jst-sh-8"
+gender = "male"
+pos = [0.0, 0.0175, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; position on the board estimated."
+pins = [
+  { number = 1, name = "B+", kind = "power", dir = "in", v_max = 33.6, fidelity = "derived", derivation = "S2: 'Battery positive voltage (2S-8S)'; 8S x 4.2 V/cell = 33.6 V full-charge limit." },
+  { number = 2, name = "R7", kind = "signal", dir = "in", v = 3.3, alt = ["UART7_RX"], note = "UART7 RX (shared with port 1)" },
+  { number = 3, name = "GND", kind = "ground" },
+  { number = 4, name = "CURRENT", kind = "signal", dir = "in", v = 3.3, fidelity = "estimated", rationale = "S2 lists the pin name 'CURRENT' with no voltage; the MCU ADC range 3.3 V is assumed." },
+  { number = 5, name = "M5", kind = "signal", dir = "out", v = 3.3 },
+  { number = 6, name = "M6", kind = "signal", dir = "out", v = 3.3 },
+  { number = 7, name = "M7", kind = "signal", dir = "out", v = 3.3 },
+  { number = 8, name = "M8", kind = "signal", dir = "out", v = 3.3 },
+]
+
+[[connectors]]
+id = "VTX"
+name = "VTX port (6-pin JST-GH)"
+type = "jst-gh-6"
+gender = "male"
+pos = [0.0175, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; position on the board estimated. S1 writes the pitch as GH1.5; the 1.25 mm JST-GH family pitch is used."
+pins = [
+  { number = 1, name = "Vtx+", kind = "power", dir = "out", v = 9.0, note = "9V for HD System or other VTX; can be controlled by the VTX ON/OFF pit switch (User1)" },
+  { number = 2, name = "G", kind = "ground" },
+  { number = 3, name = "T1", kind = "signal", dir = "out", v = 3.3, alt = ["UART1_TX"] },
+  { number = 4, name = "R1", kind = "signal", dir = "in", v = 3.3, alt = ["UART1_RX"] },
+  { number = 5, name = "G", kind = "ground" },
+  { number = 6, name = "R6", kind = "signal", dir = "in", v = 3.3, alt = ["UART6_RX"] },
+]
+
+[[connectors]]
+id = "PADS"
+name = "signal and regulator pads"
+type = "solder-pad"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0065]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 9
+pitch = 0.0025
+layout = "seq"
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pad names and functions from S2 (Pinout table); the grid order and pitch are estimated (no coordinates on the page)."
+pins = [
+  { number = "VTX+", name = "VTX+", kind = "power", dir = "out", v = 9.0, note = "9V for HD System or other VTX; controlled by the VTX ON/OFF pit switch (User1)" },
+  { number = "SDA", name = "I2C_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = "SCL", name = "I2C_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = "5v", name = "5v", kind = "power", dir = "out", v = 5.0, i_max = 1.5 },
+  { number = "3v3", name = "3v3", kind = "power", dir = "out", v = 3.3, i_max = 0.25 },
+  { number = "Vi", name = "Vi", kind = "signal", dir = "in", note = "video input from FPV camera" },
+  { number = "Vo", name = "Vo", kind = "signal", dir = "out", note = "video output to video transmitter" },
+  { number = "CAM", name = "CAM", kind = "signal", dir = "out", note = "to camera OSD control" },
+  { number = "G", name = "GND", kind = "ground" },
+  { number = "RSI", name = "RSI", kind = "signal", dir = "in", v = 3.3, note = "analog RSSI (0-3.3v) input from receiver" },
+  { number = "R3", name = "UART3_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T3", name = "UART3_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R4", name = "UART4_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T4", name = "UART4_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R6", name = "UART6_RX", kind = "signal", dir = "in", v = 3.3, note = "UART6 RX is located in the GH plug" },
+  { number = "T6", name = "UART6_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "LED", name = "LED", kind = "signal", dir = "out", v = 3.3, note = "WS2812 addressable LED signal wire" },
+  { number = "Z-", name = "Z-", kind = "signal", dir = "out", note = "piezo buzzer negative leg" },
+]
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/autopilot/kakute-h7-v1-v2-mini/kakute-h7-v2/pinout"
+title = "Kakute H7 V2 Pinout (Holybro docs; Holybro llms-full.txt text export)"
+accessed = "2026-10-09"
+quote = "VTX+ | 9V for HD System or other VTX | SDA, SCL | I2C connection (for peripherals) | 5v | 5v output (1.5A max) | 3v3 | 3.3v output (0.25A max) | Vi | Video input from FPV camera | Vo | Video output to video transmitter | R6, T6 | UART6 RX and TX (UART6 RX is located in the GH plug) || ESC Port 1: B+ Battery positive voltage (2S-8S) | R7 UART7 RX | GND | CURRENT | M1 | M2 | M3 | M4 || ESC Port 2: B+ | R7 | GND | CURRENT | M5 | M6 | M7 | M8 || VTX Port: Vtx+ | G | T1 UART1 TX | R1 UART1 RX | G | R6 UART6 RX"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/autopilot/kakute-h7-v1-v2-mini/kakute-h7-v2/overview.md"
+title = "Kakute H7 v2 Overview (Holybro docs)"
+accessed = "2026-10-07"
+quote = "MCU - STM32H743 32-bit processor running at 480 MHz IMU – BMI270 Barometer - BMP280 ... 6x UARTs (1,2,3,4,6,7; UART2 is used for Bluetooth telemetry) 9x PWM Outputs (8 Motor Output, 1 LED) Battery input voltage: 3S-8S BEC 5V 2A Cont. BEC 9V 1.5A Cont. ... Mounting - 30.5 x 30.5mm/Φ4mm hole with Φ3mm Grommets Dimension - 35x35mm Weight - 8g 2x JST-SH1.0_8pin port (4in1 ESCs, x8/Octocopter compatible) 1x JST-GH1.5_6pin port (For HD System like Caddx Vista, Air Unit, or other VTX)"

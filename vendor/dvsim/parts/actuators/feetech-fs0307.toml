@@ -1,0 +1,109 @@
+id = "feetech-fs0307"
+name = "FEETECH FS0307 sub-micro analog hobby servo (Pololu 3420)"
+category = "motor.servo"
+vendor = "FEETECH (via Pololu item 3420)"
+part_number = "FS0307"
+url = "https://www.pololu.com/product/3420"
+
+# Frame: origin on the output axis at the horn-seat face of the case; +z = output axis out of the case.
+# The Pololu specs give the case envelope 20.0 x 8.3 x 17.3 mm only; the horn spline and mounting-ear hole spacing are not on the pages, so the ports are opaque family tags.
+
+[params]
+mass            = { value = 0.0044,  unit = "kg",   src = "S1", fidelity = "datasheet" }
+envelope_length = { value = 0.020,   unit = "m",    src = "S1", fidelity = "datasheet" }
+envelope_width  = { value = 0.0083,  unit = "m",    src = "S1", fidelity = "datasheet" }
+envelope_height = { value = 0.0173,  unit = "m",    src = "S1", fidelity = "datasheet" }
+protocol        = { value = "analog PWM servo pulses 900-2100 us, about 120 deg operating angle", unit = "-", src = "S2", fidelity = "datasheet" }
+position_range  = { value = 2.0944,  unit = "rad",  src = "S2", fidelity = "datasheet" }  # approximate 120 deg
+v_operating_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }  # lowest tabulated voltage
+v_operating_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }  # highest tabulated voltage
+no_load_speed_4v8 = { value = 10.472, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.10 sec/60 deg
+no_load_speed_6v0 = { value = 11.636, unit = "rad/s", src = "S1", fidelity = "datasheet" }  # 0.09 sec/60 deg
+stall_torque_4v8  = { value = 0.04903, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 0.5 kg.cm
+stall_torque_6v0  = { value = 0.05884, unit = "N*m", src = "S1", fidelity = "datasheet" }  # 0.6 kg.cm
+lead_length     = { value = 0.1524, unit = "m", src = "S1", fidelity = "datasheet" }  # 6 in
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.servo-sub-micro-ears"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Sub-micro hobby servo mounting ears; hole spacing and case height not on the pages, opaque family tag; z is positional only."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "servo-horn.feetech-sub-micro"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Output spline not stated on the pages (additional horns are included); opaque tag, symmetry 1 as a placeholder."
+
+[[ports]]
+name = "power_in"
+pins = ["SRV.1", "SRV.2"]
+kind = "power"
+type = "servo-3pin"
+gender = "male"
+role = "sink"
+v_max = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.8, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "JR-style (Futaba-compatible) connector on a 6 in cable; no current rating on the pages."
+
+[[ports]]
+name = "signal"
+pins = ["SRV.3"]
+kind = "signal"
+type = "pwm"
+gender = "male"
+note = "Pulse range 900-2100 us (S2); signal level not on the pages."
+
+# Pin level: the 3-pin servo lead, a 150 mm cable ending in a JR-style (Futaba-compatible) plug (P1). Pin order is the JR convention, not stated by P1.
+[[connectors]]
+id = "SRV"
+name = "servo lead (3-pin JR-style plug, 150 mm)"
+type = "servo-lead-3"
+port_type = "servo-3pin"
+gender = "female"
+pos = [-0.012, 0.0, -0.01]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "P1"
+fidelity = "estimated"
+rationale = "P1 states the cable length and the JR-style Futaba-compatible plug, not the pin order or pitch: ground, +V, signal at 0.1 in is assumed from the JR convention."
+pose_rationale = "Servo case dimensions are not in the sources, so the lead exit is a positional estimate: at the -x end of a micro-size case, lead pointing out along -x."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "V+", kind = "power", dir = "in" },
+  { number = 3, name = "SIGNAL", kind = "signal", dir = "in" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/3420"
+title = "Pololu - FEETECH FS0307 micro servo (product description)"
+accessed = "2026-10-09"
+quote = "The servo has a 6″ (15 cm) cable that is terminated with a standard JR-style connector, which is Futaba-compatible"
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/3420/specs"
+title = "Pololu item 3420 Specs tab (FEETECH Sub-Micro Servo FS0307)"
+accessed = "2026-10-07"
+quote = "Size: | 20.0 × 8.3 × 17.3 mm | Weight: | 4.4 g | General specifications | Digital?: | N | Speed @ 6V: | 0.09 sec/60° | Stall torque @ 6V: | 0.6 kg·cm | Speed @ 4.8V: | 0.10 sec/60° | Stall torque @ 4.8V: | 0.5 kg·cm | Hardware included?: | Y | Lead length: | 6 in"
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/3420"
+title = "Pololu item 3420 product page (FEETECH Sub-Micro Servo FS0307)"
+accessed = "2026-10-07"
+quote = "The FS0307 is a very small 4.4 g analog servo from FEETECH (formerly known as Fitec) that offers position control over an approximate 120° operating angle for servo pulses between 900 µs and 2100 µs | The servo has a 6″ (15 cm) cable that is terminated with a standard JR-style connector, which is Futaba-compatible"

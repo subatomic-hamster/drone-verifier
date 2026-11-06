@@ -1,0 +1,22 @@
+id = "tpu-95a"
+name = "TPU 95A (Ultimaker TPU 95A, 3D-printing grade)"
+category = "material"
+vendor = "Ultimaker"
+part_number = "Ultimaker TPU 95A"
+url = "https://um-support-files.ultimaker.com/materials/2.85mm/tds/TPU-95A/TDS-TPU95A-V2.01-250915.pdf"
+
+# Elastomer: modulus is very low (tens of MPa) and strongly strain-dependent; tensile test at 1 mm/min is a small-strain value.
+[params]
+density         = { value = 1220, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 67e6, unit = "Pa", src = "S1", fidelity = "datasheet" }
+youngs_modulus_z = { value = 56e6, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.20, 0.20, 0.22, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://um-support-files.ultimaker.com/materials/2.85mm/tds/TPU-95A/TDS-TPU95A-V2.01-250915.pdf"
+title = "Ultimaker TPU 95A Technical data sheet V2.01"
+accessed = "2026-10-07"
+quote = "Tensile (Young's) modulus ASTM D3039 (1 mm / min) 67 ± 6 MPa 67 ± 2 MPa 56 ± 3 MPa ... Specific gravity ASTM D782 1.22 g / cm3"

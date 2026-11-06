@@ -1,0 +1,48 @@
+id = "pololu-ball-caster-3-4in-metal-955"
+name = "Pololu Ball Caster with 3/4 inch Metal Ball (item 955), shortest spacer stack"
+category = "caster"
+vendor = "Pololu"
+part_number = "Pololu 955"
+url = "https://www.pololu.com/product/955"
+
+# Frame: origin at the top (mounting) face of the caster, on the ball's vertical axis, +z up (out of the chassis bottom plate, whose underside
+# the caster is screwed to); the caster hangs below: z in [-height, 0]. The spacers set the height (0.8 - 1.1 inch); the shortest stack is modelled.
+
+[params]
+mass           = { value = 0.030,    unit = "kg", src = "S1", fidelity = "datasheet" }  # without screws or spacers
+ball_diameter  = { value = 0.01905,  unit = "m",  src = "S1", fidelity = "datasheet" }  # 0.75 in
+height         = { value = 0.02032,  unit = "m",  src = "S1", fidelity = "datasheet" }  # 0.8 in, the low end of 'ranges from 0.8" to 1.1"' (shortest spacer combination)
+ball_friction  = { value = 0.01,     unit = "1",  fidelity = "estimated", rationale = "Pololu publishes none. The real ball ROLLS in its seat in any direction, but the model's ball is a fixed sphere, so its sliding coefficient stands in for the ball's rolling-resistance coefficient: a hard ball on a hard floor, ~0.005 - 0.02; 0.01 taken, repeated in the geometry. (0.1, a sliding-like value, put 14 % extra on the no-load current: tests/python/test_rover.py.)" }
+
+[geometry]
+shape = "sphere"
+size = [0.009525]
+pos = [0.0, 0.0, -0.010795]            # ball centre = -(height - radius)
+friction = [0.01, 0.0, 0.0]
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.0
+note = "Screws to the chassis with #2-56 screws (the 3/8 inch variants share the pattern; the hole spacing is not in the retrieved text), so no bolt pattern is recorded."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "S1"
+note = "Metal ball (source: 'Ball material: metal'), drawn as a polished steel sphere."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "steel" }
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/955/specs"
+title = "Pololu item 955 (Ball Caster with 3/4 inch Metal Ball), description and Specs tab"
+accessed = "2026-10-07"
+quote = "This ball caster uses a 3/4″ diameter metal ball. The height of the assembled kit ranges from 0.8″ to 1.1″, depending on the combination of included spacers used. || Ball diameter: 0.75 in Weight: 30 g|1| General specifications Ball material: metal Notes: 1|Without screws or spacers."

@@ -1,0 +1,32 @@
+id = "pololu-2266-nema17-l-bracket"
+name = "Pololu stamped aluminium L-bracket for NEMA 17 stepper motors (item 2266)"
+category = "structure.bracket"
+vendor = "Pololu"
+part_number = "2266"
+url = "https://www.pololu.com/product/2266"
+
+[params]
+mass = { value = 0.015, unit = "kg", src = "S1", fidelity = "datasheet" }
+screws_included = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+
+# Frame: origin at the centre of the motor-side face, +z = out of that face toward the motor. The bracket drawing (slot positions, leg
+# height, thickness) is only in Pololu's linked resources, which were not fetched: only the motor seat is filed.
+[[ports]]
+name = "motor"
+kind = "mech"
+type = "bolt-pattern.31x31.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+fidelity = "estimated"
+rationale = "'four M3x6mm screws are included for securing the motor to the bracket' (S1) and it fits 'typical NEMA 17-size stepper motors', so the NEMA 17 31 mm square M3 pattern is the only consistent seat; the plate thickness and hole drawing were not fetched."
+note = "NEMA 17 face of the motor bolts to this plate with 4 x M3x6 (included)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/2266"
+title = "Pololu item 2266: Pololu Stamped Aluminum L-Bracket for NEMA 17 Stepper Motors"
+accessed = "2026-10-07"
+quote = "This black anodized aluminum bracket lets you securely mount typical NEMA 17-size stepper motors to your project. The bracket features several slots and holes for a wide variety of mounting solutions, and four M3×6mm screws are included for securing the motor to the bracket. ... Weight: | 15 g| 1| Notes:| 1| For bracket only (no screws)."

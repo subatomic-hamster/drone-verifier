@@ -1,0 +1,67 @@
+id = "m3-flange-locknut"
+name = "M3 flange lock nut (X500 V2 frame bolts), steel"
+category = "fastener"
+vendor = "generic"
+part_number = "M3 flange locknut"
+url = "https://github.com/PX4/PX4-Autopilot/blob/v1.17.0/docs/en/frames_multicopter/holybro_x500v2_pixhawk6c.md"
+
+[params]
+thread_diameter = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 6.1e-4
+unit = "kg"
+fidelity = "estimated"
+rationale = "Holybro gives no flange-nut standard. The vendor STEP (x500v2-frame.step, measured with OpenCascade) models these nuts as a solid 7.6 mm flange diameter x 4.8 mm tall body of 102 mm3; at 7850 kg/m3 solid = 0.80 g; subtracting a 2.5 mm core bore through 4.8 mm (23.6 mm3 = 0.19 g) gives 0.61 g. Same order as the DIN 985 M3 nut (0.5 g, see din985-m3-locknut) plus a flange. Retail DIN 6923 M3 stainless nuts quote ~0.65 g but that page could not be fetched."
+
+[params.mass_tol]
+value = 1.5e-4
+unit = "kg"
+fidelity = "estimated"
+rationale = "mass (0.61 g) comes from the STEP solid volume minus an assumed 2.5 mm core bore at steel density (see mass rationale); the real part may be nylon-insert or all-metal and no standard is stated, so +-0.15 g (25%) is carried."
+
+[params.height]
+value = 4.8e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Bounding-box height 4.80 mm of the 16 nut solids (7.60 x 4.80 x 7.60 mm, volume 102 mm3 each) in Holybro's x500v2-frame.step, computed with OpenCascade BRepBndLib; includes the flange."
+
+[params.thread_pitch]
+value = 0.5e-3
+unit = "m"
+src = "S2"
+fidelity = "datasheet"
+
+[params.flange_diameter]
+value = 7.6e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Bounding-box diameter of the 16 nut solids (7.60 x 4.80 x 7.60 mm, volume 102 mm3 each) in Holybro's x500v2-frame.step, computed with OpenCascade BRepBndLib."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.0048
+fidelity = "derived"
+derivation = "length = nut height 4.80 mm (params.height, STEP bbox of the 16 nut solids); thread M3 from the PX4 guide's 'Flange Locknut M3' mating the M3x38 screws (S1). Axis/pos follow parts/structure/iso4032-m2-nut (axis normal to the nut faces)."
+note = "Through-threaded bore; the flange face is the face nearest pos."
+
+[[sources]]
+id = "S2"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 key dimensions table (fasten.it), column P: M3 coarse pitch (the pitch is the same for every ISO metric M3 thread; Holybro names no flange-nut standard)"
+accessed = "2026-10-07"
+quote = "M 3 0.5 5.5 5.68 5.32 3 2.86 2.5 1.3 1.15 18  (d, P, dk max plain, dk max knurled, dk min, k max, k min, s nom, t min, w min, b)"
+
+[[sources]]
+id = "S1"
+url = "https://github.com/PX4/PX4-Autopilot/blob/v1.17.0/docs/en/frames_multicopter/holybro_x500v2_pixhawk6c.md"
+title = "Holybro X500 V2 build (PX4 docs): screw list"
+accessed = "2026-10-07"
+quote = "Socket Cap Screw M3*38 16pcs | Flange Locknut M3 16pcs"

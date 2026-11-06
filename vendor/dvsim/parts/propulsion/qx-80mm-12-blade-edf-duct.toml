@@ -1,0 +1,165 @@
+id = "qx-80mm-12-blade-edf-duct"
+name = "QX-Motor 80 mm EDF housing (duct, stator vanes, 66 mm exit nozzle) for the QF3538 motor set"
+category = "prop.duct"
+vendor = "QX-Motor"
+part_number = "80mm 12-blade EDF (housing)"
+url = "https://www.qx-motor.com/products/80mm-ducted-fan-edf-jet-12-blade-cw-ccw-with-qx-motor-6s-12s-motor-engine-power-120a-esc-for-fms-freewing-rc-airplane-model"
+
+# The housing of the 80 mm ducted fan sold with qx-qf3538-2000kv-edf-motor and qx-80mm-12-blade-edf-fan. The vendor page publishes no dimension of
+# the housing except the fan diameter ("80mm"); everything else here is a design estimate of a typical 80 mm EDF (outer 83 mm, 103 mm long with the
+# rear cone). Part frame: origin on the axis in the fan (blade) plane, +z towards the inlet; the motor base seat is at z = -0.043 (the motor's shaft
+# end then reaches the blade plane), the shoulder face that sits on a deck at z = -0.045, the exit plane at z = -0.075 (exhaust towards -z).
+# The wall is modelled as two octagonal tubes of thin boxes so that the fan disc and the motor inside it do not intersect the housing.
+
+[params]
+diameter_inner   = { value = 0.0806, unit = "m", fidelity = "estimated", rationale = "Blade tip 0.5 mm clearance from an 80 mm fan (the vendor gives only the fan diameter, 80 mm). Typical EDF tip clearance is 0.5-1 mm." }
+diameter_outer   = { value = 0.083, unit = "m", fidelity = "estimated", rationale = "Inner diameter 80.6 mm plus a 1.2 mm wall; the retail name '80 mm EDF' implies about this outer size, not published." }
+length_total     = { value = 0.103, unit = "m", fidelity = "estimated", rationale = "Inlet lip at +0.028 m to the exit at -0.075 m: fan at 28 mm behind the lip, 75 mm of housing and nozzle behind the blade plane (motor length 38 mm plus the cone). Typical of 80 mm EDF units (about 100 mm); not published." }
+exit_diameter    = { value = 0.0658, unit = "m", fidelity = "estimated", rationale = "Nozzle contraction to about 66 mm (typical 80 mm EDF exit ratio 0.68 of the fan area). Not published for this unit; sets the exit speed of the jet vanes' momentum model (v_e = sqrt(T / (rho A_e))), +-15 %." }
+exit_area        = { value = 0.003400, unit = "m^2", fidelity = "derived", derivation = "pi / 4 x 0.0658^2 = 3.40e-3 m^2 (inner radius 0.0329 m of the exit tube)." }
+mass             = { value = 0.060, unit = "kg", fidelity = "estimated", rationale = "Housing 1.2 mm ABS-class wall 0.073 m long (area 0.0187 m2 x 1.2 mm x 1100 kg/m3 = 25 g), nozzle tube 1.5 mm x 0.03 m (7 g), seven stator vanes and the motor cage (15 g), inlet lip (5 g), plus rounding: 60 g. The vendor gives no weight of the housing alone; +-30 %." }
+
+# 8 + 8 thin boxes: housing (z -0.045 .. +0.028) at apothem 0.0409 m, half thickness 0.0006 m; nozzle tube (z -0.075 .. -0.045) at 0.0344 m, half thickness 0.0015 m.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [0.04090, 0.00000, -0.0085]
+quat = [1.0000000, 0.0, 0.0, 0.0000000]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [0.02892, 0.02892, -0.0085]
+quat = [0.9238795, 0.0, 0.0, 0.3826834]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [0.00000, 0.04090, -0.0085]
+quat = [0.7071068, 0.0, 0.0, 0.7071068]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [-0.02892, 0.02892, -0.0085]
+quat = [0.3826834, 0.0, 0.0, 0.9238795]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [-0.04090, 0.00000, -0.0085]
+quat = [0.0000000, 0.0, 0.0, 1.0000000]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [-0.02892, -0.02892, -0.0085]
+quat = [-0.3826834, 0.0, 0.0, 0.9238795]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [0.00000, -0.04090, -0.0085]
+quat = [-0.7071068, 0.0, 0.0, 0.7071068]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0006, 0.01694, 0.0365]
+pos = [0.02892, -0.02892, -0.0085]
+quat = [-0.9238795, 0.0, 0.0, 0.3826834]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [0.03440, 0.00000, -0.06]
+quat = [1.0000000, 0.0, 0.0, 0.0000000]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [0.02432, 0.02432, -0.06]
+quat = [0.9238795, 0.0, 0.0, 0.3826834]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [0.00000, 0.03440, -0.06]
+quat = [0.7071068, 0.0, 0.0, 0.7071068]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [-0.02432, 0.02432, -0.06]
+quat = [0.3826834, 0.0, 0.0, 0.9238795]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [-0.03440, 0.00000, -0.06]
+quat = [0.0000000, 0.0, 0.0, 1.0000000]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [-0.02432, -0.02432, -0.06]
+quat = [-0.3826834, 0.0, 0.0, 0.9238795]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [0.00000, -0.03440, -0.06]
+quat = [-0.7071068, 0.0, 0.0, 0.7071068]
+material = "petg"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0015, 0.01425, 0.015]
+pos = [0.02432, -0.02432, -0.06]
+quat = [-0.9238795, 0.0, 0.0, 0.3826834]
+material = "petg"
+
+[visual]
+rationale = "80 mm EDF housing: thin-wall tube with an inlet lip, contraction to the exit nozzle, seven stator vanes (QX-Motor product photo of the 80 mm set)."
+
+[[visual.elements]]
+gen = "edf_duct"
+
+[[ports]]
+name = "motor_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.043]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "The motor's rear face seats in the housing's stator cage 43 mm behind the blade plane (motor can 38 mm + 5 mm shaft stub reaching the fan hub). Axis towards the motor."
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, -0.045]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "The housing's shoulder at the start of the exit nozzle (radius 41.5 mm), seated on a deck with a 37.5 mm hole (examples/hopper): the nozzle passes through, the housing rests on top. Axis out of the shoulder, away from the housing."

@@ -1,0 +1,85 @@
+id = "so101-wrist-roll-pitch"
+name = "SO-101 wrist roll/pitch housing (3D printed, wrist_link)"
+category = "frame.printed"
+vendor = "TheRobotStudio (open design, Apache-2.0)"
+part_number = "Wrist_Roll_Pitch_SO101.stl (sim mesh wrist_roll_pitch_so101_v2.stl)"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/STL/SO101/Individual/Wrist_Roll_Pitch_SO101.stl"
+
+[params]
+volume_solid = { value = 3.229e-5, unit = "m^3", fidelity = "derived", derivation ="Signed-volume integral over the 53994 triangles of meshes/so101/wrist_roll_pitch_so101_v2.stl (binary STL, metres) = 32.29 cm^3. Solid." }
+infill_fraction = { value = 0.15, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale ="Repo README gives only material, nozzle/layer height and 15% infill, no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile)." }
+wrist_flex_range = { value = [-1.65806, 1.65806], unit = "rad", src = "S3", fidelity = "datasheet" }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/so101/wrist_roll_pitch_so101_v2.stl"
+material = "pla"
+urdf_link = "wrist_link"
+origin_xyz = [0.0, -0.028, 0.0181]
+origin_rpy = [-1.5708, -1.5708, 0.0]
+bbox_min = [-0.0271, -0.02, -0.0378]
+bbox_max = [0.0352, 0.0157, 0.04]
+
+# Ports derived by tools/so101_ports.py (closure check: python tools/so101_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame.
+# horn_seat: mate with feetech-sts3215-c001 `output` (k = 0, no reverse needed) to reproduce the URDF; q = 0 is the URDF zero of joint wrist_flex, limits in wrist_flex_range.
+# servo_seat: the wrist-roll servo in this link is drawn with the no-horn mesh (feetech-sts3215-c001 geometry.mesh_no_horn); same frame as the horn mesh.
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.25t"
+gender = "female"
+pos = [0.0183, -1.13967e-07, 0.027999977742]
+axis = [-1.0, -3.77628e-07, 6.11487e-07]
+ref = [-6.11491e-07, 9.999999e-06, -0.99999999995]
+symmetry = 25
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): F = inv(T_part) @ inv(J_wrist_flex) @ T_servo_wrist_flex @ P_out @ Rx(pi); mating servo.output (k=0) reproduces the URDF; absorbs the 89.999638 deg rotation about z of joint wrist_flex relative to the canonical output frame"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin). Estimated."
+joint = "wrist_flex"
+joint_reverse = false
+
+[[ports]]
+name = "servo_seat"
+kind = "mech"
+type = "bolt-pattern.feetech-sts3215-base"
+gender = "neutral"
+pos = [0.0125, 9.8809e-08, -0.0303]
+axis = [-2.7e-11, 0.0, 1.0]
+ref = [-0.999999999973, -7.34641e-06, -2.7e-11]
+symmetry = 2
+thread = "m2"
+hole_pos = [[0.0196, 0.00935], [-0.0196, 0.00935], [-0.0196, -0.00935], [0.0196, -0.00935]]
+hole_pos_rationale = "Estimated placeholder (not a measured pattern): 4 holes at the corners of the 45.2 x 24.7 mm servo case footprint (datasheet size) inset 3 mm; screws are the 'PA2.0 self-tapping' M2 of the servo kit. Only places the 0.28 g screw masses of the builder's fastener model (CoM shift well under 1 mm); no kinematic role."
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): F = inv(T_part) @ T_servo_wrist_roll @ P_base @ Rx(pi); the servo holding part is chosen by mesh contact (tools/so101_ports.py --evidence)"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin). Estimated."
+servo_joint = "wrist_roll"
+
+[[sources]]
+id = "S1"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "SO-ARM100 README, Printing the Parts, Step 1 (commit a758567)"
+accessed = "2026-10-06"
+quote = "Material: PLA+ || Nozzle Diameter and Precision: 0.4mm nozzle diameter at 0.2mm layer height or 0.6mm nozzle at 0.4mm layer height. || Infill Density: 15%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), part placement in link wrist_link"
+accessed = "2026-10-06"
+quote = "<!-- Part wrist_roll_pitch_so101_v2 --> <visual> <origin xyz=\"0 -0.028 0.0181\" rpy=\"-1.5708 -1.5708 0\"/>"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), joint wrist_flex (parent lower_arm_link, child wrist_link)"
+accessed = "2026-10-07"
+quote = "<joint name=\"wrist_flex\" type=\"revolute\"> || <limit effort=\"10\" velocity=\"10\" lower=\"-1.65806\" upper=\"1.65806\"/>"
+license = "Apache-2.0"

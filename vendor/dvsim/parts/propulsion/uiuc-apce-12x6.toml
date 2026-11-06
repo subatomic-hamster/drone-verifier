@@ -1,0 +1,86 @@
+id = "uiuc-apce-12x6"
+name = "APC Thin Electric 12x6 propeller - UIUC wind-tunnel C_T/C_P data (reference)"
+category = "prop.reference"
+vendor = "APC (propeller); data: UIUC Propeller Data Site (Selig et al.)"
+part_number = "apce_12x6"
+url = "https://m-selig.ae.illinois.edu/props/volume-4/propDB-volume-4.html"
+
+# Literature reference for C_T(J)/C_P(J) of a 12 in x 6 in APC Thin Electric prop (pitch/D = 0.50). Tables transcribed from the UIUC .txt files, rounded to 4 decimals (3 for J, eta):
+# static (J = 0, C_T and C_P vs rpm, all 14 rows) and one advancing run at about 5007 rpm (all 16 rows). Shape reference for similar mass-produced props, not a measurement of any specific
+# part. No mass or ports (reference data only). UIUC volume 4 notes that coefficients use the true prop diameter, which can differ from the list value.
+
+[params]
+diameter  = { value = 0.3048, unit = "m", src = "S1", fidelity = "literature" }      # 12 in (list value)
+pitch     = { value = 0.1524, unit = "m", src = "S1", fidelity = "literature" }      # 6 in per revolution
+rpm_static_min = { value = 1047, unit = "rpm", src = "S2", fidelity = "literature" }
+rpm_static_max = { value = 7547, unit = "rpm", src = "S2", fidelity = "literature" }
+ct_static_at_max_rpm = { value = 0.1055, unit = "1", src = "S2", fidelity = "literature" }
+cp_static_at_max_rpm = { value = 0.0336, unit = "1", src = "S2", fidelity = "literature" }
+eta_max_approx = { value = 0.702, unit = "1", src = "S3", fidelity = "literature" }   # at J = 0.424 in the 5007 rpm run
+
+[tables.static_ct_cp]
+# UIUC file apce_12x6_static_0629od.txt
+columns = ["rpm", "C_T", "C_P"]
+rows = [
+  [1047, 0.0770, 0.0334],
+  [1520, 0.0892, 0.0340],
+  [1980, 0.0926, 0.0322],
+  [2520, 0.0963, 0.0322],
+  [2980, 0.0983, 0.0320],
+  [3460, 0.0995, 0.0318],
+  [3960, 0.0998, 0.0316],
+  [4453, 0.1014, 0.0322],
+  [4953, 0.1025, 0.0324],
+  [5500, 0.1025, 0.0324],
+  [6000, 0.1020, 0.0327],
+  [6473, 0.1036, 0.0331],
+  [6967, 0.1043, 0.0333],
+  [7547, 0.1055, 0.0336],
+]
+src = "S2"
+fidelity = "literature"
+
+[tables.advancing_5007rpm]
+# UIUC file apce_12x6_0632od_5007.txt (constant rpm about 5007)
+columns = ["J", "C_T", "C_P", "eta"]
+rows = [
+  [0.111, 0.0976, 0.0339, 0.319],
+  [0.134, 0.0952, 0.0341, 0.374],
+  [0.162, 0.0927, 0.0347, 0.431],
+  [0.185, 0.0892, 0.0346, 0.476],
+  [0.212, 0.0838, 0.0342, 0.519],
+  [0.235, 0.0795, 0.0338, 0.552],
+  [0.258, 0.0745, 0.0330, 0.583],
+  [0.283, 0.0684, 0.0317, 0.610],
+  [0.306, 0.0634, 0.0306, 0.633],
+  [0.328, 0.0577, 0.0290, 0.651],
+  [0.352, 0.0528, 0.0276, 0.672],
+  [0.376, 0.0477, 0.0261, 0.688],
+  [0.400, 0.0427, 0.0245, 0.698],
+  [0.424, 0.0377, 0.0228, 0.702],
+  [0.448, 0.0327, 0.0211, 0.697],
+  [0.473, 0.0280, 0.0194, 0.683],
+]
+src = "S3"
+fidelity = "literature"
+
+[[sources]]
+id = "S1"
+url = "https://m-selig.ae.illinois.edu/props/volume-4/propDB-volume-4.html"
+title = "UIUC Propeller Database - Volume 4, page notes"
+accessed = "2026-10-07"
+quote = "Unless otherwise noted, the propeller size is given in inches, e.g. APC 12x6 is a 12-inch diameter propeller with a pitch of 6 inch/revolution. Coefficients are based on the propeller true diameter, which might differ from the manufacturer's list value."
+
+[[sources]]
+id = "S2"
+url = "https://m-selig.ae.illinois.edu/props/volume-4/data/apce_12x6_static_0629od.txt"
+title = "UIUC data file apce_12x6_static_0629od.txt"
+accessed = "2026-10-07"
+quote = "RPM CT CP / 1046.667 0.077004 0.033361 / 3960.000 0.099843 0.031623 / 7546.667 0.105460 0.033643"
+
+[[sources]]
+id = "S3"
+url = "https://m-selig.ae.illinois.edu/props/volume-4/data/apce_12x6_0632od_5007.txt"
+title = "UIUC data file apce_12x6_0632od_5007.txt"
+accessed = "2026-10-07"
+quote = "J CT CP eta / 0.110537 0.097582 0.033852 0.318635 / 0.282818 0.068357 0.031691 0.610033 / 0.472890 0.028048 0.019430 0.682638"

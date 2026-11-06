@@ -1,0 +1,107 @@
+id = "soyo-sy42sth47-1206a-nema17"
+name = "SOYO SY42STH47-1206A NEMA 17 6-lead stepper motor, 42x48 mm, 1.2 A (Pololu 1200)"
+category = "motor.stepper"
+vendor = "SOYO / Changzhou Songyang Machinery & Electronics (Pololu item 1200)"
+part_number = "SY42STH47-1206A"
+url = "https://www.pololu.com/product/1200"
+
+# Frame: origin on the shaft axis at the front mounting-flange face; +z = shaft direction (out of the motor); x/y along the square flange sides.
+# Body occupies z in [-0.048, 0]. Six leads: centre-tapped windings (unipolar, or bipolar using the full winding / one half). Electrical figures are 'per coil'.
+# The manufacturer PDF linked from Pololu has an unusable text layer, so only the Pololu page is used; the NEMA 17 31 mm hole pattern is therefore
+# adopted from the sibling SY42STH38-1684A drawing (same NEMA 17 flange, inference).
+
+[params]
+mass               = { value = 0.350,   unit = "kg",    src = "S1", fidelity = "datasheet" }
+flange_size        = { value = 0.0423,  unit = "m",     src = "S1", fidelity = "datasheet" }  # 42.3 mm square
+body_length        = { value = 0.048,   unit = "m",     src = "S1", fidelity = "datasheet" }  # not including the shaft
+step_angle         = { value = 0.031416, unit = "rad",  src = "S1", fidelity = "datasheet" }  # 200 steps/rev = 1.8 deg
+steps_per_rev      = { value = 200,     unit = "1",     src = "S1", fidelity = "datasheet" }
+leads              = { value = 6,       unit = "1",     src = "S1", fidelity = "datasheet" }
+rated_current      = { value = 1.2,     unit = "A",     src = "S1", fidelity = "datasheet" }  # per coil
+rated_voltage      = { value = 4.0,     unit = "V",     src = "S1", fidelity = "datasheet" }
+phase_resistance   = { value = 3.3,     unit = "ohm",   src = "S1", fidelity = "datasheet" }  # per coil
+phase_inductance   = { value = 0.0028,  unit = "H",     src = "S1", fidelity = "datasheet" }  # per coil
+holding_torque     = { value = 0.31071, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 44 oz.in
+shaft_diameter     = { value = 0.005,   unit = "m",     src = "S1", fidelity = "datasheet" }
+shaft_type         = { value = "5 mm D-shaft (0.5 mm flat), 2 ball bearings", unit = "-", src = "S2", fidelity = "datasheet" }
+kt_equiv_phase = { value = 0.1831, unit = "N*m/A", fidelity = "derived", derivation = "Torque constant per phase from the holding torque with both phases at rated current: T_hold = sqrt(2)*Kt*I  =>  Kt = 0.31071 N*m / (1.4142 * 1.2 A) = 0.1831 N*m/A. Equals the back-EMF constant Ke (V*s/rad) per phase for an ideal motor. Assumes the Pololu figures refer to the winding as wired for the stated rating." }
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.31x31.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.0045
+note = "NEMA 17 flange; pattern and M3 thread taken from the SY42STH38-1684A drawing (inference for this model), 4.5 mm hole depth likewise."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.5d"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "5 mm D-shaft."
+
+[[ports]]
+name = "phases"
+pins = ["PH.1", "PH.2", "PH.3", "PH.4", "PH.5", "PH.6"]
+kind = "power"
+type = "stepper-6wire"
+gender = "neutral"
+role = "sink"
+i_max = { value = 1.2, unit = "A", src = "S1", fidelity = "datasheet" }  # rated current per coil
+note = "Six bare 30 cm leads, centre-tapped coils; rotor inertia is not published for this part."
+
+# Pin level: six colour-coded bare leads (P1: red-blue pair = one coil, black-green pair = the other, yellow and white = the centre taps). P1 does not say which centre tap belongs to which coil.
+[[connectors]]
+id = "PH"
+name = "phase leads (6, bare)"
+type = "wire-lead"
+port_type = "stepper-6wire"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.048]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.003
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "P1 does not say where the leads leave the body: drawn at the centre of the rear face, 3 mm apart (positional estimate)."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", i_max = 1.2, note = "black wire, coil A end (P1)" },
+  { number = 2, name = "A2", kind = "power", dir = "in", i_max = 1.2, note = "green wire, coil A end (P1)" },
+  { number = 3, name = "B1", kind = "power", dir = "in", i_max = 1.2, note = "red wire, coil B end (P1)" },
+  { number = 4, name = "B2", kind = "power", dir = "in", i_max = 1.2, note = "blue wire, coil B end (P1)" },
+  { number = 5, name = "CT1", kind = "power", dir = "in", note = "yellow wire, centre tap (P1); coil not stated" },
+  { number = 6, name = "CT2", kind = "power", dir = "in", note = "white wire, centre tap (P1); coil not stated" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/1200"
+title = "Pololu item 1200 product page, Overview"
+accessed = "2026-10-09"
+quote = "The motor has six color-coded wires terminated with bare leads that allow it to be controlled by both unipolar and bipolar stepper motor drivers. When used with a unipolar stepper motor driver, all six leads are used. When used with a bipolar stepper motor driver, the center-tap yellow and white wires can be left disconnected (the red-blue pair gives access to one coil and the black-green pair gives access to the other coil)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1200/specs"
+title = "Pololu item 1200 Specs tab (Stepper Motor: Unipolar/Bipolar, 200 Steps/Rev, 42×48mm, 4V, 1.2 A/Phase)"
+accessed = "2026-10-07"
+quote = "Size: | 42.3 mm square × 48 mm| (NEMA 17)| 1| NEMA size: | 17 | Weight: | 350 g | Shaft diameter: | 5 mm | General specifications| Shaft type: | 5 mm \"D\" | Current rating: | 1200 mA| 2| Voltage rating: | 4 V | Holding torque: | 44 oz·in | Steps per revolution: | 200 | Resistance: | 3.3 Ohm| 2| Inductance per phase: | 2.8 mH | Number of leads: | 6 | Lead length: | 30 cm | Notes:| 1| Not including the shaft.| 2| Per coil."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/1200"
+title = "Pololu item 1200 product page, Dimensions"
+accessed = "2026-10-07"
+quote = "Output shaft supported by two ball bearings || Dimensions| The following diagram shows the stepper motor dimensions in mm. The dimension labeled “length” is 48 mm. The output D-shaft has a 5 mm diameter with a section that is flattened by 0.5 mm."

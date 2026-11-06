@@ -1,0 +1,180 @@
+id = "sparkfun-gps-rtk-sma-16481"
+name = "SparkFun GPS-RTK-SMA Breakout, u-blox ZED-F9P (SKU GPS-16481)"
+category = "pcb.gps"
+vendor = "SparkFun"
+part_number = "GPS-16481"
+url = "https://www.sparkfun.com/sparkfun-gps-rtk-sma-breakout-zed-f9p-qwiic.html"
+
+# The breakout of the u-blox ZED-F9P multi-band RTK receiver (chip data in parts/electronics/ublox-zed-f9p.toml) with a panel SMA antenna connector, a USB-C port that enumerates as a
+# serial port, two Qwiic connectors and 0.1 in pins for UART1 / UART2 / I2C / SPI (S1). Used here as the RTK BASE STATION of the vessel (its antenna on the wheelhouse mast)
+# and as the receiver the moving-base relative GNSS model is calibrated to: with the rover's ZED-F9P (in the lander) it forms the "moving base" pair of S2 ("The ZED-F9P-02B includes
+# moving base support, allowing both base and rover to move while computing the position between them ... ideal for UAV applications where the UAV ... is programmed to ... land on a moving platform").
+# Moving-base numbers of S2 (the ZED-F9P-02B data sheet) used by dvsim.cuas.relnav.RelGnss: RTK horizontal and vertical position accuracy 0.01 m + 1 ppm of the baseline,
+# convergence < 10 s, moving-base RTK navigation update rate 8 Hz with GPS+GLO+GAL+BDS (10 Hz with fewer constellations), heading accuracy 0.4 deg (50 % at 30 m/s dynamics).
+# Part frame: origin at the board centre on its underside, x along the length, z up.
+[params]
+price = { value = 259.95, unit = "USD", src = "SP", fidelity = "datasheet" }  # SparkFun retail price seen 2026-10-16 (US, USD, ex shipping)
+mass                = { value = 0.0068, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.0435, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.0432, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.012, unit = "m", fidelity = "estimated", rationale = "Not on the product page: board 1.6 mm plus the 6.5 mm SMA / USB-C connectors and the 2.4 mm module; 12 mm overall. Drawing only." }
+supply_voltage_min  = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_min  = { value = 0.068, unit = "A", src = "S1", fidelity = "datasheet" }
+supply_current_max  = { value = 0.130, unit = "A", src = "S1", fidelity = "datasheet" }
+rtk_accuracy        = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+rtk_accuracy_ppm    = { value = 1.0, unit = "ppm", src = "S2", fidelity = "datasheet" }
+rtk_convergence_s   = { value = 10.0, unit = "s", src = "S2", fidelity = "datasheet" }
+moving_base_rate_hz = { value = 8.0, unit = "Hz", src = "S2", fidelity = "datasheet" }
+moving_base_heading_deg = { value = 0.4, unit = "deg", src = "S2", fidelity = "datasheet" }
+standalone_accuracy = { value = 2.5, unit = "m", src = "S1", fidelity = "datasheet" }
+cable_length        = { value = 0.3, unit = "m", fidelity = "estimated", rationale = "USB-C cable from the board to the Pi on the cabin floor: 0.3 m with slack (no cable ships with the board)." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.02175, 0.0216, 0.006]
+pos = [0.0, 0.0, 0.006]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside of the board on a standoff / foam pad."
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "neutral"
+pins = ["USBC.A4", "USBC.A7", "USBC.A6", "USBC.A1"]
+note = "USB-C: VBUS, D-, D+, GND of the USB 2.0 pairs; enumerates as a serial port (S1)."
+
+[[ports]]
+name = "antenna"
+kind = "signal"
+type = "sma"
+gender = "female"
+pins = ["ANT.1", "ANT.2"]
+note = "Panel-mount SMA jack for the multi-band active antenna (S1): centre pin = RF + antenna bias, shell = ground."
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+pins = ["UART.TX1", "UART.RX1", "UART.GND"]
+note = "UART1 of the ZED-F9P on the breakout's header (3.3 V logic): the receiver's TX1 / RX1."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+pins = ["UART.3V3", "UART.GND"]
+v_min = { value = 3.3, unit = "V", src = "S1", fidelity = "datasheet" }
+v_max = { value = 5.0, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "3V3 pin of the header with ground (the page allows 5 V or 3.3 V supply; here 3.3 V from the Jetson header)."
+
+# UART header pins of the breakout. The SparkFun page names the UART1 pins (TX1, RX1) but gives no pin table or position: the order and the placement on the edge are estimates.
+[[connectors]]
+id = "UART"
+name = "UART1 / 3V3 / GND header pins"
+type = "header-0.1in"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0216, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00254
+src = "S1"
+fidelity = "estimated"
+rationale = "The ZED-F9P breakout exposes UART1 on header pads; their order and edge are not in the retrieved text."
+pins = [
+  { number = "TX1", name = "TX1", kind = "signal", dir = "out", v = 3.3 },
+  { number = "RX1", name = "RX1", kind = "signal", dir = "in", v = 3.3 },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "3V3", name = "3V3", kind = "power", dir = "in", v_min = 3.3, v_max = 5.0 },
+]
+
+# USB-C receptacle: the standard USB 2.0 contacts (A1 GND, A4 VBUS, A6 D+, A7 D-), plus the CC pins that a sink pulls down. The SparkFun page lists the connector but no
+# pin table; the pin names are the USB Type-C standard's.
+[[connectors]]
+id = "USBC"
+name = "USB-C port (USB 2.0 serial)"
+type = "usb-c"
+gender = "female"
+pos = [-0.0216, 0.0, 0.0045]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.0008
+src = "S1"
+fidelity = "derived"
+derivation = "S1 names the USB-C connector ('which enumerates as a COM port'); the contacts are the USB Type-C standard's USB 2.0 set: A1 GND, A4 VBUS, A5 CC1, A6 D+, A7 D-, B5 CC2. The board's CC resistors are not on the product page."
+pins = [
+  { number = "A1", name = "GND", kind = "ground" },
+  { number = "A4", name = "VBUS", kind = "power", dir = "in", v_min = 4.5, v_max = 5.5, i_max = 0.13 },
+  { number = "A5", name = "CC1", kind = "signal", dir = "io" },
+  { number = "A6", name = "D+", kind = "signal", dir = "io", v = 3.3 },
+  { number = "A7", name = "D-", kind = "signal", dir = "io", v = 3.3 },
+  { number = "B5", name = "CC2", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "ANT"
+name = "SMA antenna jack"
+type = "sma"
+gender = "female"
+pos = [0.0, 0.0216, 0.006]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.003
+src = "S1"
+fidelity = "derived"
+derivation = "S1: 'a robust, panel-mountable SMA connector'. An SMA jack has the centre contact (RF and the antenna's bias voltage from the module) and the grounded shell."
+pins = [
+  { number = 1, name = "RF", kind = "signal", dir = "io", v = 3.3, note = "RF in; the module supplies the active antenna bias" },
+  { number = 2, name = "SHELL", kind = "ground" },
+]
+
+[visual]
+rationale = "Small red-blue breakout board with a ZED-F9P shield, an SMA jack and a USB-C port: drawn from the part's length, width and height."
+
+[[visual.elements]]
+gen = "board_generic"
+colors = { pcb = "soldermask-red" }
+
+[[sources]]
+id = "SP"
+url = "https://www.sparkfun.com/products/16481"
+title = "SparkFun GPS-RTK-SMA Breakout (ZED-F9P), product page price"
+accessed = "2026-10-16"
+quote = "$259.95 retail price (page fetch summary)"
+
+[[sources]]
+id = "S1"
+url = "https://www.sparkfun.com/sparkfun-gps-rtk-sma-breakout-zed-f9p-qwiic.html"
+title = "SparkFun GPS-RTK-SMA Breakout - ZED-F9P (Qwiic), product page"
+accessed = "2026-10-13"
+quote = "43.5mm x 43.2mm | Weight: 6.8g | Voltage: 5V or 3.3V but all logic is 3.3V | Current: 68mA - 130mA | 0.010m with RTK | 2.5m without RTK | a robust, panel-mountable SMA connector | USB-C which enumerates as a COM port"
+
+[[sources]]
+id = "S2"
+url = "https://cdn.sparkfun.com/assets/f/8/d/6/d/ZED-F9P-02B_DataSheet_UBX-21023276.pdf"
+title = "u-blox ZED-F9P-02B Data sheet UBX-21023276-R03, Tables 2, 3 and 5"
+accessed = "2026-10-13"
+quote = "The ZED-F9P-02B includes moving base support, allowing both base and rover to move while computing the position between them. The moving base is ideal for UAV applications where the UAV is programmed to follow its owner or to land on a moving platform. | Convergence RTK < 10 s | RTK 0.01 m + 1 ppm CEP | Max navigation update rate 8 Hz (GPS+GLO+GAL+BDS) | Heading accuracy 0.4 deg"

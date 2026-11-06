@@ -1,0 +1,88 @@
+id = "amass-mr60-f"
+name = "Amass MR60-F connector (3-pole motor connector, female, wire-solder)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "MR60-F"
+url = "https://www.china-amass.net/mr60-fb-product/"
+
+# Mating half of amass-mr60-m. Ratings per pole. No mass published.
+[params]
+current_rated       = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0012, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 100, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "12 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2", "MATE.3"]
+kind = "power"
+type = "mr60"
+gender = "female"
+v_max = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "35 A per contact on 12 AWG at a temperature rise <= 85 K"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2", "WIRE.3"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, 12 AWG"
+
+# Pin level (estimated): 3-pole motor connector; contacts numbered 1..3 in a line, solder cup n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (3-pole)"
+type = "mr60"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0065
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the part title (3-pole); S1 gives no contact numbering or pole spacing, so the contacts are numbered 1..3 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+  { number = 3, name = "3", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (3)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0065
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+  { number = 3, name = "3", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/mr60-fb-product/"
+title = "AMASS MR60-F product page (Amass), electrical SPEC"
+accessed = "2026-10-07"
+quote = "Electrical specifications | Current rating | 35A (12AWG△≤85K) | Rated voltage | 80V DC | Insulation Resistance | ≥2000MΩ | Contact Resistance | ≤1.2mΩ | Mechanical characteristics | Plug Life. | 100 times | Environmental resistance | Work Temperature | -20℃ to 120℃"

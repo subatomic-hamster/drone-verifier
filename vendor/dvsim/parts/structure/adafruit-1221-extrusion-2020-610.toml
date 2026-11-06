@@ -1,0 +1,37 @@
+id = "adafruit-1221-extrusion-2020-610"
+name = "Slotted aluminium extrusion 20 x 20 mm, 610 mm long (Adafruit 1221)"
+category = "structure.extrusion"
+vendor = "Adafruit"
+part_number = "1221"
+url = "https://www.adafruit.com/product/1221"
+
+# Frame: origin at the centre of one end face, +z along the length. Slot width, wall thickness and the mass are not published on the page.
+[params]
+section_width  = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+section_height = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+length         = { value = 0.610, unit = "m", src = "S1", fidelity = "datasheet" }
+center_hole_diameter = { value = 4.45e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass_per_m]
+value = 0.50
+unit = "kg/m"
+fidelity = "estimated"
+rationale = "Adafruit publishes no mass. Taken equal to the 0.50 kg/m that haluminium prints for its 20x20 T-slot profile (parts/structure/haluminium-2020-s6.toml, datasheet); the Adafruit profile is a different, unspecified wall design, so +-20 %."
+
+[[ports]]
+name = "center_bore"
+kind = "mech"
+type = "bore.4.45"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "Centre hole 'approx 4.45mm / 0.17\"' (S1); taps to M5 per the Adafruit 1257 page ('tap the 5mm diameter center-hole'), 4-fold symmetric profile."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1221"
+title = "Adafruit product 1221: Slotted Aluminum Extrusion - 20mm x 20mm - 610mm long"
+accessed = "2026-10-07"
+quote = "Made of aluminum, its exactly 20x20mm square and has slots on all four sides. ... Each piece here is 610mm long (2 feet), and is easily cut down with a hacksaw or bandsaw. ... Technical Details | Center Hole Diameter: approx 4.45mm / 0.17\""

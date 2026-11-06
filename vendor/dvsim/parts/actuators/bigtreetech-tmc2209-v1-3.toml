@@ -1,0 +1,192 @@
+id = "bigtreetech-tmc2209-v1-3"
+name = "BIGTREETECH TMC2209 V1.3 stepper driver module (StepStick footprint, 110 mohm sense resistors)"
+category = "driver.stepper"
+vendor = "BIGTREETECH (BTT)"
+part_number = "TMC2209 V1.3"
+url = "https://biqu.equipment/collections/driver-board/products/bigtreetech-tmc2209-stepper-motor-driver-for-3d-printer-board-vs-tmc2208"
+
+# The carrier module around the IC of parts/actuators/trinamic-tmc2209.toml. Drops into the 16-hole StepStick footprint of 3D-printer and CNC boards, or into a breadboard / perfboard.
+# Part frame: origin at the board centre on the top (component) face; +z out of the component side; x along the 0.8 in (20.32 mm) length, y along the 0.6 in (15.24 mm) width, pins pointing to -z (the Pololu StepStick convention, as in pololu-a4988-carrier.toml).
+# BTT publishes no mass, dimensions or pin table as text (its wiki shows a dimension diagram, a STEP file and schematic PDFs only): the footprint and pin order are the StepStick standard (S3), the UART pin is pin 4 (S2); the module's own mass and size are estimates.
+# The IC supports 4.75-29 V on VM; BTT quotes 4.75-28 V for the module (S1). Pins 5 and 6 of the control row (the A4988's RESET / SLEEP positions) carry other signals on TMC2209 sticks (DIAG / INDEX / CLK, board-revision dependent): not listed.
+
+[params]
+mass               = { value = 0.003, unit = "kg", fidelity = "estimated", rationale = "BTT publishes no mass. The Pololu A4988 carrier of the same footprint weighs 1.3 g without a heat sink (pololu-a4988-carrier S1); the V1.3 ships with a small aluminium heat sink (about 1.5 g), so 3 g is taken." }
+length             = { value = 0.02032, unit = "m", fidelity = "estimated", rationale = "StepStick standard footprint, 0.8 in long (S3); BTT's own dimension diagram is an image." }
+width              = { value = 0.01524, unit = "m", fidelity = "estimated", rationale = "StepStick standard footprint, 0.6 in wide (S3); BTT's own dimension diagram is an image." }
+height             = { value = 0.012, unit = "m", fidelity = "estimated", rationale = "Board + IC + heat sink above the top face, for drawing only (BTT gives no height)." }
+v_motor_min        = { value = 4.75, unit = "V", src = "S5", fidelity = "datasheet" }
+v_motor_max        = { value = 28.0, unit = "V", src = "S5", fidelity = "datasheet" }
+i_rms_max_per_phase = { value = 2.0, unit = "A", src = "S2", fidelity = "datasheet" }   # BTT: 'Drive current 2A RMS, 2.8A peak'
+i_peak_max_per_phase = { value = 2.8, unit = "A", src = "S2", fidelity = "datasheet" }
+r_sense            = { value = 0.110, unit = "ohm", src = "S2", fidelity = "datasheet" }   # 'Using the TMC 2209 Driver Module 110 mΩ R_SENSE Resistor'
+v_logic_min        = { value = 3.0, unit = "V", src = "S4", fidelity = "datasheet" }   # IC control voltage 3 V - 5.5 V (parts/actuators/trinamic-tmc2209.toml)
+v_logic_max        = { value = 5.5, unit = "V", src = "S4", fidelity = "datasheet" }
+microstep_max_divisor = { value = 256, unit = "1", src = "S1", fidelity = "datasheet" }   # MicroPlyer interpolation; 2 / 4 / 8 / 16 by pins
+current_formula    = { value = "I_RMS = 325 mV / (R_SENSE + 20 mohm) * 1/sqrt(2) * VREF / 2.5 V", unit = "-", src = "S2", fidelity = "datasheet" }
+i_rms_per_vref     = { value = 0.7071, unit = "A/V", fidelity = "derived", derivation = "With R_SENSE = 110 mohm: 325 mV / 130 mohm = 2.5 A; times 1/sqrt(2) times VREF/2.5 V gives I_RMS = VREF / sqrt(2) = 0.7071 A per volt (the same derivation as parts/actuators/trinamic-tmc2209.toml). A 1.7 A motor at 70-80 % current wants VREF about 1.7-1.9 V." }
+price          = { value = 7.89, unit = "USD", src = "S1", fidelity = "datasheet" }   # sale price on 2026-10-11 (regular 9.99 USD)
+
+# Envelope (collision, wire clearance): the 20.32 x 15.24 mm module, from the underside of the 1.6 mm board (z = -1.6 mm, the frame origin is on the top face) to 12 mm above the board's underside
+# (IC + heat sink, drawing height, estimated).
+[[geometry.shapes]]
+shape = "box"
+size = [0.01016, 0.00762, 0.006]
+pos = [0.0, 0.0, 0.0044]
+
+[[ports]]
+name = "motor_out"
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "source"
+pins = ["PWR.3", "PWR.4", "PWR.5", "PWR.6"]
+i_max = { value = 2.0, unit = "A", src = "S2", fidelity = "datasheet" }
+i_peak = { value = 2.8, unit = "A", src = "S2", fidelity = "datasheet" }
+note = "2B 2A 1A 1B: coil 2 = 2A/2B, coil 1 = 1A/1B."
+
+[[ports]]
+name = "vmot"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["PWR.1", "PWR.2"]
+v_max = { value = 28.0, unit = "V", src = "S5", fidelity = "datasheet" }
+v_min = { value = 4.75, unit = "V", src = "S5", fidelity = "datasheet" }
+note = "Motor supply VM with its ground."
+
+[[ports]]
+name = "step_dir"
+kind = "signal"
+type = "step-dir"
+gender = "male"
+pins = ["CTL.1", "CTL.7", "CTL.8"]
+level_min = { value = 3.0, unit = "V", src = "S4", fidelity = "datasheet" }
+level_max = { value = 5.5, unit = "V", src = "S4", fidelity = "datasheet" }
+note = "EN, STEP and DIR; MS1 / MS2 select the microstep mode (pins 2 and 3), PDN_UART the single-wire UART (pin 4)."
+
+# Pin-wire groupings of the other pins (a pin wire end `<inst>.CTL.4` is folded into the port that lists the pin). Signal-kind at port level; the pin kinds (VIO power, GND ground) apply in the pin rules.
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["CTL.4"]
+note = "PDN_UART: the driver's single-wire UART (TX through a series resistor of about 1 kohm, RX direct)."
+
+[[ports]]
+name = "strap"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["CTL.2", "CTL.3"]
+note = "MS1 / MS2: both tied to VIO selects 16 microsteps and UART address 3."
+
+[[ports]]
+name = "vio"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["PWR.7", "PWR.8"]
+note = "VIO logic supply (3.0-5.5 V) with its ground."
+
+# ---- Connectors (pin level): the 16 holes of the StepStick footprint, two rows of eight on a 0.1 in grid, as on the Pololu A4988 carrier (S3). CTL = the control row (EN ... DIR), PWR = the motor / supply row (VM ... GND).
+[[connectors]]
+id = "CTL"
+name = "control header row (8 holes, pins 5 and 6 not listed)"
+type = "header-1x8-2.54mm"
+gender = "male"
+pos = [0.0, -0.00635, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "S3"
+fidelity = "estimated"
+rationale = "BTT's wiki gives no pin table as text; it says the UART pin is 'connected to Pin 4' (S2), which is the A4988 MS3 position of the StepStick footprint. The names EN, MS1, MS2, STEP and DIR at positions 1, 2, 3, 7 and 8 are the common TMC2209 StepStick labels on the footprint of S3 (not confirmed against BTT's schematic PDF, which was not readable here)."
+pose_rationale = "Row spacing 0.5 in and orientation as the Pololu A4988 carrier (S3): positional estimate."
+pins = [
+  { number = 1, name = "EN", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "active-low enable" },
+  { number = 2, name = "MS1", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "microstep select 1 (with MS2: 1/8, 1/16, 1/32, 1/64)" },
+  { number = 3, name = "MS2", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "microstep select 2" },
+  { number = 4, name = "PDN_UART", kind = "signal", dir = "io", v_min = 3.0, v_max = 5.5, alt = ["UART_TX", "UART_RX"], note = "single-wire UART of the TMC2209 (S2: connected to pin 4)" },
+  { number = 7, name = "STEP", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, at = [6, 0] },
+  { number = 8, name = "DIR", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, at = [7, 0] },
+]
+
+[[connectors]]
+id = "PWR"
+name = "power and motor header row (8 holes)"
+type = "header-1x8-2.54mm"
+gender = "male"
+pos = [0.0, 0.00635, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "S3"
+fidelity = "estimated"
+rationale = "The motor / supply row of the StepStick footprint is VMOT-or-VM, GND, 2B, 2A, 1A, 1B, VIO-or-VDD, GND on every module of this form (the Pololu A4988 / DRV8825 carriers in this library, S3); BTT's own pin table is an image."
+pose_rationale = "As the Pololu A4988 carrier (S3): positional estimate."
+pins = [
+  { number = 1, name = "VM", kind = "power", dir = "in", v_min = 4.75, v_max = 28.0, i_max = 2.0, note = "motor supply, 4.75-28 V (S1)" },
+  { number = 2, name = "GND", kind = "ground", note = "motor supply ground" },
+  { number = 3, name = "2B", kind = "power", dir = "out", i_max = 2.0, note = "coil 2" },
+  { number = 4, name = "2A", kind = "power", dir = "out", i_max = 2.0, note = "coil 2" },
+  { number = 5, name = "1A", kind = "power", dir = "out", i_max = 2.0, note = "coil 1" },
+  { number = 6, name = "1B", kind = "power", dir = "out", i_max = 2.0, note = "coil 1" },
+  { number = 7, name = "VIO", kind = "power", dir = "in", v_min = 3.0, v_max = 5.5, note = "logic supply 3-5.5 V" },
+  { number = 8, name = "GND", kind = "ground", note = "logic ground" },
+]
+
+[visual]
+src = "V1"
+note = "Small red-brown 20 x 15 mm StepStick board with the TMC2209 under a black or silver heat sink (BTT product photos)."
+
+[[visual.elements]]
+gen = "board_generic"
+
+[[sources]]
+id = "S1"
+url = "https://biqu.equipment/collections/driver-board/products/bigtreetech-tmc2209-stepper-motor-driver-for-3d-printer-board-vs-tmc2208"
+title = "BIQU / BIGTREETECH store: BIGTREETECH TMC2209 Stepper Motor Driver for 3D Printer (V1.3)"
+accessed = "2026-10-11"
+quote = "BIGTREETECH TMC2209 Stepper Motor Driver for 3D Printer ... $9.99 USD, on sale for $7.89 USD ... Supports UART and STEP/DIR modes ... Up to 256 microstepping interpolation ... Up to 2.0A RMS / 2.8A peak current"
+
+[[sources]]
+id = "S5"
+url = "https://www.tinymachines3d.com/products/bigtreetech-tmc2209-v1-3"
+title = "Tiny Machines 3D: BIGTREETECH TMC2209 V1.3 (reseller listing)"
+accessed = "2026-10-11"
+quote = "Operating Mode: STEP/DIR or UART | Power Voltage (VM): 4.75V-28V DC | Peak Current: 2.8A | Current RMS: 2A | Max Microsteps: 256"
+
+[[sources]]
+id = "S2"
+url = "https://neo.bttwiki.com/en/docs/accessories-docs/tmc-driver/tmc-2209/"
+title = "BIGTREETECH wiki, TMC 2209 driver module (V1.1-V1.3)"
+accessed = "2026-10-11"
+quote = "Driver IC| TMC 2209| Maximum voltage| 29V| Drive current| 2A RMS, 2.8A peak || I_{RMS}=\\frac{325mV}{R_{SENSE}+20mΩ}*\\frac{1}{\\sqrt{2}}*\\frac{V_{VREF}}{2.5V} || Using the TMC 2209 Driver Module 110 mΩ R_{SENSE} Resistor || UART ... connected to Pin 4"
+
+[[sources]]
+id = "S3"
+url = "https://www.pololu.com/product/1182"
+title = "Pololu A4988 carrier product page (the StepStick footprint reference: size and header pin order; see parts/actuators/pololu-a4988-carrier.toml)"
+accessed = "2026-10-09"
+quote = "Left row, top to bottom: ENABLE, MS1, MS2, MS3, RESET, SLEEP, STEP, DIR. Right row, top to bottom: VMOT, GND, 2B, 2A, 1A, 1B, VDD, GND. ... Size: 0.6″ × 0.8″"
+
+[[sources]]
+id = "S4"
+url = "https://www.lcsc.com/product-detail/C465949.html"
+title = "LCSC TRINAMIC TMC2209-LA product page (IC control voltage)"
+accessed = "2026-10-07"
+quote = "Control Voltage| 3V~5.5V"
+
+[[sources]]
+id = "V1"
+url = "https://neo.bttwiki.com/en/docs/accessories-docs/tmc-driver/tmc-2209/"
+title = "BTT wiki TMC2209 page (appearance only)"
+accessed = "2026-10-11"
+quote = "TMC 2209"

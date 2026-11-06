@@ -1,0 +1,49 @@
+id = "adafruit-1302-extrusion-2040-610"
+name = "Slotted aluminium extrusion 20 x 40 mm, 610 mm long (Adafruit 1302)"
+category = "structure.extrusion"
+vendor = "Adafruit"
+part_number = "1302"
+url = "https://www.adafruit.com/product/1302"
+
+# Frame: origin at the centre of one end face, +z along the length, 40 mm along x. No hole size, slot width or mass on the page.
+[params]
+section_width  = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+section_height = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+length         = { value = 0.610, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass_per_m]
+value = 0.90
+unit = "kg/m"
+fidelity = "estimated"
+rationale = "Adafruit publishes no mass. The sibling 20x20 profile is taken as 0.50 kg/m (haluminium datasheet). A 20x40 profile is two 20x20 cells that share one 1.5 mm-class wall and lose one pair of outer slots' worth of web, so slightly under 2 x 0.50 = 1.0 kg/m; 0.90 kg/m is used. The wall design is unknown: +-25 %."
+
+[[ports]]
+name = "center_bore_a"
+kind = "mech"
+type = "bore.4.45"
+gender = "female"
+pos = [-0.010, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+fidelity = "estimated"
+rationale = "The page says 'dual-20mm square' extrusion; one centre hole per 20 mm cell, on the cell centres at x = -10 mm. Hole diameter assumed the same 4.45 mm as the 20x20 profile (Adafruit 1221); the 20x40 page gives none."
+
+[[ports]]
+name = "center_bore_b"
+kind = "mech"
+type = "bore.4.45"
+gender = "female"
+pos = [0.010, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+fidelity = "estimated"
+rationale = "Second cell of the dual-20 profile, centre at x = +10 mm; diameter assumed as for center_bore_a."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1302"
+title = "Adafruit product 1302: Slotted Aluminum Extrusion - 20mm x 40mm - 610mm long"
+accessed = "2026-10-07"
+quote = "we've added dual-20mm square aluminum extrusion and components to our catalog. This product is the extrusion itself. Made of aluminum, its exactly 40x20mm and has slots on all four sides. ... Each piece here is 610mm long (2 feet)"

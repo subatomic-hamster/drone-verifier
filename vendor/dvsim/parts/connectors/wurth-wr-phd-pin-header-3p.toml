@@ -1,0 +1,56 @@
+id = "wurth-wr-phd-pin-header-3p"
+name = "Wurth WR-PHD 2.54 mm pin header, 3 pins (servo/Dupont male header)"
+category = "connector"
+vendor = "Wurth Elektronik"
+part_number = "61300311121"
+url = "https://www.we-online.com/components/products/datasheet/61300311121.pdf"
+
+# A 3-pin 0.1 in header is the physical interface of an RC servo lead (signal/+V/GND) and of Dupont jumper sockets;
+# it is modelled with port type servo-3pin. Wurth does not state a part mass in the datasheet.
+[params]
+pitch               = { value = 2.54e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+current_rated       = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_working     = { value = 250, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.020, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 25, unit = "1", src = "S1", fidelity = "datasheet" }
+length              = { value = 7.62e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 233.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 378.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "header"
+pins = ["HDR.1", "HDR.2", "HDR.3"]
+kind = "power"
+type = "servo-3pin"
+gender = "male"
+v_max = { value = 250, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Working voltage 250 V (AC) and 3 A per pin; servo use is far below this"
+
+# Pin level (derived): 3 pins in one row at the S1 pitch; function of each pin is set by the board or servo lead it is used with.
+[[connectors]]
+id = "HDR"
+name = "pin header (3 pins)"
+type = "servo-3pin"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S1"
+fidelity = "derived"
+derivation = "Pin count is the part designation (3-pin header); pitch is the S1 value (2.54 mm); numbering 1..3 along the row is assumed."
+pose_rationale = "A catalogue part has no board frame: mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.we-online.com/components/products/datasheet/61300311121.pdf"
+title = "WR-PHD Pin Header 61300311121 datasheet (Wurth Elektronik)"
+accessed = "2026-10-07"
+quote = "WR-PHD Pin Header ORDER CODE 61300311121 ... Pins 3 ... Length L 7.62 mm ... Pitch P 2.54 mm Durability 25 Mating cycles ... Operating Temperature -40 up to +105 °C ... Rated Current IR 3 A Working Voltage 250 V (AC) ... Contact Resistance R 20 mΩ max."

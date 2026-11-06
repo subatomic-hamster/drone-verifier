@@ -1,0 +1,68 @@
+id = "cnhl-6200mah-3s2p-100c-ec5"
+name = "CNHL 6200mAh 3S2P 11.1V 100C hardcase LiPo pack, EC5"
+category = "battery.lipo"
+vendor = "CNHL (China Hobby Line)"
+part_number = "AHC6201003EC5"
+url = "https://chinahobbyline.com/products/cnhl-6200mah-3s-lipo-battery-100c-11-8v-lipo-battery-hard-case-with-ec5-plug-for-rc-car-truck-boat-tank-buggy-truggy2-packs"
+
+# Part frame: origin at the pack centre, x along length (138 mm), y along width (47 mm), z up (38 mm). Listing prints "38X47X138mm" (H x W x L as in the
+# other CNHL hardcase listing). The listing title says 11.8 V but the specification block says 11.1 V (3-Cell / 3S2P): 11.1 V used.
+
+[params]
+capacity_ah     = { value = 6.2, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 22320.0, unit = "C", fidelity = "derived", derivation = "6.2 Ah x 3600 s/h = 22320 C (coulombs)." }
+cells_series    = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 11.1, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 12.6, unit = "V", fidelity = "derived", derivation = "3S x 4.2 V/cell full-charge LiPo limit = 12.6 V." }
+c_rating_cont   = { value = 100, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 200, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 620.0, unit = "A", fidelity = "derived", derivation = "100 C x 6.2 Ah = 620 A (rating label only)." }
+mass            = { value = 0.425, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.138, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.047, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.038, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "EC5", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 10, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0126, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R scaled inversely with pack capacity, 0.026 ohm*Ah / 6.2 Ah = 4.2 mOhm per series group x 3 groups = 12.6 mOhm (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml, applied to the parallel group as a whole). Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.069, 0.0235, 0.019]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "ec5"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 12.6, unit = "V", fidelity = "derived", derivation = "3S x 4.2 V/cell = 12.6 V." }
+i_max = { value = 620.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 100 C x 6.2 Ah = 620 A (S1 label); far above the EC5 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the EC5 plug but not its polarity or contact spacing: + then -, an assumed 12 mm spacing for the EC5 family (no source read). The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (EC5)"
+type = "ec5"
+gender = "neutral"
+pos = [0.069, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.012
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the EC5 plug but not its polarity or contact spacing: + then -, an assumed 12 mm centre distance for the EC5 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 12.6, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://chinahobbyline.com/products/cnhl-6200mah-3s-lipo-battery-100c-11-8v-lipo-battery-hard-case-with-ec5-plug-for-rc-car-truck-boat-tank-buggy-truggy2-packs"
+title = "China Hobby Line - CNHL 6200mAh 3S LiPo Battery 100C hard case with EC5 plug"
+accessed = "2026-10-07"
+quote = "Stock Number: AHC6201003EC5 | Capacity: 6200mAh | Voltage: 11.1V / 3-Cell / 3S2P | Discharge Rate: 100C Continual / 200C Burst | Size(1-5mm difference): 38X47X138mm | Approx Weight(±5g) : 425g | Output Connector: EC5 | Wire (AWG): 10#"

@@ -1,0 +1,45 @@
+id = "iso4032-m2.5-nut"
+name = "Hexagon nut ISO 4032 M2.5, steel"
+category = "fastener"
+vendor = "generic (ISO 4032 / DIN 934)"
+part_number = "ISO 4032 M2.5"
+url = "https://fasten.it/norms/norm/din_en_iso_4032"
+
+[params]
+thread_diameter = { value = 2.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thread_pitch    = { value = 0.45e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 2e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+steel_density   = { value = 7850, unit = "kg/m3", src = "S2", fidelity = "datasheet" }
+
+[params.mass]
+value = 2.63e-4
+unit = "kg"
+fidelity = "derived"
+derivation = "Hex prism minus bore, chamfers ignored: (sqrt(3)/2 x s^2 - pi/4 x d^2) x m x rho = (0.8660 x 25 - 0.7854 x 6.25) mm2 x 2.0 mm x 7850 kg/m3 = 2.63e-4 kg, using s = 5 mm, d = 2.5 mm, m = 2.0 mm (S1) and rho = 7850 (S2). The fasten.it ISO 4032 page lists no mass table; chamfer-free estimate runs slightly high."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m2.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.002
+note = "Through-threaded bore, axis normal to the nut faces; length = nut height"
+
+[[sources]]
+id = "S1"
+url = "https://fasten.it/norms/norm/din_en_iso_4032"
+title = "DIN EN ISO 4032 key dimensions table (fasten.it)"
+accessed = "2026-10-07"
+quote = "M 2.5 | 0.45 | 2 | 1.75 | 5 | 5.45  (d, P, m max, m min, s nom, e min)"
+
+[[sources]]
+id = "S2"
+url = "https://fasten.it/norms/norm/din_en_iso_4762"
+title = "DIN EN ISO 4762 approximate mass table header (fasten.it), steel density basis"
+accessed = "2026-10-07"
+quote = "Approximate mass, in kg x1000 pcs, (ρ=7,85 kg/dm3) - commercial items"

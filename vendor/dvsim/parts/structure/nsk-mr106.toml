@@ -1,0 +1,45 @@
+id = "nsk-mr106"
+name = "NSK MR 106 deep-groove ball bearing, open, 6x10x2.5 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "MR 106"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.006, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.01, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.0025, unit = "m", src = "S1", fidelity = "datasheet" }
+chamfer_min        = { value = 0.00015, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 545, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 218, unit = "N", src = "S1", fidelity = "datasheet" }
+limiting_speed_grease = { value = 45000, unit = "rpm", src = "S1", fidelity = "datasheet" }  # open type, grease lubrication
+mass               = { value = 0.00056, unit = "kg", src = "S1", fidelity = "datasheet" }  # open type, catalog mass in g
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.10"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, extra small and miniature ball bearings table (metric series, bore 6 mm group; open type; mass in g)"
+accessed = "2026-10-07"
+quote = "6 10 2.5 3.0 0.15 0.10 545 218 45 000 — 53 000 MR 106 MR 106 ZZ1 — — 07.2 07.0 08.8 09.3 0.15 0.10 00.56 00.68 (columns: d D B B1 r r1 Cr C0r grease-open grease-ZZ oil-open, designations, abutment dims, mass open/shielded)"

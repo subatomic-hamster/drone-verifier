@@ -1,0 +1,98 @@
+id = "eplzon-12v-5v-reducer"
+name = "EPLZON DC 6-36V to 5V step-down voltage reducer (Koch v1.1 follower XL330 supply)"
+category = "psu.dcdc"
+vendor = "EPLZON"
+part_number = "B09R4DBZJK (Amazon ASIN); wiring-diagram label EP-JY-DC5"
+url = "https://www.amazon.com/EPLZON-Converter-5V-5-3V-Transformer-Regulator/dp/B09R4DBZJK"
+
+# Koch v1.1 follower BOM row "Voltage Reducer". In the wiring diagram (S2) it takes 12 V from the Waveshare board and powers ONLY the daisy chain of the four XL330-M288-T
+# (max 6.0 V); the two XL430-W250-T stay on 12 V. Whether the BOM product is the diagram's EP-JY-DC5 is an inference (same row, same role); the product title's output range is 5-5.3 V.
+
+[params]
+v_in_min      = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_in_max      = { value = 36.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_out_nominal = { value = 5.0, unit = "V", src = "S2", fidelity = "datasheet" }   # wiring diagram label "OUT+ 5V"
+v_out_max     = { value = 5.3, unit = "V", src = "S1", fidelity = "datasheet" }   # title "DC 5V-5.3V 5.2V": adjustable / alternative outputs
+i_out_rated   = { value = 3.5, unit = "A", src = "S1", fidelity = "datasheet" }   # title "3.5-6A": the lower figure is taken as the continuous rating
+i_out_peak    = { value = 6.0, unit = "A", src = "S1", fidelity = "datasheet" }   # title "3.5-6A": the upper figure
+r_out         = { value = 0.05, unit = "ohm", fidelity = "estimated", rationale = "No published load regulation. A 5 % droop at 3.5 A on 5 V (0.25 V) is 0.07 ohm; a good buck module is lower; 0.05 ohm taken. Unverified." }
+efficiency    = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "No published figure. Typical 12 V -> 5 V synchronous buck modules reach 85-95 % at 1-3 A; 0.9 taken. Only matters for the 12 V side input current (P_in = P_out / efficiency)." }
+mass          = { value = 0.01, unit = "kg", fidelity = "estimated", rationale = "No published weight; small buck PCB module of a few grams to ~10 g." }
+current_limit = { value = 6.0, unit = "A", fidelity = "estimated", rationale = "Title lists 3.5-6 A, taken as the current-limit / peak figure; actual limiting behaviour unpublished." }
+
+# Electrical only. Solder-pad terminals (no connector named on the product title or in the wiring diagram).
+[[ports]]
+name = "power_in"
+pins = ["IN.1", "IN.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 36.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 6.0, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "IN+ / IN- (S2); fed 12 V from the Waveshare board's servo-port V and G pins in the Koch follower."
+
+[[ports]]
+name = "power_out"
+pins = ["OUT.1", "OUT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "source"
+v_max = { value = 5.3, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3.5, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "OUT+ 5 V / OUT- GND (S2) to the XL330 chain cable pins 2 (VDD) and 1 (GND); the DATA pin (3) of that cable comes straight from the Waveshare board (S2). v_max is the top of the title's 5-5.3 V range, below the XL330 6.0 V limit."
+
+# Connectors (pin level): four solder pads, labelled IN+ / IN- / OUT+ 5V / OUT- GND in the Koch wiring diagram (S2). The pad order and
+# spacing are not published (the Amazon listing has no drawing text), so the pose is an estimate: input pair at one end, output pair at the other.
+[[connectors]]
+id = "IN"
+name = "input solder pads (IN+ / IN-)"
+type = "solder-pad-1x2"
+gender = "neutral"
+pos = [-0.01, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Estimated: S2 names the pads, not their position on the module; 5 mm pad spacing assumed."
+pins = [
+  { number = 1, name = "IN+", kind = "power", dir = "in", v_min = 6.0, v_max = 36.0, note = "6 - 36 V input range from the product title (S1)" },
+  { number = 2, name = "IN-", kind = "ground" },
+]
+
+[[connectors]]
+id = "OUT"
+name = "output solder pads (OUT+ 5V / OUT- GND)"
+type = "solder-pad-1x2"
+gender = "neutral"
+pos = [0.01, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "As IN."
+pins = [
+  { number = 1, name = "OUT+ 5V", kind = "power", dir = "out", v = 5.0, v_max = 5.3, i_max = 3.5, note = "'OUT+ 5V' (S2); title range 5 - 5.3 V, 3.5 - 6 A (S1)" },
+  { number = 2, name = "OUT- GND", kind = "ground", i_max = 3.5 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.amazon.com/EPLZON-Converter-5V-5-3V-Transformer-Regulator/dp/B09R4DBZJK"
+title = "Amazon product page title, EPLZON step-down module (Koch v1.1 follower BOM 'Voltage Reducer' US link)"
+accessed = "2026-10-07"
+quote = "EPLZON DC 6V-36V Step Down to DC 5V-5.3V 5.2V 3.5-6A Transformer Dual Output Voltage Regulator Power Module (Pack of 2 pcs)"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/electrical/Wiring_Diagram_Alexander_Koch_V1.1.pdf"
+title = "Koch v1.1 wiring diagram (jess-moss/koch-v1-1, commit 1a553e1, EasyEDA, 2024-07-08), follower arm; text layer of the PDF"
+accessed = "2026-10-07"
+quote = "Follower Arm: || VOLTAGE_REDUCER || IN+ || OUT+ 5V || EP-JY-DC5 || DYNAMIXELXL330-M288-T"

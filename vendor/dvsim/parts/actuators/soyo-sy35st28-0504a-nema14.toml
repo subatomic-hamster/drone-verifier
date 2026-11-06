@@ -1,0 +1,102 @@
+id = "soyo-sy35st28-0504a-nema14"
+name = "SOYO SY35ST28-0504A NEMA 14 bipolar stepper motor, 35x28 mm, 0.5 A (Pololu 1208)"
+category = "motor.stepper"
+vendor = "SOYO / Changzhou Songyang Machinery & Electronics (Pololu item 1208)"
+part_number = "SY35ST28-0504A"
+url = "https://www.pololu.com/product/1208"
+
+# Frame: origin on the shaft axis at the front mounting-flange face; +z = shaft direction (out of the motor); x/y along the square flange sides.
+# Body occupies z in [-0.028, 0]. The manufacturer PDF linked from Pololu has an unusable text layer (garbled), so only the Pololu page is used.
+
+[params]
+mass               = { value = 0.140,   unit = "kg",    src = "S1", fidelity = "datasheet" }
+flange_size        = { value = 0.035,   unit = "m",     src = "S1", fidelity = "datasheet" }  # 35 mm square
+body_length        = { value = 0.028,   unit = "m",     src = "S1", fidelity = "datasheet" }  # not including the shaft
+step_angle         = { value = 0.031416, unit = "rad",  src = "S1", fidelity = "datasheet" }  # 200 steps/rev = 1.8 deg
+steps_per_rev      = { value = 200,     unit = "1",     src = "S1", fidelity = "datasheet" }
+leads              = { value = 4,       unit = "1",     src = "S1", fidelity = "datasheet" }
+rated_current      = { value = 0.5,     unit = "A",     src = "S1", fidelity = "datasheet" }  # per coil
+rated_voltage      = { value = 10.0,    unit = "V",     src = "S1", fidelity = "datasheet" }
+phase_resistance   = { value = 20.0,    unit = "ohm",   src = "S1", fidelity = "datasheet" }  # per coil
+phase_inductance   = { value = 0.0135,  unit = "H",     src = "S1", fidelity = "datasheet" }  # per coil
+holding_torque     = { value = 0.09886, unit = "N*m",   src = "S1", fidelity = "datasheet" }  # 14 oz.in (Pololu text also says 1 kg-cm)
+shaft_diameter     = { value = 0.005,   unit = "m",     src = "S1", fidelity = "datasheet" }
+shaft_type         = { value = "5 mm D-shaft (0.5 mm flat), 21 mm long, 2 ball bearings", unit = "-", src = "S2", fidelity = "datasheet" }
+kt_equiv_phase = { value = 0.1398, unit = "N*m/A", fidelity = "derived", derivation = "Torque constant per phase from the holding torque with both phases at rated current: T_hold = sqrt(2)*Kt*I  =>  Kt = 0.09886 N*m / (1.4142 * 0.5 A) = 0.1398 N*m/A. Equals the back-EMF constant Ke (V*s/rad) per phase for an ideal motor." }
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.nema14"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "NEMA 14 square flange; hole spacing/thread not retrievable as text, opaque family tag."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.5d"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "5 mm D-shaft, 21 mm long."
+
+[[ports]]
+name = "phases"
+pins = ["PH.1", "PH.2", "PH.3", "PH.4"]
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "sink"
+i_max = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }  # rated current per phase
+note = "Bare 30 cm leads; drive with a chopper (current-limited) driver. Rotor inertia is not published for this part."
+
+# Pin level: four colour-coded bare leads (P1: black + green = one coil, red + blue = the other). P1 does not give the polarity within a coil, so pins are named per coil end.
+[[connectors]]
+id = "PH"
+name = "phase leads (4, bare)"
+type = "wire-lead"
+port_type = "stepper-bipolar-4wire"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.028]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.003
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "P1 does not say where the leads leave the body: drawn at the centre of the rear face, 3 mm apart (positional estimate)."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", i_max = 0.5, note = "black wire, coil A (P1)" },
+  { number = 2, name = "A2", kind = "power", dir = "in", i_max = 0.5, note = "green wire, coil A (P1)" },
+  { number = 3, name = "B1", kind = "power", dir = "in", i_max = 0.5, note = "red wire, coil B (P1)" },
+  { number = 4, name = "B2", kind = "power", dir = "in", i_max = 0.5, note = "blue wire, coil B (P1)" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/1208"
+title = "Pololu item 1208 product page, Overview"
+accessed = "2026-10-09"
+quote = "The motor has four color-coded wires terminated with bare leads: black and green connect to one coil; red and blue connect to the other."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1208/specs"
+title = "Pololu item 1208 Specs tab (Stepper Motor: Bipolar, 200 Steps/Rev, 35x28mm, 10V, 0.5 A/Phase)"
+accessed = "2026-10-07"
+quote = "Size: | 35 mm square × 28 mm| 1| NEMA size: | 14 | Weight: | 140 g | Shaft diameter: | 5 mm | General specifications| Shaft type: | 5 mm \"D\" | Current rating: | 500 mA| 2| Voltage rating: | 10 V | Holding torque: | 14 oz·in | Steps per revolution: | 200 | Resistance: | 20 Ohm| 2| Inductance per phase: | 13.5 mH | Number of leads: | 4 | Lead length: | 30 cm | Notes:| 1| Not including the shaft.| 2| Per coil."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/1208"
+title = "Pololu item 1208 product page, Specifications and Dimensions"
+accessed = "2026-10-07"
+quote = "Output shaft supported by two ball bearings || Dimensions| The following diagram shows the stepper motor dimensions in mm. The dimension labeled “length” is 28 mm. The output D-shaft has a length of 21 mm and a 5 mm diameter with a section that is flattened by 0.5 mm."

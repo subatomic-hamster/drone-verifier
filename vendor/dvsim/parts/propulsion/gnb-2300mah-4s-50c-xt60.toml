@@ -1,0 +1,68 @@
+id = "gnb-2300mah-4s-50c-xt60"
+name = "GNB 2300mAh 4S 14.8V 50C/100C LiPo pack, XT60U-F"
+category = "battery.lipo"
+vendor = "GAONENG (GNB)"
+part_number = "GNB 4S 2300mAh 50C/100C"
+url = "https://rcdrone.top/products/gnb-4s-14-8v-2300mah-50c-100c-lipo-battery"
+
+# Part frame: origin at the pack centre, x along length (108 mm), y along width (33 mm), z up (34 mm). Wire gauge and resistance not published.
+
+[params]
+capacity_ah     = { value = 2.3, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 8280.0, unit = "C", fidelity = "derived", derivation = "2.3 Ah x 3600 s/h = 8280 C (coulombs)." }
+energy_wh       = { value = 34.04, unit = "Wh", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", fidelity = "estimated", rationale = "Listing gives only '4S'; 1P assumed (2300 mAh in a 108 x 33 x 34 mm case is a single-string pack)." }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 50, unit = "C", src = "S1", fidelity = "datasheet" }
+c_rating_burst  = { value = 100, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 115.0, unit = "A", fidelity = "derived", derivation = "50 C x 2.3 Ah = 115 A (rating label only)." }
+mass            = { value = 0.239, unit = "kg", src = "S1", fidelity = "datasheet" }
+price       = { value = 56.64, unit = "USD", fidelity = "estimated", rationale = "A web search on 2026-10-11 found a GNB 4S 2300 mAh 130C pack at 56.64 USD (a different C-rating variant); this 50C/100C pack (S1, rcdrone.top) was not priced. Optional 4S path of cuas-lite, outside the base BOM." }
+length          = { value = 0.108, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.033, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.034, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60U-F", unit = "text", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0452, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/2.3 = 11.3 mOhm/cell x 4 cells = 45.2 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.054, 0.0165, 0.017]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 115.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 50 C x 2.3 Ah = 115 A (S1 label); exceeds the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.054, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/gnb-4s-14-8v-2300mah-50c-100c-lipo-battery"
+title = "rcdrone.top (GNB distributor) - GNB 4S 14.8V 2300mAh 50C/100C LiPo battery for drone"
+accessed = "2026-10-07"
+quote = "Voltage : 14.8V (4S) | Capacity : 2300mAh | Energy : 34.04Wh | Continuous Discharge Rate : 50C | Burst Discharge Rate : 100C | Size : 108mm x 33mm x 34mm | Weight : 239g | Plug : XT60U-F"

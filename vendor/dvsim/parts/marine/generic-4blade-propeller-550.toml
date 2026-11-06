@@ -1,0 +1,61 @@
+id = "generic-4blade-propeller-550"
+name = "Generic 4-blade fixed-pitch marine propeller, 550 mm, pitch/diameter 1.0 (Wageningen B-series-like open-water curve; illustrative, not a product)"
+category = "prop"
+vendor = "generic"
+part_number = "n/a"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+
+# Marine propeller coefficients for the rotor device (`water = true`: rho = the Sea's density, V_a relative to the water current). K_T = T / (rho n^2 D^4) and K_Q = Q / (rho n^2 D^5)
+# against the advance ratio J = V_a / (n D) are the rotor device's C_T and C_Q. NO propeller data is published for the Deep Blue 50i (S1 lists only the maximum
+# propeller speed 1200 rpm and "Propulsive power > 32.4 kW" at "Maximum overall efficiency > 54 %"), so the open-water curve is a typical 4-blade, expanded-area-ratio 0.55,
+# P/D = 1.0 Wageningen B-series shape recalled from the literature (K_T(0) ~ 0.33, 10 K_Q(0) ~ 0.45, zero thrust at J ~ 1.05, peak open-water efficiency ~ 0.59 at J = 0.8);
+# every number is ESTIMATED, none was read off a published table. The diameter 0.55 m is chosen so that 1200 rpm at J = 0.5 needs about the motor's rated torque
+# (K_Q = 0.0330 at J = 0.5: Q = 0.033 x 1025 x 20^2 x 0.55^5 = 680 N m; the controller current-limits the motor to 395 N m, so 1200 rpm is reached only at J > 0.8, i.e. at speed).
+[params]
+diameter  = { value = 0.55, unit = "m", fidelity = "estimated", rationale = "Design choice, see the header: a 12 m boat with a 55 kW drive at 1200 rpm turns a 0.5-0.6 m propeller." }
+pitch     = { value = 0.55, unit = "m", fidelity = "estimated", rationale = "Pitch / diameter 1.0 (design choice, the B-series curve below is for P/D = 1.0)." }
+blade_count = { value = 4, unit = "1", fidelity = "estimated", rationale = "Four blades, common on workboat propellers; the rotor model does not depend on it (the curve does)." }
+hub_diameter = { value = 0.09, unit = "m", fidelity = "estimated", rationale = "Hub / diameter 0.16 (typical)." }
+mass      = { value = 22.0, unit = "kg", fidelity = "estimated", rationale = "A 0.55 m 4-blade nickel-aluminium-bronze propeller weighs 18-30 kg (blade area ratio 0.55, 8 g/cm3). Not weighed." }
+thrust_reverse_ratio = { value = 0.7, unit = "1", fidelity = "estimated", rationale = "Reverse thrust of a propeller designed for ahead running is 55-80 % of its ahead thrust at the same rpm; the rotor device multiplies the (otherwise mirrored) thrust by this factor." }
+
+[tables.ct_cq_j]
+columns = ["j", "ct", "cq"]
+rows = [
+  [0.00, 0.3300, 0.04500],
+  [0.20, 0.2850, 0.04100],
+  [0.40, 0.2320, 0.03600],
+  [0.60, 0.1720, 0.03000],
+  [0.80, 0.1050, 0.02250],
+  [0.95, 0.0500, 0.01500],
+  [1.05, 0.0000, 0.00950],
+]
+fidelity = "estimated"
+rationale = "Shape of a 4-blade B-series propeller at P/D = 1.0 and EAR 0.55 as remembered from the open-water diagrams (Oosterveld and van Oossanen, Further computer-analysed data of the Wageningen B-screw series, 1975), NOT re-read from the published polynomial: K_T falls from 0.33 to zero at J = 1.05, K_Q from 0.045 to 0.0095, open-water efficiency J K_T / (2 pi K_Q) = 0.55 at J = 0.6 and 0.59 at J = 0.8. Treat +-15 % on K_T and K_Q; a propeller-design tool or a model test would replace it. Cavitation, ventilation (apart from the rotor's immersion factor), hull wake and thrust deduction are not modelled; the 'propulsive power 32.4 kW at 54 % overall' figure of the vendor corresponds to this curve at J ~ 0.8."
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.275, 0.02]
+pos = [0.0, 0.0, 0.02]
+mass_param = "mass"
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "bore.deepblue50"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Hub on the drive's shaft end, axis down the shaft; the propeller spins freely about z (the builder uses a hinge). Interface family name only."
+
+[visual]
+rationale = "Four twisted blades on a hub, from the part's diameter, pitch and blade count."
+
+[[visual.elements]]
+gen = "propeller"
+params = { chord = 0.17 }
+colors = { blade = "brass", hub = "brass" }

@@ -1,0 +1,46 @@
+id = "fold-fc-standoffs"
+name = "fold drone FC / ESC standoff block under rail 1 (printed)"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "fc_esc_standoffs"
+url = "cad/fold/modules/rail.py"
+
+# Frame = the reference pose of rail 1. Ports: origin (seat on the rail), fc and esc (flat seats of the two boards under the rail).
+
+[params]
+mass = { value = 0.000797, unit = "kg", fidelity = "derived", derivation = "CAD manifest fc_esc_standoffs 0.797 g (printed, 2 walls + 20 % infill PA12-CF [est])." }
+mass_tol = { value = 0.0001, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass until weighed." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/fc_esc_standoffs_rail1.stl"
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "fc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.07, 0.0, -0.0096]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "esc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.125, 0.0, -0.013]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

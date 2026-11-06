@@ -1,0 +1,22 @@
+id = "abs"
+name = "ABS (Ultimaker ABS, 3D-printing grade)"
+category = "material"
+vendor = "Ultimaker"
+part_number = "Ultimaker ABS"
+url = "https://www.alloys.com.au/Documents/Ultimaker-ABS-TDS-v5.00.pdf"
+
+# Printed-specimen Young's modulus depends on print orientation; the XY (flat) value is stored as the default.
+[params]
+density         = { value = 1100, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+youngs_modulus  = { value = 1.962e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+youngs_modulus_z = { value = 1.699e9, unit = "Pa", src = "S1", fidelity = "datasheet" }
+
+[appearance]  # cosmetic only: renderer colour, no physics, no provenance. The design builder emits it as the geom rgba.
+rgba = [0.82, 0.82, 0.79, 1.0]
+
+[[sources]]
+id = "S1"
+url = "https://www.alloys.com.au/Documents/Ultimaker-ABS-TDS-v5.00.pdf"
+title = "Ultimaker ABS Technical data sheet v5.00 (hosted by Alloys Australia)"
+accessed = "2026-10-07"
+quote = "Tensile (Young's) modulus ASTM D3039 (1 mm / min) 1962 ± 31 MPa 1931 ± 68 MPa 1699 ± 113 MPa  (columns XY (Flat), YZ (Side), Z (Up)) ... Specific gravity ISO 1183 1.1 g / cm3"

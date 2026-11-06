@@ -1,0 +1,31 @@
+id = "cuas2-wheel-tyre"
+name = "cuas2 wheel_tyre (3D printed TPU 95A, M3 flywheel tyre 40 mm, 2 instances, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "wheel_tyre"
+url = "cad/cuas2/modules/launcher_cartridge.py"
+
+# Mesh authored on the launcher-frame origin in H (tyre OD 40 mm, 14 mm wide, press fit on the 28 mm hub); instances offset like the hubs. Printed in TPU first, cast silicone second (spec Q9).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/wheel_tyre.stl"
+material = "tpu-95a"
+bbox_min = [-0.01197, -0.007, -0.04699]
+bbox_max = [0.028, 0.007, -0.00701]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

@@ -1,0 +1,128 @@
+id = "esc-30a-bluejay-single"
+name = "30 A single-channel BLHeli_S class ESC, 2-4S, DShot600 (cuas2 flywheel ESC; Bluejay is flashed by the builder, not shipped)"
+category = "esc"
+vendor = "generic (priced from the Tiger Motor F 30A 2-4S BLHeli_S listing)"
+part_number = "30A BLHeli_S 2-4S DShot"
+url = "https://www.getfpv.com/tiger-motor-f-30a-2-4s-esc-blheli-s-w-dshot.html"
+
+# Part frame: origin at the centre of the board underside, z up, 45 x 15 x 5 mm (CAD params ESC_SIZE, length along x, width along y). Solder-pad board; the pad positions are not published.
+# Firmware: stock BLHeli_S; the user re-flashes Bluejay (GPL-3.0) for bidirectional DShot and RPM telemetry. The repo only documents this (spec 4.5, docs/cuas2/assembly.md).
+
+[params]
+mass         = { value = 0.009, unit = "kg", fidelity = "estimated", rationale = "30 A BLHeli_S single boards weigh 6-10 g; 9 g is the CAD / spec figure." }
+length       = { value = 0.045, unit = "m", fidelity = "estimated", rationale = "CAD params ESC_SIZE." }
+width        = { value = 0.015, unit = "m", fidelity = "estimated", rationale = "CAD params ESC_SIZE." }
+height       = { value = 0.005, unit = "m", fidelity = "estimated", rationale = "CAD params ESC_SIZE." }
+cells_min    = { value = 2, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max    = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+i_cont       = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+firmware     = { value = "BLHeli_S (Bluejay by the builder)", unit = "text", fidelity = "estimated", rationale = "Spec 4.5: the user flashes Bluejay; stock firmware is BLHeli_S on this class." }
+bec          = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+price        = { value = 14.99, unit = "USD", src = "S1", fidelity = "datasheet" }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0225, 0.0075, 0.0025]
+pos = [0.0, 0.0, 0.0025]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power_in"
+pins = ["BAT.1", "BAT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell (2-4S, S1)." }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "Follows the battery input." }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+
+[[connectors]]
+id = "BAT"
+name = "battery pads (+, -)"
+type = "solder-pad"
+port_type = "solder-pad"
+gender = "neutral"
+pos = [-0.0225, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+fidelity = "estimated"
+rationale = "Pad positions are not published; battery pads at the -x end, motor pads and signal at the +x end (convention of iflight-blitz-e80-single)."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "in", v_max = 16.8, i_max = 30.0 },
+  { number = 2, name = "BAT-", kind = "ground", i_max = 30.0 },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor pads (3)"
+type = "motor-3phase"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.0225, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+fidelity = "estimated"
+rationale = "As BAT."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", v_max = 16.8, i_max = 30.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", v_max = 16.8, i_max = 30.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", v_max = 16.8, i_max = 30.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "signal pads (DShot in, ground)"
+type = "dshot"
+port_type = "dshot"
+gender = "neutral"
+pos = [0.0225, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+fidelity = "estimated"
+rationale = "Signal pair beside the motor pads; the Pico drives DShot at 3.3 V (logic threshold of this class about 2 V), ground shared with the battery minus."
+pins = [
+  { number = 1, name = "DSHOT", kind = "signal", dir = "in", v_min = 2.0, v_max = 5.5 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.getfpv.com/tiger-motor-f-30a-2-4s-esc-blheli-s-w-dshot.html"
+title = "GetFPV: Tiger Motor F 30A 2-4S ESC BLHeli_S w/ Dshot (search snippet: USD 14.99, out of stock at the time, BEC none, DShot)"
+accessed = "2026-10-27"
+quote = "Tiger Motor F 30A 2-4S ESC BLHeli_S w/ Dshot - $14.99 - BEC: No"

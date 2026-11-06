@@ -1,0 +1,283 @@
+id = "cuas2-cradle"
+name = "cuas2 cradle (3D printed PETG, M2 tilt cradle with the D1 dovetail arms, group tilt, root of the tilt group, frame H)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "cradle"
+url = "cad/cuas2/modules/tilt_head.py"
+
+# Mesh in the head frame H = tilt axis origin (x along the barrel, y left, z up at tilt 0). Root of the tilt group: the printed parts of M3/M4/M5 are bolted pairs (identity closure mates), every bought part of the
+# group is seated by a `seat_*` port (pose = the child's part frame in H; axis = child +z, ref = child +x). CAD tilt axis in the launcher frame L is (-8, 0, 27) mm, so H = L + (8, 0, -27) mm.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/cradle.stl"
+material = "petg"
+bbox_min = [-0.02666, -0.059, -0.041]
+bbox_max = [0.053, 0.059, 0.02668]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame (= H), axis +z: 'a' side of the mates to the printed parts of the tilt group (identity)."
+
+[[ports]]
+name = "hinge"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt axis H, axis -y_H. With cuas2-yoke-left.tilt_axis (axis +y, ref x) the mated cradle frame equals frame H exactly."
+
+[[ports]]
+name = "seat_wheel_top"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0296]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "The wheel meshes are authored on the launcher-frame origin; the top wheel is offset +WZ = 29.6 mm (cad/cuas2 modules/launcher_cartridge.py at=)."
+
+[[ports]]
+name = "seat_wheel_bot"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, -0.0296]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "As seat_wheel_top, offset -WZ."
+
+[[ports]]
+name = "seat_motor_top"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.008, 0.028, 0.0026]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Top flywheel motor on the inner face of the +y motor plate (y = 31 - 3 = 28 mm), wheel axis z = +WZ in L; shaft towards -y."
+
+[[ports]]
+name = "seat_motor_bot"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.008, -0.028, -0.0566]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Bottom flywheel motor on the inner face of the -y motor plate, wheel axis z = -WZ in L; shaft towards +y."
+
+[[ports]]
+name = "seat_esc_top"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.008, 0.031, 0.0026]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Top ESC board underside on the outer face of the +y motor plate (y = 31 mm), board 45 x 15 x 5 mm."
+
+[[ports]]
+name = "seat_esc_bot"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.008, -0.031, -0.0566]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Bottom ESC board on the outer face of the -y motor plate."
+
+[[ports]]
+name = "seat_muzzle_led"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.063, 0.017, -0.027]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Muzzle-beam emitter 55 mm after the nip centre (L x = 55), in the barrel wall at y +9..+17 mm, beam towards -y."
+
+[[ports]]
+name = "seat_muzzle_pt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.063, -0.017, -0.027]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Muzzle-beam receiver, opposite side, looking at the emitter."
+
+[[ports]]
+name = "seat_breech_led"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0488, 0.0228, -0.027]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Breech-beam emitter across the bore 9 mm behind the plug axis (XV - 9 = -56.8 mm L; the gate servo sits on the plug axis), through the valve housing wall (y 15.3..22.8)."
+
+[[ports]]
+name = "seat_breech_pt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0488, -0.0228, -0.027]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Breech-beam receiver, opposite wall."
+
+[[ports]]
+name = "seat_servo_gate"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0398, 0.0196, -0.027]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Gate servo on the +y face of the valve housing, spline on the plug axis (L x = XV), horn-seat face at y = 19.6 mm, output towards -y."
+
+[[ports]]
+name = "seat_servo_push"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0912, 0.0145, -0.061]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Pusher servo behind the valve housing, horn-seat face at y = 14.5 mm, crank axis at L x = -99.2, z = -34."
+
+[[ports]]
+name = "seat_hall_gate"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0353, -0.0213, -0.01921]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Gate-home hall on the -y side outside the housing (the gate servo is on +y), beside the plug end-face magnet at the LOAD pose (L x = XV + 9 cos 60, z = 9 sin 60), y -22.8..-19.8 mm."
+
+[[ports]]
+name = "seat_magnet_gate"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0353, -0.014, -0.01921]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "6 x 2 mm magnet in the plug -y end face at the LOAD pose (the sensed pose), y -14..-12 mm."
+
+[[ports]]
+name = "seat_hall_push"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.1188, 0.0095, -0.05]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Push-home hall at the retracted rod tail (L x = -126.8, z = -23)."
+
+[[ports]]
+name = "seat_magnet_push"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.1168, 0.006, -0.05]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "6 x 2 mm magnet on the rod yoke, facing the push-home hall."
+
+[[ports]]
+name = "seat_magnet_tilt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.001, 0.048, 0.027]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt-home magnet on the left cradle arm at L (-7, 47, 54): swings past the hall on the left cheek."
+
+[[ports]]
+name = "seat_brio"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.04925, 0.0, -0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, -1.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Brio underside centre on the sensor bar (L (41.25, 0, 26)), long axis along y, lens looking along +x_H: the library lens axis +y maps to +x_H (a -90 deg turn about z)."
+
+[[ports]]
+name = "seat_launcher"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.070, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Muzzle plane on the barrel axis: BARREL_X1 = 70 mm after the nip (cad/cuas2/params.py), y = z = 0 in the cradle (head) frame."

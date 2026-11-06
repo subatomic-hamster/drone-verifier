@@ -1,0 +1,54 @@
+id = "so101-motor-holder-shoulder"
+name = "SO-101 shoulder motor holder (3D printed, shoulder_link)"
+category = "frame.printed"
+vendor = "TheRobotStudio (open design, Apache-2.0)"
+part_number = "Motor_holder_SO101_Base.stl (sim mesh motor_holder_so101_base_v1.stl)"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/STL/SO101/Individual/Motor_holder_SO101_Base.stl"
+
+[params]
+volume_solid = { value = 1.331e-5, unit = "m^3", fidelity = "derived", derivation ="Signed-volume integral over the 22586 triangles of meshes/so101/motor_holder_so101_base_v1.stl (binary STL, metres) = 13.31 cm^3. Solid." }
+infill_fraction = { value = 0.15, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale ="Repo README gives only material, nozzle/layer height and 15% infill, no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile)." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/so101/motor_holder_so101_base_v1.stl"
+material = "pla"
+urdf_link = "shoulder_link"
+origin_xyz = [-0.0675992, -0.000177759, 0.0158499]
+origin_rpy = [1.5708, -1.5708, 0.0]
+bbox_min = [-0.0538, -0.0551, -0.0289]
+bbox_max = [-0.0258, -0.017, 0.0262]
+
+# Ports derived by tools/so101_ports.py (closure check: python tools/so101_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame.
+[[ports]]
+name = "rotation_pitch_seat"
+kind = "mech"
+type = "bolt-pattern.so101-rotation-pitch-motor-holder"
+gender = "neutral"
+pos = [-0.039849916324, -0.037548431177, -0.0001995946]
+axis = [0.999999999993, -3.673205e-06, 1.3e-11]
+ref = [-3.673205e-06, -0.999999999987, 3.673205e-06]
+symmetry = 1
+thickness = 0.004
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): mate frame M at the centre of the bbox overlap of the two parts (mid-plane of the gap where the bboxes only touch), axis along the thinnest overlap dimension from so101-rotation-pitch towards so101-motor-holder-shoulder; port = inv(T_part) @ M (a) or inv(T_part) @ M @ Rx(pi) (b)"
+thickness_rationale = "No published or measurable value; 4 mm placeholder = two 2 mm printed walls clamped by M3 screws. Estimated."
+
+[[sources]]
+id = "S1"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "SO-ARM100 README, Printing the Parts, Step 1 (commit a758567)"
+accessed = "2026-10-06"
+quote = "Material: PLA+ || Nozzle Diameter and Precision: 0.4mm nozzle diameter at 0.2mm layer height or 0.6mm nozzle at 0.4mm layer height. || Infill Density: 15%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), part placement in link shoulder_link"
+accessed = "2026-10-06"
+quote = "<!-- Part motor_holder_so101_base_v1 --> <visual> <origin xyz=\"-0.0675992 -0.000177759 0.0158499\" rpy=\"1.5708 -1.5708 0\"/>"
+license = "Apache-2.0"

@@ -1,0 +1,468 @@
+# dvsim program examples/hopper-land/rain/rain25.scenario.toml --runs-dir <dir>
+# Rain hop on rolling moorland at 2800 m (ISA 0.927 kg/m3): the EDF hopper takes off from the hilltop pad and lands on a pad 28 m away on the slope (2 m lower) in a 3 m/s wind while the rain builds up to 25 mm/h
+# over 10 s (kernel rain device: Marshall-Palmer drops, 5.7 m/s fall speed, fan thrust loss, water film, drop drag; the TF-Luna lidar loses and gains returns: two-way extinction, dropout, false near
+# returns from drops in the beam). The estimator rejects false returns that disagree with the filter; GNSS, IMU and barometer are not affected by rain.
+# hopper-land/landhop.py OWNS the Sim, steps landflight.py (the flight software) and writes trace.csv / replay.dvsimog / native.json / telemetry.jsonl; the runner judges the monitors on trace.csv and
+# replays replay.dvsimog for the state hash. The claim is the Monte Carlo rate (landmc.py, README.md), not this one flight.
+name = "hopperland-rain25"
+
+[model]
+script = "rain25.py"
+
+[interfaces.native]
+
+[program]
+cmd = ["python", "{dir}/../landhop.py", "rain25.scenario.toml"]
+
+[limits]
+wall_s = 1500
+cpu_s = 1500
+
+# ---- parameters & telemetry (dvsim.params) --------------------------------------------------------------------------------------------------------------
+[[parameters]]
+name = "seed"
+type = "int"
+default = 1
+min = 1
+max = 1000000
+group = "run"
+label = "Seed"
+doc = "Seeds the sensor noise, the Dryden turbulence, the vehicle scatter, the wind and gust draws: the same seed and parameters replay to the same state hash."
+
+[[parameters]]
+name = "max_s"
+type = "float"
+default = 150.0
+min = 10.0
+max = 300.0
+unit = "s"
+group = "run"
+label = "Longest flight"
+
+[[parameters]]
+name = "site"
+type = "choice"
+choices = ["mesa", "ridge", "ledge", "moor", "deck"]
+default = "moor"
+group = "site"
+label = "Terrain"
+doc = "Seeded terrain with a take-off pad and a landing pad (landscene.SITES); deck = flat floor and a scripted moving platform."
+
+[[parameters]]
+name = "reverse"
+type = "bool"
+default = false
+group = "site"
+label = "Reverse the hop"
+doc = "false: take off from the site's first pad and land on its second; true: the other way round (mesa: plateau to lowland, or lowland up to the plateau)."
+
+[[parameters]]
+name = "origin_alt"
+type = "float"
+default = -1.0
+min = -1.0
+max = 9000.0
+unit = "m"
+group = "site"
+label = "Site altitude (MSL; -1 = the site's)"
+doc = "Sets the ISA air density of the scene and the GNSS altitude. Above about 8000 m (the thrust fit's extrapolation; 9000 m was flown and refused) the fan cannot lift the hopper with margin and the firmware refuses to launch (thrust margin check)."
+
+[[parameters]]
+name = "hold_s"
+type = "float"
+default = 3.0
+min = 0.0
+max = 30.0
+unit = "s"
+group = "mission"
+label = "Hover over the landing pad"
+
+[[parameters]]
+name = "t_launch"
+type = "float"
+default = 3.0
+min = 2.5
+max = 10.0
+unit = "s"
+group = "mission"
+label = "Spool-up time"
+
+[[parameters]]
+name = "vmax_xy"
+type = "float"
+default = 2.5
+min = 0.5
+max = 5.0
+unit = "m/s"
+group = "flight"
+label = "Largest transit speed"
+
+[[parameters]]
+name = "k_dob"
+type = "float"
+default = 0.7
+min = 0.0
+max = 1.0
+group = "flight"
+label = "Wind-push feed-forward gain"
+doc = "Share of the accelerometer-measured wind push on the body that the position loop cancels at once (0 = the original hopper's integral only)."
+
+[[parameters]]
+name = "wind_ms"
+type = "float"
+default = 3.0
+min = 0.0
+max = 12.0
+unit = "m/s"
+group = "environment"
+label = "Mean wind at 10 m above the ground"
+
+[[parameters]]
+name = "wind_dir_deg"
+type = "float"
+default = 0.0
+min = 0.0
+max = 360.0
+unit = "deg"
+group = "environment"
+label = "Wind blows towards (0 = east, +x)"
+
+[[parameters]]
+name = "wind_fixed"
+type = "bool"
+default = true
+group = "environment"
+label = "Nominal wind (no per-seed scatter of speed and direction)"
+
+[[parameters]]
+name = "gust_ms"
+type = "float"
+default = 0.0
+min = 0.0
+max = 10.0
+unit = "m/s"
+group = "environment"
+label = "Gust amplitude (1 - cos gust)"
+doc = "FAR 25.341 / MIL-F-8785C discrete gust of the wind field device: peak amplitude, along the wind (plus a vertical part with 'Gust vertical share'). 0 = no gust."
+
+[[parameters]]
+name = "gust_len_m"
+type = "float"
+default = 20.0
+min = 2.0
+max = 60.0
+unit = "m"
+group = "environment"
+label = "Gust gradient distance H (rise length)"
+
+[[parameters]]
+name = "gust_speed_ms"
+type = "float"
+default = 0.0
+min = 0.0
+max = 20.0
+unit = "m/s"
+group = "environment"
+label = "Gust front speed (0 = uniform in space)"
+doc = "> 0: a front moving along the wind at this speed; 0: the gust is the same everywhere and rises as the wind carries it past (frozen field)."
+
+[[parameters]]
+name = "gust_t_s"
+type = "float"
+default = 40.0
+min = 5.0
+max = 120.0
+unit = "s"
+group = "environment"
+label = "Time the gust peaks over the landing pad"
+
+[[parameters]]
+name = "gust_vert"
+type = "float"
+default = 0.0
+min = -5.0
+max = 5.0
+group = "environment"
+label = "Gust vertical share (vertical part of the direction vector; negative = downdraft)"
+
+[[parameters]]
+name = "rain_mmh"
+type = "float"
+default = 25.0
+min = 0.0
+max = 150.0
+unit = "mm/h"
+group = "environment"
+label = "Rain rate"
+
+[[parameters]]
+name = "disperse"
+type = "bool"
+default = true
+group = "scatter"
+label = "Scatter the vehicle (thrust, mass, CG, servos, sensors, battery)"
+doc = "false: the nominal vehicle."
+
+[[parameters]]
+name = "noise_extra"
+type = "float"
+default = 0.5
+min = 0.0
+max = 2.0
+group = "scatter"
+label = "Sensor noise scatter (up to +x)"
+
+[[telemetry]]
+name = "state"
+kind = "string"
+group = "flight"
+label = "Flight state"
+
+[[telemetry]]
+name = "est.alt_m"
+unit = "m"
+group = "state"
+label = "Height above the take-off pad (estimate)"
+
+[[telemetry]]
+name = "est.vz_ms"
+unit = "m/s"
+group = "state"
+label = "Vertical speed (estimate)"
+
+[[telemetry]]
+name = "est.x_m"
+unit = "m"
+group = "state"
+label = "East of the take-off pad (estimate)"
+
+[[telemetry]]
+name = "est.y_m"
+unit = "m"
+group = "state"
+label = "North of the take-off pad (estimate)"
+
+[[telemetry]]
+name = "est.tilt_deg"
+unit = "deg"
+group = "state"
+label = "Tilt (estimate)"
+min = 0
+max = 45
+
+[[telemetry]]
+name = "setpoint.alt_m"
+unit = "m"
+group = "state"
+label = "Height setpoint"
+
+[[telemetry]]
+name = "throttle"
+unit = "1"
+group = "propulsion"
+label = "ESC duty"
+min = 0
+max = 1
+
+[[telemetry]]
+name = "thrust_N"
+unit = "N"
+group = "propulsion"
+label = "Fan thrust (kernel)"
+
+[[telemetry]]
+name = "thrust_cmd_N"
+unit = "N"
+group = "propulsion"
+label = "Thrust command"
+
+[[telemetry]]
+name = "motor.rpm"
+unit = "rpm"
+group = "propulsion"
+label = "Fan speed"
+
+[[telemetry]]
+name = "battery.v"
+unit = "V"
+group = "power"
+label = "Pack voltage"
+
+[[telemetry]]
+name = "battery.soc"
+unit = "1"
+group = "power"
+label = "State of charge"
+min = 0
+max = 1
+
+[[telemetry]]
+name = "vanes.a1_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 1 angle (+x)"
+min = -20
+max = 20
+
+[[telemetry]]
+name = "vanes.a2_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 2 angle (+y)"
+min = -20
+max = 20
+
+[[telemetry]]
+name = "lidar_m"
+unit = "m"
+group = "sensors"
+label = "Lidar range (0 = no return)"
+min = 0
+max = 8
+
+[[telemetry]]
+name = "air.rho"
+unit = "kg/m^3"
+group = "air"
+label = "Air density (from the barometer)"
+
+[[telemetry]]
+name = "air.rho_true"
+unit = "kg/m^3"
+group = "air"
+label = "Air density (kernel)"
+
+[[telemetry]]
+name = "air.margin"
+unit = "1"
+group = "air"
+label = "Full-throttle thrust / weight"
+
+[[telemetry]]
+name = "ground.agl_m"
+unit = "m"
+group = "sensors"
+label = "Height above the ground below (lidar, < 8 m)"
+
+[[telemetry]]
+name = "ground.push_x"
+unit = "m/s^2"
+group = "wind"
+label = "Wind push on the body, east (accelerometer)"
+
+[[telemetry]]
+name = "ground.push_y"
+unit = "m/s^2"
+group = "wind"
+label = "Wind push on the body, north (accelerometer)"
+
+[[telemetry]]
+name = "flags.abort"
+kind = "string"
+group = "flight"
+label = "Abort reason"
+
+[[telemetry]]
+name = "flags.vane_sat"
+kind = "bool"
+group = "control"
+label = "Roll / pitch vane command at the limit"
+
+[[telemetry]]
+name = "truth.alt_m"
+unit = "m"
+group = "truth"
+label = "Height above the take-off pad (truth)"
+
+[[telemetry]]
+name = "truth.terrain_m"
+unit = "m"
+group = "truth"
+label = "Terrain height under the vehicle (truth, world z)"
+
+[[telemetry]]
+name = "truth.tilt_deg"
+unit = "deg"
+group = "truth"
+label = "Tilt (truth)"
+
+[[telemetry]]
+name = "rain_mmh"
+unit = "mm/h"
+group = "environment"
+label = "Rain rate"
+
+# ---- monitors (judged on trace.csv) ----------------------------------------------------------------------------------------------------------------------
+[[monitors]]
+name = "stands_on_the_pad"
+column = "tilt_deg"
+op = "always"
+from = 0.1
+to = 2.9
+hi = 0.5
+
+[[monitors]]
+name = "reaches_cruise_height"          # 13 m above the hilltop pad (the planner: highest terrain on the line + 12 m)
+column = "z_m"
+op = "eventually"
+lo = 12.0
+
+[[monitors]]
+name = "thrust_margin"                  # full-throttle thrust / weight at the site's density (landveh.thrust_margin) >= 1.15
+column = "margin"
+op = "final"
+lo = 1.15
+
+[[monitors]]
+name = "no_abort"
+column = "abort"
+op = "final"
+hi = 0.5
+
+[[monitors]]
+name = "terrain_clearance"              # feet at least 1 m above the terrain whenever away from the pads
+column = "clr_m"
+op = "always"
+lo = 1.0
+
+[[monitors]]
+name = "touchdown_speed"
+column = "td_speed_ms"
+op = "final"
+hi = 0.5
+
+[[monitors]]
+name = "touchdown_tilt"
+column = "td_tilt_deg"
+op = "final"
+hi = 5
+
+[[monitors]]
+name = "lands_on_the_pad"               # within 0.5 m of the centre of the 2 m radius pad
+column = "td_dist_m"
+op = "final"
+hi = 0.5
+
+[[monitors]]
+name = "battery_voltage"
+column = "vbat_v"
+op = "always"
+lo = 18.0
+
+[[monitors]]
+name = "battery_charge"
+column = "soc"
+op = "final"
+lo = 0.15
+
+[[monitors]]
+name = "stays_upright"
+column = "tilt_deg"
+op = "final"
+hi = 5
+
+[[monitors]]
+name = "vane_saturation"
+column = "sat_frac"
+op = "final"
+hi = 0.10

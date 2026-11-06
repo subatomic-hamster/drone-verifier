@@ -1,0 +1,122 @@
+id = "robotis-robot-cable-x3p-180mm"
+name = "ROBOTIS ROBOT CABLE-X3P 180mm DYNAMIXEL X-series TTL 3-pin cable (JST EH, as used in the Koch v1.1 arms)"
+category = "wire"
+vendor = "ROBOTIS"
+part_number = "ROBOT CABLE-X3P 180mm"
+url = "https://robotis.us/robot-cable-x3p-180mm-10pcs/"
+
+# The Koch v1.1 wiring diagram (S3) labels every servo-to-servo and board-to-servo link "Robot Cable-X3P 180mm" (pins 1 GND, 2 VDD, 3 DATA). The product page does not state the
+# connector or the gauge; both are taken from the e-Manual connector table for the servos (S2) and the JST EH datasheet (S4), so the connector entries are inferences for this cable.
+
+[params]
+length_default = { value = 0.18, unit = "m", src = "S1", fidelity = "datasheet" }
+conductors     = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }   # "3P" cable (pins 1 GND, 2 VDD, 3 DATA per S2)
+connector      = { value = "JST EHR-03 housing (2.5 mm pitch EH), pins 1 GND / 2 VDD / 3 DATA", unit = "-", fidelity = "estimated", rationale = "The cable page names no connector. The XL330/XL430 e-Manual connector tables (S2) give JST EHR-03 housing for the servo TTL port; the cable that mates it (and that the Koch diagram S3 chains between servos) is assumed to carry the same housing on both ends." }
+awg            = { value = 21, unit = "AWG", fidelity = "estimated", rationale = "The cable page names no gauge. The e-Manual connector table (S2) lists 'Wire Gauge for DYNAMIXEL | 21 AWG' for the servo harness; assumed for this cable." }
+area           = { value = 4.10e-7, unit = "m^2", fidelity = "derived", derivation = "Copper cross-section of 21 AWG from the AWG table (S5): 0.410 mm^2 = 4.10e-7 m^2; tracks the awg estimate." }
+resistance_per_m = { value = 0.042, unit = "ohm/m", fidelity = "derived", derivation = "Copper resistance of the assumed 21 AWG conductor from the AWG table (S5): 42.00 mOhm/m = 0.042 ohm/m per conductor; tracks the awg estimate." }
+loop_resistance_default = { value = 0.01512, unit = "ohm", fidelity = "derived", derivation = "Supply + return conductors over the 0.18 m default length: 2 * 0.18 m * 0.042 ohm/m = 0.01512 ohm per cable segment (connector contact resistance not included)." }
+connector_resistance = { value = 0.01, unit = "ohm", src = "S4", fidelity = "datasheet" }   # JST EH contact resistance, initial value 10 mohm max per contact (20 mohm max after environmental tests)
+current_rating_connector = { value = 3.0, unit = "A", src = "S4", fidelity = "datasheet" } # JST EH: 3 A AC/DC (AWG #22)
+mass_per_m = { value = 0.0176, unit = "kg/m", fidelity = "estimated", rationale = "Not published. 3 x 21 AWG copper (0.410 mm^2 * 8960 kg/m^3 = 3.67 g/m each, 11.0 g/m) plus roughly 60 % insulation mass = ~17.6 g/m." }
+mass_per_connector = { value = 0.0005, unit = "kg", fidelity = "estimated", rationale = "Not published. A 3-pin 2.5 mm EH housing with crimped terminals is of the order of 0.5 g." }
+
+# Geometry: none. A wire part has no rigid shape; the builder routes it from length_default (or the actual link-to-link distance) and uses mass_per_m / resistance_per_m.
+[geometry]
+shape = "none"
+
+# Both ends: JST EHR-03 housing (inference, S2/S4) that plugs into the servo's female port_a / port_b (robotis-xl430-w250-t etc.), so the cable end is the male side.
+[[ports]]
+name = "end_a"
+kind = "power"
+type = "jst-eh.3"
+gender = "male"
+role = "passthrough"
+i_max = { value = 3.0, unit = "A", src = "S4", fidelity = "datasheet" }
+pins = ["A.1", "A.2", "A.3"]
+note = "Cable end A; passes GND / VDD / DATA straight through to end_b (3 conductors). Current rating is the JST EH connector figure (3 A with AWG #22 wire); the cable's own conductor is 21 AWG (S2)."
+
+[[ports]]
+name = "end_b"
+kind = "power"
+type = "jst-eh.3"
+gender = "male"
+role = "passthrough"
+i_max = { value = 3.0, unit = "A", src = "S4", fidelity = "datasheet" }
+pins = ["B.1", "B.2", "B.3"]
+note = "Cable end B, same pinout as end_a."
+
+# Pin level: a straight 1:1 cable, so each housing has the XL430 socket's pin order (S2 'Pinout | 1 GND | 2 VDD | 3 DATA | Housing | JST EHR-03').
+# The cable has no frame of its own (shape = none); the ends are placed at +-0.09 m on x for drawing.
+[[connectors]]
+id = "A"
+name = "end A (EHR-03)"
+type = "jst-eh-3"
+gender = "male"
+pos = [-0.09, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "S2"
+fidelity = "datasheet"
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "io", v = 12.0 },
+  { number = 3, name = "DATA", kind = "signal", dir = "io", v = 5.0 },
+]
+
+[[connectors]]
+id = "B"
+name = "end B (EHR-03)"
+type = "jst-eh-3"
+gender = "male"
+pos = [0.09, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "S2"
+fidelity = "datasheet"
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "io", v = 12.0 },
+  { number = 3, name = "DATA", kind = "signal", dir = "io", v = 5.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://robotis.us/robot-cable-x3p-180mm-10pcs/"
+title = "ROBOTIS America store page, Robot Cable-X3P 180mm (10pcs)"
+accessed = "2026-10-07"
+quote = "Robot Cable-X3P 180mm (10pcs) || This cable is for DYNAMIXEL X-Series TTL version only || This is the TTL communication 3P cable set for Dynamixel X-series."
+
+[[sources]]
+id = "S2"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/"
+title = "ROBOTIS e-Manual XL330-M288-T, Connector Information (the XL430-W250 page has the same table)"
+accessed = "2026-10-07"
+quote = "Pinout | 1 GND | 2 VDD | 3 DATA || Housing | JST EHR-03 || PCB Header | JST B3B-EH-A || Crimp Terminal | JST SEH-001T-P0.6 || Wire Gauge for DYNAMIXEL | 21 AWG"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/electrical/Wiring_Diagram_Alexander_Koch_V1.1.pdf"
+title = "Koch v1.1 wiring diagram (jess-moss/koch-v1-1, commit 1a553e1, EasyEDA, 2024-07-08); text layer of the PDF"
+accessed = "2026-10-07"
+quote = "Robot Cable-X3P 180mm"
+
+[[sources]]
+id = "S4"
+url = "http://www.jst-mfg.com/product/pdf/eng/eEH.pdf"
+title = "JST EH connector datasheet (2.5 mm pitch wire-to-board crimp style)"
+accessed = "2026-10-07"
+quote = "Current rating: 3 A AC/DC (AWG #22) || Voltage rating: 250 V AC/DC || Contact resistance: Initial value/ 10 mΩ max. After environmental tests/ 20 mΩ max. || Conductor size/ AWG #32 to AWG #22"
+
+[[sources]]
+id = "S5"
+url = "https://en.wikipedia.org/wiki/American_wire_gauge"
+title = "American wire gauge (Wikipedia), table of AWG sizes, copper resistance column"
+accessed = "2026-10-07"
+quote = "21 | 0.0285 | 0.723 | 35.1 | 13.8 | 0.810 | 0.410 | 42.00 | 12.80"

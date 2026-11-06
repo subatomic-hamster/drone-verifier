@@ -1,0 +1,116 @@
+id = "tmotor-2814-kv900"
+name = "T-Motor 2814 KV900 multirotor motor (7.5-inch class)"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "2814 KV900"
+url = "https://uav-en.tmotor.com/2026/Motor_0126/1336.html"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop. "Motor Dimension 32.9 x 40.55 mm" is used as
+# diameter x length; the source does not say whether the 40.55 mm includes the shaft stub (inference - verify before stack-up use).
+# Source page is T-Motor's UAV motor spec sheet (title "Technical Drawing"); the test uses T-Motor C7.5*4.6*3 (3-blade 7.5-inch).
+
+[params]
+mass            = { value = 0.0837, unit = "kg", src = "S1", fidelity = "datasheet" }         # 83.7 g incl. cable
+kv              = { value = 900, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.0691, unit = "ohm", src = "S1", fidelity = "datasheet" }        # 69.1 mOhm
+i0              = { value = 1.05, unit = "A", src = "S1", fidelity = "datasheet" }            # Idle Current (10V)
+i0_voltage      = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 41.59, unit = "A", src = "S1", fidelity = "datasheet" }
+p_max           = { value = 881.0, unit = "W", src = "S1", fidelity = "datasheet" }
+thrust_max      = { value = 29.71, unit = "N", src = "S1", fidelity = "datasheet" }           # "Max Thrust 3.03kg" x 9.80665
+cells_min       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 8, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration   = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+diameter        = { value = 0.0329, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.04055, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter  = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_circle    = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }           # "Screw Diameter Φ19-M3-4"
+mount_screw     = { value = "M3", unit = "thread", src = "S1", fidelity = "datasheet" }
+prop_adapter_thread = { value = "M5", unit = "thread", src = "S1", fidelity = "datasheet" }
+lead_length     = { value = 0.3, unit = "m", src = "S1", fidelity = "datasheet" }             # 18AWG x 300 mm
+kt              = { value = 0.010610, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*900) = 0.010610 N*m/A." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, T-MOTOR C7.5*4.6*3 prop, ~29 V (per-row voltage as printed). All 10 printed rows (10-100 %).
+# Operating temperature 55 C. Vendor columns: Current(A), RPM, Thrust(g), Power(W), Efficiency(g/W), Torque(N*m); thrust_N = thrust_g * 0.00980665.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "torque_Nm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [10, 29.64, 0.2, 2, 2280, 0.01, 0.3825, 39, 22.96],
+  [20, 29.62, 0.86, 12, 4642, 0.03, 1.6475, 168, 13.46],
+  [30, 29.59, 2.24, 42, 6868, 0.06, 3.7756, 385, 9.25],
+  [40, 29.53, 4.49, 93, 8897, 0.1, 6.6489, 678, 7.33],
+  [50, 29.43, 7.79, 169, 10839, 0.15, 9.9832, 1018, 6.04],
+  [60, 29.29, 12.33, 271, 12592, 0.21, 13.7097, 1398, 5.16],
+  [70, 29.15, 17.95, 396, 14253, 0.27, 17.5441, 1789, 4.52],
+  [80, 28.97, 24.65, 544, 15796, 0.33, 21.5452, 2197, 4.04],
+  [90, 28.76, 32.58, 707, 17204, 0.39, 25.7032, 2621, 3.71],
+  [100, 28.52, 41.59, 881, 18434, 0.46, 29.7338, 3032, 3.44],
+]
+prop_label = "T-MOTOR C7.5*4.6*3"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.01645, 0.020275]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.19.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.5"
+gender = "male"
+pos = [0.0, 0.0, 0.04055]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V (upper end of the 4-8S rated range, S1)." }
+i_max = { value = 41.59, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three 18 AWG phase leads, 300 mm (S1 'Lead|18AWG*300mm'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 18 AWG, 300 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01645, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the lead gauge and length (18AWG*300mm), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 41.59 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 41.59 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 41.59 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://uav-en.tmotor.com/2026/Motor_0126/1336.html"
+title = "T-MOTOR UAV motor specification page - 2814 (Specification + Test Data)"
+accessed = "2026-10-07"
+quote = "Type|2814|Motor Dimension|φ32.9*40.55|Configuration|12N14P|Shaft Diameter|5mm|Lead|18AWG*300mm|Screw Diameter|Φ19-M3-4|Prop Adapter Shaft Thread|M5|Recommended Voltage|KV900|Idle Current (10V)|1.05A|Max Power|881W|Internal Resistance|69.1mΩ|Rated Voltage (LiPo)|4-8S|Peak Current|41.59A|Max Thrust|3.03kg|Weight (Incl. Cable)|83.7g. Test: 2814 KV900|C7.5*4.6*3|29.64|10%|0.20|2280|39|2|22.96|0.01|55℃ ... 100%|28.52|41.59|18434|3032|881|3.44|0.46"

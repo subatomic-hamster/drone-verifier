@@ -1,0 +1,39 @@
+id = "tdk-icm-20948"
+name = "TDK InvenSense ICM-20948 9-axis MotionTracking (gyro + accel + AK09916 mag)"
+category = "sensor.imu"
+vendor = "TDK InvenSense"
+part_number = "ICM-20948"
+url = "https://cdn.sparkfun.com/assets/7/f/e/c/d/DS-000189-ICM-20948-v1.3.pdf"
+
+# Conversions: 1 deg/s = 0.0174533 rad/s; 1 ug = 9.80665e-6 m/s2. Datasheet v1.3 (third-party mirror on SparkFun's CDN).
+[params]
+supply_voltage_min   = { value = 1.71, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max   = { value = 3.6, unit = "V", src = "S1", fidelity = "datasheet" }
+gyro_noise_density   = { value = 2.618e-4, unit = "rad/s/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+gyro_sensitivity_at_250dps = { value = 131, unit = "LSB/(deg/s)", src = "S1", fidelity = "datasheet" }
+gyro_sensitivity_tolerance = { value = 1.5, unit = "%", src = "S1", fidelity = "datasheet" }
+accel_noise_density  = { value = 2.2553e-3, unit = "m/s2/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+accel_zero_g_board_level = { value = 0.4903, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+mag_sensitivity      = { value = 0.15e-6, unit = "T/LSB", src = "S1", fidelity = "datasheet" }
+package_length       = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+package_width        = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+package_height       = { value = 1e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+
+[[ports]]
+name = "spi"
+kind = "signal"
+type = "spi"
+gender = "neutral"
+
+[[sources]]
+id = "S1"
+url = "https://cdn.sparkfun.com/assets/7/f/e/c/d/DS-000189-ICM-20948-v1.3.pdf"
+title = "ICM-20948 Datasheet DS-000189 v1.3 (TDK InvenSense; SparkFun-hosted copy)"
+accessed = "2026-10-07"
+quote = "device all in a small 3x3x1mm QFN package ... Sensitivity Scale Factor GYRO_FS_SEL=0 131 LSB/(dps) ... Sensitivity Scale Factor Tolerance 25°C ±1.5 % ... Noise Spectral Density Based on Noise Bandwidth = 0.015 dps/√Hz ... Initial Tolerance Board-level, all axes ±50 mg ... Noise Spectral Density Based on Noise Bandwidth = 10 Hz 230 µg/√Hz ... Sensitivity Scale Factor 0.15 µT / LSB ... VDD 1.71 1.8 3.6 V"

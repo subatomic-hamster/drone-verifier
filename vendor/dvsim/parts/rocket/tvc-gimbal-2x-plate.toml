@@ -1,0 +1,129 @@
+id = "tvc-gimbal-2x-plate"
+name = "TVC gimbal for two 29 mm motors, fixed plate: 5.5 in tube bulkhead with the pitch servo arm, PLA (design of this repo)"
+category = "rocket.gimbal"
+vendor = "custom (FDM printed)"
+part_number = "n/a"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+
+# A two-axis gimbal for a pair of 29 mm motors, direct-driven by two Dynamixel XL330 servos (20 x 34 x 26 mm), in a 5.5 in tube (inside diameter 0.1377 m). Three printed
+# parts: this plate (fixed to the tube), tvc-gimbal-2x-ring (hinged to the plate about y by the PITCH servo) and tvc-gimbal-2x-cradle (hinged to the ring about x by the
+# YAW servo, holds the motors). The axes cross at the origin of all three part frames (the gimbal centre); +z towards the nose. The servo bodies sit outside the ring
+# (hub planes at |r| = 0.039 m, bodies to 0.0649 m, the arms' inner faces), inside the tube wall (0.0689 m).
+# Mechanical travel is +-8 deg (the ring clearance, see tvc-gimbal-2x-ring); the packaging (screws, wiring) is NOT checked beyond the builder's interference check.
+# PITCH SERVO: output hub at (0, 0.039, 0) facing -y; its base mounts to this plate's arm at (0, 0.0649, 0.0075) (the XL330 base port is 7.5 mm off the body centre
+# along the servo's long axis, which runs along z). The plate is an annulus (hole radius 0.043 m for the cradle and motors) drawn as eight boxes.
+[visual]
+rationale = "Design of this repo: printed tube bulkhead with the stepped pitch-servo arm and a bearing boss (same generator as the 1-axis gimbal plate)."
+
+[[visual.elements]]
+gen = "tvc_gimbal"
+params = { kind = "plate" }
+
+[params]
+disc_radius = { value = 0.064, unit = "m", fidelity = "estimated", rationale = "Design choice: the octagonal plate's apothem; its corners reach 0.068 m, inside the tube's 0.06885 m inside radius (parts/rocket/generic-fiberglass-tube-140)." }
+hole_radius = { value = 0.043, unit = "m", fidelity = "estimated", rationale = "Design choice: octagonal hole apothem; clears the ring's 0.039 m radius and its tilt sweep." }
+disc_thickness = { value = 0.003, unit = "m", fidelity = "estimated", rationale = "Design choice." }
+mass = { value = 0.0423, unit = "kg", fidelity = "derived", derivation = "PLA 1240 kg/m3 (parts/common/pla, src S1) x printed factor 0.95 = 1178 kg/m3 times the volume: octagonal annulus 4.8284 (0.064^2 - 0.043^2) m2 x 0.003 m = 3.26e-5 m3, servo arm 0.024 x 0.0027 x 0.035 m = 2.27e-6 m3, strut 0.02 x 0.0027 x 0.021 m = 1.13e-6 m3; total 3.60e-5 m3 = 0.0423 kg. Screws and the hub of the unused -y pivot are not counted." }
+
+# Eight boxes forming the octagonal annulus: centre radius 0.0535 m (hole apothem 0.043 to outer apothem 0.064), tangential half-width 0.023 m (0.0535 x tan 22.5 deg = 0.0222 plus overlap), z in [0.0465, 0.0495].
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [0.0535, 0.0, 0.048]
+quat = [1.0, 0.0, 0.0, 0.0]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [0.03783, 0.03783, 0.048]
+quat = [0.9238795325, 0.0, 0.0, 0.3826834324]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [0.0, 0.0535, 0.048]
+quat = [0.7071067812, 0.0, 0.0, 0.7071067812]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [-0.03783, 0.03783, 0.048]
+quat = [0.3826834324, 0.0, 0.0, 0.9238795325]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [-0.0535, 0.0, 0.048]
+quat = [0.0, 0.0, 0.0, 1.0]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [-0.03783, -0.03783, 0.048]
+quat = [-0.3826834324, 0.0, 0.0, 0.9238795325]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [0.0, -0.0535, 0.048]
+quat = [-0.7071067812, 0.0, 0.0, 0.7071067812]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0105, 0.0230, 0.0015]
+pos = [0.03783, -0.03783, 0.048]
+quat = [-0.9238795325, 0.0, 0.0, 0.3826834324]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.012, 0.00135, 0.0175]
+pos = [0.0, 0.06355, 0.0075]
+material = "pla"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.01, 0.00135, 0.0105]
+pos = [0.0, 0.06355, 0.0355]
+material = "pla"
+
+# Tube end: the plate's annulus top face sits on the tube's aft face, 0.05 m above the gimbal centre.
+[[ports]]
+name = "tube"
+kind = "mech"
+type = "tube.140"
+gender = "female"
+pos = [0.0, 0.0, 0.05]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Annulus top face at z = 0.05 m; the tube's aft face rests on it."
+
+# Pitch servo base seat (see the header for the geometry).
+[[ports]]
+name = "pitch_servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl330-base"
+gender = "neutral"
+pos = [0.0, 0.0649, 0.0075]
+axis = [0.0, -1.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 2
+thickness = 0.0027
+fidelity = "estimated"
+rationale = "Inner face of the servo arm (0.0649 m = hub plane 0.039 + 0.0259 servo height), centred 7.5 mm along z so that the servo's output hub lands on the pitch axis (the XL330 base port is offset 7.5 mm from the body centre)."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/1223/5992/files/PLA_4043D_TDS.pdf"
+title = "Ingeo Biopolymer 4043D Technical Data Sheet (NatureWorks), 3D printing monofilament"
+accessed = "2026-10-07"
+quote = "Specific Gravity, g/cc 1.24 D792"

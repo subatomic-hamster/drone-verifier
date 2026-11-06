@@ -1,0 +1,168 @@
+id = "holybro-x500v2-esc-blheli-s-20a"
+name = "Holybro X500 V2 BLHeli_S 20A ESC"
+category = "esc"
+vendor = "Holybro"
+part_number = "520081"
+url = "https://holybro.com/products/spare-parts-x500-v2-kit"
+
+# 4 per kit, pre-installed on the arms with XT30 power plugs. Firmware family BLHeli_S (Holybro). The kit ESC is NOT
+# the BLHeli_32/AM32 Tekko line. Signal: the X500 V2 + Pixhawk 6C PX4 build guide wires them to FMU PWM outputs.
+
+[params]
+current_continuous = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+current_peak       = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }     # 10 s
+mass               = { value = 0.021, unit = "kg", src = "S1", fidelity = "datasheet" }   # "Weight (Incl. Cable) 21g"
+v_cells_min        = { value = 3, unit = "cells", src = "S1", fidelity = "datasheet" }    # "Rated Voltage(Lipo) 3-4s"
+v_cells_max        = { value = 4, unit = "cells", src = "S1", fidelity = "datasheet" }
+firmware           = { value = "BLHeli_S", unit = "text", src = "S2", fidelity = "datasheet" }
+signal_freq_min    = { value = 50, unit = "Hz", src = "S1", fidelity = "datasheet" }      # "Throttle Signal Frequency 50Hz-600Hz"
+signal_freq_max    = { value = 600, unit = "Hz", src = "S1", fidelity = "datasheet" }
+size_length        = { value = 0.026, unit = "m", src = "S1", fidelity = "datasheet" }
+size_width         = { value = 0.014, unit = "m", src = "S1", fidelity = "datasheet" }
+size_height        = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+bec                = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" } # BEC "/"
+input_plug         = { value = "XT30", unit = "text", src = "S2", fidelity = "datasheet" }
+fc_output          = { value = "FMU PWM Out", unit = "text", src = "S3", fidelity = "datasheet" }
+r_on_total         = { value = 0.012, unit = "ohm", fidelity = "estimated", rationale = "ESC FET resistance is unpublished. Assumed 12 mOhm total series (two conducting half-bridge FETs ~4 mOhm each plus ~4 mOhm traces/solder) as typical for a 20 A, 26x14 mm BLHeli_S ESC; loss at 16 A is then ~3 W (~1% of 260 W). Treat as +-50%." }
+pwm_carrier_freq   = { value = 24000.0, unit = "Hz", fidelity = "estimated", rationale = "Motor-drive PWM carrier of BLHeli_S assumed at the usual 24 kHz default; not stated on Holybro pages. Only affects ripple, not the averaged-duty model." }
+switching_loss_fraction = { value = 0.0015, unit = "1", src = "S4", fidelity = "estimated", rationale = "Switching + dead-time loss as a fraction of the motor-side power V I_m (device field Esc.sw_loss: bus current (d + sw) I_m). BLHeli_S is complementary 'damped light' PWM with active freewheeling (S4), so no body-diode freewheel loss; what remains is (a) hard-switching overlap f_sw (t_r + t_f) / 2 = 24 kHz x 30 ns = 7e-4 (f_sw 24 kHz = the usual BLHeli_S motor PWM, t_r = t_f = 30 ns assumed for a 20 A, 30 V class FET) and (b) dead-time body-diode conduction 2 t_dead f_sw V_f / V = 2 x 300 ns x 24 kHz x 0.8 V / 16 V = 7e-4 (S4: dead time is a code-name multiple of 20.4 ns, 300 ns assumed; V_f 0.8 V). Sum 1.4e-3, rounded to 1.5e-3. At hover that is 0.14 W per ESC (0.3 %), ~1 W at 20 A; +-3x." }
+quiescent_current  = { value = 0.015, unit = "A", fidelity = "estimated", rationale = "Bus-side current of the ESC electronics (EFM8BB21 MCU, gate drivers, on-board regulator from the 16 V bus), drawn also at zero throttle; unpublished, assumed 15 mA (0.24 W at 16 V, 0.6 % of the 40 W hover input). +-3x." }
+
+[geometry]
+# Part frame: origin at the centre of the underside (mounting face), x along the 26 mm length, z up (board normal).
+shape = "box"
+size = [0.013, 0.007, 0.0025]   # half-extents: 26x14x5 mm / 2
+pos = [0.0, 0.0, 0.0025]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat (mates 'esc' of holybro-x500v2-arm-tube). Holybro publishes no mounting method for the ESC on the arm (zip tie / heat shrink); modelled as a flat seat with the 26 mm length along the tube. Resolve with the assembly photos."
+
+[[ports]]
+name = "power_in"
+lead = {}   # the XT30 input cable is part of the 21 g datasheet mass ('Weight (Incl. Cable)'); its length is not published
+kind ="power"
+type = "xt30"
+gender = "male"
+role = "sink"
+pins = ["PWR.1", "PWR.2"]
+v_max = { value = 16.8, unit = "V", src = "S1", fidelity = "derived", derivation = "4 cells x 4.2 V from 'Rated Voltage(Lipo) 3-4s' (S1)." }
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "XT30 plug on the ESC input cable (S2: 'with XT30 Plugs'); the cable is part of the 21 g (S1 'Weight (Incl. Cable)'). Gender male by the PDB-out (female) to ESC (male) convention of this kit model; Holybro does not state the plug gender. i_max is the continuous rating (peak 30 A for 10 s)."
+
+[[ports]]
+name = "motor_out"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+i_max = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Three motor leads (bullet/solder, 'Banana Plug 2.0mm' in the spec) to the motor 'phase' port; continuous current rating, peak 30 A for 10 s."
+
+[[ports]]
+name = "signal"
+lead = {}   # the signal lead ships on the ESC and is inside its mass (same datasheet line); length not published
+kind ="signal"
+type = "pwm"
+gender = "neutral"
+pins = ["SIG.1", "SIG.2"]
+note = "Throttle signal 50-600 Hz (S1) from the flight controller FMU PWM Out (S3)."
+
+# Pin level: the three leads that ship on the ESC (S1 'Weight (Incl. Cable)', 'Banana Plug 2.0mm', S2 'with XT30 Plugs'). Holybro prints no pin
+# table: polarity (XT30 pin 1 +), phase order (A B C) and the 2-wire signal lead (signal, ground; BEC '/' = none, S1) are assumptions, the
+# poses are estimates on the 26 x 14 x 5 mm body.
+[[connectors]]
+id = "PWR"
+name = "power input XT30"
+type = "xt30"
+gender = "male"
+pos = [-0.013, 0.0, 0.0025]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "estimated"
+rationale = "S2: ESCs 'with XT30 Plugs'; polarity and the family's 5 mm spacing assumed."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_max = 16.8, i_max = 20.0 },
+  { number = 2, name = "V-", kind = "ground", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor leads (2.0 mm bullets)"
+type = "bullet-2.0mm-x3"
+gender = "male"
+pos = [0.013, 0.0, 0.0025]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists 'Banana Plug 2.0mm' for the motor side; phase order A B C is a convention (any two swapped reverse the motor), the 3 mm spacing is the leads' spread, estimated."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 20.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 20.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "throttle signal lead"
+type = "servo-lead-2"
+gender = "female"
+pos = [0.0, 0.007, 0.0025]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.00254
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the throttle signal frequency (50 Hz to 600 Hz) and no BEC ('BEC /'); a signal wire plus the ground return (the lead's black wire) is the minimum a servo-PWM lead has; connector family assumed."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in", v = 3.3 },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopify.com/s/files/1/0604/5905/7341/files/X500MotorSpec.png?v=1678791632"
+title = "Holybro X500 V2 motor/ESC/prop specification image (BLHeli S 20A block)"
+accessed = "2026-10-06"
+quote = "BLHeli S 20A-Specifications: Size(L x W x H) 26x14x5mm; Rated Voltage(Lipo) 3-4s; Con.Current 20A; BEC /; Peak Current(10s) 30A; Weight (Incl. Cable) 21g; Banana Plug 2.0mm; Throttle Signal Frequency 50Hz-600Hz"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "Holybro docs - PX4 Development Kit - X500v2"
+accessed = "2026-10-06"
+quote = "ESCs - BLHeli S ESC 20A (4 pcs) with XT30 Plugs - Compatible with 4S Battery"
+
+[[sources]]
+id = "S3"
+url = "https://raw.githubusercontent.com/PX4/PX4-user_guide/main/en/frames_multicopter/holybro_x500v2_pixhawk6c.md"
+title = "PX4 User Guide - Holybro X500 v2 + Pixhawk 6C assembly (source markdown)"
+accessed = "2026-10-06"
+quote = "The airframe is preconfigured with the motors on the **FMU PWM Out**."
+
+[[sources]]
+id = "S4"
+url = "https://bluerobotics.com/wp-content/uploads/2018/10/BLHeli_S-manual-SiLabs-Rev16.x.pdf"
+title = "Operation manual for BLHeli_S SiLabs Rev16.x (firmware family of this ESC)"
+accessed = "2026-10-07"
+quote = "All codes use damped light mode. Damped light does regenerative braking, causing very fast motor retardation, and inherently also does active freewheeling. ... The two numbers denote the FET switching deadtime. The unit is 20.4ns."

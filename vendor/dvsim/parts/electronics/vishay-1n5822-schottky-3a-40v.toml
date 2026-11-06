@@ -1,0 +1,77 @@
+id = "vishay-1n5822-schottky-3a-40v"
+name = "Vishay 1N5822 Schottky rectifier, 40 V, 3 A, DO-201AD (flyback diode across a flywheel motor)"
+category = "semiconductor.diode"
+vendor = "Vishay General Semiconductor"
+part_number = "1N5822-E3/54"
+url = "https://www.vishay.com/docs/88526/1n5820.pdf"
+
+# Flyback (freewheel) diode spec for the brushed flywheel motors: fit one across each motor, cathode (banded end) to the motor's positive lead, anode to the MOSFET drain / motor negative lead.
+# Choice: reverse voltage >= 2 x the highest supply (40 V vs 16.8 V of a charged 4S pack), average forward current >= the motor's 1.88 A stall current (3 A; the smaller 1N5819 is 1 A), fast Schottky recovery.
+# Part frame: origin at the body centre, axis along z; leads leave at +-z; the cathode (band) end at +z.
+
+[params]
+v_rrm             = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }   # 1N5822 (1N5820: 20 V, 1N5821: 30 V)
+i_f_avg           = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }   # at TL = 95 degC, 9.5 mm leads
+i_fsm             = { value = 80.0, unit = "A", src = "S1", fidelity = "datasheet" }   # 8.3 ms half sine
+v_f_3a            = { value = 0.525, unit = "V", src = "S1", fidelity = "datasheet" }   # at 3.0 A, 1N5822
+v_f_9a4           = { value = 0.950, unit = "V", src = "S1", fidelity = "datasheet" }   # at 9.4 A
+t_j_max           = { value = 398.15, unit = "K", src = "S1", fidelity = "datasheet" }   # 125 degC
+mass              = { value = 0.00108, unit = "kg", src = "S1", fidelity = "datasheet" }   # 1.08 g, the unit weight the sheet lists for the 1N5820-E3 of this DO-201AD package
+body_diameter     = { value = 0.0050, unit = "m", src = "S1", fidelity = "datasheet" }   # 4.8-5.3 mm
+body_length       = { value = 0.0083, unit = "m", src = "S1", fidelity = "datasheet" }   # 7.2-9.5 mm
+length            = { value = 0.0083, unit = "m", src = "S1", fidelity = "datasheet" }
+width             = { value = 0.0050, unit = "m", src = "S1", fidelity = "datasheet" }
+height            = { value = 0.0050, unit = "m", src = "S1", fidelity = "datasheet" }
+price         = { value = 0.34, unit = "USD", fidelity = "estimated", rationale = "Single-piece price of the 1N5822-E3/54 at TME US shown in a web search on 2026-10-11 (https://www.tme.com/us/en-us/details/1n5822-e3_54/tht-schottky-diodes/vishay/, USD 0.34 for one, 0.20 at 2800; Arrow 0.19); the TME page itself returned 403 so the figure could not be read directly." }
+
+[[ports]]
+name = "diode"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "passthrough"
+pins = ["D.1", "D.2"]
+v_max = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Anode (pin 1) and cathode (pin 2)."
+
+[[connectors]]
+id = "D"
+name = "axial leads (anode, cathode)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.0042]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0083
+src = "S1"
+fidelity = "datasheet"
+pose_rationale = "Both leads drawn at the body ends 8.3 mm apart (body length); axial leads leave along +-z (positional estimate)."
+pins = [
+  { number = 1, name = "A", kind = "power", i_max = 3.0, v_max = 40.0, note = "anode" },
+  { number = 2, name = "K", kind = "power", i_max = 3.0, v_max = 40.0, note = "cathode (colour band denotes the cathode end)" },
+]
+
+[visual]
+src = "V1"
+note = "Black cylindrical body with a silver band at the cathode end (Vishay package drawing); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.vishay.com/docs/88526/1n5820.pdf"
+title = "Vishay 1N5820, 1N5821, 1N5822 Schottky Barrier Plastic Rectifier (document 88526)"
+accessed = "2026-10-11"
+quote = "IF(AV) 3.0 A VRRM 20 V, 30 V, 40 V IFSM 80 A VF 0.475 V, 0.500 V, 0.525 V TJ max. 125 °C Package DO-201AD ... Maximum repetitive peak reverse voltage VRRM 20 30 40 V ... Maximum average forward rectified current ... IF(AV) 3.0 A ... Peak forward surge current ... IFSM 80 A ... Maximum instantaneous forward voltage 3.0 VF 0.475 0.500 0.525 V; 9.4 0.850 0.900 0.950 V ... 1N5820-E3/54 UNIT WEIGHT (g) 1.08 ... Polarity: color band denotes the cathode end ... 0.210 (5.3) 0.190 (4.8) DIA. ... 0.375 (9.5) 0.285 (7.2)"
+
+[[sources]]
+id = "V1"
+url = "https://www.vishay.com/docs/88526/1n5820.pdf"
+title = "Vishay 1N5820-1N5822 package drawing (appearance only)"
+accessed = "2026-10-11"
+quote = "DO-201AD"

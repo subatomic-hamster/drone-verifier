@@ -1,0 +1,113 @@
+id = "bullet-4mm-gold"
+name = "4 mm gold bullet connector pair (RC ESC-to-motor, male / female)"
+category = "connector"
+vendor = "generic (Flying Tech listing)"
+part_number = "4mm gold bullet"
+url = "https://www.flyingtech.co.uk/product/4mm-gold-bullet-connector-banana-plug-for-escs/"
+
+# Generic hobby part, no manufacturer datasheet. i_max is the conservative Oscar Liang figure (4 mm up to 70 A); Flying Tech lists 'rated up to 80amps',
+# kept as i_burst-class vendor maximum. No mass or contact resistance published.
+[params]
+current_rated       = { value = 70, unit = "A", src = "S2", fidelity = "literature" }
+current_max_vendor  = { value = 80, unit = "A", src = "S1", fidelity = "datasheet" }
+diameter            = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["M.1"]
+kind = "power"
+type = "bullet.4"
+gender = "male"
+i_max = { value = 70, unit = "A", src = "S2", fidelity = "literature" }
+i_burst = { value = 80, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Pin 4 mm. 70 A: Oscar Liang rule of thumb; 80 A: vendor 'rated up to'."
+
+[[ports]]
+name = "female"
+pins = ["F.1"]
+kind = "power"
+type = "bullet.4"
+gender = "female"
+i_max = { value = 70, unit = "A", src = "S2", fidelity = "literature" }
+i_burst = { value = 80, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 70, unit = "A", src = "S2", fidelity = "literature" }
+role = "passthrough"
+note = "Solder cup"
+
+# Pin level (derived): a bullet connector is a single-contact plug and socket; one contact per half, one solder cup.
+[[connectors]]
+id = "M"
+name = "male bullet pin"
+type = "bullet.4"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "A bullet connector pair is one single-conductor contact per half (S1 lists a pin diameter, not a pin count); no other pins exist."
+pose_rationale = "Mating face at the origin (the part has no geometry)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[connectors]]
+id = "F"
+name = "female bullet socket"
+type = "bullet.4"
+gender = "female"
+pos = [0.02, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "As M: one contact per half."
+pose_rationale = "Second half placed 20 mm to the side so the two halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cup"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.01]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "One solder cup per contact."
+pose_rationale = "Cable side of the body (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.flyingtech.co.uk/product/4mm-gold-bullet-connector-banana-plug-for-escs/"
+title = "Flying Tech - 4mm gold bullet connector (banana plug) for ESCs"
+accessed = "2026-10-07"
+quote = "They are gold plated for minimum connection resistance and rated up to 80amps."
+
+[[sources]]
+id = "S2"
+url = "https://oscarliang.com/choosing-gold-bullet-connectors-motor-esc/"
+title = "Oscar Liang - Choosing gold bullet connectors for motor and ESC"
+accessed = "2026-10-07"
+quote = "make sure the connector meets your electrical rating. I follow these rules. | 2mm connectors - up to 20 Amps 3.5mm connectors - up to 40Amps XT60 connectors - up to 60Amps 4mm connectors - up to 70 Amps 6mm connectors - up to 120 Amps 8mm connectors - up to 200 Amps"

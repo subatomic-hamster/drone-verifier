@@ -1,0 +1,31 @@
+id = "cuas2-pusher-rod"
+name = "cuas2 pusher_rod (3D printed PETG, M4 pusher slider, 47.2 mm stroke, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "pusher_rod"
+url = "cad/cuas2/modules/feeder.py"
+
+# Mesh in the head frame H, shown RETRACTED (tip clear of the valve shoulder). Stroke 47.2 mm along +x_H, driven by the pusher servo crank; the slider joint is left to the integration step.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/pusher_rod.stl"
+material = "petg"
+bbox_min = [-0.1188, -0.01, -0.089]
+bbox_max = [-0.0548, 0.01, -0.017]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

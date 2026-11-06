@@ -1,0 +1,244 @@
+id = "iflight-blitz-e55s-4in1"
+name = "iFlight BLITZ E55S 4-in-1 2-6S ESC (BB21, BlheliS/Bluejay), 30.5x30.5 stack"
+category = "esc"
+vendor = "iFlight"
+part_number = "BLITZ E55S 4-IN-1"
+url = "https://rcdrone.top/products/iflight-blitz-e55s-4-in-1-esc"
+
+# Part frame: origin at the centre of the board underside, z up, +x toward the signal-connector edge (assumed). Mount pattern 30.5 x 30.5 mm,
+# listed as "Φ4mm" holes; bolt-pattern type uses m3 to match flight controllers in parts/electronics. Board outline and thickness are not
+# published (listing gives mounting holes and weight only), so the box geometry is an assumed 35 x 35 x 6 mm. Pad positions unpublished.
+
+[params]
+mass            = { value = 0.0147, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.035, unit = "m", fidelity = "estimated", rationale = "Board outline not published in the listing; 35 mm assumed (30.5 mm hole pattern plus ~2 mm edge margin per side, typical for the class)." }
+width           = { value = 0.035, unit = "m", fidelity = "estimated", rationale = "Board outline not published in the listing; 35 mm assumed (30.5 mm hole pattern plus ~2 mm edge margin per side, typical for the class)." }
+height          = { value = 0.006, unit = "m", fidelity = "estimated", rationale = "Board thickness not published; ~6 mm taken from the Holybro Tekko32 4-in-1 spec (6 mm) as same-class comparable." }
+cells_min       = { value = 2, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+i_cont_per_ch   = { value = 55.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst_per_ch  = { value = 65.0, unit = "A", src = "S1", fidelity = "datasheet" }
+channels        = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+mcu             = { value = "BB21", unit = "text", src = "S1", fidelity = "datasheet" }
+bec             = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+current_rate    = { value = 200, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.0175, 0.0175, 0.003]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.30.5x30.5.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "30.5 x 30.5 mm per S1; 4 mm hole, M3 screw with grommet assumed (inference)"
+
+[[ports]]
+name = "power_in"
+pins = ["BAT.1", "BAT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (upper end of 'Supports 2-6S lipo input', S1)." }
+i_max = { value = 220.0, unit = "A", fidelity = "derived", derivation = "4 channels x 55 A constant per channel (S1) = 220 A; no total-input rating is published." }
+
+[[ports]]
+name = "motor_out_1"
+pins = ["M1.1", "M1.2", "M1.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "Output follows battery input, 6S x 4.2 V = 25.2 V." }
+i_max = { value = 55.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out_2"
+pins = ["M2.1", "M2.2", "M2.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "Output follows battery input, 6S x 4.2 V = 25.2 V." }
+i_max = { value = 55.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out_3"
+pins = ["M3.1", "M3.2", "M3.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "Output follows battery input, 6S x 4.2 V = 25.2 V." }
+i_max = { value = 55.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out_4"
+pins = ["M4.1", "M4.2", "M4.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "Output follows battery input, 6S x 4.2 V = 25.2 V." }
+i_max = { value = 55.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["FC.5", "FC.6", "FC.7", "FC.8", "FC.9", "FC.1"]   # M1 .. M4 DShot, CUR current sense, GND
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+
+# ---- Connectors (pin level). The only pinout published for this ESC family is the sibling BLITZ E55's ten-position FC connector (P1, a hands-on review
+# quoting the board). The E55S is the same iFlight 4-in-1 line on the 30.5 mm pattern (S1: current sensor, DShot150/300/600), so the
+# sibling's pinout is used (parts/propulsion/iflight-blitz-e55-4in1.toml). Battery pads, motor pads and poses are estimates.
+[[connectors]]
+id = "FC"
+name = "FC connector (10 positions)"
+type = "header-1x10"
+gender = "male"
+pos = [0.0, 0.0145, 0.006]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 10
+pitch = 0.00125
+src = "P1"
+fidelity = "estimated"
+rationale = "P1 describes the sibling BLITZ E55 (same iFlight 4-in-1 line, current sensor, DShot); the E55S's own connector pinout is not published, so the sibling's is assumed. Housing type, pitch and position are assumptions."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "VBAT", kind = "power", dir = "out", v_max = 25.2, note = "battery rail passed to the FC; 2-6S (S1)" },
+  { number = 4, name = "VBAT", kind = "power", dir = "out", v_max = 25.2 },
+  { number = 5, name = "M1", kind = "signal", dir = "in", note = "DShot150/300/600 motor 1 signal (S1)" },
+  { number = 6, name = "M2", kind = "signal", dir = "in" },
+  { number = 7, name = "M3", kind = "signal", dir = "in" },
+  { number = 8, name = "M4", kind = "signal", dir = "in" },
+  { number = 9, name = "CUR", kind = "signal", dir = "out", note = "current sensor output ('Current sensor: Yes', S1)" },
+  { number = 10, name = "NC", kind = "nc" },
+]
+
+[[connectors]]
+id = "BAT"
+name = "battery solder pads (BAT+ / BAT-)"
+type = "solder-pad-1x2"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0145, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states the supply range, nothing on the pad layout: two pads, + then -, 6 mm apart on the edge opposite the FC connector."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "in", v_max = 25.2, i_max = 220.0, fidelity = "derived", derivation = "v_max 6S x 4.2 V (S1 'Supports 2-6S lipo input'); i_max 4 x 55 A constant (S1)." },
+  { number = 2, name = "BAT-", kind = "ground", i_max = 220.0, fidelity = "derived", derivation = "4 x 55 A constant (S1)." },
+]
+
+[[connectors]]
+id = "M1"
+name = "motor 1 solder pads"
+type = "solder-pad-1x3"
+gender = "neutral"
+joinable = true
+pos = [0.0125, -0.0125, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives 55 A constant / 65 A burst per channel; the pad positions, the corner of motor 1 and the A B C labels are not published (conventions: swapping two phases reverses the motor)."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 55.0 },
+]
+
+[[connectors]]
+id = "M2"
+name = "motor 2 solder pads"
+type = "solder-pad-1x3"
+gender = "neutral"
+joinable = true
+pos = [-0.0125, -0.0125, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "As M1."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 55.0 },
+]
+
+[[connectors]]
+id = "M3"
+name = "motor 3 solder pads"
+type = "solder-pad-1x3"
+gender = "neutral"
+joinable = true
+pos = [-0.0125, 0.0125, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "As M1."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 55.0 },
+]
+
+[[connectors]]
+id = "M4"
+name = "motor 4 solder pads"
+type = "solder-pad-1x3"
+gender = "neutral"
+joinable = true
+pos = [0.0125, 0.0125, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "As M1."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 55.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 55.0 },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.firstquadcopter.com/reviews/iflight-blitz-e55-4-in-1-esc-review/"
+title = "iFlight BLITZ E55 4-in-1 ESC review (firstquadcopter.com), board description (sibling of the E55S; read through a page summariser)"
+accessed = "2026-10-09"
+quote = "On the opposite side, with the 470μ/35V capacitor, is the FC connector with the following pinout from left to right: GND, GND, VBAT, VBAT, M1, M2, M3, M4, CUR, and NC. ... the BLITZ E55 has a stellar one, with motor pads on each corner."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/iflight-blitz-e55s-4-in-1-esc"
+title = "rcdrone.top (iFlight listing) - BLITZ E55S 4-IN-1 ESC"
+accessed = "2026-10-07"
+quote = "Mounting Holes: 30.5*30.5mm/Φ4mm|Weight: 14.7g|Supports 2-6S lipo input|MCU: BB21|Constant: 55 Amps |Burst: 65 Amps|Current sensor: Yes|BEC: No|Current rate: 200|Supports: DShot150/300/600/MultiShot/ OneShot etc."

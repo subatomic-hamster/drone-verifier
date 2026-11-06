@@ -1,0 +1,85 @@
+id = "sunnysky-x2212-kv980"
+name = "SunnySky X2212 KV980 brushless motor (multirotor, CCW thread)"
+category = "motor.bldc"
+vendor = "SunnySky"
+part_number = "X2212 KV980 (GTIN 680306448760)"
+url = "https://www.readymaderc.com/products/details/sunnysky-x2212-kv980-multirotor-ccw"
+
+# Part frame: origin at the stator-side end of the body (mounting face), z up toward the prop; the shaft port sits at the published
+# "Body Length (without shaft)" of 42 mm (inference: the length is measured from the mounting face).
+# No thrust table in the retailer text, so there is no [tables.thrust_test]; the manufacturer-recommended prop is 9x4.5 (9450).
+# GAP: the mounting-hole pattern is not stated on the fetched page -> no base port declared (do not guess; check the SunnySky datasheet).
+
+[params]
+mass            = { value = 0.056, unit = "kg", src = "S1", fidelity = "datasheet" }
+kv              = { value = 980, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+r_winding       = { value = 0.100, unit = "ohm", src = "S1", fidelity = "datasheet" }         # 100 mOhm
+i0              = { value = 0.7, unit = "A", src = "S1", fidelity = "datasheet" }             # No-load current at 10 V
+i0_voltage      = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak          = { value = 25.0, unit = "A", src = "S1", fidelity = "datasheet" }            # max continuous, 30 s
+p_max           = { value = 412.0, unit = "W", src = "S1", fidelity = "datasheet" }
+cells_min       = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+stator_diameter = { value = 0.022, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height   = { value = 0.012, unit = "m", src = "S1", fidelity = "datasheet" }
+slots           = { value = 12, unit = "1", src = "S1", fidelity = "datasheet" }
+poles           = { value = 14, unit = "1", src = "S1", fidelity = "datasheet" }
+rotor_diameter  = { value = 0.0275, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body     = { value = 0.042, unit = "m", src = "S1", fidelity = "datasheet" }           # "Body Length (without shaft)"
+shaft_diameter  = { value = 0.003175, unit = "m", src = "S1", fidelity = "datasheet" }
+esc_rec         = { value = 20.0, unit = "A", src = "S1", fidelity = "datasheet" }
+kt              = { value = 0.009744, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*980) = 0.009744 N*m/A." }
+
+[geometry]
+shape = "cylinder"
+size = [0.01375, 0.021]
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # any unit vector perpendicular to the axis (+z)
+symmetry = 360  # round shaft: axisymmetric, as holybro-2216-kv920
+type = "shaft.3.175"
+gender = "male"
+pos = [0.0, 0.0, 0.042]
+axis = [0.0, 0.0, 1.0]
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V (upper end of 'Max Lipo Cell 3-4S', S1)." }
+i_max = { value = 25.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+# Pin level: three phase leads. S1 does not describe the leads (gauge, length, connector).
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01375, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives no lead gauge, length, connector or phase labels: three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention (swapping two reverses the motor)."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 25.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 25.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 25.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.readymaderc.com/products/details/sunnysky-x2212-kv980-multirotor-ccw"
+title = "ReadyMadeRC - SunnySky X2212 KV980 Multirotor CCW (product specifications)"
+accessed = "2026-10-07"
+quote = "KV|: 980|Stator Diameter|: 22mm|Stator Thickness|: 12mm|No. of Stator Slots|: 12|No. of Rotor Poles|: 14|Motor Resistance|: 100mΩ|No-load Current|: 0.7A/10V|Max Continuous Current|: 25A/30s|Max Continuous Power|: 412W|ESC|: 20A recommended|Max Lipo Cell|: 3-4S|Recommended Prop|: 9x4.5 (9450)|Rotor Diameter|: 27.5mm|Shaft Diameter|: 3.175mm|Body Length (without shaft)|: 42mm|Weight|: 56g"

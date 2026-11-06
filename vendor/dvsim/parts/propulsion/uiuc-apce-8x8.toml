@@ -1,0 +1,89 @@
+id = "uiuc-apce-8x8"
+name = "APC Thin Electric 8x8 propeller - UIUC wind-tunnel C_T/C_P data (reference)"
+category = "prop.reference"
+vendor = "APC (propeller); data: UIUC Propeller Data Site (Selig et al.)"
+part_number = "apce_8x8"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+
+# Literature reference for C_T(J)/C_P(J) of a 8 in x 8 in APC Thin Electric prop (pitch/D = 1.00). Tables transcribed from the UIUC .txt files, rounded to 4 decimals (3 for J, eta):
+# static (J = 0, C_T and C_P vs rpm, all 16 rows) and one advancing run at about 5008 rpm (all 17 rows). Shape reference for similar mass-produced props, not a measurement of any specific
+# part. No mass or ports (reference data only).
+
+[params]
+diameter  = { value = 0.2032, unit = "m", src = "S1", fidelity = "literature" }      # 8 in (list value)
+pitch     = { value = 0.2032, unit = "m", src = "S1", fidelity = "literature" }      # 8 in per revolution
+rpm_static_min = { value = 2519, unit = "rpm", src = "S2", fidelity = "literature" }
+rpm_static_max = { value = 6412, unit = "rpm", src = "S2", fidelity = "literature" }
+ct_static_at_max_rpm = { value = 0.1329, unit = "1", src = "S2", fidelity = "literature" }
+cp_static_at_max_rpm = { value = 0.1133, unit = "1", src = "S2", fidelity = "literature" }
+eta_max_approx = { value = 0.701, unit = "1", src = "S3", fidelity = "literature" }   # at J = 0.754 in the 5008 rpm run
+
+[tables.static_ct_cp]
+# UIUC file apce_8x8_static_2805rd.txt
+columns = ["rpm", "C_T", "C_P"]
+rows = [
+  [2519, 0.1231, 0.1155],
+  [2759, 0.1240, 0.1158],
+  [3025, 0.1239, 0.1148],
+  [3288, 0.1245, 0.1141],
+  [3522, 0.1264, 0.1147],
+  [3789, 0.1267, 0.1138],
+  [4069, 0.1275, 0.1135],
+  [4334, 0.1284, 0.1139],
+  [4590, 0.1284, 0.1145],
+  [4841, 0.1287, 0.1149],
+  [5112, 0.1285, 0.1147],
+  [5369, 0.1288, 0.1146],
+  [5625, 0.1291, 0.1144],
+  [5894, 0.1298, 0.1134],
+  [6157, 0.1317, 0.1138],
+  [6412, 0.1329, 0.1133],
+]
+src = "S2"
+fidelity = "literature"
+
+[tables.advancing_5008rpm]
+# UIUC file apce_8x8_2809rd_5008.txt (constant rpm about 5008)
+columns = ["J", "C_T", "C_P", "eta"]
+rows = [
+  [0.609, 0.1036, 0.0965, 0.653],
+  [0.646, 0.0992, 0.0955, 0.671],
+  [0.686, 0.0950, 0.0945, 0.689],
+  [0.720, 0.0900, 0.0929, 0.698],
+  [0.754, 0.0833, 0.0896, 0.701],
+  [0.790, 0.0745, 0.0847, 0.695],
+  [0.833, 0.0636, 0.0768, 0.689],
+  [0.870, 0.0550, 0.0704, 0.680],
+  [0.906, 0.0479, 0.0646, 0.672],
+  [0.941, 0.0414, 0.0595, 0.655],
+  [0.979, 0.0353, 0.0547, 0.631],
+  [1.008, 0.0309, 0.0511, 0.609],
+  [1.052, 0.0227, 0.0439, 0.543],
+  [1.088, 0.0159, 0.0382, 0.452],
+  [1.123, 0.0092, 0.0326, 0.318],
+  [1.160, 0.0024, 0.0266, 0.105],
+  [1.196, -0.0048, 0.0212, -0.272],
+]
+src = "S3"
+fidelity = "literature"
+
+[[sources]]
+id = "S1"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+title = "UIUC Propeller Database - Volume 1, page notes"
+accessed = "2026-10-07"
+quote = "The propeller size is given in inches, e.g. APC 10x4.7 is a 10-inch diameter propeller with a pitch of 4.7 inch/revolution."
+
+[[sources]]
+id = "S2"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apce_8x8_static_2805rd.txt"
+title = "UIUC data file apce_8x8_static_2805rd.txt"
+accessed = "2026-10-07"
+quote = "RPM CT CP / 2519 0.1231 0.1155 / 4334 0.1284 0.1139 / 6412 0.1329 0.1133"
+
+[[sources]]
+id = "S3"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/apce_8x8_2809rd_5008.txt"
+title = "UIUC data file apce_8x8_2809rd_5008.txt"
+accessed = "2026-10-07"
+quote = "J CT CP eta / 0.609 0.1036 0.0965 0.653 / 0.906 0.0479 0.0646 0.672 / 1.196 -0.0048 0.0212 -0.272"

@@ -1,0 +1,117 @@
+id = "fold-rail"
+name = "fold drone rail: 2 mm CF ladder (16 x 8 x 200) + printed roll boss / hinge knuckle + the two pod arms and servo cradles"
+category = "frame"
+vendor = "dvsim fold (own design)"
+part_number = "rail"
+url = "cad/fold/modules/rail.py"
+
+# Frame = the reference pose of rail 1 (flat square, loop in z = 0, rail along +x from corner 1 at the origin). Rail 3 is this part turned 180 deg about the loop
+# centre (the loop's symmetry, cad/fold/interfaces.py rot180): the builder lands it there through the port frames, so one part serves both rails.
+# Ports: re = roll end (R1 / R3 axis along the rail at corner 1 / 3), he = hinge end (H2 / H4, vertical axis at corner 2 / 4), pod_a / pod_b = the SCS0009 tilt-servo
+# bases (pods 1, 3 / 2, 4), dock_fc = the W-frame seat of the FC / ESC standoffs, dock_bec = the 6 V BEC seat (rail 3 side).
+# Mass: sum of the CAD items (cad/fold/build.py manifest, 2026-11-01 run): rail_plates 11.159 + spacers 1.0 + roll_cap 0.862 + roll_bearings 0.9 + knuckle 2.164 +
+# knuckle_bearings 0.9 + 2 x (cradle 1.647 + arm 1.846). The builder splits it over the shapes by volume (CF and printed densities differ: COM is approximate).
+
+[params]
+mass = { value = 0.023971, unit = "kg", fidelity = "derived", derivation = "Sum of the CAD manifest items of rail 1: printed parts at 2 walls x 0.4 mm + 20 % infill of PA12-CF 1.10 g/cm^3 [est], CF plates solid at 1.55 g/cm^3 [est], bought bearings / spacers at their listed mass [est] (cad/fold/params.py)." }
+mass_tol = { value = 0.0025, unit = "kg", fidelity = "estimated", rationale = "10 % of the CAD mass: densities and infill are estimates until the parts are weighed (bench B-MASS)." }
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/rail_plates_rail1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/rail_spacers_rail1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/rail_roll_cap_rail1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/rail_roll_bearings_rail1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/rail_knuckle_rail1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/rail_knuckle_bearings_rail1.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pod1_cradle.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pod1_arm.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pod2_cradle.stl"
+
+[[geometry.shapes]]
+shape = "mesh"
+mesh = "meshes/fold/pod2_arm.stl"
+
+[[ports]]
+name = "re"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "he"
+kind = "mech"
+type = "fold.joint"
+gender = "neutral"
+pos = [0.2, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "pod_a"
+kind = "mech"
+type = "bolt-pattern.feetech-micro-scs0009-base"
+gender = "neutral"
+pos = [-0.02075, -0.06, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "pod_b"
+kind = "mech"
+type = "bolt-pattern.feetech-micro-scs0009-base"
+gender = "neutral"
+pos = [0.22075, -0.06, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "dock_fc"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "dock_bec"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.165, 0.0, -0.014]  # ASM round 2: the 6 V BEC sits on rail 1 next to the FC / ESC (was x = 0.09 on rail 3), cad/fold/modules/rail.py BEC6_X
+axis = [0.0, 0.0, 1.0]
+ref = [-1.0, 0.0, 0.0]
+symmetry = 1

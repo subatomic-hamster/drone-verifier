@@ -1,0 +1,69 @@
+id = "torqeedo-deep-blue-battery-40"
+name = "Torqeedo Deep Blue Battery 40 (352 V, 38 kWh usable, 284 kg lithium-ion traction battery)"
+category = "battery.lipo"
+vendor = "Torqeedo"
+part_number = "Deep Blue Battery 40"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+
+# S1 (the Deep Blue i inboard page; the battery data is footnoted "preliminary") gives: "Nominal voltage 352 V | Max. continuous performance 55 kW | Capacity (usable) 38 kWh |
+# Weight 284 kg | Dimensions 1666 x 993 x 173 mm". The cell count, chemistry and internal resistance are NOT published: ESTIMATES below (NMC lithium-ion: 3.7 V/cell nominal
+# gives 95 cells in series; the battery device uses the LiPo cell open-circuit-voltage curve for it, whose shape (3.0-4.2 V) is the same class). Category `battery.lipo` is the
+# library's family for the battery device (the ASV packs are LiPo too).
+# Part frame: origin at the centre of the underside, x along the length (1.666 m), y along the width (0.993 m), z up (0.173 m).
+[params]
+capacity_ah     = { value = 108.0, unit = "Ah", fidelity = "derived", derivation = "Usable energy 38 kWh / nominal voltage 352 V = 108 Ah (S1)." }
+capacity        = { value = 388800.0, unit = "C", fidelity = "derived", derivation = "108 Ah x 3600 s/h = 388800 C (coulombs)." }
+energy_usable   = { value = 38000.0, unit = "Wh", src = "S1", fidelity = "datasheet" }
+cells_series    = { value = 95, unit = "1", fidelity = "estimated", rationale = "Not published; 352 V / 3.7 V nominal NMC cell = 95.1, so 95 in series (the per-cell energy: 38 kWh / 95 = 400 Wh = 108 Ah x 3.7 V per series string, i.e. an unspecified parallel arrangement of cells)." }
+cells_parallel  = { value = 1, unit = "1", fidelity = "estimated", rationale = "Treated as one equivalent 108 Ah cell per series position (the parallel group count is unpublished and does not change the electrical model)." }
+v_nominal       = { value = 352.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 399.0, unit = "V", fidelity = "estimated", rationale = "95 cells x 4.2 V charge limit (NMC); the vendor gives only the nominal voltage." }
+i_max_continuous = { value = 156.5, unit = "A", fidelity = "derived", derivation = "Max. continuous performance 55 kW / 352 V nominal = 156.5 A (S1)." }
+mass            = { value = 284.0, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 1.666, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.993, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.173, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.080, unit = "ohm", fidelity = "estimated", rationale = "Not published. 95 series cells of a 108 Ah-class cell at ~0.8 mOhm each (0.9-1.2 mOhm/Ah-scaled for EV NMC cells at 25 degC) = 76 mOhm, 0.08 ohm with the busbar and contactor: 12.5 V (3.5 %) drop at the 156.5 A of the continuous rating. +-40 %." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.833, 0.4965, 0.0865]
+pos = [0.0, 0.0, 0.0865]
+mass_param = "mass"
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 399.0, unit = "V", fidelity = "estimated", rationale = "95 cells x 4.2 V." }
+i_max = { value = 156.5, unit = "A", fidelity = "derived", derivation = "Max. continuous performance 55 kW / 352 V (S1)." }
+note = "High-voltage output; the vendor's connector is not documented on the product page (modelled as two lugs)."
+
+[[connectors]]
+id = "OUT"
+name = "HV output terminals (+ / -)"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.833, 0.0, 0.0865]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.08
+fidelity = "estimated"
+rationale = "The vendor page gives no connector or terminal drawing (the Deep Blue battery connects through its own high-voltage plug and contactor box); modelled as a positive and a negative lug on the +x end face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 399.0, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.torqeedo.com/us/products/inboards/deep-blue-50i-1200/3302-00.html"
+title = "Deep Blue 50i 1200 (Torqeedo product page), battery specification table (preliminary data)"
+accessed = "2026-10-13"
+quote = "Deep Blue Battery 40 | Nominal voltage 352 V | Max. continuous performance 55 kW | Capacity (usable) 38 kWh | Weight 284 kg | Dimensions 1666 x 993 x 173 mm"

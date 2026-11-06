@@ -1,0 +1,278 @@
+id = "cuas-lite-launcher-chassis"
+name = "cuas-lite launcher_chassis (3D printed PETG, group tilt, root of the tilt group)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "launcher_chassis"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (166.19 g, supports: minor). The mesh is the CAD's dvsim mesh (m), already in the head frame H: origin on the tilt axis (frame B (0, 0, 202 mm)), x along the barrel,
+# y left, z up at tilt = 0. The part frame IS H.
+# `hinge` is the b-side of the tilt joint (axis -y = manifest interface.frames.tilt_joint axis_H; the mate with yoke_left.tilt_axis carries reverse = true: positive tilt raises the muzzle).
+# Every other part that tilts (and every bought part of the head) is seated on this chassis by a `seat_*` port. A seat port's pose is the child's part-frame pose in H (manifest `interface`: frames, mounts,
+# barrel, flywheels, camera); mating the child's `origin` port (axis -z, ref x) reproduces it exactly. The hopper, hopper_lid and feed_elbow are PAN-group parts since CAD 987985b (seats on the rotor plate); the tilt group carries the
+# trunnion_beam (hollow 35 mm tube through the right cheek) instead.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/launcher_chassis.stl"
+material = "petg"
+bbox_min = [-0.133, -0.05, -0.0695]
+bbox_max = [0.02, 0.05, -0.0201]
+
+[[ports]]
+name = "hinge"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt axis H, axis -y_H (manifest interface.frames.tilt_joint). With yoke_left.tilt_axis (axis +y, ref x) the mated chassis frame equals frame H exactly."
+
+[[ports]]
+name = "seat_tilt_hub"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "tilt_hub is modelled in H (manifest interface.frames.tilt_joint children): identity pose."
+
+[[ports]]
+name = "seat_tilt_pulley_80t"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "tilt_pulley_80t is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_barrel_half_a"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "barrel_half_a is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_barrel_half_b"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "barrel_half_b is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_trunnion_beam"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "trunnion_beam is modelled in H (manifest interface.frames.tilt_joint children): identity pose."
+
+[[ports]]
+name = "seat_piston"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "piston is modelled in H at its home position (manifest mounts.piston home_face_x_mm = -65.5): identity pose."
+
+[[ports]]
+name = "seat_servo_bracket"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "servo_bracket is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_pusher_arm"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "pusher_arm is modelled in H at the stroke middle (manifest mounts.pusher_servo lever_zero): identity pose."
+
+[[ports]]
+name = "seat_wheel_cover_pos_y"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "wheel_cover_pos_y is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_wheel_cover_neg_y"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "wheel_cover_neg_y is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_camera_mount"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "camera_mount is modelled in H: identity pose."
+
+[[ports]]
+name = "seat_fw_motor_pos_y"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.015, 0.0271, -0.048]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Flywheel motor mounting face (manifest flywheels: centre_H (-15, 0, -52.5), y = +27.10 mm, axes +-z_H; bought.py: the motor body starts 4.5 mm above the wheel centre in L), shaft pointing down (-z_H) into the wheel."
+
+[[ports]]
+name = "seat_fw_motor_neg_y"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.015, -0.0271, -0.048]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "As seat_fw_motor_pos_y at y = -27.10 mm."
+
+[[ports]]
+name = "seat_fw_wheel_pos_y"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.015, 0.0271, -0.0525]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Flywheel centre (manifest flywheels.centre_H (-15, 0, -52.5), wheels at y = +-27.10 mm, axes z_H)."
+
+[[ports]]
+name = "seat_fw_wheel_neg_y"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.015, -0.0271, -0.0525]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "As seat_fw_wheel_pos_y at y = -27.10 mm."
+
+[[ports]]
+name = "seat_servo"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.0805, -0.018, -0.0723]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Pusher servo output spline (manifest mounts.pusher_servo spline_H_mm = (-80.5, -18, -72.3), axis +z_H); the servo body's long axis (22.7 mm in the CAD) lies along y, so the part x axis points along +y_H."
+
+[[ports]]
+name = "seat_brio"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.11675, 0.0, -0.0244]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, -1.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Brio underside centre: manifest mounts.brio box_centre_mm (116.75, 0, -11) minus half the 27 mm height (-24.5 mm; the port sits 0.1 mm higher so the plate contact stays under the DRC 1 mm interference tolerance).The Brio part's lens axis is its +y and its long (102 mm) side its x, so the part x axis points along -y_H and y along +x_H (lens along +x_H, image up +z_H, as manifest camera)."
+
+[[ports]]
+name = "seat_rod_left"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.05775, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Left 8 mm axle piece (manifest mounts.rods_8mm: y_H 39..76.5 mm, centre 57.75 mm), along y."
+
+[[ports]]
+name = "seat_magnet_tilt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0675, 0.013]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt hall magnet (manifest mounts.tilt_hall magnet_H_mm = (0, 68.5, 13)), 2 mm disc with its underside at y = 67.5 mm, axis along y."
+
+[[ports]]
+name = "seat_launcher"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.13, 0.0, -0.0525]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Muzzle (manifest barrel.muzzle_H_mm = (130, 0, -52.5)), barrel along +x_H."

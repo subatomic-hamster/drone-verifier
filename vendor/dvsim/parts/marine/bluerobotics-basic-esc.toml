@@ -1,0 +1,83 @@
+id = "bluerobotics-basic-esc"
+name = "Blue Robotics Basic ESC (BLHeli_S, bidirectional, 30 A, 2-6S)"
+category = "esc"
+vendor = "Blue Robotics"
+part_number = "BESC30-R3 (BR-100344)"
+url = "https://bluerobotics.com/store/thrusters/speed-controllers/besc30-r3/"
+
+# The ESC Blue Robotics sells for the T200 thruster and fits in the BlueBoat. Firmware default is BIDIRECTIONAL with the centre throttle (1500 us) = stopped,
+# so a device binding sets `bidirectional = true` and the throttle runs -1 (full reverse, 1100 us) .. +1 (full forward, 1900 us). The device model is the same
+# averaged ESC chain as the multirotor ESCs (docs/models.md); the vendor publishes no FET resistance, switching loss or quiescent current, so those are
+# ESTIMATES, scaled from the BLHeli_S 20 A ESC of the X500 kit (same firmware family, same 24 kHz PWM class).
+# Part frame: origin at the centre of the underside, x along the length, z up (a bare board in shrink wrap: no mounting holes).
+[params]
+current_continuous = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+mass               = { value = 0.0163, unit = "kg", src = "S1", fidelity = "datasheet" }
+v_min              = { value = 7.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_max              = { value = 26.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_cells_min        = { value = 2, unit = "cells", src = "S1", fidelity = "datasheet" }
+v_cells_max        = { value = 6, unit = "cells", src = "S1", fidelity = "datasheet" }
+signal_neutral_us  = { value = 1500.0, unit = "us", src = "S1", fidelity = "datasheet" }
+signal_forward_us  = { value = 1900.0, unit = "us", src = "S1", fidelity = "datasheet" }
+signal_reverse_us  = { value = 1100.0, unit = "us", src = "S1", fidelity = "datasheet" }
+signal_deadband_us = { value = 25.0, unit = "us", src = "S1", fidelity = "datasheet" }
+signal_rate_max    = { value = 400.0, unit = "Hz", src = "S1", fidelity = "datasheet" }
+price          = { value = 40.0, unit = "USD", src = "S1", fidelity = "datasheet" }
+size_length        = { value = 0.045, unit = "m", fidelity = "estimated", rationale = "The product page links a 2D drawing (an image) but states no dimension in text. A 30 A BLHeli_S board with its heat-shrink is ~45 x 25 x 8 mm; only the board envelope and the visual depend on it. +-30 %." }
+size_width         = { value = 0.025, unit = "m", fidelity = "estimated", rationale = "As size_length." }
+size_height        = { value = 0.008, unit = "m", fidelity = "estimated", rationale = "As size_length." }
+r_on_total         = { value = 0.008, unit = "ohm", fidelity = "estimated", rationale = "FET resistance is unpublished. 8 mOhm total series (two conducting half-bridge FETs ~2.5 mOhm each plus ~3 mOhm traces / solder), between the 12 mOhm assumed for the 20 A X500 BLHeli_S ESC and the 4 mOhm of the 60 A SeaKing; at the T200's 17 A the loss is 2.3 W (1.1 % of 205 W). Treat as +-50 %." }
+switching_loss_fraction = { value = 0.0015, unit = "1", fidelity = "estimated", rationale = "Switching + dead-time loss as a fraction of the motor-side power (device field Esc.sw_loss): the value derived for the BLHeli_S 20 A ESC of the X500 kit (24 kHz, complementary damped-light PWM), same firmware family; not published for this board." }
+quiescent_current  = { value = 0.015, unit = "A", fidelity = "estimated", rationale = "Bus-side current of the ESC electronics (MCU, gate drivers, on-board regulator), drawn also at zero throttle; unpublished, 15 mA as assumed for the X500 BLHeli_S ESC. +-3x." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0225, 0.0125, 0.004]
+pos = [0.0, 0.0, 0.004]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside seat; Blue Robotics sells the ESC as a bare board in heat shrink, fixed with tape or a strap (no mounting holes stated)."
+
+[[ports]]
+name = "power_in"
+lead = {}   # the battery input leads are part of the 16.3 g datasheet mass; their length is not stated on the product page
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "sink"
+v_max = { value = 26.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Input leads (7-26 V, 2-6S); connector style not stated (the page sells it with bare leads)."
+
+[[ports]]
+name = "motor_out"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+i_max = { value = 30.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Three motor leads to the thruster's phase port; 30 A constant ('depends on cooling')."
+
+[[ports]]
+name = "signal"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+note = "Throttle signal 3.3-5 V, 1100-1900 us around 1500 us neutral (S1), up to 400 Hz."
+
+[[sources]]
+id = "S1"
+url = "https://bluerobotics.com/store/thrusters/speed-controllers/besc30-r3/"
+title = "Basic ESC product page (Blue Robotics), specifications"
+accessed = "2026-10-08"
+quote = "Max Current (Constant) 30 A (depends on cooling) ... Voltage Range 7-26 V (2-6S) ... Bidirectional (center throttle is zero/stopped) ... Initialize/stop 1500 us ... Max forward 1900 us ... Max reverse 1100 us ... Signal deadband 1500 us +/- 25 us ... Weight 16.3 g ... $40.00"

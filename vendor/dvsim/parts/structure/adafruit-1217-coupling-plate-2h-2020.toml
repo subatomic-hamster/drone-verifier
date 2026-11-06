@@ -1,0 +1,41 @@
+id = "adafruit-1217-coupling-plate-2h-2020"
+name = "Coupling plate, 2 holes, for 20x20 aluminium extrusion (Adafruit 1217)"
+category = "structure.bracket"
+vendor = "Adafruit"
+part_number = "1217"
+url = "https://www.adafruit.com/product/1217"
+
+# Frame: origin at the plate centre on the face that sits against the extrusion, +z out of the other face.
+[params]
+length         = { value = 40e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width          = { value = 18e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness      = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter  = { value = 5.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_spacing   = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.0073
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Aluminium (2700 kg/m3, assumed; alloy not stated) plate 40 x 18 x 4 mm less two 5.3 mm holes: (2880 - 176) mm3 = 2704 mm3 -> 7.3 g. About +-10 %."
+
+[[ports]]
+name = "holes"
+kind = "mech"
+type = "bolt-pattern.20x0.m5"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.004
+fidelity = "estimated"
+rationale = "Two 5.3 mm holes 20 mm apart (S1: 'drill holes 20mm apart so you can use M4 or M5 screws'), assumed centred on the 40 mm length and the 18 mm width; the M5 family name is the larger of the two screws it takes."
+note = "Plate clamped to an extrusion end/face with M4 or M5 screws and T-nuts; 10 mm screws recommended (S1)."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1217"
+title = "Adafruit product 1217: Coupling Plate - 2 Holes - 20x20 Aluminum Extrusion"
+accessed = "2026-10-07"
+quote = "Measures 40mm long, 18mm wide, 4mm thick. 5.3m drill holes 20mm apart so you can use M4 or M5 screws. You'll want to use 10mm long screws to attach this to 20mm extrusion."

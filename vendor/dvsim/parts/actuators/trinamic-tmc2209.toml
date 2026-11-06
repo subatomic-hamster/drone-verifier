@@ -1,0 +1,78 @@
+id = "trinamic-tmc2209"
+name = "Trinamic (ADI) TMC2209 silent stepper driver IC, 2 A RMS / 2.8 A peak (BTT TMC2209 V1.3 module sources current formula)"
+category = "driver.stepper"
+vendor = "Trinamic Motion Control / Analog Devices"
+part_number = "TMC2209-LA (QFN-28-EP 5x5)"
+url = "https://www.lcsc.com/product-detail/C465949.html"
+
+# Frame: the IC itself has no module frame; designs normally use a carrier module (e.g. BigTreeTech TMC2209 V1.3, 110 mohm sense resistors, S2).
+# Module dimensions are only in BTT's STEP file, so no mech port is declared. Electrical ports only.
+# Not retrievable here: the ADI/Trinamic PDF datasheet host was unreachable from the build environment; figures come from distributor and module pages quoting the datasheet feature list.
+
+[params]
+package            = { value = "QFN-28-EP (5x5 mm), HTSSOP option exists", unit = "-", src = "S1", fidelity = "datasheet" }
+v_motor_min        = { value = 4.75,    unit = "V",    src = "S1", fidelity = "datasheet" }
+v_motor_max        = { value = 29.0,    unit = "V",    src = "S1", fidelity = "datasheet" }
+i_rms_max_per_phase = { value = 2.0,    unit = "A",    src = "S1", fidelity = "datasheet" }
+i_peak_max_per_phase = { value = 2.8,   unit = "A",    src = "S1", fidelity = "datasheet" }
+v_logic_min        = { value = 3.0,     unit = "V",    src = "S1", fidelity = "datasheet" }
+v_logic_max        = { value = 5.5,     unit = "V",    src = "S1", fidelity = "datasheet" }
+rds_on_per_switch  = { value = 0.170,   unit = "ohm",  src = "S1", fidelity = "datasheet" }  # LS and HS each, typ. at 25 degC
+microstep_pin_modes = { value = "8, 16, 32 or 64 via MS pins; 256 via MicroPlyer interpolation", unit = "-", src = "S1", fidelity = "datasheet" }
+microstep_max_divisor = { value = 256,  unit = "1",    src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = -40,     unit = "degC", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 125,     unit = "degC", src = "S1", fidelity = "datasheet" }
+features           = { value = "StealthChop2, SpreadCycle, StallGuard4, CoolStep, single-wire UART, OTP, integrated pulse generator", unit = "-", src = "S1", fidelity = "datasheet" }
+module_r_sense     = { value = 0.110,   unit = "ohm",  src = "S2", fidelity = "datasheet" }  # BTT TMC2209 module
+current_formula    = { value = "I_RMS = 325 mV / (R_SENSE + 20 mohm) * 1/sqrt(2) * VREF / 2.5 V", unit = "-", src = "S2", fidelity = "datasheet" }
+i_rms_per_vref_module = { value = 0.7071, unit = "A/V", fidelity = "derived", derivation = "With the BTT module's R_SENSE = 110 mohm: 325 mV/(110+20 mohm) = 2.5 A; times 1/sqrt(2) times VREF/2.5 V gives I_RMS = VREF/sqrt(2) = 0.7071 A per volt (BTT's own simplification). At the formula's full-scale VREF = 2.5 V this is 1.77 A RMS, i.e. the 110 mohm module tops out below the IC's 2 A RMS rating." }
+
+[[ports]]
+name = "vmot"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 29.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 4.75, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }  # RMS per phase
+i_peak = { value = 2.8, unit = "A", src = "S1", fidelity = "datasheet" }  # peak per phase
+
+[[ports]]
+name = "motor_out"
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "source"
+i_max = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }  # RMS per phase
+i_peak = { value = 2.8, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "step_dir"
+kind = "signal"
+type = "step-dir"
+gender = "neutral"
+level_min = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }  # 'Control Voltage 3V~5.5V'
+level_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "STEP/DIR with MS1/MS2 microstep pin selection."
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+note = "Single-wire UART for configuration (current, StealthChop/SpreadCycle, StallGuard) and OTP."
+
+[[sources]]
+id = "S1"
+url = "https://www.lcsc.com/product-detail/C465949.html"
+title = "LCSC TRINAMIC TMC2209-LA product page (feature list and specifications)"
+accessed = "2026-10-07"
+quote = "2-phase stepper motors up to 2.8A coil current (peak), 2A RMS| STEP/DIR Interface with 8, 16, 32 or 64 microstep pin setting| Smooth Running 256 microsteps by MicroPlyer interpolation| StealthChop2 silent motor operation| SpreadCycle highly dynamic motor control chopper| StallGuard4 load and stall detection for StealthChop| CoolStep current control for energy savings up to 75%| Low RDSon, Low Heat-Up LS 170mΩ & HS 170mΩ (typ. at 25°C)| Voltage Range 4.75… 29V DC || Single Wire UART & OTP for advanced configuration options| Integrated Pulse Generator for standalone motion| Full Protection & Diagnostics| Choice of QFN and HTSSOP package for best fit || Packaging| QFN-28-EP(5x5) || Operating Temperature| -40℃~+125℃| Output Current| 2.8A| Step Resolution| 256| Control Voltage| 3V~5.5V| RDS(on)| 170mΩ| Motor Drive Voltage(Vm)| 4.75V~29V"
+
+[[sources]]
+id = "S2"
+url = "https://neo.bttwiki.com/en/docs/accessories-docs/tmc-driver/tmc-2209/"
+title = "BIGTREETECH wiki, TMC 2209 driver module (V1.1-V1.3)"
+accessed = "2026-10-07"
+quote = "Driver IC| TMC 2209| Maximum voltage| 29V| Drive current| 2A RMS, 2.8A peak || I_{RMS}=\\frac{325mV}{R_{SENSE}+20mΩ}*\\frac{1}{\\sqrt{2}}*\\frac{V_{VREF}}{2.5V} || Using the TMC 2209 Driver Module 110 mΩ R_{SENSE} Resistor"

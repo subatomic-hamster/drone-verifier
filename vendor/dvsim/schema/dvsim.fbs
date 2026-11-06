@@ -1,0 +1,115 @@
+// Single source of truth for the command bus. The `cap` attribute on each command table
+// ("read" | "control" | "destructive") is read at runtime via reflection from the embedded .bfbs
+// (src/core/bus.cpp), never duplicated in C++. Later milestones add Run/Pause/Sweep/RunTest/...
+attribute "cap";
+
+namespace dvsim;
+
+enum Err : byte { none = 0, invalid_argument, not_found, permission_denied, limit_exceeded, solver_error }
+
+// Empty path lists all prims. Otherwise returns `attr` of `path` (values + unit).
+// frame: "" or "world", or a body prim path to express body pos/quat in that body's frame.
+table Query (cap: "read") { path: string; attr: string; frame: string; }
+table SetAttr (cap: "control") { path: string; attr: string; frame: string; values: [double]; }
+table Step (cap: "control") { n: int; }
+table Snapshot (cap: "control") {}  // reply.snapshot_id
+table Restore (cap: "control") { id: uint64; }
+table LoadModel (cap: "destructive") { path: string; }  // replaces the solver, resets tick
+
+// Host-level: free-run at `rate` sim-seconds per wall-second (0 = as fast as possible) / freeze the tick.
+// On a bare World (no Host) both validate and are otherwise no-ops, so logs containing them replay.
+table Run (cap: "control") { rate: double; }
+table Pause (cap: "control") {}
+
+// Declarative test (TOML for humans and JSON for agents both map onto TestSpec; no code runs).
+// RunTest applies `settings` (same semantics as SetAttr, in order), then steps `duration` seconds (or `ticks`;
+// exactly one) sampling every monitor's signal at tick 0 and after each step. A monitor only sees samples with
+// from <= t <= to (t = seconds since the test started). `always`: every sample must lie in [lo, hi].
+// `eventually`: at least one sample must. Omitted lo/hi are -inf/+inf (one-sided bound).
+table Setting { path: string; attr: string; frame: string; values: [double]; }
+table Signal { path: string; attr: string; index: int; frame: string; }  // component `index` of Query(path, attr, frame)
+enum MonitorOp : byte { always = 0, eventually }
+table Monitor {
+  name: string; signal: Signal; op: MonitorOp;
+  lo: double = -inf; hi: double = inf; from: double = 0; to: double = inf;
+}
+table TestSpec {
+  name: string; settings: [Setting]; duration: double; ticks: int; monitors: [Monitor];
+  trace_every: int = 10;  // trace row every N ticks (plus the last tick); one column per distinct monitored signal
+}
+table RunTest (cap: "control") { spec: TestSpec; }  // reply.result; steps the world (and may leave it diverged)
+
+// Parameter sweep / Monte Carlo over a TestSpec. Each run clones the base state (`base` = a snapshot id, 0 = the current
+// state), applies spec.settings, then the run's parameter values (scalar SetAttr of `attr` on `path`; they override the
+// settings), then runs the test. The caller's World is never touched. grid: cartesian product of every param's `values`
+// (first param varies slowest); random: `n` runs, each param uniform in [lo, hi], run i seeded by (seed + i) alone. Rows
+// are ordered by run index and do not depend on `threads` (capped at 6 and at the run count). A run that fails or throws
+// gets its message in `error` (pass=false); a diverged run is reported, never fatal. Not logged: it changes no state.
+enum SweepMode : byte { grid = 0, random }
+table SweepParam { path: string; attr: string; values: [double]; lo: double; hi: double; }
+table Sweep (cap: "control") {
+  base: uint64; spec: TestSpec; params: [SweepParam]; mode: SweepMode; n: int; seed: uint64; threads: int = 1;
+}
+
+// Offscreen camera image (needs a renderer hook + Vulkan device, else solver_error). pos/lookat: 3 doubles each, world
+// frame (+z up). width/height in [1, 4096]. Reply: width, height, image (RGBA8, row 0 = top), depth (float32 metres
+// along the optical axis, +inf = no hit). Camera images are deterministic per GPU/driver only.
+table Render (cap: "read") { pos: [double]; lookat: [double]; fovy: double = 45; width: int = 320; height: int = 240; }
+// Lidar via solver ray casts (CPU, fully deterministic): `directions` = 3n doubles (any nonzero length), n <= 1048576.
+// Reply.distances: n doubles in metres, -1 = no hit.
+table Raycast (cap: "read") { origin: [double]; directions: [double]; }
+
+// Add / remove an entity in the running world (ROS 2 simulation_interfaces spawn_entity / delete_entity). The tick and
+// every other entity's state (qpos/qvel/act/ctrl, time, actuator gains) are kept exactly; snapshots taken before the
+// structural change no longer restore (error), and warm-start / applied forces / user data are reset.
+// Spawn: `path` = model file (MJCF/URDF, confined under session.root like LoadModel); `at` = new prim path
+// "<parent body prim>/<name>" (e.g. "/world/arm2"), the model's bodies appear beneath it; optional pos (3) / quat
+// (4, w x y z) place it in the parent body's frame. cap "control": it adds state and destroys none (Delete undoes it).
+// Delete: removes the body prim `path` and everything beneath it (its joints, geoms, ...). cap "destructive": the
+// entity's state is lost.
+table Spawn (cap: "control") { path: string; at: string; pos: [double]; quat: [double]; }
+table Delete (cap: "destructive") { path: string; }
+
+union Command { Query, SetAttr, Step, Snapshot, Restore, LoadModel, Run, Pause, RunTest, Sweep, Render, Raycast, Spawn, Delete }
+
+table Envelope { id: uint64; source: string; cmd: Command; }  // source: "cli" | "viewer" | ...
+
+// hit_*: `always` = first violation (hit => fail); `eventually` = first satisfaction (hit => pass).
+// Stats cover the monitor's window. tick = world tick, time = seconds since the test started.
+table MonitorResult {
+  name: string; pass: bool; hit: bool; hit_tick: uint64; hit_time: double; hit_value: double;
+  samples: uint64; min_value: double; max_value: double; rms: double; final_value: double;
+}
+// fail_*: the earliest violation over all `always` monitors. fail_snapshot = World::save() bytes at that tick
+// (feed to Sim.restore); fail_hash = state_hash at that tick.
+table TestResult {
+  pass: bool; diverged: bool; start_tick: uint64; end_tick: uint64; dt: double;
+  monitors: [MonitorResult];
+  fail_monitor: string; fail_tick: uint64; fail_time: double; fail_hash: uint64; fail_snapshot: [ubyte];
+  trace_cols: [string]; trace: [double];  // trace is row-major, columns "tick","t", then the signals
+}
+
+// One row per run, ordered by index. params = the values applied, in SweepParam order (SweepResult.params names them).
+table SweepRow { index: uint64; params: [double]; pass: bool; diverged: bool; error: string; monitors: [MonitorResult]; }
+table SweepResult { params: [string]; rows: [SweepRow]; }
+
+table Reply {
+  id: uint64;
+  ok: bool;
+  error: Err = none;
+  message: string;
+  values: [double];
+  unit: string;
+  prims: [string];
+  tick: uint64;
+  snapshot_id: uint64;
+  result: TestResult;
+  sweep: SweepResult;
+  width: int;
+  height: int;
+  image: [ubyte];
+  depth: [float];
+  distances: [double];
+}
+
+root_type Envelope;

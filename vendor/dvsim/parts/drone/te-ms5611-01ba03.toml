@@ -1,0 +1,46 @@
+id = "te-ms5611-01ba03"
+ports_note = "Data-only barometer chip that lives inside the Pixhawk 6C (holybro-pixhawk-6c); it is never mounted or wired on its own, so it has no ports. Resolution/offset numbers feed the barometer model of the flight controller."
+name = "TE Connectivity MS5611-01BA03 barometric pressure sensor (Pixhawk 6C baro)"
+category = "sensor.baro"
+vendor = "TE Connectivity (MEAS)"
+part_number = "MS5611-01BA03"
+url = "https://static.chipdip.ru/lib/444/DOC011444630.pdf"
+
+# 1 mbar = 100 Pa.
+[params]
+pressure_range_min        = { value = 1000, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_range_max        = { value = 120000, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_rms_noise_osr4096 = { value = 1.2, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_rms_noise_osr2048 = { value = 1.8, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_rms_noise_osr1024 = { value = 2.7, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_rms_noise_osr512  = { value = 4.2, unit = "Pa", src = "S1", fidelity = "datasheet" }
+pressure_rms_noise_osr256  = { value = 6.5, unit = "Pa", src = "S1", fidelity = "datasheet" }
+temperature_rms_noise_osr4096 = { value = 0.002, unit = "K", src = "S1", fidelity = "datasheet" }
+accuracy_25c_750mbar      = { value = 150, unit = "Pa", src = "S1", fidelity = "datasheet" }
+error_band_m20_85c        = { value = 250, unit = "Pa", src = "S1", fidelity = "datasheet" }
+long_term_stability       = { value = 100, unit = "Pa/yr", src = "S1", fidelity = "datasheet" }
+adc_bits                  = { value = 24, unit = "bit", src = "S1", fidelity = "datasheet" }
+response_time_osr4096     = { value = 8.22e-3, unit = "s", src = "S1", fidelity = "datasheet" }
+response_time_osr256      = { value = 0.5e-3, unit = "s", src = "S1", fidelity = "datasheet" }
+
+[visual]                            # cosmetic only: the bare package, size from the datasheet
+src = "V1"
+note = "5.0 x 3.0 x 1.0 mm QFN-style package (datasheet)."
+
+[[visual.elements]]
+gen = "sensor_ic"
+params = { size = [0.005, 0.003, 0.001] }
+
+[[sources]]
+id = "V1"
+url = "https://static.chipdip.ru/lib/444/DOC011444630.pdf"
+title = "MS5611-01BA03 data sheet (package size)"
+accessed = "2026-10-08"
+quote = "QFN package 5.0 x 3.0 x 1.0 mm3"
+
+[[sources]]
+id = "S1"
+url = "https://static.chipdip.ru/lib/444/DOC011444630.pdf"
+title = "MS5611-01BA03 Barometric Pressure Sensor, with stainless steel cap - data sheet (TE Connectivity; distributor copy)"
+accessed = "2026-10-07"
+quote = "Resolution (1) 0.065 / 0.042 / 0.027 / 0.018 / 0.012 mbar ... Accuracy 25°C, 750 mbar -1.5 +1.5 mbar ... Response time (1) 0.5 / 1.1 / 2.1 / 4.1 / 8.22 ms ... Error band, -20°C to +85°C, 450 to 1100 mbar (2) -2.5 +2.5 ... Long term stability ±1 mbar/yr ... Resolution RMS 1024 0.027 mbar ... OSR 4096 0.012 ... Range 10 1200 mbar"

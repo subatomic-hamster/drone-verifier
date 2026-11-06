@@ -1,0 +1,151 @@
+id = "pololu-37d-19-1-12v-4751"
+name = "Pololu 19:1 Metal Gearmotor 37Dx68L mm 12V with 64 CPR Encoder, Helical Pinion (item 4751)"
+category = "motor.dc.gearmotor"
+vendor = "Pololu"
+part_number = "Pololu 4751"
+url = "https://www.pololu.com/product/4751"
+
+# Frame: origin on the output-shaft axis at the gearbox face plate; +z = shaft direction (out of the face plate); cylindrical body (37 mm class)
+# occupies z in [-0.068, 0] (68 mm = face plate to back of the encoder cap); the 6 mm D-shaft extends 16 mm to z = +0.016.
+# Same motor + gearbox as item 4741 (parts/actuators/pololu-37d-19-1-12v-4741.toml, no encoder, 185 g): every performance number below is the
+# 4751 page's own, re-read on 2026-10-07; the encoder adds 15 g and 16 mm of length. Full DC-motor model at 12 V (as the 4741 part).
+
+[params]
+mass               = { value = 0.200,   unit = "kg",     src = "S1", fidelity = "datasheet" }
+body_diameter      = { value = 0.037,   unit = "m",      src = "S1", fidelity = "datasheet" }  # "37D" nominal class
+body_length        = { value = 0.068,   unit = "m",      src = "S1", fidelity = "datasheet" }  # face plate to back of encoder cap
+shaft_diameter     = { value = 0.006,   unit = "m",      src = "S1", fidelity = "datasheet" }
+shaft_length       = { value = 0.016,   unit = "m",      src = "S2", fidelity = "datasheet" }
+gear_ratio         = { value = 18.75,   unit = "1",      src = "S1", fidelity = "datasheet" }  # exact: (25x30x30)/(10x10x12) per S2
+v_nominal          = { value = 12.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+no_load_speed_12v  = { value = 55.501,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 530 rpm
+no_load_current_12v = { value = 0.2,    unit = "A",      src = "S1", fidelity = "datasheet" }
+stall_torque_12v   = { value = 0.83357, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 8.5 kg.cm, extrapolated
+stall_current_12v  = { value = 5.5,     unit = "A",      src = "S1", fidelity = "datasheet" }  # extrapolated
+no_load_speed_6v   = { value = 28.274,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 270 rpm
+no_load_current_6v = { value = 0.15,    unit = "A",      src = "S1", fidelity = "datasheet" }
+stall_torque_6v    = { value = 0.49033, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 5.0 kg.cm
+stall_current_6v   = { value = 3.0,     unit = "A",      src = "S1", fidelity = "datasheet" }
+max_output_power_12v = { value = 12.0,  unit = "W",      src = "S1", fidelity = "datasheet" }
+max_efficiency_12v = { value = 0.55,    unit = "1",      src = "S1", fidelity = "datasheet" }
+speed_at_max_eff   = { value = 49.218,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 470 rpm
+torque_at_max_eff  = { value = 0.09807, unit = "N*m",    src = "S1", fidelity = "datasheet" }  # 1.0 kg.cm
+current_at_max_eff = { value = 0.76,    unit = "A",      src = "S1", fidelity = "datasheet" }
+encoder_resolution = { value = 1200,    unit = "counts/rev", src = "S1", fidelity = "datasheet" }  # gearbox output; 64 CPR x 18.75 (both edges of both channels)
+encoder_resolution_motor = { value = 64, unit = "counts/rev", src = "S1", fidelity = "datasheet" }
+encoder_vcc_min    = { value = 3.5,     unit = "V",      src = "S2", fidelity = "datasheet" }
+encoder_vcc_max    = { value = 20.0,    unit = "V",      src = "S2", fidelity = "datasheet" }
+encoder_current_max = { value = 0.010,  unit = "A",      src = "S2", fidelity = "datasheet" }
+lead_length        = { value = 0.20,    unit = "m",      src = "S1", fidelity = "datasheet" }  # "may vary by a few centimeters"
+torque_limit_continuous = { value = 0.9807, unit = "N*m", src = "S3", fidelity = "datasheet" }  # 10 kg.cm
+torque_limit_instantaneous = { value = 2.4517, unit = "N*m", src = "S3", fidelity = "datasheet" }  # 25 kg.cm
+mount_screw_max_engagement = { value = 0.003, unit = "m", src = "S3", fidelity = "datasheet" }
+shaft_seat_z       = { value = 0.0068,  unit = "m",      fidelity = "estimated", rationale = "Where a universal hub sits on the 16 mm shaft is the user's choice (set screw). 6.8 mm from the face plate puts the 9.2 mm hub (Pololu 1083) flush with the shaft end (16 mm) and clears a bracket up to 6.8 mm thick. Only the wheel's lateral offset depends on it." }
+
+# --- DC-motor equivalent (motor side), derived at 12 V (same derivation as the 4741 part: identical motor and gearbox) ---
+r_effective = { value = 2.182, unit = "ohm", fidelity = "derived", derivation = "R = V/I_stall = 12 V / 5.5 A = 2.182 ohm (Pololu stall values are theoretical extrapolations). The 6 V point gives 6/3.0 = 2.0 ohm; the ~9 % difference is a Pololu source inconsistency, the 12 V values are used." }
+omega_noload_motor_12v = { value = 1040.7, unit = "rad/s", fidelity = "derived", derivation = "N * omega_out = 18.75 * 55.501 rad/s = 1040.7 rad/s (9938 rpm), the speed at which the 12 V no-load current is measured (loss-law w0)." }
+ke = { value = 0.011112, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = (V - I0*R)/(N*omega_out) = (12 - 0.2*2.182)/(18.75*55.501) = 11.564/1040.7 = 1.1112e-2 V*s/rad." }
+kt_motor = { value = 0.011112, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke." }
+kv_equivalent = { value = 859.4, unit = "rpm/V", fidelity = "derived", derivation = "Kv = 60/(2*pi*Ke) = 9.5493/0.011112 = 859.4 rpm/V, motor side (before the 18.75:1 gear)." }
+gear_efficiency = { value = 0.755, unit = "1", fidelity = "derived", derivation = "eta = tau_stall/(N*Kt*(I_stall - I0)) = 0.83357/(18.75*0.011112*(5.5-0.2)) = 0.83357/1.1042 = 0.755. (Pololu's separate 'max efficiency' of 55 % is the overall motor+gearbox peak.)" }
+friction_torque_motor_noload = { value = 0.002222, unit = "N*m", fidelity = "derived", derivation = "Kt*I0 = 0.011112*0.2 = 2.22e-3 N*m at the motor shaft." }
+i0_visc = { value = 0.51, unit = "1", fidelity = "derived", derivation = "Viscous share of the no-load loss torque from the two published no-load points: I0(w) = Ic + Iv w/w0 with 0.2 A at w0 = 1040.7 rad/s (12 V) and 0.15 A at 0.509 w0 (6 V: 28.274 * 18.75 = 530.1 rad/s): Iv = (0.2-0.15)/(1-0.509) = 0.102 A, share Iv/0.2 = 0.51 (Coulomb 0.098 A)." }
+rotor_inertia_motor = { value = 2.5e-6, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published. Solid-cylinder bound of the rotor of a 37D can motor: ~70 g of copper + steel at 17 mm diameter, J = m r^2 / 2 = 0.07 * 0.0085^2 / 2 = 2.5e-6 kg m^2 (+-50 %). Reflected to the wheel it is N^2 J = 8.8e-4 kg m^2, comparable to a 1.2 kg rover's wheel-referred inertia (m r^2 = 2.4e-3), so the straight-line acceleration depends on it; the steady speeds do not." }
+c_th = { value = 36.0, unit = "J/K", fidelity = "estimated", rationale = "No published winding thermal capacity. 10 J/K of the 55 g STS3215 scaled by the mass ratio 200 g / 55 g (heat capacity ~ mass) = 36 J/K; only the temperature readout depends on it." }
+r_th = { value = 6.3, unit = "K/W", fidelity = "estimated", rationale = "No published winding-to-ambient resistance. 15 K/W of the 55 g STS3215 scaled by (55/200)^(2/3) = 0.42 (surface area ~ m^(2/3), same construction class): 6.3 K/W; only the temperature readout depends on it." }
+
+[geometry]
+shape = "cylinder"
+size = [0.0185, 0.034]                 # radius, half-length; the mid-plane is at z = -0.034 (pos below)
+pos = [0.0, 0.0, -0.034]
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-circle.31.6.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 6
+note = "Six M3 holes on the face plate forming a regular hexagon with 15.5 mm between neighbouring hole centres (S3). Circumradius of a regular hexagon equals its side, so bolt circle diameter = 2 * 15.5 = 31 mm (derived). Max 3 mm screw engagement."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.6d"
+gender = "male"
+pos = [0.0, 0.0, 0.0068]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "6 mm D-shaft, 16 mm long (S1). The port sits at the hub seat (6.8 mm from the face plate, see shaft_seat_z), not at the shaft root."
+
+[[ports]]
+name = "motor_power"
+pins = ["J.1", "J.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }  # rated (nominal) voltage
+i_peak = { value = 5.5, unit = "A", src = "S1", fidelity = "datasheet" }  # extrapolated stall current
+i_max = { value = 1.375, unit = "A", fidelity = "derived", derivation = "Pololu's general recommendation for brushed DC motors is 25 % or less of the stall current (S3): 0.25 * 5.5 A = 1.375 A." }
+note = "Red and black 20 cm leads (S2), one to each motor terminal; terminated with the encoder leads in one 1x6 0.1 inch female header (the motor pair is an inference of the header being shared, S2 lists the six functions)."
+
+[[ports]]
+name = "encoder"
+pins = ["J.3", "J.4", "J.5", "J.6"]   # GND, Vcc, A, B
+kind = "signal"
+type = "quadrature-encoder"
+gender = "neutral"
+level = { value = 5.0, unit = "V", src = "S2", fidelity = "datasheet" }  # Hall sensor Vcc 3.5-20 V; the outputs swing 0 V to Vcc (S2 oscilloscope capture used Vcc = 5 V)
+note = "Green = encoder GND, blue = encoder Vcc (3.5 - 20 V, max 10 mA), yellow = A, white = B (S2)."
+
+# ---- Connector (pin level): the six colour-coded leads end in one 1x6 female header (S2). Pin order = the order S2 lists the leads
+# (red, black, green, blue, yellow, white); the page does not say which end of the header is pin 1. Drawn at the encoder cap, where the
+# leads leave the motor (the lead length is the wire's, `lead_length`).
+[[connectors]]
+id = "J"
+name = "motor + encoder lead header (1x6, 0.1 in)"
+type = "header-1x6-2.54mm"
+gender = "female"
+pos = [0.0, 0.0, -0.068]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00254
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin order is the order of the leads in S2; the end of the cable is placed at the encoder cap (estimated)."
+pins = [
+  { number = 1, name = "M1 (red)", kind = "power", dir = "in", v_max = 12.0, i_max = 1.375, note = "motor power, to one motor terminal (S2)" },
+  { number = 2, name = "M2 (black)", kind = "power", dir = "in", v_max = 12.0, i_max = 1.375, note = "motor power, to the other motor terminal (S2)" },
+  { number = 3, name = "ENC GND (green)", kind = "ground", note = "encoder ground (S2)" },
+  { number = 4, name = "ENC Vcc (blue)", kind = "power", dir = "in", v_min = 3.5, v_max = 20.0, i_max = 0.010, note = "Hall sensor supply 3.5 to 20 V, max 10 mA (S2)" },
+  { number = 5, name = "ENC A (yellow)", kind = "signal", dir = "out", note = "square wave 0 V to Vcc (S2)" },
+  { number = 6, name = "ENC B (white)", kind = "signal", dir = "out", note = "square wave 0 V to Vcc, about 90 degrees out of phase with A (S2)" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/4751/specs"
+title = "Pololu item 4751 Specs tab (19:1 Metal Gearmotor 37Dx68L mm 12V with 64 CPR Encoder, Helical Pinion)"
+accessed = "2026-10-07"
+quote = "Size: 37D × 68L mm|1| Weight: 200 g Shaft diameter: 6 mm|2| General specifications Gear ratio: 18.75:1 No-load speed @ 12V: 530 rpm No-load current @ 12V: 0.2 A Stall current @ 12V: 5.5 A|3| Stall torque @ 12V: 8.5 kg·cm|3| Max output power @ 12V: 12 W No-load speed @ 6V: 270 rpm No-load current @ 6V: 0.15 A|4| Stall current @ 6V: 3.0 A|4| Stall torque @ 6V: 5.0 kg·cm|4| Motor type: 12V Performance at maximum efficiency Max efficiency @ 12V: 55 % Speed at max efficiency: 470 rpm Torque at max efficiency: 1.0 kg·cm Current at max efficiency: 0.76 A Output power at max efficiency: 5.0 W General specifications Lead length: 20 cm|5| Encoders?: Y Encoder resolution: 64 CPR Notes:|1|Length measurement is from gearbox face plate to back of encoder cap (it does not include the output shaft). See dimension diagram for details.|2|D shaft.|3|Stalling is likely to damage the gearmotor. Stall parameters come from a theoretical extrapolation of performance at loads far from stall. As the motor heats up, as happens as it approaches an actual stall, the stall torque and current decrease.|4|This motor will run at 6 V but is intended for operation at 12 V.|5|May vary by a few centimeters."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/4751"
+title = "Pololu item 4751 product page (description, Exact gear ratio, Using the Encoder)"
+accessed = "2026-10-07"
+quote = "This gearmotor is a powerful 12V brushed DC motor with a 18.75:1 metal gearbox and an integrated quadrature encoder with a resolution of 64 counts per revolution (CPR) of the motor shaft and 1200 CPR of the gearbox’s output shaft. || These units have a 16 mm-long, 6 mm-diameter D-shaped output shaft. || Exact gear ratio: (25×30×30) / (10×10×12) = 18.75:1 || The quadrature encoder provides a resolution of 64 counts per revolution of the motor shaft when counting both edges of both channels. To compute the counts per revolution of the gearbox output, multiply the gear ratio by 64. The motor/encoder has six color-coded, 8″ (20 cm) leads terminated by a 1×6 female header with a 0.1″ pitch || Red motor power (connects to one motor terminal) Black motor power (connects to the other motor terminal) Green encoder GND Blue encoder Vcc (3.5 – 20 V) Yellow encoder A output White encoder B output The Hall sensor requires an input voltage, Vcc, between 3.5 and 20 V and draws a maximum of 10 mA."
+
+[[sources]]
+id = "S3"
+url = "https://www.pololu.com/product/4751"
+title = "Pololu item 4751 product page (Note on stall extrapolations and load limits; Gearmotor accessories: mounting holes; dimension-diagram warning)"
+accessed = "2026-10-07"
+quote = "The recommended upper limit for continuously applied loads is 10 kg-cm (150 oz-in), and the recommended upper limit for instantaneous torque is 25 kg-cm (350 oz-in). Stalls can also result in rapid (potentially on the order of seconds) thermal damage to the motor windings and brushes; a general recommendation for brushed DC motor operation is 25% or less of the stall current. || The face plate has six mounting holes evenly spaced around the outer edge threaded for M3 screws. These mounting holes form a regular hexagon and the centers of neighboring holes are 15.5 mm apart. || Warning: Do not screw too far into the mounting holes as the screws can hit the gears. We recommend screwing no more than 3mm (0.12″) into the screw hole."

@@ -1,0 +1,78 @@
+id = "matek-m10q-5883"
+name = "Matek M10Q-5883 GNSS + QMC5883L compass (15x15 patch)"
+category = "pcb.gps"
+vendor = "Matek Systems"
+part_number = "M10Q-5883"
+url = "https://www.mateksys.com/?portfolio=m10q-5883"
+
+[params]
+mass                = { value = 0.008, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.0124, unit = "m", src = "S1", fidelity = "datasheet" }
+antenna_size_xy     = { value = 0.015, unit = "m", src = "S1", fidelity = "datasheet" }
+antenna_thickness   = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+supply_voltage_min  = { value = 4, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 9, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current      = { value = 0.013, unit = "A", src = "S1", fidelity = "datasheet" }
+default_baud        = { value = 9600, unit = "baud", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 353.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "gps_in"
+pins = ["J.1", "J.6"]
+kind = "power"
+type = "jst-gh.6"
+gender = "male"
+v_max = { value = 9, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "JST-GH-6P connector (SM06B-GHS-TB), listed by Matek as 1.27 mm pitch; 5 V pad/pin input range 4~9 V"
+
+[[ports]]
+name = "uart"
+pins = ["J.2", "J.3"]
+kind = "signal"
+type = "uart"
+gender = "neutral"
+
+[[ports]]
+name = "i2c"
+pins = ["J.4", "J.5"]
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+note = "QMC5883L compass"
+
+# Pin level (estimated): the page lists the six wires in the order 5V, RX, TX, CL, DA, G and names the connector JST-GH-6P (SM06B-GHS-TB); the pin-to-position mapping is not stated, so the listed order is taken as pins 1..6.
+[[connectors]]
+id = "J"
+name = "JST-GH-6P (SM06B-GHS-TB)"
+type = "jst-gh-6"
+port_type = "jst-gh.6"
+gender = "male"
+pos = [0.0, -0.01, 0.003]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00127
+src = "S1"
+fidelity = "estimated"
+rationale = "Signal names and the connector part number are from S1 (Wiring and settings); the page does not number the pins, so the order in which it lists the wires (5V, RX, TX, CL, DA, G) is assumed to be pin 1..6. Pitch 1.27 mm as the page states."
+pose_rationale = "Header location on the board is not documented: placed on the -y edge (positional estimate)."
+pins = [
+  { number = 1, name = "5V", kind = "power", dir = "in", v_min = 4.0, v_max = 9.0 },
+  { number = 2, name = "RX", kind = "signal", dir = "in", note = "module RX, connects to the flight controller UART TX" },
+  { number = 3, name = "TX", kind = "signal", dir = "out", note = "module TX, connects to the flight controller UART RX" },
+  { number = 4, name = "CL", kind = "signal", dir = "io", note = "I2C SCL for the QMC5883 compass" },
+  { number = 5, name = "DA", kind = "signal", dir = "io", note = "I2C SDA for the QMC5883 compass" },
+  { number = 6, name = "G", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.mateksys.com/?portfolio=m10q-5883"
+title = "GNSS & Compass, M10Q-5883 (Matek Systems product page)"
+accessed = "2026-10-07"
+quote = "GNSS u-blox M10 series (GPS, GLONASS, Galileo and BeiDou) Magnetic Compass QMC5883L Patch antenna 15*15*4mm Input voltage range: 4~9V (5V pad/pin) Power consumption: 13mA UART baudrate: 9600 default Operating Temperatures: -20~80 °C ... JST-GH-6P connector (SM06B-GHS-TB). 1.27mm pitch ... 20mm*20mm*12.4mm 8g"

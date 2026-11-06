@@ -1,0 +1,51 @@
+id = "cuas-lite-foam-launcher"
+name = "cuas-lite foam-ball launcher (device marker: flywheel muzzle of the printed head; all mass is in the printed and bought parts)"
+category = "effector.launcher"
+vendor = "dvsim cuas-lite"
+part_number = "n/a"
+url = "cad/cuas-lite/parts.py"
+
+# NOT a physical part: the carrier of the simulator's `launcher` device for the printed head (the barrel, flywheels, cage and pusher are separate parts of the assembly). It supplies the muzzle
+# port (device site) and the launcher constants. Muzzle velocity 30 m/s, sigma 1.5 m/s and direction spread 10 mrad are the spec's section 5.3 estimates (flywheel launchers of foam balls are loose),
+# to be replaced by bench measurements (spec Q8). A 0.1 g marker mass keeps the part a body.
+# Part frame: origin at the muzzle centre, +z = barrel direction is NOT used; the port below carries the barrel axis (+x of the part frame).
+
+[params]
+mass                = { value = 0.0001, unit = "kg", fidelity = "estimated", rationale = "Marker only; the head's mass is in the parts that make it." }
+muzzle_velocity     = { value = 30.0, unit = "m/s", fidelity = "estimated", rationale = "Spec section 5.3: nominal 30 m/s (Rival blasters 27-37 m/s, secondary source); flywheel launcher performance is a design variable (spec Q8)." }
+muzzle_velocity_std = { value = 1.5, unit = "m/s", fidelity = "estimated", rationale = "Spec section 5.3 estimate." }
+spread_std          = { value = 0.01, unit = "rad", fidelity = "estimated", rationale = "Spec section 5.3 estimate: 10 mrad per axis." }
+length              = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope of the marker only." }
+width               = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope of the marker only." }
+height              = { value = 0.002, unit = "m", fidelity = "estimated", rationale = "Drawing envelope of the marker only." }
+bore_diameter       ={ value = 0.024, unit = "m", fidelity = "derived", derivation = "Ball 22.2 mm + 1.8 mm clearance = 24.0 mm (cad/cuas-lite params BARREL_ID)." }
+barrel_length       = { value = 0.110, unit = "m", fidelity = "derived", derivation = "cad/cuas-lite params BARREL_LEN = 110 mm." }
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port."
+
+# Muzzle: the launcher device's site takes this port's pose: +z of the site = the port axis = the barrel direction (+x of the part frame, level).
+[[ports]]
+name = "muzzle"
+kind = "mech"
+type = "muzzle-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Barrel muzzle on the barrel axis."
+
+[visual]
+rationale = "Device marker: nothing to draw; a 2 mm box at the muzzle keeps the part visible in the viewer."
+
+[[visual.elements]]
+gen = "box_device"

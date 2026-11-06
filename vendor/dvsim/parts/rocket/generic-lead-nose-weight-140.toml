@@ -1,0 +1,47 @@
+id = "generic-lead-nose-weight-140"
+name = "Cast lead nose weight, 60 mm disc x 16 mm, 520 g (illustrative, not a product)"
+category = "rocket.ballast"
+vendor = "generic"
+part_number = "n/a (home-cast or sheet lead)"
+url = "https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html"
+
+# Nose weight of assemblies/tvc-lander.toml: moves the centre of gravity forward (shortens the lever of the aerodynamic instability CP - CG, lengthens the TVC lever
+# CG - gimbal centre) and sets the vehicle mass, which sets the apogee and the speed of the landing burn. Part frame: origin at the centre of the underside, +z up.
+# A 60 mm x 17 mm lead slug is a stack of home-cast or sheet-lead discs: ordinary model-rocket nose ballast.
+[visual]
+rationale = "The part's own collision cylinder (a cast lead disc), dark metal finish."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "steel-dark" }
+
+[params]
+density = { value = 11340.0, unit = "kg/m^3", src = "S1", fidelity = "datasheet" }
+radius = { value = 0.030, unit = "m", fidelity = "estimated", rationale = "Design choice: fits inside the ogive 0.10 m above its base (inside radius ~0.058 m) with room for a bulkhead." }
+thickness = { value = 0.016218, unit = "m", fidelity = "derived", derivation = "mass / (density x pi radius^2) = 0.520 / (11340 x pi x 0.030^2) = 16.2 mm." }
+mass = { value = 0.520, unit = "kg", fidelity = "estimated", rationale = "Chosen to bring the vehicle to 1.45 kg with both motors loaded and the 37 g tail fins, inside the 1.5 kg hobby-model limit. The F15 landing motor's tail thrust (13-14.6 N) is then about the weight of the vehicle (13.7-14.2 N) and a 1-D design Monte Carlo (docs/lander.md) puts the best landing odds at 1.43-1.47 kg: lighter, the tail lifts the vehicle again after the stop; heavier, the motor cannot brake the fall. The bare 0.85 kg airframe would climb to ~30 m and return at ~17 m/s, faster than a motor of this class can stop, and its nose-first coast is aerodynamically unstable for ~2 s; at 1.45 kg the E16 hop is ~7 m." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.030, 0.008109]
+pos = [0.0, 0.0, 0.008109]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside of the disc, glued to the nose bulkhead."
+
+[[sources]]
+id = "S1"
+url = "https://www.engineeringtoolbox.com/metal-alloys-densities-d_50.html"
+title = "Engineering ToolBox - Metals and Alloys, Densities"
+accessed = "2026-10-08"
+quote = "Lead | 11340 (kg/m3)"

@@ -1,0 +1,21 @@
+id = "cuas-lite-electronics-tray"
+name = "cuas-lite electronics_tray (3D printed PLA, group static)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "electronics_tray"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (81.77 g, supports: minor). The mesh is the CAD's dvsim mesh (m), already in its group frame (B static/pan, head frame H tilt): the part frame IS that frame.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/electronics_tray.stl"
+material = "pla"
+bbox_min = [-0.098, -0.0645, -0.085]
+bbox_max = [0.098, 0.0645, -0.06]

@@ -1,0 +1,33 @@
+id = "cuas-lite-feed-elbow"
+name = "cuas-lite feed_elbow (3D printed PETG, group pan)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "feed_elbow"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (40.99 g, supports: yes). The mesh is the CAD's dvsim mesh (m), already in its group frame B (pan group): the part frame IS frame B.
+# Hopper neck -> 38 deg slope -> spigot that enters the hollow right trunnion (manifest interface.mounts.ball_feed.feed_elbow); bolted to the outer face of the right cheek.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/feed_elbow.stl"
+material = "petg"
+bbox_min = [-0.036, -0.142, 0.168]
+bbox_max = [0.036, -0.015, 0.253251]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the rotor plate's seat port mates here."

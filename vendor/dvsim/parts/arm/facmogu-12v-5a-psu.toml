@@ -1,0 +1,71 @@
+id = "facmogu-12v-5a-psu"
+name = "Facmogu 12V 5A AC-DC power supply adapter (Koch v1.1 follower arm power supply)"
+category = "psu"
+vendor = "Facmogu"
+part_number = "B0BYVK73BP (Amazon ASIN)"
+url = "https://www.amazon.com/dp/B0BYVK73BP"
+
+# Koch v1.1 follower BOM row "12V Power Supply" (US link a.co/d/40o8uMN resolves to this ASIN; the UK row links a Facmogu 12V adapter too). It feeds the
+# Waveshare Bus Servo Adapter, which passes 12 V to the two XL430-W250-T and (through the 12 V -> 5 V reducer) the four XL330-M288-T (docs/research/dynamixel.md section 8).
+# The Koch LEADER arm uses a separate 5 V supply (README footnote 14), not this file; no leader supply part is created (its product links are unrecognised short links).
+# Same vendor and port pattern as parts/arm/facmogu-5v-4a-psu.toml (SO-101 supply).
+
+[params]
+v_out_nominal = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_out_rated   = { value = 5.0, unit = "A", src = "S1", fidelity = "datasheet" }
+v_in_min      = { value = 100.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_in_max      = { value = 240.0, unit = "V", src = "S1", fidelity = "datasheet" }
+connector     = { value = "DC barrel 5.5x2.1 mm (also supplied with a 5.5x2.5 mm tip)", unit = "-", src = "S1", fidelity = "datasheet" }
+cable_length  = { value = 1.5, unit = "m", src = "S1", fidelity = "datasheet" }
+price     = { value = 23.0, unit = "USD", fidelity = "estimated", rationale = "Amazon (S1) blocks scripted fetches; third-party Newegg listings of the same Facmogu 12V 5A adapter showed 22.99-23.99 USD in a web search on 2026-10-11 (search 'Facmogu 12V 5A', newegg.com marketplace); 23 USD taken. Base-path supply of cuas-lite (the brick)." }
+mass          = { value = 0.2, unit = "kg", fidelity = "estimated", rationale = "The product title lists no weight. Typical 60 W wall-mount switching adapters are of the order of 150-250 g; 0.2 kg taken. Does not enter the arm's moving mass." }
+r_out         = { value = 0.05, unit = "ohm", fidelity = "estimated", rationale = "No published output impedance or load regulation. A 1-3 % regulation at 5 A on 12 V (0.12-0.36 V) corresponds to 0.024-0.07 ohm; 0.05 ohm taken. Excludes the 1.5 m output cable." }
+current_limit = { value = 5.6, unit = "A", fidelity = "estimated", rationale = "No published over-current threshold. Small adapters typically trip/hiccup at 110-150 % of rating; 5.6 A (112 %) is a conservative placeholder for a simulator limit." }
+v_out_unloaded_max = { value = 12.6, unit = "V", fidelity = "estimated", rationale = "Unregulated-to-lightly-regulated 12 V adapters commonly sit 3-5 % high at light load; 12.6 V assumed. Relevant because the XL430-W250-T spec maximum is 12.0 V (robotis-xl430-w250-t) and the Waveshare board maximum is 12.6 V. Unverified, no published figure." }
+
+[geometry]
+shape = "box"
+size = [0.04, 0.025, 0.017]
+size_fidelity = "estimated"
+size_rationale = "Half extents (m) of an assumed 80 x 50 x 34 mm wall-mount adapter body; the product title gives no dimensions. Used only for drawing, never for kinematics. No mesh."
+
+# Electrical only: no mechanical ports (the adapter plugs into a wall socket; not part of the arm assembly).
+[[ports]]
+name = "power_out"
+lead = { length = "cable_length" }   # the 150 cm output cable is attached to the adapter (S1 title); the 0.2 kg is an estimate for such an adapter as sold
+kind ="power"
+type = "dc-barrel.5.5x2.1"
+gender = "male"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 12.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "12 V nominal output on the 5.5 x 2.1 mm barrel tip (the supply also ships a 5.5 x 2.5 mm tip, S1); v_max is the nominal output voltage (param v_out_nominal), i_max the rated current (param i_out_rated)."
+
+# Pin level: the output barrel plug on the end of the 150 cm lead (S1: '5.5mmx 2.5mm & 2.1mm Output Jack'). The listing gives no polarity;
+# centre-positive is the convention of LED-strip / Koch-arm supplies of this kind (estimated). The plug is drawn at the body.
+[[connectors]]
+id = "OUT"
+name = "DC output plug"
+type = "dc-barrel-5.5x2.1"
+gender = "male"
+pos = [0.04, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 (product title) names the 5.5 x 2.1 mm jack and 12 V 5 A but not the polarity; centre-positive assumed (the barrel convention for this supply class)."
+pins = [
+  { number = 1, name = "DC+", kind = "power", dir = "out", v = 12.0, i_max = 5.0, note = "centre pin (assumed)" },
+  { number = 2, name = "DC-", kind = "ground", note = "sleeve" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.amazon.com/dp/B0BYVK73BP"
+title = "Amazon product page title, Facmogu 12V 5A power supply adapter (Koch v1.1 follower BOM link a.co/d/40o8uMN redirects here)"
+accessed = "2026-10-07"
+quote = "Facmogu 12V 5A Power Supply Adapter, AC 100-240V to DC 12V Converter | 50/60Hz | Wall Plug Adapter Transformers | 150cm/ 4.92ft Long Cable | 5.5mmx 2.5mm & 2.1mm Output Jack | For LED Strip Lights : Electronics"

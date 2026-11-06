@@ -1,0 +1,67 @@
+id = "koch-gripper-moving"
+name = "Koch v1.1 follower gripper moving part (3D printed, link_6)"
+category = "frame.printed"
+vendor = "Jess Moss / Hugging Face (Koch v1.1, Apache-2.0); original design Alexander Koch"
+part_number = "Follower_Gripper_Moving_Part.STL (sim mesh link_6.STL)"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/hardware/follower/STL/Follower_Gripper_Moving_Part.STL"
+
+[params]
+volume_solid = { value = 1.2841e-5, unit = "m^3", fidelity = "derived", derivation = "Signed-volume (divergence theorem) integral over the 884 triangles of meshes/koch/link_6.STL (binary STL, metres) = 12.841 cm^3. Solid; excludes infill. The upstream hardware/follower/STL/Follower_Gripper_Moving_Part.STL (mm) integrates to 12843.1 mm^3 (same solid, 0.02 % apart, re-tessellated)." }
+infill_fraction = { value = 0.30, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "The Koch v1.1 README gives material, layer height, maximum nozzle diameter and ~30 % infill (its author used 37 %), no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile)." }
+gripper_range = { value = [-1.60, 0.032], unit = "rad", fidelity = "estimated", rationale = "No published limit. MuJoCo Menagerie low_cost_robot_arm (S3, 'approximate joint limits', joint gripper) gives -1.60 .. 0.032 with the same axis (0 0 -1) as URDF joint_6; the URDF of S2 has -2.45 .. 0.032 (same closed end 0.032, wider open end), the narrower Menagerie range is used." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/koch/link_6.STL"
+material = "pla"
+urdf_link = "link_6"
+origin_xyz = [0.0, 0.0, 0.0]
+origin_rpy = [0.0, 0.0, 0.0]
+bbox_min = [-0.0557, -0.0079, -0.0322]
+bbox_max = [0.0083, 0.0131, 0.0033]
+# mesh units metres; the mesh is already in the URDF link frame (visual origin identity). Link frame origin = gripper joint origin (the horn outer face).
+
+# Ports derived by tools/koch_ports.py (closure check: python tools/koch_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame = URDF link frame.
+# horn_seat: mate with robotis-xl330-m288-t `output` (k = 0) with reverse = true (URDF joint_6 axis is -z, the output axis is +z); q = 0 is the URDF zero of the gripper joint, limits in gripper_range.
+[[ports]]
+name = "horn_seat"
+kind = "mech"
+type = "servo-horn.dynamixel-xl330"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/koch_ports.py from meshes/koch/follower.urdf (s1lent4gnt/koch-v1-1 cc1a4eb): F = inv(J_joint_6) @ S_joint_6 @ Rx(pi) with J the URDF joint frame (joint_6 = gripper) and S the servo frame in the parent link; mating robotis-xl330-m288-t.output (k = 0) reproduces the URDF. The URDF joint axis is the INVERSE of the output axis, so the mate needs reverse = true to get the URDF sign"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin), the value used by the SO-101 parts. Estimated."
+joint = "gripper"
+joint_reverse = true
+
+[[sources]]
+id = "S1"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/README.md"
+title = "Koch v1.1 README, Printing the Parts, Step 1 (commit 1a553e1)"
+accessed = "2026-10-07"
+quote = "Precision: 0.2mm minimum height layer || Material: PLA+, ABS, PETG or other reasonably strong plastics. || Nozzle Diameter: 0.4mm maximum nozzle diameter || Infill Density: ~30%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/s1lent4gnt/koch-v1-1/blob/cc1a4eb9b27978b6bc3bb34f12fa5a7d229f1fde/simulation/follower.urdf"
+title = "s1lent4gnt/koch-v1-1 simulation/follower.urdf (commit cc1a4eb, a fork of jess-moss/koch-v1-1), link_6 and joint_6"
+accessed = "2026-10-07"
+quote = "<link name=\"link_6\"> || <mesh filename=\"package://follower/meshes/link_6.STL\" /> || <joint name=\"joint_6\" type=\"revolute\"> <origin xyz=\"-0.01315 -0.0075 0.0145\" rpy=\"0 0 0\" /> <parent link=\"link_5\" /> <child link=\"link_6\" /> <axis xyz=\"0 0 -1\" /> <limit lower=\"-2.45\" upper=\"0.032\" effort=\"0.5\" velocity=\"100\" />"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S3"
+url = "https://github.com/google-deepmind/mujoco_menagerie/blob/f054586a8e90465d49ee5be15335c4a0c7f57caf/low_cost_robot_arm/low_cost_robot_arm.xml"
+title = "MuJoCo Menagerie low_cost_robot_arm.xml (commit f054586), joint gripper; README: derived from the Koch v1.1 URDF, 'Added approximate joint limits.'"
+accessed = "2026-10-07"
+quote = "<joint name=\"gripper\" pos=\"0 0 0\" axis=\"0 0 -1\" range=\"-1.60 0.032\" frictionloss=\"0.1\"/>"
+license = "Apache-2.0"

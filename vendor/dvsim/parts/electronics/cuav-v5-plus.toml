@@ -1,0 +1,78 @@
+id = "cuav-v5-plus"
+name = "CUAV V5+ flight controller (Pixhawk FMUv5)"
+category = "pcb.fc"
+vendor = "CUAV"
+part_number = "V5+"
+url = "https://ardupilot.org/copter/docs/common-cuav-v5plus-overview.html"
+
+# CUAV's own docs site was not reachable and the PX4 guide page was removed (July 2026); the ArduPilot overview is used.
+# No mounting pattern is given on that page, so no mech port is declared.
+[params]
+mass                = { value = 0.090, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.0855, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.042, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.033, unit = "m", src = "S1", fidelity = "datasheet" }
+cpu_clock           = { value = 216e6, unit = "Hz", src = "S1", fidelity = "datasheet" }
+supply_voltage_min  = { value = 4.3, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 5.4, unit = "V", src = "S1", fidelity = "datasheet" }
+usb_voltage_min     = { value = 4.75, unit = "V", src = "S1", fidelity = "datasheet" }
+usb_voltage_max     = { value = 5.25, unit = "V", src = "S1", fidelity = "datasheet" }
+servo_rail_voltage_max = { value = 36, unit = "V", src = "S1", fidelity = "datasheet" }
+pwm_outputs_max     = { value = 14, unit = "1", src = "S1", fidelity = "datasheet" }
+uart_count          = { value = 5, unit = "1", src = "S1", fidelity = "datasheet" }
+i2c_ports           = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+can_buses           = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 353.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "jst-gh.6"
+gender = "male"
+v_max = { value = 5.4, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "Operating power 4.3-5.4 V via the 2x analog power-monitor inputs or USB; connector family not stated on S1, jst-gh.6 assumed for Pixhawk-standard POWER ports"
+
+[[ports]]
+name = "pwm_out"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+count = 14
+
+[[ports]]
+name = "serial"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 5
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+count = 2
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+count = 4
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer"); the part has no [geometry]
+rationale = "Enclosed black anodised case like the other Pixhawk-class controllers (no appearance photo of this unit was checked)."
+
+[[visual.elements]]
+gen = "board_fc"
+params = { case = true }
+colors = { pcb = "plastic-black", label = "plastic-dark" }
+
+[[sources]]
+id = "S1"
+url = "https://ardupilot.org/copter/docs/common-cuav-v5plus-overview.html"
+title = "CUAV V5 Plus Overview (ArduPilot documentation)"
+accessed = "2026-10-07"
+quote = "32-bit ARM Cortex M7 core with DPFPU 216 Mhz/512 KB RAM/2 MB Flash ... InvenSense ICM20689 accelerometer / gyroscope InvenSense ICM20602 : accelerometer / gyroscope Bosch BMI055 accelerometer / gyroscope MS5611 barometer IST8310 magnetometer ... Operating power: 4.3~5.4V USB Input: 4.75~5.25V High-power servo rail, up to 36V ... 8 - 14 PWM servo outputs (6 IOMCU, 8 FMU) ... 5x general purpose serial ports 4x I2C ports 4x SPI bus 2x CAN Bus ports ... Weight: 90g Dimensions: 85.5mm x 42mm x 33mm Operating temperature: -20 ~ 80°c（Measured value）"

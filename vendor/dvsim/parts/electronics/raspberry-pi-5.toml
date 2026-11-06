@@ -1,0 +1,584 @@
+id = "raspberry-pi-5"
+name = "Raspberry Pi 5 (BCM2712, 4GB/8GB)"
+category = "computer.sbc"
+vendor = "Raspberry Pi Ltd"
+part_number = "Raspberry Pi 5"
+url = "https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf"
+
+# Mass is not published in the product brief or mechanical drawing, so it is left out rather than guessed.
+# Power draw is a public measurement by a third party (S3); the vendor only specifies the supply (S1).
+[params]
+length              = { value = 0.085, unit = "m", src = "S2", fidelity = "datasheet" }
+width               = { value = 0.056, unit = "m", src = "S2", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.0027, unit = "m", src = "S2", fidelity = "datasheet" }
+supply_voltage      = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_rated = { value = 5, unit = "A", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 273.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 343.15, unit = "K", src = "S1", fidelity = "datasheet" }
+cpu_clock           = { value = 2.4e9, unit = "Hz", src = "S1", fidelity = "datasheet" }
+power_idle_4gb      = { value = 3.3, unit = "W", src = "S3", fidelity = "measured" }
+power_idle_8gb      = { value = 3.2, unit = "W", src = "S3", fidelity = "measured" }
+power_stress_ng_4gb = { value = 9.8, unit = "W", src = "S3", fidelity = "measured" }
+power_stress_ng_8gb = { value = 9.8, unit = "W", src = "S3", fidelity = "measured" }
+
+[params.mount_hole_spacing_long]
+value = 0.058
+unit = "m"
+fidelity = "derived"
+derivation = "Read from the S2 drawing: 58 mm label along the 85 mm edge; across the 56 mm edge the 49 mm label equals 56 - 2 x 3.5 (holes 3.5 mm from the edges), consistent with the 3.5 label. Axis assignment (58 along 85) is from the figure layout, not from text."
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.58x49.m2.5"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Four holes of dia 2.7 mm (S2) take M2.5 screws"
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "usb-c-pd"
+gender = "female"
+v_max = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "sink"
+pins = ["PWR.A4", "PWR.A1"]   # VBUS, GND of the USB-C power connector (pin pairs of a 2-conductor wire: + then -)
+note = "5V/5A DC power via USB-C, with Power Delivery support"
+
+[[ports]]
+name = "gpio_uart"
+kind = "signal"
+type = "uart"
+gender = "male"
+connector = "Raspberry Pi standard 40-pin GPIO header"
+pins = ["J8.8", "J8.10", "J8.6"]   # GPIO14 (UART0 TX), GPIO15 (UART0 RX), GND
+
+[[ports]]
+name = "gpio_i2c"
+kind = "signal"
+type = "i2c"
+gender = "male"
+connector = "Raspberry Pi standard 40-pin GPIO header"
+pins = ["J8.3", "J8.5", "J8.9"]   # GPIO2 (I2C1 SDA), GPIO3 (I2C1 SCL), GND
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "female"
+count = 4
+connector = "2 x USB 3.0 + 2 x USB 2.0 Type-A"
+pins = ["USB1.1", "USB1.2", "USB1.3", "USB1.4", "USB1.5", "USB1.6", "USB1.7", "USB1.8", "USB1.9"]   # the first USB 3.0 receptacle (USB2 is the other)
+
+[[ports]]
+name = "csi"
+kind = "signal"
+type = "csi"
+gender = "female"
+count = 2
+note = "2 x 4-lane MIPI camera/display transceivers (S1); FPC connector pitch not stated in S1"
+
+# ---- Connectors (pin level; parts/README.md "Connectors and pins"). Part frame: origin at the board centre on the underside, +x towards the
+# USB / Ethernet end, +y towards the GPIO header edge, z up (the board_sbc visual's frame). The pose of every connector is placed on the
+# published board layout (header centred between the 58 mm mounting holes, connectors on the edges as in the product photos); the
+# mechanical drawing carries numeric labels only, so poses are estimates, the pin tables are not.
+[[connectors]]
+id = "J8"
+name = "40-pin GPIO header"
+type = "header-2x20-2.54mm"
+gender = "male"
+pos = [-0.0100, 0.0245, 0.0136]   # pin tips: 1.6 mm PCB + 8.5 mm housing + 3.5 mm pin; centred 32.5 mm from the short edge (HAT outline)
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]             # pin 1 at -x; odd pins on the inner row, even pins on the board-edge row
+rows = 2
+cols = 20
+pitch = 0.00254
+layout = "dual"
+src = "S4"
+fidelity = "literature"
+note = "Pin names / numbers: S4 (pinout.xyz). Alternate functions a0..a8: Table 4 of the RP1 peripherals datasheet (S5); the header GPIOs are RP1 GPIO0-27. GPIO levels 3.3 V, 16 mA per pad (S6)."
+pins = [
+  { number = 1, name = "3V3", kind = "power", dir = "out", v = 3.3 },
+  { number = 2, name = "5V", kind = "power", dir = "out", v = 5.0 },
+  { number = 3, name = "GPIO2", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_CSn[3]", "a1:DPI_VSYNC", "a2:UART1_CTS", "a3:I2C1_SDA", "a4:UART0_IR_RX", "a5:SYS_RIO[2]", "a6:PROC_RIO[2]", "a7:PIO[2]", "a8:SPI2_SIO[0]"], note = "fixed pull-up (S6)" },
+  { number = 4, name = "5V", kind = "power", dir = "out", v = 5.0 },
+  { number = 5, name = "GPIO3", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_CSn[2]", "a1:DPI_HSYNC", "a2:UART1_RTS", "a3:I2C1_SCL", "a4:UART0_IR_TX", "a5:SYS_RIO[3]", "a6:PROC_RIO[3]", "a7:PIO[3]", "a8:SPI2_SCLK"], note = "fixed pull-up (S6)" },
+  { number = 6, name = "GND", kind = "ground" },
+  { number = 7, name = "GPIO4", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:GPCLK[0]", "a1:DPI_D[0]", "a2:UART2_TX", "a3:I2C2_SDA", "a4:UART0_RI", "a5:SYS_RIO[4]", "a6:PROC_RIO[4]", "a7:PIO[4]", "a8:SPI3_CSn[0]"] },
+  { number = 8, name = "GPIO14", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:PWM0[2]", "a1:DPI_D[10]", "a2:UART4_CTS", "a3:I2C3_SDA", "a4:UART0_TX", "a5:SYS_RIO[14]", "a6:PROC_RIO[14]", "a7:PIO[14]", "a8:SPI5_SIO[0]"] },
+  { number = 9, name = "GND", kind = "ground" },
+  { number = 10, name = "GPIO15", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:PWM0[3]", "a1:DPI_D[11]", "a2:UART4_RTS", "a3:I2C3_SCL", "a4:UART0_RX", "a5:SYS_RIO[15]", "a6:PROC_RIO[15]", "a7:PIO[15]", "a8:SPI5_SCLK"] },
+  { number = 11, name = "GPIO17", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI1_CSn[1]", "a1:DPI_D[13]", "a2:MIPI1_DSI_TE", "a4:UART0_RTS", "a5:SYS_RIO[17]", "a6:PROC_RIO[17]", "a7:PIO[17]"] },
+  { number = 12, name = "GPIO18", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI1_CSn[0]", "a1:DPI_D[14]", "a2:I2S0_SCLK", "a3:PWM0[2]", "a4:I2S1_SCLK", "a5:SYS_RIO[18]", "a6:PROC_RIO[18]", "a7:PIO[18]", "a8:GPCLK[1]"] },
+  { number = 13, name = "GPIO27", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SDIO0_DAT[3]", "a1:DPI_D[23]", "a2:I2S0_SDO[3]", "a3:AUDIO_IN_DAT1", "a4:I2S1_SDO[3]", "a5:SYS_RIO[27]", "a6:PROC_RIO[27]", "a7:PIO[27]", "a8:SPI1_CSn[1]"] },
+  { number = 14, name = "GND", kind = "ground" },
+  { number = 15, name = "GPIO22", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SDIO0_CLK", "a1:DPI_D[18]", "a2:I2S0_SDI[1]", "a3:I2C3_SDA", "a4:I2S1_SDI[1]", "a5:SYS_RIO[22]", "a6:PROC_RIO[22]", "a7:PIO[22]"] },
+  { number = 16, name = "GPIO23", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SDIO0_CMD", "a1:DPI_D[19]", "a2:I2S0_SDO[1]", "a3:I2C3_SCL", "a4:I2S1_SDO[1]", "a5:SYS_RIO[23]", "a6:PROC_RIO[23]", "a7:PIO[23]"] },
+  { number = 17, name = "3V3", kind = "power", dir = "out", v = 3.3 },
+  { number = 18, name = "GPIO24", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SDIO0_DAT[0]", "a1:DPI_D[20]", "a2:I2S0_SDI[2]", "a4:I2S1_SDI[2]", "a5:SYS_RIO[24]", "a6:PROC_RIO[24]", "a7:PIO[24]", "a8:SPI2_CSn[1]"] },
+  { number = 19, name = "GPIO10", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_SIO[0]", "a1:DPI_D[6]", "a2:UART3_CTS", "a3:I2C1_SDA", "a5:SYS_RIO[10]", "a6:PROC_RIO[10]", "a7:PIO[10]", "a8:SPI4_SIO[1]"] },
+  { number = 20, name = "GND", kind = "ground" },
+  { number = 21, name = "GPIO9", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_SIO[1]", "a1:DPI_D[5]", "a2:UART3_RX", "a3:I2C0_SCL", "a5:SYS_RIO[9]", "a6:PROC_RIO[9]", "a7:PIO[9]", "a8:SPI4_SIO[0]"] },
+  { number = 22, name = "GPIO25", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SDIO0_DAT[1]", "a1:DPI_D[21]", "a2:I2S0_SDO[2]", "a3:AUDIO_IN_CLK", "a4:I2S1_SDO[2]", "a5:SYS_RIO[25]", "a6:PROC_RIO[25]", "a7:PIO[25]", "a8:SPI3_CSn[1]"] },
+  { number = 23, name = "GPIO11", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_SCLK", "a1:DPI_D[7]", "a2:UART3_RTS", "a3:I2C1_SCL", "a5:SYS_RIO[11]", "a6:PROC_RIO[11]", "a7:PIO[11]", "a8:SPI4_SCLK"] },
+  { number = 24, name = "GPIO8", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_CSn[0]", "a1:DPI_D[4]", "a2:UART3_TX", "a3:I2C0_SDA", "a5:SYS_RIO[8]", "a6:PROC_RIO[8]", "a7:PIO[8]", "a8:SPI4_CSn[0]"] },
+  { number = 25, name = "GND", kind = "ground" },
+  { number = 26, name = "GPIO7", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_CSn[1]", "a1:DPI_D[3]", "a2:UART2_RTS", "a3:I2C3_SCL", "a4:UART0_DSR", "a5:SYS_RIO[7]", "a6:PROC_RIO[7]", "a7:PIO[7]", "a8:SPI3_SCLK"] },
+  { number = 27, name = "GPIO0", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_SIO[3]", "a1:DPI_PCLK", "a2:UART1_TX", "a3:I2C0_SDA", "a5:SYS_RIO[0]", "a6:PROC_RIO[0]", "a7:PIO[0]", "a8:SPI2_CSn[0]"], note = "ID EEPROM pin (ID_SD): present but reserved for advanced use (S6)" },
+  { number = 28, name = "GPIO1", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI0_SIO[2]", "a1:DPI_DE", "a2:UART1_RX", "a3:I2C0_SCL", "a5:SYS_RIO[1]", "a6:PROC_RIO[1]", "a7:PIO[1]", "a8:SPI2_SIO[1]"], note = "ID EEPROM pin (ID_SC): present but reserved for advanced use (S6)" },
+  { number = 29, name = "GPIO5", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:GPCLK[1]", "a1:DPI_D[1]", "a2:UART2_RX", "a3:I2C2_SCL", "a4:UART0_DTR", "a5:SYS_RIO[5]", "a6:PROC_RIO[5]", "a7:PIO[5]", "a8:SPI3_SIO[1]"] },
+  { number = 30, name = "GND", kind = "ground" },
+  { number = 31, name = "GPIO6", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:GPCLK[2]", "a1:DPI_D[2]", "a2:UART2_CTS", "a3:I2C3_SDA", "a4:UART0_DCD", "a5:SYS_RIO[6]", "a6:PROC_RIO[6]", "a7:PIO[6]", "a8:SPI3_SIO[0]"] },
+  { number = 32, name = "GPIO12", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:PWM0[0]", "a1:DPI_D[8]", "a2:UART4_TX", "a3:I2C2_SDA", "a4:AUDIO_OUT_L", "a5:SYS_RIO[12]", "a6:PROC_RIO[12]", "a7:PIO[12]", "a8:SPI5_CSn[0]"] },
+  { number = 33, name = "GPIO13", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:PWM0[1]", "a1:DPI_D[9]", "a2:UART4_RX", "a3:I2C2_SCL", "a4:AUDIO_OUT_R", "a5:SYS_RIO[13]", "a6:PROC_RIO[13]", "a7:PIO[13]", "a8:SPI5_SIO[1]"] },
+  { number = 34, name = "GND", kind = "ground" },
+  { number = 35, name = "GPIO19", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI1_SIO[1]", "a1:DPI_D[15]", "a2:I2S0_WS", "a3:PWM0[3]", "a4:I2S1_WS", "a5:SYS_RIO[19]", "a6:PROC_RIO[19]", "a7:PIO[19]"] },
+  { number = 36, name = "GPIO16", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI1_CSn[2]", "a1:DPI_D[12]", "a2:MIPI0_DSI_TE", "a4:UART0_CTS", "a5:SYS_RIO[16]", "a6:PROC_RIO[16]", "a7:PIO[16]"] },
+  { number = 37, name = "GPIO26", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SDIO0_DAT[2]", "a1:DPI_D[22]", "a2:I2S0_SDI[3]", "a3:AUDIO_IN_DAT0", "a4:I2S1_SDI[3]", "a5:SYS_RIO[26]", "a6:PROC_RIO[26]", "a7:PIO[26]", "a8:SPI5_CSn[1]"] },
+  { number = 38, name = "GPIO20", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI1_SIO[0]", "a1:DPI_D[16]", "a2:I2S0_SDI[0]", "a3:GPCLK[0]", "a4:I2S1_SDI[0]", "a5:SYS_RIO[20]", "a6:PROC_RIO[20]", "a7:PIO[20]"] },
+  { number = 39, name = "GND", kind = "ground" },
+  { number = 40, name = "GPIO21", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, alt = ["a0:SPI1_SCLK", "a1:DPI_D[17]", "a2:I2S0_SDO[0]", "a3:GPCLK[1]", "a4:I2S1_SDO[0]", "a5:SYS_RIO[21]", "a6:PROC_RIO[21]", "a7:PIO[21]"] },
+]
+
+[[connectors]]
+id = "PWR"
+name = "USB-C power input"
+type = "usb-c"
+gender = "female"
+pos = [-0.0313, -0.028, 0.0032]   # bottom edge, 11.2 mm from the left short edge
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+pitch = 0.0005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states 5 V / 5 A via USB-C with Power Delivery but no pin table; the receptacle pins follow the USB Type-C standard (A1 / B12 GND, A4 / B9 VBUS, A5 / B5 CC1 / CC2). Only the pins a power-only sink uses are modelled; the pose is read from the board layout."
+pins = [
+  { number = "A1", name = "GND", kind = "ground", offset = [-0.0032, 0.0005] },
+  { number = "A4", name = "VBUS", kind = "power", dir = "in", v = 5.0, offset = [-0.0024, 0.0005] },
+  { number = "A5", name = "CC1", kind = "signal", dir = "io", offset = [-0.0010, 0.0005] },
+  { number = "B5", name = "CC2", kind = "signal", dir = "io", offset = [0.0010, -0.0005] },
+  { number = "B9", name = "VBUS", kind = "power", dir = "in", v = 5.0, offset = [0.0024, -0.0005] },
+  { number = "B12", name = "GND", kind = "ground", offset = [0.0032, -0.0005] },
+]
+
+[[connectors]]
+id = "CAM0"
+name = "CAM/DISP 0 (22-pin 0.5 mm FPC)"
+type = "fpc-22-0.5mm"
+port_type = "csi"
+gender = "female"
+pos = [0.0330, -0.028, 0.0035]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 22
+pitch = 0.0005
+src = "S6"
+fidelity = "estimated"
+rationale = "S6 (Raspberry Pi docs flagship table): 'mini 22-pin, 0.5 mm (fine) pitch' combined CSI / DSI ports; the camera guide says Pi 5 takes a 22-pin cable. The pin-by-pin assignment is the widely published 4-lane layout (GND, D0, D1, CK, D2, D3 pairs, CAM GPIO / clock, I2C, 3V3); the official connector datasheet was not retrievable (Cloudflare), so verify before building a cable."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "CAM_D0_N", kind = "signal", alt = ["DSI_D0_N"] },
+  { number = 3, name = "CAM_D0_P", kind = "signal", alt = ["DSI_D0_P"] },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "CAM_D1_N", kind = "signal", alt = ["DSI_D1_N"] },
+  { number = 6, name = "CAM_D1_P", kind = "signal", alt = ["DSI_D1_P"] },
+  { number = 7, name = "GND", kind = "ground" },
+  { number = 8, name = "CAM_CK_N", kind = "signal", alt = ["DSI_CK_N"] },
+  { number = 9, name = "CAM_CK_P", kind = "signal", alt = ["DSI_CK_P"] },
+  { number = 10, name = "GND", kind = "ground" },
+  { number = 11, name = "CAM_D2_N", kind = "signal", alt = ["DSI_D2_N"] },
+  { number = 12, name = "CAM_D2_P", kind = "signal", alt = ["DSI_D2_P"] },
+  { number = 13, name = "GND", kind = "ground" },
+  { number = 14, name = "CAM_D3_N", kind = "signal", alt = ["DSI_D3_N"] },
+  { number = 15, name = "CAM_D3_P", kind = "signal", alt = ["DSI_D3_P"] },
+  { number = 16, name = "GND", kind = "ground" },
+  { number = 17, name = "CAM_GPIO", kind = "signal", dir = "io", v = 3.3 },
+  { number = 18, name = "CAM_CLK", kind = "signal", dir = "out", v = 3.3 },
+  { number = 19, name = "GND", kind = "ground" },
+  { number = 20, name = "CAM_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 21, name = "CAM_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 22, name = "CAM_3V3", kind = "power", dir = "out", v = 3.3 },
+]
+
+[[connectors]]
+id = "CAM1"
+name = "CAM/DISP 1 (22-pin 0.5 mm FPC)"
+type = "fpc-22-0.5mm"
+port_type = "csi"
+gender = "female"
+pos = [0.0155, -0.028, 0.0035]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 22
+pitch = 0.0005
+src = "S6"
+fidelity = "estimated"
+rationale = "As CAM0 (the two connectors are identical)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "CAM_D0_N", kind = "signal", alt = ["DSI_D0_N"] },
+  { number = 3, name = "CAM_D0_P", kind = "signal", alt = ["DSI_D0_P"] },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "CAM_D1_N", kind = "signal", alt = ["DSI_D1_N"] },
+  { number = 6, name = "CAM_D1_P", kind = "signal", alt = ["DSI_D1_P"] },
+  { number = 7, name = "GND", kind = "ground" },
+  { number = 8, name = "CAM_CK_N", kind = "signal", alt = ["DSI_CK_N"] },
+  { number = 9, name = "CAM_CK_P", kind = "signal", alt = ["DSI_CK_P"] },
+  { number = 10, name = "GND", kind = "ground" },
+  { number = 11, name = "CAM_D2_N", kind = "signal", alt = ["DSI_D2_N"] },
+  { number = 12, name = "CAM_D2_P", kind = "signal", alt = ["DSI_D2_P"] },
+  { number = 13, name = "GND", kind = "ground" },
+  { number = 14, name = "CAM_D3_N", kind = "signal", alt = ["DSI_D3_N"] },
+  { number = 15, name = "CAM_D3_P", kind = "signal", alt = ["DSI_D3_P"] },
+  { number = 16, name = "GND", kind = "ground" },
+  { number = 17, name = "CAM_GPIO", kind = "signal", dir = "io", v = 3.3 },
+  { number = 18, name = "CAM_CLK", kind = "signal", dir = "out", v = 3.3 },
+  { number = 19, name = "GND", kind = "ground" },
+  { number = 20, name = "CAM_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 21, name = "CAM_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 22, name = "CAM_3V3", kind = "power", dir = "out", v = 3.3 },
+]
+
+[[connectors]]
+id = "FAN"
+name = "PWM fan connector"
+type = "jst-sh-4"
+gender = "female"
+pos = [0.0215, 0.0235, 0.0030]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.001
+src = "S6"
+fidelity = "datasheet"
+pose_rationale = "Docs: upper right of the board between the 40-pin header and the USB 2.0 ports; exact position estimated."
+pins = [
+  { number = 1, name = "+5V", kind = "power", dir = "out", v = 5.0, note = "red; shares the USB peripheral current limit (S6)" },
+  { number = 2, name = "PWM", kind = "signal", dir = "out", v = 3.3, note = "blue" },
+  { number = 3, name = "GND", kind = "ground", note = "black" },
+  { number = 4, name = "Tach", kind = "signal", dir = "in", note = "yellow" },
+]
+
+[[connectors]]
+id = "UART"
+name = "Debug UART (3-pin JST-SH)"
+type = "jst-sh-3"
+gender = "female"
+pos = [0.0040, -0.0278, 0.0030]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.001
+src = "S6"
+fidelity = "estimated"
+rationale = "S6 lists a UART connector without pins; the order TX / GND / RX follows the Raspberry Pi Debug Probe cable (orange TX, black GND, yellow RX) and third-party adapter listings for the Pi 5 JST-SH port. 3.3 V logic. Pose estimated."
+pins = [
+  { number = 1, name = "TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "RX", kind = "signal", dir = "in", v = 3.3 },
+]
+
+[[connectors]]
+id = "RTC"
+name = "RTC battery (J5, 2-pin JST-SH)"
+type = "jst-sh-2"
+gender = "female"
+pos = [0.0290, 0.0200, 0.0030]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.001
+src = "S6"
+fidelity = "estimated"
+rationale = "S6: 'J5 (BAT) connector', pre-fitted two-pin JST-SH plug on the official battery; polarity (pin 1 +) and pose estimated."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "in" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[connectors]]
+id = "POE"
+name = "PoE header (2 x 2)"
+type = "header-2x2-2.54mm"
+gender = "male"
+pos = [-0.0345, 0.0125, 0.0100]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 2
+pitch = 0.00254
+src = "S6"
+fidelity = "estimated"
+rationale = "The public docs name a PoE+ capable jack (IEEE 802.3at) and a PoE header but give no pin functions; four pins, named by position only. Pose estimated."
+pins = [
+  { number = 1, name = "PoE-1", kind = "signal" },
+  { number = 2, name = "PoE-2", kind = "signal" },
+  { number = 3, name = "PoE-3", kind = "signal" },
+  { number = 4, name = "PoE-4", kind = "signal" },
+]
+
+[[connectors]]
+id = "PCIE"
+name = "PCIe x1 FFC"
+type = "ffc-0.5mm"
+gender = "female"
+pos = [-0.0405, 0.0, 0.0030]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 16
+pitch = 0.0005
+src = "S6"
+fidelity = "estimated"
+rationale = "S6: 'single-lane PCIe FFC connector' (RP-008298-DS); the 16-way 0.5 mm count and every pin function are not in the fetched text, so the pins are numbered only. Pose estimated."
+pins = [
+  { number = 1, name = "P1", kind = "signal" }, { number = 2, name = "P2", kind = "signal" }, { number = 3, name = "P3", kind = "signal" },
+  { number = 4, name = "P4", kind = "signal" }, { number = 5, name = "P5", kind = "signal" }, { number = 6, name = "P6", kind = "signal" },
+  { number = 7, name = "P7", kind = "signal" }, { number = 8, name = "P8", kind = "signal" }, { number = 9, name = "P9", kind = "signal" },
+  { number = 10, name = "P10", kind = "signal" }, { number = 11, name = "P11", kind = "signal" }, { number = 12, name = "P12", kind = "signal" },
+  { number = 13, name = "P13", kind = "signal" }, { number = 14, name = "P14", kind = "signal" }, { number = 15, name = "P15", kind = "signal" },
+  { number = 16, name = "P16", kind = "signal" },
+]
+
+[[connectors]]
+id = "USB1"
+name = "USB 3.0 Type-A (lower)"
+type = "usb-a"
+port_type = "usb"
+gender = "female"
+pos = [0.0433, 0.0, 0.0058]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 9
+pitch = 0.0012
+src = "S9"
+fidelity = "literature"
+pose_rationale = "Stack position from the board layout, estimated; pins 1-4 are the USB 2.0 contacts (S7), pins 5-9 the SuperSpeed contacts of a USB 3.0 Standard-A receptacle (S9; the Pi 5 brief states the 3.0 ports, the pin table is the USB 3.0 standard's)."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "out", v = 5.0 },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "SSRX-", kind = "signal", dir = "in" },
+  { number = 6, name = "SSRX+", kind = "signal", dir = "in" },
+  { number = 7, name = "GND_DRAIN", kind = "ground" },
+  { number = 8, name = "SSTX-", kind = "signal", dir = "out" },
+  { number = 9, name = "SSTX+", kind = "signal", dir = "out" },
+]
+
+[[connectors]]
+id = "USB2"
+name = "USB 3.0 Type-A (upper)"
+type = "usb-a"
+port_type = "usb"
+gender = "female"
+pos = [0.0433, 0.0, 0.0128]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 9
+pitch = 0.0012
+src = "S9"
+fidelity = "literature"
+pose_rationale = "As USB1."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "out", v = 5.0 },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "SSRX-", kind = "signal", dir = "in" },
+  { number = 6, name = "SSRX+", kind = "signal", dir = "in" },
+  { number = 7, name = "GND_DRAIN", kind = "ground" },
+  { number = 8, name = "SSTX-", kind = "signal", dir = "out" },
+  { number = 9, name = "SSTX+", kind = "signal", dir = "out" },
+]
+
+[[connectors]]
+id = "USB3"
+name = "USB 2.0 Type-A (lower)"
+type = "usb-a"
+port_type = "usb"
+gender = "female"
+pos = [0.0433, 0.0195, 0.0058]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.002
+src = "S7"
+fidelity = "literature"
+pose_rationale = "As USB1."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "out", v = 5.0 },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "USB4"
+name = "USB 2.0 Type-A (upper)"
+type = "usb-a"
+port_type = "usb"
+gender = "female"
+pos = [0.0433, 0.0195, 0.0128]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.002
+src = "S7"
+fidelity = "literature"
+pose_rationale = "As USB1."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "out", v = 5.0 },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "ETH"
+name = "Gigabit Ethernet (RJ45)"
+type = "rj45"
+gender = "female"
+pos = [0.0433, -0.0170, 0.0075]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00102
+src = "S8"
+fidelity = "estimated"
+rationale = "Standard 1000BASE-T RJ45 pairs (pins 1-2, 3-6, 4-5, 7-8) as in TIA-568; the jack is PoE+ capable (S6). The Pi 5 pin table itself is not in the fetched sources. Pose estimated."
+pins = [
+  { number = 1, name = "TX+", kind = "signal", alt = ["BI_DA+"] }, { number = 2, name = "TX-", kind = "signal", alt = ["BI_DA-"] },
+  { number = 3, name = "RX+", kind = "signal", alt = ["BI_DB+"] }, { number = 4, name = "BI_DC+", kind = "signal" },
+  { number = 5, name = "BI_DC-", kind = "signal" }, { number = 6, name = "RX-", kind = "signal", alt = ["BI_DB-"] },
+  { number = 7, name = "BI_DD+", kind = "signal" }, { number = 8, name = "BI_DD-", kind = "signal" },
+]
+
+[[connectors]]
+id = "HDMI0"
+name = "micro-HDMI 0"
+type = "micro-hdmi-d"
+gender = "female"
+pos = [-0.0165, -0.028, 0.0030]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 10
+pitch = 0.0005
+layout = "dual"
+src = "S8"
+fidelity = "estimated"
+rationale = "Type D (micro) HDMI receptacle pins as the HDMI standard assigns them (TMDS D2 / D1 / D0 / clock with shields, CEC, utility, SCL, SDA, ground, +5 V, hot-plug detect); the Pi 5 product brief only states 2 x micro-HDMI. Pose estimated."
+pins = [
+  { number = 1, name = "D2+", kind = "signal" }, { number = 2, name = "D2 shield", kind = "ground" }, { number = 3, name = "D2-", kind = "signal" },
+  { number = 4, name = "D1+", kind = "signal" }, { number = 5, name = "D1 shield", kind = "ground" }, { number = 6, name = "D1-", kind = "signal" },
+  { number = 7, name = "D0+", kind = "signal" }, { number = 8, name = "D0 shield", kind = "ground" }, { number = 9, name = "D0-", kind = "signal" },
+  { number = 10, name = "CK+", kind = "signal" }, { number = 11, name = "CK shield", kind = "ground" }, { number = 12, name = "CK-", kind = "signal" },
+  { number = 13, name = "CEC", kind = "signal", dir = "io" }, { number = 14, name = "Utility", kind = "signal" },
+  { number = 15, name = "SCL", kind = "signal", dir = "io" }, { number = 16, name = "SDA", kind = "signal", dir = "io" },
+  { number = 17, name = "DDC/CEC GND", kind = "ground" }, { number = 18, name = "+5V", kind = "power", dir = "out", v = 5.0 },
+  { number = 19, name = "HPD", kind = "signal", dir = "in" },
+]
+
+[[connectors]]
+id = "HDMI1"
+name = "micro-HDMI 1"
+type = "micro-hdmi-d"
+gender = "female"
+pos = [-0.0030, -0.028, 0.0030]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 10
+pitch = 0.0005
+layout = "dual"
+src = "S8"
+fidelity = "estimated"
+rationale = "As HDMI0."
+pins = [
+  { number = 1, name = "D2+", kind = "signal" }, { number = 2, name = "D2 shield", kind = "ground" }, { number = 3, name = "D2-", kind = "signal" },
+  { number = 4, name = "D1+", kind = "signal" }, { number = 5, name = "D1 shield", kind = "ground" }, { number = 6, name = "D1-", kind = "signal" },
+  { number = 7, name = "D0+", kind = "signal" }, { number = 8, name = "D0 shield", kind = "ground" }, { number = 9, name = "D0-", kind = "signal" },
+  { number = 10, name = "CK+", kind = "signal" }, { number = 11, name = "CK shield", kind = "ground" }, { number = 12, name = "CK-", kind = "signal" },
+  { number = 13, name = "CEC", kind = "signal", dir = "io" }, { number = 14, name = "Utility", kind = "signal" },
+  { number = 15, name = "SCL", kind = "signal", dir = "io" }, { number = 16, name = "SDA", kind = "signal", dir = "io" },
+  { number = 17, name = "DDC/CEC GND", kind = "ground" }, { number = 18, name = "+5V", kind = "power", dir = "out", v = 5.0 },
+  { number = 19, name = "HPD", kind = "signal", dir = "in" },
+]
+
+[[sources]]
+id = "S4"
+url = "https://pinout.xyz/"
+title = "Raspberry Pi GPIO Pinout (pinout.xyz), 40-pin header"
+accessed = "2026-10-08"
+quote = "Orientate your Pi with the GPIO on the right and the HDMI port(s) on the left. || Pin 1 3v3 Power | Pin 2 5v Power | Pin 3 GPIO 2 I2C1 SDA | Pin 4 5v Power | Pin 5 GPIO 3 I2C1 SCL | Pin 6 Ground | Pin 7 GPIO 4 GPCLK0 | Pin 8 GPIO 14 UART0 TX | Pin 9 Ground | Pin 10 GPIO 15 UART0 RX | ... | Pin 27 GPIO 0 EEPROM SDA | Pin 28 GPIO 1 EEPROM SCL | ... | Pin 40 GPIO 21 PCM DOUT (table read through a page summariser)"
+
+[[sources]]
+id = "S5"
+url = "https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf"
+title = "Raspberry Pi RP1 Peripherals datasheet, 3.1 GPIO, Table 4 GPIO function"
+accessed = "2026-10-08"
+quote = "RP1 has 28 multi-functional General-Purpose Input/Output pins available to implement the standard Raspberry Pi 40-pin GPIO connector. ... GPIO a0 a1 a2 a3 a4 a5 a6 a7 a8 ... 14 PWM0[2] DPI_D[10] UART4_CTS I2C3_SDA UART0_TX SYS_RIO[14] PROC_RIO[14] PIO[14] SPI5_SIO[0] ... 15 PWM0[3] DPI_D[11] UART4_RTS I2C3_SCL UART0_RX SYS_RIO[15] PROC_RIO[15] PIO[15] SPI5_SCLK"
+
+[[sources]]
+id = "S6"
+url = "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html"
+title = "Raspberry Pi documentation: Raspberry Pi hardware, GPIO and the 40-pin header, Raspberry Pi 5 connectors (read through a page summariser)"
+accessed = "2026-10-08"
+quote = "The GPIO headers on all boards have a 0.1in (2.54 mm) pin pitch. || A GPIO pin designated as an output pin can be set to high (3.3V) or low (0V). || Pins GPIO2 and GPIO3 have fixed pull-up resistors, but for other pins this can be configured in software. || GPIO pins 0 and 1 are present on the board (physical pins 27 and 28), but are reserved for advanced use. || each pin can individually draw up to 16mA || mini 22-pin, 0.5 mm (fine) pitch, 11.5 mm width, combined CSI (camera)/DSI (display) ports || four-pin JST-SH PWM fan connector || The Raspberry Pi 5 fan connector is a 1 mm pitch JST-SH socket containing the following four pins: Pin 1: +5V (red), Pin 2: PWM (blue), Pin 3: GND (black), Pin 4: Tach (yellow) || This can be battery powered through the J5 (BAT) connector on the board. || with a pre-fitted two-pin JST-SH plug and an adhesive mounting pad || single-lane PCIe FFC connector || UART connector || The Ethernet jack on Raspberry Pi 5 is PoE+ capable, supporting the IEEE 802.3at-2009 PoE standard."
+
+[[sources]]
+id = "S9"
+url = "https://en.wikipedia.org/wiki/USB_3.0"
+title = "USB 3.0 (Wikipedia), Pin assignments: Standard-A connector (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "Pin 1 VBUS Power | Pin 2 D- USB 2.0 differential pair | Pin 3 D+ | Pin 4 GND Ground for power return | Pin 5 StdA_SSRX- SuperSpeed receiver differential pair | Pin 6 StdA_SSRX+ | Pin 7 GND_DRAIN Ground for signal return | Pin 8 StdA_SSTX- SuperSpeed transmitter differential pair | Pin 9 StdA_SSTX+ ... The five additional USB 3.0 pins are two differential pairs and one ground (GND_DRAIN)."
+
+[[sources]]
+id = "S7"
+url = "https://en.wikipedia.org/wiki/USB_hardware"
+title = "USB hardware (Wikipedia), USB 2.0 Type-A pin assignments (read through a page summariser)"
+accessed = "2026-10-08"
+quote = "Pin 1 VBUS +5 V | Pin 2 D- Data- | Pin 3 D+ Data+ | Pin 4 GND Ground"
+
+[[sources]]
+id = "S8"
+url = "https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf"
+title = "Raspberry Pi 5 Product Brief: Ethernet, HDMI, PCIe, RTC features (the pin tables of the RJ45 and micro-HDMI connectors follow the TIA-568 / HDMI standards, not this document)"
+accessed = "2026-10-08"
+quote = "Dual 4Kp60 HDMI® display output with HDR support ... Gigabit Ethernet, with PoE+ support (requires separate PoE+ HAT) ... 2 × 4-lane MIPI camera / display transceivers ... PCIe 2.0 x1 interface for fast peripherals ... Real-time clock (RTC), powered from external battery"
+
+[[sources]]
+id = "S1"
+url = "https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-product-brief.pdf"
+title = "Raspberry Pi 5 Product Brief (Raspberry Pi Ltd)"
+accessed = "2026-10-07"
+quote = "Broadcom BCM2712 2.4GHz quad-core 64-bit Arm Cortex-A76 CPU ... 2 × USB 3.0 ports ... 2 × USB 2.0 ports ... 2 × 4-lane MIPI camera / display transceivers ... 5V/5A DC power via USB-C, with Power Delivery support ... Raspberry Pi standard 40-pin GPIO header ... Operating temperature 0°C to 70°C"
+
+[[sources]]
+id = "S2"
+url = "https://datasheets.raspberrypi.com/rpi5/raspberry-pi-5-mechanical-drawing.pdf"
+title = "Raspberry Pi 5 mechanical drawing (Raspberry Pi Ltd)"
+accessed = "2026-10-07"
+quote = "Drawing: Raspberry Pi 5 ... 85 ... 58 ... 49 ... 56 ... 3.5 ... Ø2.7 ... Note: All dimensions in mm (text extracted from the drawing; numeric labels only)"
+
+[[sources]]
+id = "S3"
+url = "https://www.jeffgeerling.com/blog/2024/new-2gb-pi-5-has-33-smaller-die-30-idle-power-savings/"
+title = "New 2GB Pi 5 has 33% smaller die, 30% idle power savings (Jeff Geerling)"
+accessed = "2026-10-07"
+quote = "Idle power | 2.4W | 3.3W | 0.9W (+32%) | 3.2W | 0.8W (+29%) ... stress-ng power | 8.9W | 9.8W | 0.9W (+10%) | 9.8W | 0.9W (+10%) (columns: Pi 5 2GB D0, Pi 5 4GB C1, 4GB Delta, Pi 5 8GB C1, 8GB Delta)"

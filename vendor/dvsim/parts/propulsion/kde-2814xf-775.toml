@@ -1,0 +1,92 @@
+id = "kde-2814xf-775"
+name = "KDE Direct KDE2814XF-775 brushless motor"
+category = "motor.bldc"
+vendor = "KDE Direct"
+part_number = "KDE2814XF-775"
+url = "https://www.kdedirect.com/products/kde2814xf-775"
+
+# Part frame: origin at the centre of the mounting face, +z along the shaft towards the prop.
+# Ports as a top-level inline-table array (TOML requires it before the first [table] header).
+ports = [
+  { name = "base_25_m3", kind = "mech", type = "bolt-circle.25.4.m3", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 4, note = "Estimated: S1 lists only 'M3 x ф 25 mm'; hole count 4 assumed (same circle on T-Motor drawings)." },
+  { name = "base_19_m3", kind = "mech", type = "bolt-circle.19.4.m3", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 4, note = "Estimated: S1 lists only 'M3/2.5 x ф 19 mm'; hole count 4 assumed (same circle on T-Motor drawings)." },
+  { name = "shaft", kind = "mech", type = "shaft.4", gender = "male", pos = [0.0, 0.0, 0.0372], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Estimated: tip height = Motor Length 31.7 mm + Shaft Length 5.5 mm (S1); assumes the listed Motor Length excludes the protruding shaft." },
+  { name = "phase", pins = ["PH.1", "PH.2", "PH.3"], kind = "power", type = "motor-3phase", gender = "neutral", role = "sink", v_max = { value = 21.8, unit = "V", fidelity = "derived", derivation = "5S x 4.35 V/cell (LiHV) = 21.8 V from the Voltage Range '11.1 V (3S LiPo) - 21.8 V (5S LiHV)' (S1)." }, i_max = { value = 36.0, unit = "A", src = "S1", fidelity = "datasheet" }, note = "i_max is the 180 s continuous current ('Maximum Continuous Current'); the motor needs 5 mph+ airflow for it (vendor footnote)" },
+]
+
+[params]
+mass = { value = 0.125, unit = "kg", src = "S1", fidelity = "datasheet" }  # with wires/bullets
+mass_no_cable = { value = 0.095, unit = "kg", src = "S1", fidelity = "datasheet" }  # motor only
+kv = { value = 775, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+kt = { value = 0.0123, unit = "N*m/A", src = "S1", fidelity = "datasheet" }  # Kt (Motor Torque Constant)
+km = { value = 0.0469, unit = "N*m/sqrt(W)", src = "S1", fidelity = "datasheet" }  # Km (Motor Constant)
+r_winding = { value = 0.069, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Rm phase-to-phase, delta wound
+i0 = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }  # Io (@10V)
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 36.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Maximum Continuous Current (180 s)
+p_max = { value = 535.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Maximum Continuous Power (180 s)
+cells_min = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }  # 11.1 V (3S LiPo) - 21.8 V (5S LiHV)
+cells_max = { value = 5, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration = { value = "12 (12S14P) / 14 (12S14P)", unit = "text", src = "S1", fidelity = "datasheet" }  # stator poles / magnet poles
+diameter = { value = 0.0355, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body = { value = 0.0317, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+j_rotor_bell = { value = 9.3e-06, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }  # Motor Rotor Inertia, kg*cm^2 x 1e-4
+
+[tables.thrust_test]
+# VALIDATION TARGET. KDE performance data sheet (xlsx), prop '12.5" x 4.3 TRIPLE-EDN (KDE)', 16.8V supply. All printed rows; thrust 'Thrust Output' columns in g and N as printed.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "torque_Nm", "efficiency_g_per_W"]
+rows = [
+  [25.0, 16.8, 2.1, 31.0, 3650, 2.79, 284, 0.05, 9.1],
+  [37.5, 16.8, 3.8, 56.0, 4620, 4.49, 457, 0.08, 8.11],
+  [50.0, 16.8, 6.5, 96.0, 5690, 6.97, 710, 0.12, 7.39],
+  [62.5, 16.8, 10.7, 159.0, 6820, 10.22, 1042, 0.18, 6.56],
+  [75.0, 16.8, 15.9, 236.0, 7860, 13.62, 1389, 0.23, 5.89],
+  [87.5, 16.8, 22.2, 329.0, 8800, 17.29, 1762, 0.29, 5.35],
+  [100.0, 16.8, 28.8, 426.0, 9590, 20.59, 2099, 0.35, 4.93],
+]
+prop_label = "KDE 12.5 in x 4.3 TRIPLE-EDN (KDE)"
+src = "S2"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.01775, 0.0186]
+pos = [0.0, 0.0, 0.0186]
+
+# Pin level: three phase leads. S1 mentions only 'wires/bullets' in the listing mass: no gauge, length, connector or phase labels.
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.01775, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 only says the listed mass includes 'wires/bullets': no gauge, length, connector or phase labels. Three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 36.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 36.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 36.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.kdedirect.com/products/kde2814xf-775"
+title = "KDE Direct - KDE2814XF-775 product page (Full Specifications)"
+accessed = "2026-10-07"
+quote = "Full Specifications : Kv (Motor Velocity Constant)| 775 RPM/V|Kt (Motor Torque Constant)| 0.0123 Nm/A|Km (Motor Constant)| 0.0469 Nm/ √(W)|Maximum Continuous Current*| 36 A (180 s)|Maximum Continuous Power*| 535 W (180 s)|Voltage Range| 11.1 V (3S LiPo) - 21.8 V (5S LiHV)|Io (@10V)| 0.5 A|Rm (Phase to Phase Resistance Delta Wound)| 0.069 Ω|Stator Poles| 12 (12S14P)|Magnetic Poles| 14 (12S14P)|Mount Pattern| M3 x ф 25 mm, M3/2.5 x ф 19 mm|Shaft Diameter| ф4 mm ( ф 4 mm Internal)|Shaft Length| 5.5 mm|Motor Diameter| ф35.5 mm|Motor Rotor Inertia| 0.093 kg*cm^2|Motor Length| 31.7 mm|Motor Weight| 95 g (125 g with Wires/Bullets)"
+
+[[sources]]
+id = "S2"
+url = "https://cdn.shopify.com/s/files/1/0496/8205/files/KDE2814-775kV_rev2.xlsx"
+title = "KDE Direct KDE2814XF-775 performance testing data sheet (XLSX linked from the product page)"
+accessed = "2026-10-07"
+quote = "KDE2814XF-775|16.8V    [4S]|12.5\" x 4.3 TRIPLE-EDN (KDE)|0.25|2.10|31.0|284|2.79|3650|0.050|9.10 (values rounded for display; columns: THROTTLE RANGE, AMPERAGE [A], POWER INPUT [W], THRUST OUTPUT [g], [N], RPM [rev/min], TORQUE [Nm], Efficiency [g/W]; first printed row)"

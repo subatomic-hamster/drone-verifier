@@ -1,0 +1,67 @@
+id = "tattu-1300mah-6s-160c-rline6-xt60"
+name = "Tattu R-Line V6.0 1300mAh 6S 22.2V 160C LiPo pack, XT60U-F"
+category = "battery.lipo"
+vendor = "Tattu (Grepow)"
+part_number = "TAA13006S16ST"
+url = "https://rcdrone.top/products/src-taa13006s16st-tattu-1300mah-6s-160c-22-2v-r-line-version-6-0-st-lipo-battery-pack-with-xt60-plug"
+
+# Part frame: origin at the pack centre, x along length (78 mm), y along width (39.5 mm), z up (33 mm). No burst rating published for this listing.
+
+[params]
+capacity_ah     = { value = 1.3, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 4680.0, unit = "C", fidelity = "derived", derivation = "1.3 Ah x 3600 s/h = 4680 C (coulombs)." }
+cells_series    = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 22.2, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell full-charge LiPo limit = 25.2 V." }
+c_rating_cont   = { value = 160, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 208.0, unit = "A", fidelity = "derived", derivation = "160 C x 1.3 Ah = 208 A (rating label only)." }
+mass            = { value = 0.203, unit = "kg", src = "S1", fidelity = "datasheet" }          # 203 g (+-20 g)
+length          = { value = 0.078, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0395, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.033, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60U-F", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+discharge_wire_length = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.120, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/1.3 = 20 mOhm/cell x 6 cells = 120 mOhm. A 160 C-class cell is likely lower than this rule, so the value is conservative; plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.039, 0.01975, 0.0165]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V." }
+i_max = { value = 208.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 160 C x 1.3 Ah = 208 A (S1 label); exceeds the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug (XT60U-F), drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60U-F)"
+type = "xt60"
+gender = "neutral"
+pos = [0.039, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 25.2, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-taa13006s16st-tattu-1300mah-6s-160c-22-2v-r-line-version-6-0-st-lipo-battery-pack-with-xt60-plug"
+title = "rcdrone.top (authorized Tattu distributor) - Tattu R-Line Version 6.0 1300mAh 6S 22.2V 160C, XT60U-F"
+accessed = "2026-10-07"
+quote = "Series | R-Line Version 6.0 | Minimum Capacity | 1300mAh | Configuration | 6S1P | Voltage | 22.2V | Discharge Rate | 160C | Net Weight (±20g) | 203g | Dimensions (L x W x H) | 78mm x 39.5mm x 33mm | Discharge Plug / Connector Type | XT60U-F | Discharge Wire Length | 45mm | Wire Gauge | 12#"

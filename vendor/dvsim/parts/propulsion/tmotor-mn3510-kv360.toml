@@ -1,0 +1,130 @@
+id = "tmotor-mn3510-kv360"
+name = "T-Motor MN3510 KV360 multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN3510 KV360"
+url = "https://store.tmotor.com/product/mn3510-motor-navigator-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, +z along the shaft towards the prop.
+# Vendor page lists several KV variants; the values below are this variant's own spec column and test table.
+
+[params]
+mass = { value = 0.117, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Including Cables
+mass_no_cable = { value = 0.097, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Excluding Cables
+kv = { value = 360, unit = "rpm/V", src = "S1", fidelity = "datasheet" }  # from the model name
+r_winding = { value = 0.188, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Internal Resistance (mOhm on page)
+i0 = { value = 0.4, unit = "A", src = "S1", fidelity = "datasheet" }  # Idle Current@10v
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }  # test voltage from the 'Idle Current@10v' label
+i_peak = { value = 15.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Max Continuous Current 180S
+p_max = { value = 330.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Max Power (180S)
+configuration = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+cells_min = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+diameter = { value = 0.0418, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+length_body = { value = 0.0285, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+stator_diameter = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height = { value = 0.01, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+lead_length = { value = 0.6, unit = "m", src = "S1", fidelity = "datasheet" }  # 18# AWG
+kt = { value = 0.026526, unit = "N*m/A", fidelity = "derived", derivation = "60 / (2*pi*Kv) with Kv = 360 rpm/V." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, prop 'T-MOTOR 15*5CF', 22.2 V. All printed rows. thrust_N = thrust_g*0.00980665; vendor temp at 100 % throttle: 60 C.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [50, 22.2, 3, 66.60, 3800, 7.6492, 780, 11.71],
+  [65, 22.2, 5.6, 124.32, 4500, 11.5718, 1180, 9.49],
+  [75, 22.2, 7.7, 170.94, 5300, 14.3177, 1460, 8.54],
+  [85, 22.2, 10.6, 235.32, 5720, 16.6713, 1700, 7.22],
+  [100, 22.2, 12.5, 277.50, 6040, 18.6326, 1900, 6.85],
+]
+prop_label = "T-MOTOR 15*5CF"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0209, 0.01725]
+pos = [0.0, 0.0, 0.01725]   # spans z = 0 .. tip height
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-circle.25.4.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+holes = 4
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.4"
+gender = "male"
+pos = [0.0, 0.0, 0.0345]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Derived: tip height = 37.1 mm overall drawing length minus 2.6 mm rear stub = 34.5 mm (S2 drawing; inference, the drawing does not say which 2.x label is the rear stub). Shaft dia from S1."
+
+[[ports]]
+name = "prop_adapter"
+kind = "mech"
+type = "shaft.6"
+gender = "male"
+pos = [0.0, 0.0, 0.0345]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Derived: supplied M6 prop adapter (S2 drawing); shaft.6 is the library family for it (as tmotor-mn3508-kv700); tip height as port 'shaft'."
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+v_max = { value = 25.2, unit = "V", fidelity = "derived", derivation = "6S x 4.2 V/cell = 25.2 V (upper end of the 3-6S range, S1)." }
+i_max = { value = 15.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "i_max is the 180 s current rating ('Max Continuous Current 180S'); cable is part of the motor"
+
+# Pin level: three 18 AWG phase leads, 600 mm (S1 'Cable Length|600mm|AWG|18#'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 18 AWG, 600 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0209, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the cable length and gauge (600mm, 18#), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 15.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 15.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 15.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn3510-motor-navigator-type.html"
+title = "T-MOTOR store - MN3510 KV360 (specification + test data)"
+accessed = "2026-10-07"
+quote = "Test Item|MN3510 KV360|Configuration|12N14P|Internal Resistance|188mΩ|Motor Dimensions|Φ41.8×28.5mm|Shaft Diameter|4mm|StatorHeight|10mm|Stator Diameter|35mm|Cable Length|600mm|AWG|18#|Weight Excluding Cables|97g|Weight Including Cables|117g|Idle Current@10v|0.4A|No.of Cells(Lipo)|3-6S|Max Continuous Current 180S|15A|Max Power (180S)|330W. Test row: MN3510 KV360|22.2|T-MOTOR 15*5CF|50%|3|66.60|780|3800|11.71"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202606/MN3510-draw-0603-v1.jpg"
+title = "T-MOTOR MN3510 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 37.1, 6, 2.6, Ø41.8, 4-M3, Ø25, Ø4, 4-M3, Ø12; accessory M6 prop adapter 26 long, Ø20, 4-Ø5.7, 4-Ø3.2 on Ø12"

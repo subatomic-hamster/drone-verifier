@@ -1,0 +1,55 @@
+id = "cuas2-base-plate"
+name = "cuas2 base_plate (3D printed PETG, M1 pan base, group static, root frame B)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "base_plate"
+url = "cad/cuas2/modules/base_pan.py"
+
+# Printed from cad/cuas2 (154.7 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in the design frame B: origin on the pan axis at the top face of the lazy-susan stator posts' datum
+# (CAD params), x forward at pan 0, y left, z up. Root of the design: every static part (legs, lower deck, power box, bought electronics) is placed in frame B, so their instance pose is the identity or a free `pos`.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/base_plate.stl"
+material = "petg"
+bbox_min = [-0.1, -0.1, -0.008]
+bbox_max = [0.1, 0.1, 0.024]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame, axis +z: the 'a' side of a mate to a printed part modelled in the same group frame (bolted pair, identity transform)."
+
+[[ports]]
+name = "seat_rotor"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Pan axis through the origin of frame B (cad/cuas2 params: x = y = 0). The pan group's frame; the rotor plate's origin port mates here (pan joint)."

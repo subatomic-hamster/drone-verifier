@@ -1,0 +1,115 @@
+id = "livox-mid-360-splitter-cable"
+name = "Livox Aviation Connector 1-to-3 splitter cable for Mid-360 (M12 12P female to RJ45 + power + function leads)"
+category = "wire"
+vendor = "Livox (DJI); retailer MyBotShop"
+part_number = "Livox connector cable Mid360/AVIA2 1m (MBS-Z-435-03)"
+url = "https://www.mybotshop.de/Livox-connector-cable-Mid360-AVIA2-1m_1"
+
+# Head harness of the dog: sensor end M12 A-code 12-pin female; the other end splits into a power pair (bare wires), a function cable (bare insulated wires: PPS / GPS / reserved IO) and an Ethernet cable ending in an RJ45 plug.
+# Pin numbers and colours: Livox Mid-360 User Manual (the sensor's own table, see livox-mid-360.toml). The manual's cable is 1.5 m; the MyBotShop 1 m variant is modelled (page offers 0.15-10 m).
+
+[params]
+length = { value = 1.0, unit = "m", src = "S1", fidelity = "datasheet" }
+mass   = { value = 0.11, unit = "kg", src = "S1", fidelity = "datasheet" }  # "Item weight 0,11 kg" for the 1 m cable
+resistance_per_m = { value = 0.05296, unit = "ohm/m", fidelity = "estimated", rationale = "Conductor gauge of the power tail is not published. 22 AWG copper (52.96 mOhm/m at 20 degC, parts/connectors/awg-22-silicone-wire.toml) is the usual gauge of a 12 V / 0.54 A sensor lead; per conductor." }
+mass_per_m = { value = 0.11, unit = "kg/m", fidelity = "derived", derivation = "Item weight 0.11 kg (mass, S1) / 1.0 m (length, S1) = 0.11 kg/m, connectors included in the rate. A run of any length uses this rate." }
+
+[params.price]
+value = 80.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "MyBotShop (DE) lists EUR 79.95 incl. 19 % VAT, net EUR 67.18, plus shipping, seen 2026-10-16. No exchange rate was looked up: at an assumed 1.1-1.2 USD/EUR the net price is 74-81 USD; 80 USD taken (+-20 %), net of VAT, shipping excluded."
+
+[[ports]]
+name = "sensor_end"
+pins = ["M12.1", "M12.2", "M12.3", "M12.9", "M12.4", "M12.5", "M12.6", "M12.7"]
+kind = "power"
+type = "m12-a-12p"
+gender = "female"
+role = "passthrough"
+note = "Mates the Mid-360's M12 male connector; carries power (1, 9 / 2, 3) and the Ethernet pairs (4-7); pins 8, 10, 11, 12 go out on the function leads."
+
+[[connectors]]
+id = "M12"
+name = "M12 A-code 12-pin aviation connector (female)"
+type = "m12-a-12p"
+port_type = "m12-a-12p"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 12
+pitch = 0.0015
+src = "S2"
+fidelity = "datasheet"
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "out", note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "GND", kind = "ground", note = "black" },
+  { number = 4, name = "ETH_TX+", kind = "signal", dir = "in", note = "orange/white (sensor transmit)" },
+  { number = 5, name = "ETH_TX-", kind = "signal", dir = "in", note = "orange" },
+  { number = 6, name = "ETH_RX+", kind = "signal", dir = "out", note = "green/white (sensor receive)" },
+  { number = 7, name = "ETH_RX-", kind = "signal", dir = "out", note = "green" },
+  { number = 8, name = "PPS_IN", kind = "signal", dir = "out", v = 3.3, note = "purple/white" },
+  { number = 9, name = "V+", kind = "power", dir = "out", note = "red" },
+  { number = 10, name = "GPS_IN", kind = "signal", dir = "out", v = 3.3, note = "gray/white" },
+  { number = 11, name = "IO_OUT1", kind = "signal", dir = "in", v = 3.3, note = "gray" },
+  { number = 12, name = "IO_OUT2", kind = "signal", dir = "in", v = 3.3, note = "purple" },
+]
+
+[[connectors]]
+id = "RJ45"
+name = "RJ45 plug (Cat5e)"
+type = "rj45-100base-tx"
+port_type = "ethernet"
+gender = "male"
+pos = [0.0, 0.0, -1.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00102
+src = "S2"
+fidelity = "estimated"
+rationale = "The sensor-side pairs are in S2; the RJ45 contact numbers follow the 100BASE-TX standard (1 = TD+, 2 = TD-, 3 = RD+, 6 = RD-) for the straight cable the retailer describes (S1: M12 side splits to an RJ45); the lidar's TX pair therefore appears on RJ45 pins 3 / 6 (the host's RD). Only the four 100BASE-TX contacts are listed."
+pins = [
+  { number = 1, name = "TD+", kind = "signal", dir = "out", note = "host transmit, to the lidar's ETH_RX+ (M12 pin 6)" },
+  { number = 2, name = "TD-", kind = "signal", dir = "out", note = "to the lidar's ETH_RX- (M12 pin 7)" },
+  { number = 3, name = "RD+", kind = "signal", dir = "in", note = "from the lidar's ETH_TX+ (M12 pin 4)" },
+  { number = 6, name = "RD-", kind = "signal", dir = "in", note = "from the lidar's ETH_TX- (M12 pin 5)" },
+]
+
+[[connectors]]
+id = "PWR"
+name = "power cable (bare wires)"
+type = "wire-lead"
+port_type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -1.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+joinable = true
+src = "S2"
+fidelity = "datasheet"
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_min = 9.0, v_max = 27.0, note = "red" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.mybotshop.de/Livox-connector-cable-Mid360-AVIA2-1m_1"
+title = "MyBotShop Livox connector cable Mid360/AVIA2 1m (page-fetch summary)"
+accessed = "2026-10-16"
+quote = "EUR 79,95 incl. 19% VAT ... Length 1 m ... Item weight 0,11 kg ... Sensor side: M12 12-pin connector (female); Data side: RJ45 plug; Power: a separate power cable (page-fetch summary, not verbatim)"
+
+[[sources]]
+id = "S2"
+url = "https://terra-1-g.djicdn.com/851d20f7b9f64838a34cd02351370894/Livox/Livox_Mid-360_User_Manual_EN.pdf"
+title = "Livox Mid-360 User Manual (EN, 2024), Connectors: M12 aviation connector pin table"
+accessed = "2026-10-16"
+quote = "1 Power+ DC 9V-27V Red (positive); 9 Power+; 2 Ground Black (negative); 3 Ground; 4 Ethernet-TX+ Orange/white; 5 Ethernet-TX- Orange; 6 Ethernet-RX+ Green/white; 7 Ethernet-RX- Green; 8 LVTTL_IN Pulse per second Purple/white; 10 LVTTL_IN GPS input Gray/white; 11 LVTTL_OUT Reserved output IO Gray; 12 LVTTL_OUT Purple"

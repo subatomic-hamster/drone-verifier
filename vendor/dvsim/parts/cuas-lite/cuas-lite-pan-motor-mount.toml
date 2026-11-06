@@ -1,0 +1,21 @@
+id = "cuas-lite-pan-motor-mount"
+name = "cuas-lite pan_motor_mount (3D printed PETG, group static)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "pan_motor_mount"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (8.11 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in its group frame (B static/pan, head frame H tilt): the part frame IS that frame.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/pan_motor_mount.stl"
+material = "petg"
+bbox_min = [0.032563, -0.028, -0.012]
+bbox_max = [0.088563, 0.028, -0.008]

@@ -1,0 +1,36 @@
+id = "ruland-lv-mcl-8e-f"
+name = "Ruland LV-MCL-8E-F one-piece shaft collar with clamping lever, 1/2 in bore, 30 mm OD, 13 mm wide"
+category = "structure.shaft-collar"
+vendor = "Ruland Manufacturing"
+part_number = "LV-MCL-8E-F"
+url = "https://cdn.eicom.ru/media/PDF24/181758.pdf"
+
+# Frame: origin on the bore axis at the bore-end face, +z along the axis through the width. Inch bore (0.5000 in = 12.7 mm) in a metric
+# body: type bore.12.7. Tool-free lever clamp (collar MCL-8E-F + lever LF30-CL-M4:12-ZS).
+[params]
+bore_diameter    = { value = 12.7e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter   = { value = 30e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+width            = { value = 13e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+lever_length     = { value = 30e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+center_to_lever_top = { value = 32.2e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+seating_torque   = { value = 4.6, unit = "N*m", src = "S1", fidelity = "datasheet" }
+mass             = { value = 0.073437, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.12.7"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.013
+note = "0.5000 in (12.7 mm) clamped bore, tolerance +0.0020 / +0.0005 in; does not mate the metric shaft.12 family."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.eicom.ru/media/PDF24/181758.pdf"
+title = "Ruland LV-MCL-8E-F datasheet (eicom mirror of the Ruland sheet)"
+accessed = "2026-10-07"
+quote = "Ruland LV-MCL-8E-F, 1/2\" One-Piece Shaft Collar with Clamping Lever, Steel Collar with Zinc Plated Lever, 30mm OD, 11mm Width ... Bore (B1) 0.5000 in ... Outer Diameter (OD) 30 mm Center to Lever Top H1 32.2 mm Width (W) 13 mm ... Lever Length L1 30 mm ... Seating Torque 4.6 Nm ... Weight (lbs) 0.161900"

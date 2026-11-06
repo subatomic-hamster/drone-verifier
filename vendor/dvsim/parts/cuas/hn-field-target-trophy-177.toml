@@ -1,0 +1,34 @@
+id = "hn-field-target-trophy-177"
+name = "H&N Field Target Trophy .177 (4.5 mm) diabolo air-gun pellet, 8.64 gr"
+category = "ammo.pellet"
+vendor = "H&N Sport (Haendler & Natermann)"
+part_number = "Field Target Trophy .177 cal."
+url = "https://hn-sport.de/en/air-gun-hunting-target-shooting/field-target-trophy-177"
+
+# A small-bore lead diabolo for air rifles (4.5 mm). The simulator treats it as a point mass with quadratic drag (device `launcher`,
+# schema/devices.fbs). The drag coefficient is NOT published; it is derived from the published G1 ballistic coefficient.
+[params]
+mass     = { value = 5.598e-4, unit = "kg", src = "S1", fidelity = "datasheet" }  # 8.64 gr x 6.479891e-5 kg/gr (unit conversion)
+bc_g1    = { value = 0.021, unit = "1", src = "S1", fidelity = "datasheet" }
+head_diameter_max = { value = 4.52e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+head_diameter_min = { value = 4.50e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+min_muzzle_energy = { value = 7.46, unit = "J", src = "S1", fidelity = "datasheet" }
+
+[params.caliber]
+value = 4.51e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Mean of the published head sizes 4.50 and 4.52 mm = 4.51 mm; used as the drag reference diameter (the skirt is slightly larger, the model has no shape)."
+
+[params.cd]
+value = 0.38
+unit = "1"
+fidelity = "estimated"
+rationale = "Constant drag coefficient on the calibre cross-section, derived from the published G1 ballistic coefficient BC = 0.021 lb/in^2 (the airgun convention; x 703.07 = 14.76 kg/m^2): form factor i = SD / BC with sectional density SD = m / d^2 = 5.598e-4 / (4.51e-3)^2 = 27.5 kg/m^2, i = 1.86; Cd = i x Cd_G1(M), and the G1 standard drag function is about 0.20 at Mach 0.55-0.6 (McCoy, ARBRL-TR-02293, 1981; the table value is from memory of that table, not re-fetched), so Cd = 1.86 x 0.20 = 0.37, rounded to 0.38. Constant: a real pellet's Cd rises with Mach number (the BC itself is velocity-dependent) and with tumbling; at 150-250 m/s that is a modelling simplification. Mach 0.45-0.73 for 150-250 m/s."
+
+[[sources]]
+id = "S1"
+url = "https://hn-sport.de/en/air-gun-hunting-target-shooting/field-target-trophy-177"
+title = "H&N Sport, Field Target Trophy .177 cal. product page, technical data (values read through a page summariser)"
+accessed = "2026-10-07"
+quote = "Calibre: .177 cal. | Weight: 8.64 gr | Ballistic coefficient (Bc): 0.021 | Head sizes: 4.50-4.52 | Minimum muzzle energy: 5.5 ft.lbs | Maximum distance: 50 m"

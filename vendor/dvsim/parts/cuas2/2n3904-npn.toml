@@ -1,0 +1,72 @@
+id = "2n3904-npn"
+name = "2N3904 NPN small-signal transistor, TO-92 (cuas2 shot-counter clamp on the supervisor MOSFET gate)"
+category = "semiconductor.bjt"
+vendor = "onsemi and others"
+part_number = "2N3904"
+url = "https://www.digikey.es/en/products/detail/dcomponents/2N3904/13575042"
+
+# Part frame: origin at the centre of the package, z up, leads towards -z (E, B, C = pins 1, 2, 3 in the usual 2N3904 EBC pin-out).
+# The counter's TRIP line drives the base through 10 k; the collector sits on the supervisor MOSFET gate node and pulls it to ground, so a tripped counter holds the relay open.
+
+[params]
+mass       = { value = 0.0003, unit = "kg", fidelity = "estimated", rationale = "TO-92 package, 0.2-0.3 g." }
+v_ceo      = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_c_max    = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }
+price      = { value = 0.15, unit = "USD", fidelity = "estimated", rationale = "Digi-Key 2N3904 (d components) is EUR 0.18 / SGD 0.29 each (search snippet); 0.15 USD allowance in a 10-pack." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.00225, 0.00175, 0.00225]
+pos = [0.0, 0.0, 0.0]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "base"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["T.2"]
+
+[[ports]]
+name = "switch"
+kind = "signal"
+type = "wire-lead"
+gender = "neutral"
+pins = ["T.3", "T.1"]
+note = "Collector and emitter."
+
+[[connectors]]
+id = "T"
+name = "TO-92 leads (E, B, C)"
+type = "to-92-3"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, -0.002]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00127
+fidelity = "estimated"
+rationale = "2N3904 TO-92 pin-out E B C (common listing, not fetched; verify on the part);pitch is the TO-92 standard."
+pins = [
+  { number = 1, name = "E", kind = "ground" },
+  { number = 2, name = "B", kind = "signal", dir = "in", v_max = 6.0 },
+  { number = 3, name = "C", kind = "signal", dir = "io", v_max = 40.0, i_max = 0.2 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.digikey.es/en/products/detail/dcomponents/2N3904/13575042"
+title = "Digi-Key: 2N3904 NPN 40 V 200 mA TO-92 (search snippet)"
+accessed = "2026-10-27"
+quote = "Bipolar (BJT) Transistor NPN 40 V 200 mA 300MHz 625 mW Through Hole TO-92"

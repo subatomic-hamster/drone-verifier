@@ -1,0 +1,41 @@
+id = "tmotor-p13x4.4"
+name = "T-Motor P13*4.4 carbon-fibre propeller (13x4.4 in, 2-blade)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "P13*4.4"
+url = "https://rcdrone.top/products/t-motor-p13-4-4-prop"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# The listing gives size, optimum rpm and a thrust figure but NO mass; the thrust-limit text is garbled ("Thrust Limitation Ambient Temp ... Polished 4.5kg"),
+# so thrust_limit is not set. Mass and hub bore unpublished: no mass param, no j_prop. Blade count is not stated; 2-blade assumed (sold as 2PCS/PAIR CW+CCW).
+
+[params]
+diameter    = { value = 0.3302, unit = "m", src = "S1", fidelity = "datasheet" }            # 13*4.4 (330.2mm*111.8mm)
+pitch       = { value = 0.1118, unit = "m", src = "S1", fidelity = "datasheet" }
+blade_count = { value = 2, unit = "1", fidelity = "estimated", rationale = "Not stated in S1. All T-Motor P-series multirotor props in this library (P15, P17, P18) are 2-blade and this one is sold as '2PCS/PAIR' CW+CCW." }
+material    = { value = "CF+Epoxy", unit = "text", src = "S1", fidelity = "datasheet" }
+rpm_opt_min = { value = 5000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+rpm_opt_max = { value = 8000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "cylinder"
+size = [0.1651, 0.0060]       # disc envelope: radius D/2, half-height 6 mm (blade thickness envelope, estimated)
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+fidelity = "estimated"
+rationale = "Hub bore is not published. 6 mm taken from the sibling NS15*5 drawing (O6 centre hole, parts/propulsion/tmotor-ns15x5.toml S2)."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/t-motor-p13-4-4-prop"
+title = "rcdrone.top (T-Motor distributor) - T-Motor P13*4.4 prop (2PCS/PAIR)"
+accessed = "2026-10-07"
+quote = "Specifications Model NO 13*4.4(330.2mm*111.8mm) Material CF+Epoxy (Single Blade) Thrust Limitation Ambient Temp -40C 658C Optimum RPM 5000-8000 RPM/min Storage -1OFC 50PC/85% Temp/Humidity Surface Treatment Polished 4.5kg"

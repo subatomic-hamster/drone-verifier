@@ -1,0 +1,185 @@
+id = "waveshare-bus-servo-adapter-a"
+name = "Waveshare Bus Servo Adapter (A) serial bus servo driver board (SO-101 motor control board)"
+category = "pcb.servo_driver"
+vendor = "Waveshare"
+part_number = "Bus Servo Adapter (A)"
+url = "https://www.waveshare.com/bus-servo-adapter-a.htm"
+
+# The SO-ARM100 BOM lists "Motor Control Board" with Amazon link B0CTMM4LWK ("Waveshare ... Integrates ... Control Circuit ...");
+# LeRobot docs: "If you are using a Waveshare controller board, make sure that the two jumpers are set on the `B` channel (USB)."
+
+[params]
+mass            = { value = 0.016, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.042, unit = "m",  src = "S2", fidelity = "datasheet" }
+width           = { value = 0.033, unit = "m",  src = "S2", fidelity = "datasheet" }
+input_voltage_min = { value = 9.0,  unit = "V", src = "S2", fidelity = "datasheet" }
+input_voltage_max = { value = 12.6, unit = "V", src = "S2", fidelity = "datasheet" }
+mounting_hole_diameter = { value = 0.0025, unit = "m", src = "S2", fidelity = "datasheet" }
+mounting_hole_spacing_x = { value = 0.037, unit = "m", src = "S3", fidelity = "datasheet" }
+mounting_hole_spacing_y = { value = 0.028, unit = "m", src = "S3", fidelity = "datasheet" }
+max_servos      = { value = 253, unit = "1", src = "S2", fidelity = "datasheet" }
+host_interface  = { value = "USB Type-C (jumper B) or UART (jumper A), bridged to the 1 Mbps half-duplex servo bus", unit = "-", src = "S2", fidelity = "datasheet" }
+power_connector = { value = "5.5 x 2.1 mm DC jack or screw terminal", unit = "-", src = "S2", fidelity = "datasheet" }
+max_continuous_current = { value = 5.0, unit = "A", fidelity = "estimated", rationale ="Waveshare publishes no current rating. Six follower servos stall at 2.0-2.5 A each (datasheet); the SO-101 BOM notes a 12V '5A+' supply for the 12V variant (README) and ships a 5V 4A supply for the 7.4V variant, so the board is operated up to ~4 A in the BOM. 5 A is only a placeholder bound for a simulator current limit, not a vendor figure." }
+bus_forward_drop = { value = 0.0, unit = "V", fidelity = "estimated", rationale ="Servo power passes from the DC jack/terminal to the servo ports; no published series resistance or diode drop. Taken as 0 V; set a value if bench data appears." }
+
+[geometry]
+shape = "box"
+size = [0.021, 0.0165, 0.006]
+# size = half extents (m): length/2, width/2, height/2. Height 12 mm is estimated (USB-C + DC jack tall parts), board thickness not published.
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.37x28.m2.5"
+gender = "neutral"
+pos = [0.0, 0.0, -0.006]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.0016
+fidelity = "estimated"
+rationale = "Hole spacing 37.00 x 28.00 mm from S3 (the pattern itself is datasheet); the frame is a convention: board geometry is a box centred on the part frame; the mount pattern is taken on the underside (box bottom, assuming the tall connectors are on top), axis -z, ref along the 42 mm side."
+thickness_rationale = "PCB thickness not published; 1.6 mm standard; estimated."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "dc-barrel.5.5x2.1"
+gender = "female"
+role = "sink"
+v_max = { value = 12.6, unit = "V", src = "S2", fidelity = "datasheet" }
+v_min = { value = 9.0, unit = "V", src = "S2", fidelity = "datasheet" }
+i_max = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "Waveshare publishes no current rating; placeholder bound, see param max_continuous_current." }
+pins = ["DC.1", "DC.2"]   # centre contact (+), sleeve (-)
+note = "5.5 x 2.1 mm DC jack (S2). Note the SO-101 BOM feeds it 5 V, below the published 9 V minimum (see the voltage-limit mismatch recorded in docs/research/so101.md)."
+
+[[ports]]
+name = "servo_bus"
+kind = "power"
+type = "5264-3p"
+gender = "female"
+role = "source"
+v_max = { value = 12.6, unit = "V", src = "S2", fidelity = "datasheet" }
+fidelity = "estimated"
+rationale = "The product page lists the compatible ST/SC servos but not the servo-port connector model or the number of ports, so this port is an assumption: 5264-3P because the STS3215 servo connector is 5264/2.54 3P (see feetech-sts3215-c001 S9) and the servo cable mates to it. The builder should treat all servo ports as one daisy-chain net carrying the DC input to the servos."
+pins = ["BUS.1", "BUS.2", "BUS.3"]
+note = "Servo-side supply output: the DC input passes to the servo ports (no series drop published, see param bus_forward_drop)."
+
+[[ports]]
+name = "bus"
+kind = "signal"
+type = "feetech-ttl"
+gender = "female"
+pins = ["UART.1", "UART.2", "UART.3"]
+note = "UART / USB-C (jumper B) to the half-duplex servo bus bridge (S2); host side not modelled."
+
+# Connectors (pin level). The product page / wiki publish the interface types (5.5 x 2.1 mm DC jack, UART with 'RX-RX, TX-TX' wiring note,
+# jumper A = UART / B = USB) but no pin table or connector positions: pin names follow the servo-bus convention, poses are estimates
+# on the 42 x 33 mm board (box frame of the ports above).
+[[connectors]]
+id = "DC"
+name = "DC power jack"
+type = "dc-barrel-5.5x2.1"
+gender = "female"
+pos = [-0.021, -0.008, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+src = "S2"
+fidelity = "estimated"
+rationale = "S2 states a 5.5 x 2.1 mm DC power connector; centre-positive polarity is the convention of the barrel family (not stated on the page); 9 to 12.6 V input range from S2."
+pins = [
+  { number = 1, name = "DC+", kind = "power", dir = "in", v = 12.0, v_min = 9.0, v_max = 12.6, note = "centre contact; 9 to 12.6 V (S2)" },
+  { number = 2, name = "DC-", kind = "ground", note = "sleeve" },
+]
+
+[[connectors]]
+id = "BUS"
+name = "Servo bus port (3-pin)"
+type = "5264-3p"
+gender = "female"
+pos = [0.021, 0.008, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S2"
+fidelity = "estimated"
+rationale = "S2 lists the compatible ST / SC bus servos but not the servo-port pinout; GND / VCC / SIGNAL is the order of the ST / SC servo cables, which the XL430 lead (GND / VDD / DATA) shares, so a straight 3-wire cable joins them pin for pin."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VCC", kind = "power", dir = "out", note = "passes the DC jack voltage (9 to 12.6 V, S2) to the servo bus; no fixed level of its own, so none is stated" },
+  { number = 3, name = "SIG", kind = "signal", dir = "io", v = 5.0 },
+]
+
+[[connectors]]
+id = "BUS2"
+name = "Servo bus port 2 (3-pin)"
+type = "5264-3p"
+gender = "female"
+pos = [0.021, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S4"
+fidelity = "literature"
+pose_rationale = "Position estimated. The Koch v1.1 wiring diagram (S4) draws the SERVO_DRIVER_BOARD with two identical 'D DATA / V 12V / G GND' servo ports, each on the same bus; the second one feeds the voltage reducer (V / G) and the XL330 chain's DATA wire in the follower arm. The silkscreen letter order D V G is mapped onto the cable's pin order 3 / 2 / 1 here (reading direction not shown in the text layer)."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VCC", kind = "power", dir = "out", note = "same net as BUS.2; passes the DC jack voltage" },
+  { number = 3, name = "SIG", kind = "signal", dir = "io", v = 5.0 },
+]
+
+[[connectors]]
+id = "UART"
+name = "UART interface (jumper A)"
+type = "header-1x3-2.54mm"
+gender = "male"
+pos = [0.0, 0.0165, 0.006]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S2"
+fidelity = "estimated"
+rationale = "S2: 'communication interface: UART'; the wiki's 'RX-RX, TX-TX' note means the pins are labelled TX / RX (labels, not their order, are assumed here). 3.3 V / 5 V logic level not published."
+pins = [
+  { number = 1, name = "TXD", kind = "signal", dir = "out" },
+  { number = 2, name = "RXD", kind = "signal", dir = "in" },
+  { number = 3, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S4"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/electrical/Wiring_Diagram_Alexander_Koch_V1.1.pdf"
+title = "Koch v1.1 wiring diagram (jess-moss/koch-v1-1, commit 1a553e1, EasyEDA, 2024-07-08); text layer of the PDF"
+accessed = "2026-10-09"
+quote = "SERVO_DRIVER_BOARD || 12V PWR || D DATA | V 12V | G GND || D DATA | V 12V | G GND || MOTOR_CABLE DATA 3 / 12V 2 / GND 1 || Robot Cable-X3P 180mm"
+
+[[sources]]
+id = "S1"
+url = "https://www.waveshare.com/bus-servo-adapter-a.htm"
+title = "Waveshare Bus Servo Adapter (A) product page, structured data (weight)"
+accessed = "2026-10-06"
+quote = "\"weight\": { \"@type\": \"QuantitativeValue\", \"value\": \"16\", \"unitCode\": \"g\" }"
+
+[[sources]]
+id = "S2"
+url = "https://www.waveshare.com/bus-servo-adapter-a.htm"
+title = "Waveshare Bus Servo Adapter (A) product page, Specifications"
+accessed = "2026-10-06"
+quote = "Power Supply: DC 9~12.6V (ST series servo) || Power supply connector: 5.5 × 2.1mm DC || communication interface: UART || Dimensions: 42.00 × 33.00mm || Mounting hole size: 2.50mm || Allows controlling up to 253 ST/SC series serial bus servos at the same time (sufficient power supply required)"
+
+[[sources]]
+id = "S3"
+url = "https://www.waveshare.com/bus-servo-adapter-a.htm"
+title = "Waveshare Bus Servo Adapter (A) product page, Specifications (mounting hole spacing)"
+accessed = "2026-10-07"
+quote = "Dimensions 42.00 × 33.00mm Mounting hole size 2.50mm Mounting hole spacing 37.00 × 28.00mm"

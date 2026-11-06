@@ -1,0 +1,82 @@
+id = "emax-eco2-2807-1300kv"
+name = "EMAX ECO II 2807 1300KV brushless motor (7-inch class)"
+category = "motor.bldc"
+vendor = "EMAX"
+part_number = "ECO II 2807 1300KV (GTIN 708111881630)"
+url = "https://www.readymaderc.com/products/details/emax-eco-ii-2807-brushless-motor-1300kv"
+
+# Part frame: origin at the centre of the stator mounting face, z up toward the prop.
+# No manufacturer thrust/current table was found in text form for this motor (EMAX publishes none on the retailer pages fetched), so
+# there is no [tables.thrust_test]. GAPs: shaft diameter, body length, R, I0 and current rating are not on the fetched pages -> no
+# shaft port and no v_max/i_max on the phase port.
+# Retailer weights disagree: 47.5 g (S1) vs 54 g (S2); S1 is used as the primary value and S2 stored as mass_alt.
+
+[params]
+mass            = { value = 0.0475, unit = "kg", src = "S1", fidelity = "datasheet" }         # "Weight: 47.5g"
+mass_alt        = { value = 0.054, unit = "kg", src = "S2", fidelity = "datasheet" }          # "Weight: 54g" on a second retailer page
+kv              = { value = 1300, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+stator_diameter = { value = 0.028, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height   = { value = 0.007, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_pattern_a = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_pattern_b = { value = 0.019, unit = "m", src = "S1", fidelity = "datasheet" }
+prop_size_rec   = { value = 0.1778, unit = "m", src = "S1", fidelity = "datasheet" }          # "Recommended Propeller Size: 7 inch"
+kt              = { value = 0.007346, unit = "N*m/A", fidelity = "derived", derivation = "Kt = 60 / (2*pi*Kv) = 60 / (2*pi*1300) = 0.007346 N*m/A." }
+
+[geometry]
+shape = "cylinder"
+size = [0.017, 0.0165]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.19x19.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "phase"
+pins = ["PH.1", "PH.2", "PH.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "sink"
+
+# Pin level: three phase leads. S1 does not describe the leads (gauge, length, connector); the port 'phase' is the 3-phase motor input.
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.017, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives no lead gauge, length, connector or phase labels: three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention (swapping two reverses the motor)."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in" },
+  { number = 2, name = "B", kind = "power", dir = "in" },
+  { number = 3, name = "C", kind = "power", dir = "in" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.readymaderc.com/products/details/emax-eco-ii-2807-brushless-motor-1300kv"
+title = "ReadyMadeRC - EMAX ECO II 2807 Brushless Motor 1300KV (product specifications)"
+accessed = "2026-10-07"
+quote = "Motor Type:|Brushless|KV Rating:|1300KV|Stator Size:|2807|Recommended Propeller Size:|7\"|Mounting Pattern:|19x19mm|Weight:|47.5g; STATOR DIAMETER|28|STATOR HEIGHT|7|KV|1300"
+
+[[sources]]
+id = "S2"
+url = "https://wrekd.com/products/emax-eco-ii-series-2807-1300kv-motor"
+title = "WREKD - EMAX ECO II Series 2807 1300kV Motor"
+accessed = "2026-10-07"
+quote = "19x19mm Motor Mounting|Specifications|Weight: 54g|Includes|1x EMAX ECO II 2807 1300Kv Motor"

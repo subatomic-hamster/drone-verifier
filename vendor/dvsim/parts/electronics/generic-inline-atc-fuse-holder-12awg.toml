@@ -1,0 +1,82 @@
+id = "generic-inline-atc-fuse-holder-12awg"
+name = "Inline ATC / ATO blade fuse holder, 12 AWG leads (waterproof cap), 2-pack listing"
+category = "protection.fuse-holder"
+vendor = "generic (listing: Quelong, Amazon)"
+part_number = "Quelong 2 Pack 12 AWG inline fuse holder"
+url = "https://www.amazon.com/Quelong-Inline-Waterproof-Lighting-Circuits/dp/B0GDYJ3TG8"
+
+# Main protection of the supply bus, between the XT60 input and everything else. The holder takes standard ATC / ATO blade fuses; the listing ships 15-40 A blades, which are too big to protect a
+# turret whose worst case is about 12 A (Jetson 3.5 A + two flywheels 3.8 A at stall + two steppers 3.4 A): buy 7.5 A or 10 A blade fuses separately (about 0.3 USD each; the design choice for the SPEC is 10 A).
+# The retrieved page text gave the title only: no price, mass or body dimensions. Those are estimates.
+# Part frame: origin at the centre of the holder body, +x along the lead axis (lead 1 at -x, lead 2 at +x), z up.
+
+[params]
+wire_gauge          = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+lead_length         = { value = 0.2997, unit = "m", src = "S1", fidelity = "datasheet" }   # 11.8 inch
+fuse_family         = { value = "ATC / ATO standard blade, 15 A to 40 A supplied (15 / 20 / 25 / 30 / 40 A, 2 each)", unit = "-", src = "S1", fidelity = "datasheet" }
+voltage_rating      = { value = 32.0, unit = "V", fidelity = "estimated", rationale = "The listing's text gives '12V'; standard ATC/ATO blade fuses are rated 32 V DC, which covers a 4S pack (16.8 V). The holder's own voltage rating is not stated." }
+current_rating      = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "12 AWG leads are rated about 30 A in the reseller listings seen in a web search; the listing page text read here gives none." }
+mass                = { value = 0.025, unit = "kg", fidelity = "estimated", rationale = "Not in the retrieved text; a holder body with two 30 cm 12 AWG silicone leads is about 25 g (12 AWG copper 30 g/m for two leads is 18 g, plus the body)." }
+length              = { value = 0.045, unit = "m", fidelity = "estimated", rationale = "Typical medium ATC holder body about 45 mm x 20 mm x 15 mm; not in the retrieved text." }
+width               = { value = 0.020, unit = "m", fidelity = "estimated", rationale = "As length." }
+height              = { value = 0.015, unit = "m", fidelity = "estimated", rationale = "As length." }
+price           = { value = 3.0, unit = "USD", fidelity = "estimated", rationale = "The retrieved Amazon page text carried no price (it was a 1.4 MB page and only its first 100 kB was read). Such 2-packs of inline blade holders with 12 AWG leads sell for roughly 6-9 USD per pack in listings seen in a web search; 3 USD per holder is taken." }
+
+# Envelope (collision, wire clearance): the 45 x 20 x 15 mm body centred on the frame origin (estimated size, see length).
+[[geometry.shapes]]
+shape = "box"
+size = [0.0225, 0.01, 0.0075]
+pos = [0.0, 0.0, 0.0]
+
+[[ports]]
+name = "line"
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+role = "passthrough"
+pins = ["F.1", "F.2"]
+lead = { length = "lead_length", awg = "wire_gauge" }
+i_max = { value = 30.0, unit = "A", fidelity = "estimated", rationale = "As current_rating." }
+note = "In-line: lead 1 to the source, lead 2 to the load. Fuse not included in the BOM line (buy 10 A blades)."
+
+[[connectors]]
+id = "F"
+name = "2 bare 12 AWG leads"
+type = "wire-lead"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.09
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the wire gauge and length only; the leads are bare or crimped (not stated)."
+pose_rationale = "Leads leave the two ends of the body along x (positional estimate; pitch is only for drawing)."
+pins = [
+  { number = 1, name = "IN", kind = "power", dir = "io", i_max = 30.0 },
+  { number = 2, name = "OUT", kind = "power", dir = "io", i_max = 30.0 },
+]
+
+[visual]
+src = "V1"
+note = "Black rubber body with a hinged waterproof cap over a blade fuse and two leads (Amazon listing photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.amazon.com/Quelong-Inline-Waterproof-Lighting-Circuits/dp/B0GDYJ3TG8"
+title = "Amazon: Quelong 2 Pack 12 AWG Inline Fuse Holder 11.8 Inch 12V ATC/ATO Blade Fuse Holder with Waterproof Cap"
+accessed = "2026-10-11"
+quote = "Quelong 2 Pack 12 AWG Inline Fuse Holder 11.8 Inch 12V ATC/ATO Blade Fuse Holder with Waterproof Cap, 15A/20A/25A/30A/40A Blade Fuses 2 Each for Marine, Golf Cart Lighting, Circuits, Auto RV Fuses."
+
+[[sources]]
+id = "V1"
+url = "https://www.amazon.com/Quelong-Inline-Waterproof-Lighting-Circuits/dp/B0GDYJ3TG8"
+title = "Amazon listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "Inline Fuse Holder"

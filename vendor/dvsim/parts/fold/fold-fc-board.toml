@@ -1,0 +1,273 @@
+id = "fold-fc-board"
+name = "fold drone flight controller (own design): RP2350A + ICM-42688-P + servo-rail switch, 30.5 x 30.5 mm"
+category = "pcb.fc"
+vendor = "dvsim fold (own design)"
+part_number = "fold-fc v1"
+url = "firmware/fold-fc/include/pins.h"
+
+# The board is ours, so its pinout is the firmware's (pins.h is the single source; docs/fold/wiring.md has the table). Frame: origin at the board centre on the underside, +z up.
+# On-board nets, not wired in the model: GP12 LED / buzzer, GP14 servo-rail P-MOSFET gate (pull-down = off), GP16-GP20 SPI0 + INT1 to the ICM-42688-P, the pull-up (4.7 k to 3V3 [est])
+# and the 100 ohm series resistor [est] of each servo bus (the RP2350 PIO drives the half-duplex line itself: no direction buffer, FW round 2), and the divider on GP26 (VBAT) [est].
+
+[params]
+mass = { value = 0.005, unit = "kg", fidelity = "estimated", rationale = "Spec 3.1 FC line: a 30.5 mm 4-layer board with the MCU, flash, IMU, MOSFET and connectors; weigh the assembled board (bench B-MASS)." }
+price = { value = 20.0, unit = "USD", fidelity = "estimated", rationale = "Spec 3.5: PCB + RP2350A + ICM-42688-P, assembled, per board of 5; no quote fetched." }
+supply_voltage_min = { value = 4.5, unit = "V", fidelity = "estimated", rationale = "On-board 3.3 V LDO input range, estimated." }
+supply_voltage_max = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "As above." }
+
+[geometry]
+shape = "box"
+size = [0.01525, 0.01525, 0.002]
+pos = [0.0, 0.0, 0.002]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "jst-sh.4"
+gender = "neutral"
+role = "sink"
+pins = ["V5.5V", "V5.G"]
+v_max = { value = 5.5, unit = "V", fidelity = "estimated", rationale = "As supply_voltage_max." }
+
+[[ports]]
+name = "v5_out"
+kind = "power"
+type = "jst-sh.4"
+gender = "neutral"
+role = "source"
+pins = ["FLOW.5V", "FLOW.G"]
+v_nominal = { value = 5.0, unit = "V", fidelity = "estimated", rationale = "Straight from the 5 V input (no on-board regulator in front of the flow sensor); the model keeps the 5 V in and out as separate nets." }
+note = "5 V to the flow sensor (from the 5 V input)."
+
+[[ports]]
+name = "rc_pwr"
+kind = "power"
+type = "jst-sh.4"
+gender = "neutral"
+role = "source"
+pins = ["RC.5V", "RC.G"]
+v_nominal = { value = 5.0, unit = "V", fidelity = "estimated", rationale = "As v5_out." }
+note = "5 V to the receiver (from the 5 V input)."
+
+[[ports]]
+name = "rail_in"
+kind = "power"
+type = "jst-sh.4"
+gender = "neutral"
+role = "sink"
+pins = ["RIN.6V", "RIN.G"]
+v_max = { value = 7.4, unit = "V", fidelity = "estimated", rationale = "P-MOSFET switch and servo ratings (STS 6 V, SCS 7.4 V max)." }
+
+[[ports]]
+name = "rail_out"
+kind = "power"
+type = "jst-sh.4"
+gender = "neutral"
+role = "source"
+pins = ["SRV.6V", "SRV.G"]
+v_nominal = { value = 6.0, unit = "V", fidelity = "estimated", rationale = "The switched 6 V rail (P-MOSFET on GP14) of the servo BEC." }
+i_max = { value = 5.0, unit = "A", fidelity = "estimated", rationale = "The BEC's 5 A; the switch is sized for it (S6, spec 3.3)." }
+
+[[ports]]
+name = "pi_uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+pins = ["PI.TX", "PI.RX", "PI.G"]
+note = "GP0 TX, GP1 RX, 2 Mbaud, 3.3 V."
+
+[[ports]]
+name = "flow_uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+pins = ["FLOW.TX", "FLOW.RX", "FLOW.G"]
+note = "GP2 TX, GP3 RX (PIO UART, MSP to the 3901-L0X)."
+
+[[ports]]
+name = "rc_uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+pins = ["RC.TX", "RC.RX", "RC.G"]
+note = "GP4 TX, GP5 RX, CRSF 420 kbaud."
+
+[[ports]]
+name = "servo_bus"
+kind = "signal"
+type = "feetech-ttl"
+gender = "neutral"
+pins = ["SRV.A", "SRV.B"]
+note = "GP6 bus A (corners, STS), GP7 bus B (pods, SCS), half-duplex, pull-up + series resistor on the board."
+
+[[ports]]
+name = "esc_sig"
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+pins = ["ESC.M1", "ESC.M2", "ESC.M3", "ESC.M4", "ESC.G"]
+note = "GP8-GP11 DShot600 bidirectional to the 4-in-1 ESC."
+
+[[ports]]
+name = "esc_sense"
+kind = "signal"
+type = "analog"
+gender = "neutral"
+pins = ["ESC.VBAT", "ESC.CUR", "ESC.G"]
+note = "GP26 pack voltage (on-board divider), GP27 ESC current sensor output."
+
+# Pin level. JST-SH 1.0 mm connectors are the FC-side housings (the receiver and flow cables are pigtails); pin order is ours, GND last.
+[[connectors]]
+id = "V5"
+name = "5 V in (JST-SH 2p)"
+type = "jst-sh-2p"
+port_type = "jst-sh.4"
+gender = "neutral"
+pos = [-0.0125, -0.0145, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board: connector placement is a layout choice."
+pins = [
+  { number = "5V", name = "5V", kind = "power", dir = "in", v = 5.0, v_min = 4.5, v_max = 5.5 },
+  { number = "G", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "FLOW"
+name = "flow sensor (JST-SH 4p: 5V, GND, TX, RX)"
+type = "jst-sh-4p"
+port_type = "jst-sh.4"
+gender = "neutral"
+pos = [-0.0125, 0.0145, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board."
+pins = [
+  { number = "5V", name = "5V", kind = "power", dir = "out", v = 5.0 },
+  { number = "G", name = "GND", kind = "ground" },
+  { number = "TX", name = "GP2 TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "RX", name = "GP3 RX", kind = "signal", dir = "in", v = 3.3 },
+]
+
+[[connectors]]
+id = "RC"
+name = "receiver (JST-SH 4p: 5V, GND, TX, RX)"
+type = "jst-sh-4p"
+port_type = "jst-sh.4"
+gender = "neutral"
+pos = [0.0125, 0.0145, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board."
+pins = [
+  { number = "5V", name = "5V", kind = "power", dir = "out", v = 5.0 },
+  { number = "G", name = "GND", kind = "ground" },
+  { number = "TX", name = "GP4 TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "RX", name = "GP5 RX", kind = "signal", dir = "in", v = 3.3 },
+]
+
+[[connectors]]
+id = "PI"
+name = "Pi 5 UART (JST-SH 3p: TX, RX, GND)"
+type = "jst-sh-3p"
+port_type = "uart"
+gender = "neutral"
+pos = [0.0145, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board."
+pins = [
+  { number = "TX", name = "GP0 TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "RX", name = "GP1 RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "G", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "RIN"
+name = "6 V servo rail in from the BEC (JST-SH 2p)"
+type = "jst-sh-2p"
+port_type = "jst-sh.4"
+gender = "neutral"
+pos = [0.0125, -0.0145, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board."
+pins = [
+  { number = "6V", name = "6V in", kind = "power", dir = "in", v = 6.0, v_min = 4.8, v_max = 7.4 },
+  { number = "G", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "SRV"
+name = "servo harness out (JST-SH 4p: 6V switched, GND, bus A, bus B)"
+type = "jst-sh-4p"
+port_type = "feetech-ttl"
+gender = "neutral"
+pos = [-0.0145, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board: the 4-wire harness of spec 2.2 leaves here, a down-pointing header at the -x edge so the cable drops below the board and can pass under the pod arms."
+pins = [
+  { number = "6V", name = "6V switched (GP14)", kind = "power", dir = "out", v = 6.0 },
+  { number = "G", name = "GND", kind = "ground" },
+  { number = "A", name = "GP6 bus A", kind = "signal", dir = "io", v = 3.3 },
+  { number = "B", name = "GP7 bus B", kind = "signal", dir = "io", v = 3.3 },
+]
+
+[[connectors]]
+id = "ESC"
+name = "4-in-1 ESC (JST-SH 8p: M1-M4, CUR, VBAT, GND)"
+type = "jst-sh-8p"
+port_type = "dshot"
+gender = "neutral"
+pos = [0.0, -0.0145, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Own board; the usual 8-pin 4-in-1 ESC signal plug."
+pins = [
+  { number = "M1", name = "GP8 M1", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M2", name = "GP9 M2", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M3", name = "GP10 M3", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M4", name = "GP11 M4", kind = "signal", dir = "out", v = 3.3 },
+  { number = "CUR", name = "GP27 current sense", kind = "signal", dir = "in", v = 3.3 },
+  { number = "VBAT", name = "GP26 pack voltage (divider)", kind = "signal", dir = "in", v = 3.3 },
+  { number = "G", name = "GND", kind = "ground" },
+]

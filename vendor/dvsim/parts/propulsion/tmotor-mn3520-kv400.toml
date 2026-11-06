@@ -1,0 +1,96 @@
+id = "tmotor-mn3520-kv400"
+name = "T-Motor MN3520 KV400 multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN3520 KV400"
+url = "https://store.tmotor.com/product/mn3520-motor-navigator-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, +z along the shaft towards the prop.
+# Vendor page lists several KV variants; the values below are this variant's own spec column and test tables.
+
+# Ports as a top-level inline-table array (TOML requires it before the first [table] header).
+ports = [
+  { name = "base", kind = "mech", type = "bolt-circle.24.7.4.m3", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 4, holes = 4 },
+  { name = "base_32", kind = "mech", type = "bolt-circle.32.3.m2.5", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 3, holes = 3 },
+  { name = "shaft", kind = "mech", type = "shaft.4", gender = "male", pos = [0.0, 0.0, 0.048], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Derived: tip height = 50.6 mm overall drawing length minus 2.6 mm rear stub = 48.0 mm (S2 drawing; inference, the drawing does not say which 2.x label is the rear stub). Shaft dia from S1." },
+  { name = "prop_adapter", kind = "mech", type = "shaft.6", gender = "male", pos = [0.0, 0.0, 0.048], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Derived: supplied M6 prop adapter (S2 drawing); shaft.6 is the library family for it (as tmotor-mn3508-kv700); tip height as port 'shaft'." },
+  { name = "phase", pins = ["PH.1", "PH.2", "PH.3"], kind = "power", type = "motor-3phase", gender = "neutral", role = "sink", v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V (upper end of the 4-8S range, S1)." }, i_max = { value = 38.0, unit = "A", src = "S1", fidelity = "datasheet" }, note = "i_max is the 180 s current rating ('Max Continuous Current 180S'); cable is part of the motor" },
+]
+
+
+[params]
+mass = { value = 0.222, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Including Cables
+mass_no_cable = { value = 0.194, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Excluding Cables
+kv = { value = 400, unit = "rpm/V", src = "S1", fidelity = "datasheet" }  # from the model name
+r_winding = { value = 0.082, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Internal Resistance (mOhm on page)
+i0 = { value = 1.2, unit = "A", src = "S1", fidelity = "datasheet" }  # Idle Current@10v
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }  # test voltage from the 'Idle Current@10v' label
+i_peak = { value = 38.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Max Continuous Current 180S
+p_max = { value = 1140.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Max Power (180S)
+configuration = { value = "12N14P", unit = "text", src = "S1", fidelity = "datasheet" }
+cells_min = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max = { value = 8, unit = "S", src = "S1", fidelity = "datasheet" }
+diameter = { value = 0.0425, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+length_body = { value = 0.042, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+stator_diameter = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height = { value = 0.02, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+lead_length = { value = 0.6, unit = "m", src = "S1", fidelity = "datasheet" }  # 16# AWG
+kt = { value = 0.023873, unit = "N*m/A", fidelity = "derived", derivation = "60 / (2*pi*Kv) with Kv = 400 rpm/V." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, prop 'T-MOTOR 16*5.4CF', 22.2 V. All printed rows. thrust_N = thrust_g*0.00980665; vendor temp at 100 % throttle: 55 C.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "efficiency_g_per_W"]
+rows = [
+  [50, 22.2, 5.3, 117.66, 4160, 11.1796, 1140, 9.69],
+  [65, 22.2, 10.2, 226.44, 5260, 17.4558, 1780, 7.86],
+  [75, 22.2, 14.4, 319.68, 5850, 21.5746, 2200, 6.88],
+  [85, 22.2, 19.4, 430.68, 6500, 26.2818, 2680, 6.22],
+  [100, 22.2, 23.2, 515.04, 6800, 29.42, 3000, 5.82],
+]
+prop_label = "T-MOTOR 16*5.4CF"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.02125, 0.024]
+pos = [0.0, 0.0, 0.024]   # spans z = 0 .. tip height
+
+# Pin level: three 16 AWG phase leads, 600 mm (S1 'AWG|16#|Cable Length|600mm'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 16 AWG, 600 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.02125, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the cable length and gauge (600mm, 16#), not a connector, lead positions or phase labels: leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 38.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 38.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 38.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn3520-motor-navigator-type.html"
+title = "T-MOTOR store - MN3520 KV400 (specification + test data)"
+accessed = "2026-10-07"
+quote = "Test Item|MN3520 KV400|Report NO.|MN.00018|Internal Resistance|82mΩ|Configuration|12N14P|Shaft Diameter|4mm|Motor Dimensions|Φ42.5×42mm|Stator Diameter|35mm|Stator Height|20mm|AWG|16#|Cable Length|600mm|Weight Including Cables|222g|Weight Excluding Cables|194g|No.of Cells(Lipo)|4-8S|Idle Current@10v|1.2A|Max Power (180S)|1140W|Max Continuous Current 180S|38A. Test row: MN3520 KV400|22.2|T-MOTOR 16*5.4CF|50%|5.3|117.66|1140|4160|9.69"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202606/MN3520-draw-0603-v1.jpg"
+title = "T-MOTOR MN3520 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 50.6, 6, 2.6, Ø42.5, 5-M3, Ø17, Ø4, 12, 4-M3, Ø24.7, 3-M2.5, Ø32; accessories M6 / M8 prop adapters 29 long, Ø24.5"

@@ -1,0 +1,268 @@
+id = "holybro-kakute-h743-wing"
+name = "Holybro Kakute H743-Wing flight controller (25x25 M2, 10-36V PDB, 3x BEC)"
+category = "pcb.fc"
+vendor = "Holybro"
+part_number = "Kakute H743-Wing"
+url = "https://docs.holybro.com/autopilot/kakute-h743-wing/overview.md"
+
+# IMU: ICM-42688-P; barometer BMP280; CAN bus; on-board PDB and BECs.
+[params]
+mass            = { value = 0.028, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0135, unit = "m", src = "S1", fidelity = "datasheet" }
+vbat_min        = { value = 10, unit = "V", src = "S1", fidelity = "datasheet" }
+vbat_max        = { value = 36, unit = "V", src = "S1", fidelity = "datasheet" }
+current_sense_continuous = { value = 90, unit = "A", src = "S1", fidelity = "datasheet" }
+current_sense_peak = { value = 220, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_5v_current_cont = { value = 2, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_5v_current_peak = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_9v_12v_current_cont = { value = 2, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_vx_current_cont = { value = 6, unit = "A", src = "S1", fidelity = "datasheet" }
+bec_vx_current_peak = { value = 8, unit = "A", src = "S1", fidelity = "datasheet" }
+ldo_3v3_current_max = { value = 0.2, unit = "A", src = "S1", fidelity = "datasheet" }
+static_current_5v = { value = 0.160, unit = "A", src = "S1", fidelity = "datasheet" }
+uart_count      = { value = 7, unit = "1", src = "S1", fidelity = "datasheet" }
+pwm_outputs     = { value = 14, unit = "1", src = "S1", fidelity = "datasheet" }
+i2c_ports_external = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+can_buses       = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.25x25.m2"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+
+[[ports]]
+name = "vbat_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 36, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "Input voltage range 10~36V (3~8S LiPo); also the ESC power pad"
+pins = ["PWR.BAT-IN", "PWR.GND"]
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+
+[[ports]]
+name = "serial"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 7
+
+[[ports]]
+name = "pwm_out"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+count = 14
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+count = 2
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "neutral"
+connector = "USB/DFU Key Extender with USB Type-C"
+
+# ---- Connectors (pin level). Pin tables: S2 (Holybro Kakute H743-Wing "Pinout" page). The JST-GH ports are named (CAN, I2C: "4Pin JST-GH"; GPS: the
+# page names no family, 6 pins: the Holybro JST-GH family is assumed). Poses are estimates on the 45 x 30 x 13.5 mm board (the page has a picture,
+# no drawing): pin order within each connector is the table's; the part frame origin is the board centre, x along the 45 mm side.
+[[connectors]]
+id = "CAN"
+name = "CAN port (4-pin JST-GH)"
+type = "jst-gh-4"
+gender = "male"
+pos = [0.0, -0.015, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00125
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; position on the board estimated."
+pins = [
+  { number = 1, name = "5V", kind = "power", dir = "out", v = 5.0, i_max = 1.0, note = "+5V voltage output (1A Max)" },
+  { number = 2, name = "CAN1_H", kind = "signal", dir = "io", v = 3.3 },
+  { number = 3, name = "CAN1_L", kind = "signal", dir = "io", v = 3.3 },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "I2C"
+name = "I2C port (4-pin JST-GH)"
+type = "jst-gh-4"
+gender = "male"
+pos = [-0.010, -0.015, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00125
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; position on the board estimated."
+pins = [
+  { number = 1, name = "5V", kind = "power", dir = "out", v = 5.0, i_max = 1.0, note = "+5V voltage output (1A Max)" },
+  { number = 2, name = "I2C2_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 3, name = "I2C2_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "GPS"
+name = "GPS port (6-pin)"
+type = "jst-gh-6"
+gender = "male"
+pos = [0.012, -0.015, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; position on the board estimated; the page does not name the connector family (JST-GH assumed, as for the siblings)."
+pins = [
+  { number = 1, name = "5V", kind = "power", dir = "out", v = 5.0, i_max = 1.0, note = "+5V voltage output (1A Max)" },
+  { number = 2, name = "UART1_TXD", kind = "signal", dir = "out", v = 3.3, alt = ["TXD"] },
+  { number = 3, name = "UART1_RXD", kind = "signal", dir = "in", v = 3.3, alt = ["RXD"] },
+  { number = 4, name = "I2C1_SCL", kind = "signal", dir = "io", v = 3.3, alt = ["SCL"] },
+  { number = 5, name = "I2C1_SDA", kind = "signal", dir = "io", v = 3.3, alt = ["SDA"] },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "USB"
+name = "USB port (6-pin, USB/DFU key extender)"
+type = "usb-ext-6"
+gender = "male"
+pos = [0.022, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S2; the 6-pin board connector family and its position are estimated (1.25 mm assumed)."
+pins = [
+  { number = 1, name = "3v3", kind = "power", dir = "out", v = 3.3, i_max = 0.25, note = "3.3v output (0.25A max)" },
+  { number = 2, name = "Boot", kind = "signal", dir = "in", note = "DFU boot signal input" },
+  { number = 3, name = "VBUS", kind = "power", dir = "in", v = 5.0, note = "5V USB VBUS input" },
+  { number = 4, name = "D-", kind = "signal", dir = "io", note = "USB data-" },
+  { number = 5, name = "D+", kind = "signal", dir = "io", note = "USB data+" },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "PWR"
+name = "power board pads"
+type = "solder-pad"
+gender = "neutral"
+pos = [-0.0225, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pad names and functions from S2 (Power Board table: BAT-IN battery positive, BAT-OUT to ESC positive, GND); pad pitch and position estimated."
+pins = [
+  { number = "BAT-IN", name = "BAT-IN", kind = "power", dir = "in", v_min = 10.0, v_max = 36.0, note = "connect to battery positive (10~36V, 3~8S)" },
+  { number = "GND", name = "GND", kind = "ground" },
+  { number = "BAT-OUT", name = "BAT-OUT", kind = "power", dir = "out", note = "connect to ESC positive: the battery voltage passes through the current sense" },
+]
+
+[[connectors]]
+id = "PADS"
+name = "signal and regulator pads"
+type = "solder-pad"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0067]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 5
+cols = 9
+pitch = 0.0025
+layout = "seq"
+src = "S2"
+fidelity = "datasheet"
+pose_rationale = "Pad names and functions from S2 (Pinout table). The page pictures, but gives no coordinates for, the pads: the 5 x 9 grid order and pitch are estimated."
+pins = [
+  { number = "9V", name = "9V", kind = "power", dir = "out", v = 9.0, i_max = 2.0, note = "video transmitter positive voltage 9V/2A (switchable to 12V by jumper)" },
+  { number = "Vx", name = "Vx", kind = "power", dir = "out", v = 6.0, i_max = 6.0, note = "servo power output 6V/6A (switchable to 8V by jumper)" },
+  { number = "5v", name = "5v", kind = "power", dir = "out", v = 5.0, i_max = 2.0 },
+  { number = "3v3", name = "3v3", kind = "power", dir = "out", v = 3.3, i_max = 0.25 },
+  { number = "IO1", name = "PINIO1", kind = "signal", dir = "io" },
+  { number = "IO2", name = "PINIO2", kind = "signal", dir = "io" },
+  { number = "Vbat2", name = "Vbat2", kind = "signal", dir = "in", note = "battery 2 voltage sense input (10~36V)" },
+  { number = "Curr2", name = "Curr2", kind = "signal", dir = "in", v = 3.3, note = "battery 2 current sense input (0~3.3V)" },
+  { number = "Vo", name = "Vo", kind = "signal", dir = "out", note = "video output to video transmitter" },
+  { number = "CAM1", name = "CAM1", kind = "signal", dir = "in", note = "video input from FPV camera 1" },
+  { number = "CAM2", name = "CAM2", kind = "signal", dir = "in", note = "video input from FPV camera 2" },
+  { number = "G", name = "GND", kind = "ground" },
+  { number = "RSI", name = "RSI", kind = "signal", dir = "in", v = 3.3, note = "analog RSSI (0-3.3v) input from receiver" },
+  { number = "R2", name = "UART2_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T2", name = "UART2_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R3", name = "UART3_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T3", name = "UART3_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R5", name = "UART5_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T5", name = "UART5_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R6", name = "UART6_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T6", name = "UART6_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R7", name = "UART7_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T7", name = "UART7_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "CTS", name = "UART7_CTS", kind = "signal", dir = "in", v = 3.3 },
+  { number = "RTS", name = "UART7_RTS", kind = "signal", dir = "out", v = 3.3 },
+  { number = "R8", name = "UART8_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = "T8", name = "UART8_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = "Buz+", name = "Buz+", kind = "signal", dir = "out", note = "piezo buzzer positive leg" },
+  { number = "Buz-", name = "Buz-", kind = "signal", dir = "out", note = "piezo buzzer negative leg" },
+  { number = "M1", name = "PWM1", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M2", name = "PWM2", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M3", name = "PWM3", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M4", name = "PWM4", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M5", name = "PWM5", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M6", name = "PWM6", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M7", name = "PWM7", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M8", name = "PWM8", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M9", name = "PWM9", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M10", name = "PWM10", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M11", name = "PWM11", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M12", name = "PWM12", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M13", name = "PWM13", kind = "signal", dir = "out", v = 3.3 },
+  { number = "M14", name = "PWM14", kind = "signal", dir = "out", v = 3.3 },
+]
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/autopilot/kakute-h743-wing/pinout"
+title = "Kakute H743-Wing Pinout (Holybro docs; Holybro llms-full.txt text export)"
+accessed = "2026-10-09"
+quote = "9V | Video transmitter positive voltage -9V/2A (Switchable to 12V by jumper) | Vx | Servo power output - 6V/6A (Switchable to 8V by jumper) | 5v | 5v output (2A) | 3v3 | 3.3v output (0.25A) | M1~M14 | PWM1~PWM14 signal outputs || CAN Port (4Pin JST-GH): 1 5V +5V voltage output (1A Max) | 2 H CAN1_H | 3 L CAN1_L | 4 Gnd || I2C Port (4Pin JST-GH): 1 5V | 2 SCL I2C2_SCL | 3 SDA I2C2_SDA | 4 Gnd || GPS Port: 1 5V (1A Max) | 2 TXD UART1_TXD | 3 RXD UART1_RXD | 4 SCL I2C1_SCL | 5 SDA I2C1_SDA | 6 Gnd || USB Port: 1 3v3 | 2 Boot | 3 VBUS | 4 D- | 5 D+ | 6 Gnd || Power Board: BAT-IN Connect to Battery positive | BAT-OUT Connect to ESC positive | GND Ground"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/autopilot/kakute-h743-wing/overview.md"
+title = "Kakute H743-Wing Overview (Holybro docs)"
+accessed = "2026-10-07"
+quote = "IMU: ICM-42688P (SPI3) Baro: BMP280 (I2C4) ... 7x Uarts (1,2,3,5,6,7,8) with built-in inversion. 14x PWM outputs 1x CAN ... 3x I2C (I2C1 and I2C2 for external devices, I2C4 for onboard sensors) ... Static power 160mA@5V ... Input voltage range: 10~36V (3~8S LiPo) ... Current Sense: 90A continuous, 220A peak. ... Continuous current 2 Amps, 3A Peak ... Continuous current 6 Amps, 8A Peak ... Continuous current: 200mA ... Mounting: 25 x 25mm, M2 hole Dimensions: 45x 30 x 13.5 mm Weight: 28g with USB extender"

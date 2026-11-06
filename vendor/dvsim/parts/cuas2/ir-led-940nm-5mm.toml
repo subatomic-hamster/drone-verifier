@@ -1,0 +1,67 @@
+id = "ir-led-940nm-5mm"
+name = "5 mm 940 nm infrared LED (cuas2 muzzle / breech beam emitter)"
+category = "sensor.optical"
+vendor = "generic (Adafruit 387 class)"
+part_number = "5 mm IR LED 940 nm"
+url = "https://core-electronics.com.au/super-bright-5mm-ir-led-940nm.html.plain.md"
+
+# Part frame: origin at the base of the 5 mm body (flange), +z towards the dome (the beam direction), body 8 mm long, leads out of the base towards -z.
+# Drive: 3.3 V from the Pico 3V3 pin through 100 ohm: (3.3 - 1.3) / 100 = 20 mA (typical Vf 1.2-1.3 V at 20 mA for a 940 nm LED, class value).
+
+[params]
+mass          = { value = 0.0003, unit = "kg", fidelity = "estimated", rationale = "A 5 mm LED with leads weighs 0.2-0.4 g (typical)." }
+wavelength    = { value = 940.0, unit = "nm", src = "S1", fidelity = "datasheet" }
+diameter      = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body   = { value = 0.008, unit = "m", fidelity = "estimated", rationale = "5 mm LED body with flange, about 8 mm (package standard)." }
+v_forward     = { value = 1.3, unit = "V", fidelity = "estimated", rationale = "Class value at 20 mA; the listing text read does not give it." }
+i_forward     = { value = 0.020, unit = "A", fidelity = "estimated", rationale = "Design drive current (3.3 V, 100 ohm)." }
+price         = { value = 0.30, unit = "USD", fidelity = "estimated", rationale = "Allowance: Adafruit 387 is AUD 1.50 at Core Electronics (out of stock); generic 5 mm 940 nm LEDs in 10-packs are about 0.2-0.4 each. Listing not fetched for USD." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0025, 0.004]
+pos = [0.0, 0.0, 0.004]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "led"
+kind = "signal"
+type = "led-2lead"
+gender = "neutral"
+pins = ["D.1", "D.2"]
+note = "Anode (pin 1, long lead) and cathode (pin 2)."
+
+[[connectors]]
+id = "D"
+name = "LED leads (anode, cathode)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.00254
+fidelity = "estimated"
+rationale = "Standard 2.54 mm lead spacing of a 5 mm LED."
+pins = [
+  { number = 1, name = "A", kind = "signal", dir = "in", v_max = 5.0, i_max = 0.05 },
+  { number = 2, name = "K", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://core-electronics.com.au/super-bright-5mm-ir-led-940nm.html.plain.md"
+title = "Core Electronics: Super-bright 5mm IR LED - 940nm (Adafruit 387), search snippet"
+accessed = "2026-10-27"
+quote = "Super-bright 5mm IR LED - 940nm ... $1.50 AUD including GST"

@@ -1,0 +1,87 @@
+id = "estes-e16"
+name = "Estes E16 black-powder model rocket motor (29 x 114 mm)"
+category = "motor.solid"
+vendor = "Estes Industries"
+part_number = "E16"
+url = "https://www.thrustcurve.org/motors/Estes/E16/"
+
+# Part frame: origin on the motor axis at the nozzle (aft) face, +z = thrust direction (towards the rocket's nose). The nozzle port's axis is
+# the thrust direction (the solid_motor device's site +z), like the launcher's muzzle port.
+# Thrust curve: NAR certification data as a RASP .eng file (thrustcurve.org simfile, source "cert"); 29 points as published, thrust ramps from
+# (0 s, 0 N) to the first point. Delivered impulse of the table (trapezoid) = 33.6 N s (certified 33.4 N s, the file is 0.6 % above).
+[params]
+mass                = { value = 0.082, unit = "kg", src = "S1", fidelity = "datasheet" }
+propellant_mass     = { value = 0.040, unit = "kg", src = "S1", fidelity = "datasheet" }
+diameter            = { value = 0.029, unit = "m", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.114, unit = "m", src = "S1", fidelity = "datasheet" }
+total_impulse_cert  = { value = 33.4, unit = "N*s", src = "S2", fidelity = "datasheet" }
+avg_thrust_cert     = { value = 16.0, unit = "N", src = "S2", fidelity = "datasheet" }
+max_thrust_cert     = { value = 26.4, unit = "N", src = "S2", fidelity = "datasheet" }
+burn_time_cert      = { value = 2.1, unit = "s", src = "S2", fidelity = "datasheet" }
+ignition_delay      = { value = 0.3, unit = "s", fidelity = "estimated", rationale = "No published value. Estes Solar igniters light a black-powder motor within a fraction of a second of the launch-controller current; 0.3 s is a design choice for the command-to-first-thrust time (the curve itself starts at 0.150 s)." }
+
+[tables.thrust_curve]
+columns = ["time_s", "thrust_N"]
+rows = [
+  [0.150, 1.371], [0.186, 1.920], [0.206, 3.387], [0.242, 5.587], [0.252, 7.422], [0.277, 8.705],
+  [0.333, 13.474], [0.359, 15.858], [0.374, 16.592], [0.394, 18.609], [0.435, 21.544], [0.476, 24.661],
+  [0.521, 26.440], [0.643, 21.720], [0.725, 20.432], [0.821, 19.511], [0.898, 18.958], [1.025, 18.219],
+  [1.142, 18.032], [1.259, 17.844], [1.396, 17.472], [1.569, 17.282], [1.757, 17.275], [1.895, 17.086],
+  [2.027, 17.816], [2.042, 12.494], [2.052, 8.457], [2.063, 4.970], [2.090, 0.000],
+]
+src = "S1"
+fidelity = "datasheet"
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0145, 0.057]
+pos = [0.0, 0.0, 0.057]
+zaxis = [0.0, 0.0, 1.0]
+
+# Case seat: the motor sits in a motor-mount tube / gimbal cradle of this bore.
+[[ports]]
+name = "case"
+kind = "mech"
+type = "tube.29"
+gender = "male"
+pos = [0.0, 0.0, 0.057]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "datasheet"
+src = "S1"
+rationale = "Round casing, 29 mm diameter (the RASP header gives the diameter)."
+
+# Nozzle: the solid_motor device's site takes this port's pose (site +z = thrust direction).
+[[ports]]
+name = "nozzle"
+kind = "mech"
+type = "motor-nozzle-axis"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "datasheet"
+src = "S1"
+rationale = "Aft face of the casing on the motor axis; thrust acts along the axis towards the nose."
+
+[visual]
+rationale = "Generic model-rocket motor look from the part's own diameter and length: paper casing, label band, recessed ceramic nozzle (label colours are not sourced)."
+
+[[visual.elements]]
+gen = "solid_motor"
+
+[[sources]]
+id = "S1"
+url = "https://www.thrustcurve.org/simfiles/5f4294d20002e900000007e6/"
+title = "thrustcurve.org: Estes E16 RASP simulation file (NAR certification data), the .eng file as downloaded"
+accessed = "2026-10-08"
+quote = "E16 29 114 0-4-6-8 .0400 .08200 E 0.150 1.371 0.186 1.920 0.206 3.387 0.242 5.587 0.252 7.422 0.277 8.705 ... 2.042 12.494 2.052 8.457 2.063 4.970 2.090 0.000 (RASP header: name, diameter mm, length mm, delays, propellant kg, loaded kg)"
+
+[[sources]]
+id = "S2"
+url = "https://www.thrustcurve.org/motors/Estes/E16/"
+title = "thrustcurve.org: Estes E16 motor details (certified values)"
+accessed = "2026-10-08"
+quote = "Total Impulse: 33.4 Ns  Avg. Thrust: 16.0 N  Max. Thrust: 26.4 N  Burn Time: 2.1 s  Total Weight: 84 g  Prop. Weight: 40 g  Diameter: 29 mm  Length: 114 mm  Delays: 0,4,6,8"

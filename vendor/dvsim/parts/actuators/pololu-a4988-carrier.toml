@@ -1,0 +1,146 @@
+id = "pololu-a4988-carrier"
+name = "Pololu A4988 stepper motor driver carrier (item 1182)"
+category = "driver.stepper"
+vendor = "Pololu (Allegro A4988 IC)"
+part_number = "Pololu 1182"
+url = "https://www.pololu.com/product/1182"
+
+# Frame: origin at the board centre on the top (component) face; +z = out of the component side; x along the 0.8 in (20.32 mm) length, y along the 0.6 in (15.24 mm) width.
+# Board thickness is not published; z = 0 is taken as the top surface and the mating pins point to -z.
+
+[params]
+mass               = { value = 0.0013,  unit = "kg",   src = "S1", fidelity = "datasheet" }
+length             = { value = 0.02032, unit = "m",    src = "S1", fidelity = "datasheet" }  # 0.8 in
+width              = { value = 0.01524, unit = "m",    src = "S1", fidelity = "datasheet" }  # 0.6 in
+v_motor_min        = { value = 8.0,     unit = "V",    src = "S1", fidelity = "datasheet" }
+v_motor_max        = { value = 35.0,    unit = "V",    src = "S1", fidelity = "datasheet" }
+i_continuous_per_phase = { value = 1.0, unit = "A",    src = "S1", fidelity = "datasheet" }  # without heat sink or forced air
+i_max_per_phase    = { value = 2.0,     unit = "A",    src = "S1", fidelity = "datasheet" }  # with sufficient additional cooling
+v_logic_min        = { value = 3.0,     unit = "V",    src = "S1", fidelity = "datasheet" }
+v_logic_max        = { value = 5.5,     unit = "V",    src = "S1", fidelity = "datasheet" }
+microstep_modes    = { value = "full, 1/2, 1/4, 1/8, 1/16", unit = "-", src = "S1", fidelity = "datasheet" }
+microstep_max_divisor = { value = 16,   unit = "1",    src = "S1", fidelity = "datasheet" }
+r_sense            = { value = 0.068,   unit = "ohm",  src = "S2", fidelity = "datasheet" }  # units made since 2017; earlier green boards used 0.050 ohm
+current_limit_formula = { value = "VREF = 8 * I_max * R_CS", unit = "-", src = "S2", fidelity = "datasheet" }
+protections        = { value = "adjustable current limiting, over-current, over-temperature", unit = "-", src = "S2", fidelity = "datasheet" }
+reverse_voltage_protection = { value = "no", unit = "-", src = "S1", fidelity = "datasheet" }
+i_per_vref = { value = 1.838, unit = "A/V", fidelity = "derived", derivation = "From VREF = 8*I_max*R_CS with R_CS = 0.068 ohm: I_max = VREF/(8*0.068) = VREF/0.544 = 1.838 A per volt (Pololu's own example: 1 A needs VREF = 540 mV, i.e. 1.85 A/V)." }
+
+[[ports]]
+name = "pins"
+kind = "mech"
+type = "pinout.pololu-16pin-stepper"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "16 header holes (male 0.1 in pins supplied, unsoldered); Pololu lists this in its '16-pin Stepper Motor Drivers' family and its DRV8825 carrier is described as a drop-in replacement for it. Exact row spacing not extracted from the page text."
+
+[[ports]]
+name = "vmot"
+pins = ["PWR.1", "PWR.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 35.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 8.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }  # per phase, no extra cooling
+i_peak = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }  # per phase with sufficient cooling
+note = "VMOT/GND header pins; the board has no reverse-voltage protection (S1)."
+
+[[ports]]
+name = "motor_out"
+pins = ["PWR.3", "PWR.4", "PWR.5", "PWR.6"]   # 2B, 2A, 1A, 1B
+kind = "power"
+type = "stepper-bipolar-4wire"
+gender = "neutral"
+role = "source"
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }  # continuous per phase, no heat sink
+i_peak = { value = 2.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "1A/1B/2A/2B outputs for one bipolar stepper (or 6/8-lead unipolar wired as bipolar)."
+
+[[ports]]
+name = "step_dir"
+pins = ["CTL.7", "CTL.8", "CTL.1", "CTL.2", "CTL.3", "CTL.4", "CTL.5", "CTL.6"]   # STEP, DIR, ENABLE, MS1-MS3, RESET, SLEEP
+kind = "signal"
+type = "step-dir"
+gender = "male"
+level_min = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }
+level_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+note = "STEP, DIR, ENABLE and MS1-MS3 pins."
+
+# ---- Connectors (pin level): the 16 header holes, two rows of eight on a 0.1 in grid (P1: the pin labels of Pololu's wiring diagram and top-view
+# photo). CTL is the control row (ENABLE ... DIR), PWR the power/motor row (VMOT ... GND). The row spacing (0.5 in = the 0.6 in board width less
+# one 0.1 in margin per side) and the orientation are read off the product photo (estimated).
+[[connectors]]
+id = "CTL"
+name = "control header row (8 holes)"
+type = "header-1x8-2.54mm"
+gender = "male"
+pos = [0.0, -0.00635, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "Pin names and order from P1; the row spacing 0.5 in and which side is 'left' are estimated from the product photo."
+pins = [
+  { number = 1, name = "ENABLE", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "active-low enable (the page's overbar label)" },
+  { number = 2, name = "MS1", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "microstep select 1 (100 kohm pull-down, P1)" },
+  { number = 3, name = "MS2", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "microstep select 2 (50 kohm pull-down, P1)" },
+  { number = 4, name = "MS3", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "microstep select 3 (100 kohm pull-down, P1)" },
+  { number = 5, name = "RESET", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "active-low reset; floating on the board (P1: connect it to SLEEP to enable)" },
+  { number = 6, name = "SLEEP", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5, note = "active-low sleep" },
+  { number = 7, name = "STEP", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5 },
+  { number = 8, name = "DIR", kind = "signal", dir = "in", v_min = 3.0, v_max = 5.5 },
+]
+
+[[connectors]]
+id = "PWR"
+name = "power and motor header row (8 holes)"
+type = "header-1x8-2.54mm"
+gender = "male"
+pos = [0.0, 0.00635, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.00254
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "Pin names and order from P1; the row spacing 0.5 in and which side is 'right' are estimated from the product photo."
+pins = [
+  { number = 1, name = "VMOT", kind = "power", dir = "in", v_min = 8.0, v_max = 35.0, i_max = 2.0, note = "motor supply 8-35 V (S1); no reverse-voltage protection" },
+  { number = 2, name = "GND", kind = "ground", note = "motor supply ground" },
+  { number = 3, name = "2B", kind = "power", dir = "out", i_max = 1.0, note = "coil 2; 1 A continuous per phase without a heat sink, 2 A with cooling (S1)" },
+  { number = 4, name = "2A", kind = "power", dir = "out", i_max = 1.0, note = "coil 2" },
+  { number = 5, name = "1A", kind = "power", dir = "out", i_max = 1.0, note = "coil 1" },
+  { number = 6, name = "1B", kind = "power", dir = "out", i_max = 1.0, note = "coil 1" },
+  { number = 7, name = "VDD", kind = "power", dir = "in", v_min = 3.0, v_max = 5.5, note = "logic supply 3-5.5 V (S1)" },
+  { number = 8, name = "GND", kind = "ground", note = "logic ground" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/1182"
+title = "Pololu item 1182 product page, pictures 0J10073 (minimal wiring diagram) and 0J10061 (top view with dimensions): header pin labels transcribed from the images"
+accessed = "2026-10-09"
+quote = "Left row, top to bottom: ENABLE, MS1, MS2, MS3, RESET, SLEEP, STEP, DIR. Right row, top to bottom: VMOT, GND, 2B, 2A, 1A, 1B, VDD, GND. The driver requires a logic supply voltage (3 V to 5.5 V) to be connected across the VDD and GND pins and a motor supply voltage (8 - 35 V) to be connected across VMOT and GND. MS1 and MS3 have internal 100kΩ pull-down resistors and MS2 has an internal 50kΩ pull-down. Please note that the RST pin is floating; if you are not using the pin, you can connect it to the adjacent SLP pin."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1182/specs"
+title = "Pololu item 1182 Specs tab (A4988 Stepper Motor Driver Carrier)"
+accessed = "2026-10-07"
+quote = "Size: | 0.6″ × 0.8″ | Weight: | 1.3 g| 1| General specifications| Minimum operating voltage: | 8 V | Maximum operating voltage: | 35 V | Continuous current per phase: | 1 A| 2| Maximum current per phase: | 2 A| 3| Minimum logic voltage: | 3 V | Maximum logic voltage: | 5.5 V | Microstep resolutions: | full, 1/2, 1/4, 1/8, and 1/16 | Reverse voltage protection?: | N | Notes: 2 Without a heat sink or forced air flow. 3 With sufficient additional cooling."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/product/1182"
+title = "Pololu item 1182 product page, Description and current limiting"
+accessed = "2026-10-07"
+quote = "This breakout board for Allegro’s A4988 microstepping bipolar stepper motor driver features adjustable current limiting, over-current and over-temperature protection, and five different microstep resolutions (down to 1/16-step). It operates from 8 V to 35 V and can deliver up to approximately 1 A per phase without a heat sink or forced air flow (it is rated for 2 A per coil with sufficient additional cooling). || VREF = 8 * I_MAX * R_CS || R_CS is the current sense resistance, and all units manufactured since 2017 have 0.068 Ω current sense resistors (units made prior to this had green 0.050 Ω sense resistors). So, for example, if you want to set the current limit to 1 A, you would set VREF to 540 mV."

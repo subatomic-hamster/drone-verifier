@@ -1,0 +1,99 @@
+id = "lm2596-adjustable-buck-module"
+name = "LM2596 adjustable DC-DC buck converter module, 3 A (43 x 21 x 14 mm, trimmer-set output)"
+category = "pcb.bec"
+vendor = "generic (listing: eBuild Electronics)"
+part_number = "LM2596 adjustable step-down module"
+url = "https://ebuildelectronics.odoo.com/shop/dc-dc-buck-converter-lm2596-adjustable-69"
+
+# The cheap 5 V rail of cuas-lite (Pico, servo, hall sensor, stepper-driver logic): 12-17 V in (3S 12.6 V ... charged 4S 16.8 V or the 12 V brick), 5 V out set with the trimmer. The Jetson Orin Nano dev kit
+# needs NO converter: its barrel jack takes 9-20 V directly (parts/electronics/nvidia-jetson-orin-nano-devkit-8gb.toml). Spare module / dearer alternative: pololu-d24v10f5 (1 A, 12.95 USD) or pololu-d24v22f5 (2.5 A, 18.95 USD).
+# Calibration: the output is set by a multi-turn trimmer; set 5.0 V with a multimeter BEFORE connecting the Pico or the Jetson-side loads (units ship at an arbitrary setting).
+# Seller figures vary between listings of this module (input 3-40 V here; 4-35 V and 4.5-40 V in others, seen in a web search): the limits recorded are this listing's, and a 12-17 V input is inside every variant.
+# Part frame: origin at the board centre on the underside, +x along the 43.2 mm length, +y along the 21 mm width, z up. Input pads at -x, output pads at +x (positional estimate).
+
+[params]
+mass                = { value = 0.01123, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.0432, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.021, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.014, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_min   = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }   # effective lower limit is Vout + about 1.5 V dropout (inference from the LM2596 family; not in the listing)
+input_voltage_max   = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }
+output_voltage_min  = { value = 1.23, unit = "V", src = "S1", fidelity = "datasheet" }
+output_voltage_max  = { value = 37.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_out_nominal       = { value = 5.0, unit = "V", fidelity = "estimated", rationale = "The setpoint the builder dials in with the trimmer (the 5 V logic / weapon rail of cuas-lite); the module itself ships at an arbitrary setting. The vout port's rating for the design rules is this value, not the 37 V upper end of the adjustment range (output_voltage_max)." }
+output_current_max  = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }   # 'Max Output Current: 3A'; other listings advise <= 2.5 A continuous and a heat sink above 2 A
+switching_frequency = { value = 150000, unit = "Hz", src = "S1", fidelity = "datasheet" }
+efficiency_max      = { value = 0.93, unit = "1", src = "S1", fidelity = "datasheet" }   # 'up to ~93 %'
+price_php           = { value = 109.0, unit = "PHP", src = "S1", fidelity = "datasheet" }   # 2026-10-11
+price           = { value = 1.90, unit = "USD", fidelity = "derived", derivation = "109 PHP (S1) / an assumed 57.5 PHP per USD = 1.90 USD; the exchange rate is assumed, not looked up. Other listings of the same module showed 1.50 USD and 2.90 EUR in a web search (not fetched)." }
+
+# Envelope (collision, wire clearance): 43.2 x 21 x 14 mm, underside at z = 0.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0216, 0.0105, 0.007]
+pos = [0.0, 0.0, 0.007]
+
+[[ports]]
+name = "vin"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["IO.1", "IO.2"]
+v_max = { value = 40.0, unit = "V", src = "S1", fidelity = "datasheet" }
+v_min = { value = 3.0, unit = "V", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "vout"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "source"
+pins = ["IO.3", "IO.4"]
+i_max = { value = 3.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Output set by the trimmer; 5.0 V for the cuas-lite rail (the design rules take the voltage from the v_out_nominal param, 5 V; the adjustable range reaches 37 V)."
+
+# Pin level: four solder pads. The listing names no pad labels; IN+ / IN- / OUT+ / OUT- is the common silkscreen of this module (estimated). Pads are drawn along the board length.
+[[connectors]]
+id = "IO"
+name = "4 solder pads (IN+, IN-, OUT+, OUT-)"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0125
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists no pads or labels. Four pads (IN+, IN-, OUT+, OUT-) are the common layout of the LM2596 module; the polarity labels are silkscreen on the board and not in the listing."
+pose_rationale = "Pads along the length, input pair then output pair; spacing positional estimate."
+pins = [
+  { number = 1, name = "IN+", kind = "power", dir = "in", v_min = 3.0, v_max = 40.0, at = [0, 0] },
+  { number = 2, name = "IN-", kind = "ground", at = [1, 0] },
+  { number = 3, name = "OUT+", kind = "power", dir = "out", v = 5.0, i_max = 3.0, at = [2, 0], note = "5.0 V when the trimmer is set for the logic rail" },
+  { number = 4, name = "OUT-", kind = "ground", at = [3, 0] },
+]
+
+[visual]
+src = "V1"
+note = "Blue PCB with the LM2596 and a black inductor, a silver electrolytic capacitor and a blue trimmer (module photos); generic board drawing."
+
+[[visual.elements]]
+gen = "board_generic"
+
+[[sources]]
+id = "S1"
+url = "https://ebuildelectronics.odoo.com/shop/dc-dc-buck-converter-lm2596-adjustable-69"
+title = "eBuild Electronics: DC-DC Buck Converter LM2596 Adjustable"
+accessed = "2026-10-11"
+quote = "Input Voltage: 3V to 40V | Output Voltage Range: 1.23V to 37V | Max Output Current: 3A | Switching Frequency: 150 kHz | Efficiency: up to ~93% | Length: 43.2 mm (1.701\") Width: 21 mm (0.827\") Height: 14 mm (0.551\") | Weight: 11.23 g (0.396 oz) | 109.00 ₱"
+
+[[sources]]
+id = "V1"
+url = "https://ebuildelectronics.odoo.com/shop/dc-dc-buck-converter-lm2596-adjustable-69"
+title = "eBuild Electronics listing photos (appearance only)"
+accessed = "2026-10-11"
+quote = "DC-DC Buck Converter LM2596 Adjustable"

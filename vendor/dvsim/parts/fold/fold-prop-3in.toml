@@ -1,0 +1,52 @@
+id = "fold-prop-3in"
+name = "3 in (76.2 mm) tri-blade prop for 1.5 mm shafts (class part, not chosen)"
+category = "prop"
+vendor = "generic (candidates in docs/fold/bom.md)"
+part_number = "3 in tri-blade, 1.5 mm bore (to be chosen)"
+url = "docs/fold/bom.md"
+
+# Spec 6.2: no sourced thrust or torque data exists for a 3 in tri-blade on 3S (p14-sources.md 1), so C_T and C_Q are ESTIMATES that reproduce the spec's own T_MAX = 2.85 N per motor:
+# at ~39 000 rpm loaded (3S, 4600 KV, spec 3.2) C_T0 = T / (rho n^2 D^4) = 2.85 / (1.225 x 650^2 x 0.0762^4) = 0.1633 (above the 0.10-0.12 of larger props: a high-pitch tri-blade; a risk,
+# bench B-THR decides). C_Q0 = C_T0 x kappa / D with kappa = 0.008 m (spec 4.1) = 0.01715. (P14 TUNE: was 0.155 / 0.0163, an arithmetic slip that gave 2.70 N at 39 000 rpm, measured
+# on the built model; the table below is scaled by 1.0537.) The J shape is borrowed from the 5 in Gemfan table of this library (J stretched by pitch/D):
+# only J near 0 (hover) is meaningful. Part frame: origin at the hub centre on the blade mid-plane, z = thrust direction; the bore sits 3.5 mm below it (CAD: motor top to prop plane).
+
+[params]
+diameter = { value = 0.0762, unit = "m", fidelity = "estimated", rationale = "Design decision: 3 in props (user, 2026-10-31); a class part, so no vendor figure." }
+mass = { value = 0.002, unit = "kg", fidelity = "estimated", rationale = "Spec 3.1 prop line: a 3 in tri-blade weighs 1.5-2.5 g." }
+blade_count = { value = 3, unit = "1", fidelity = "estimated", rationale = "Spec 2.3: tri-blade." }
+j_prop = { value = 2.0e-7, unit = "kg*m^2", fidelity = "derived", derivation = "Uniform rod, m L^2 / 12 = 0.002 x 0.0762^2 / 12 = 9.7e-7 is an upper bound; blade mass sits near the hub: 2.0e-7 assumed (a fifth)." }
+ct_static = { value = 0.1633, unit = "1", fidelity = "estimated", rationale = "Reproduces T_MAX 2.85 N at 39 000 rpm (spec 3.2); see the header." }
+cq_static = { value = 0.01715, unit = "1", fidelity = "estimated", rationale = "C_T0 x kappa / D, kappa = 0.008 m (spec 4.1 [der])." }
+geom_thickness = { value = 0.003, unit = "m", fidelity = "estimated", rationale = "Swept thickness of the blade disc (cad/fold/params.py PROP_T)." }
+price = { value = 1.0, unit = "USD", fidelity = "estimated", rationale = "Spec 3.5: props $4 per set of 4." }
+
+[tables.ct_cq_j]
+columns = ["j", "ct", "cq"]
+rows = [
+  [0.000, 0.1633, 0.01715],
+  [0.288, 0.1403, 0.01668],
+  [0.439, 0.1249, 0.01613],
+  [0.587, 0.1086, 0.01532],
+  [0.733, 0.0920, 0.01451],
+  [0.889, 0.0708, 0.01302],
+  [1.036, 0.0484, 0.01139],
+  [1.172, 0.0251, 0.00954],
+  [1.314, -0.0016, 0.00736],
+]
+fidelity = "estimated"
+rationale = "J = 0 row from the estimate in the header; the J shape is the 5 in Gemfan 51466 table of parts/propulsion (itself borrowed from an APC 10 in), scaled to the new static values."
+
+[geometry]
+shape = "cylinder"
+size = [0.0381, 0.0015]
+
+[[ports]]
+name = "hub"
+kind = "mech"
+type = "bore.1.5"
+gender = "female"
+pos = [0.0, 0.0, -0.0035]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

@@ -1,0 +1,337 @@
+id = "speedybee-f405-v4"
+name = "SpeedyBee F405 V4 30x30 flight controller"
+category = "pcb.fc"
+vendor = "SpeedyBee"
+part_number = "F405 V4 30x30 FC"
+url = "https://www.speedybee.com/speedybee-f405-v4-bls-55a-30x30-fc-esc-stack/"
+
+# IMU: ICM42688P; barometer is built in (chip not named on the page). The stack page also lists the BLS 55A ESC,
+# which is a separate part and not recorded here.
+[params]
+mass            = { value = 0.0105, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0416, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0394, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0078, unit = "m", src = "S1", fidelity = "datasheet" }
+mount_hole_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+vbat_min_cells  = { value = 3, unit = "S", src = "S1", fidelity = "datasheet" }
+vbat_max_cells  = { value = 6, unit = "S", src = "S1", fidelity = "datasheet" }
+out_5v_total_current = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+out_9v_total_current = { value = 3, unit = "A", src = "S1", fidelity = "datasheet" }
+out_3v3_current_max  = { value = 0.5, unit = "A", src = "S1", fidelity = "datasheet" }
+out_4v5_current_max  = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+uart_count      = { value = 6, unit = "1", src = "S1", fidelity = "datasheet" }
+esc_signal_outputs = { value = 8, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.30.5x30.5.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "30.5 x 30.5 mm with 4 mm hole diameter (S1); M3 screws through grommets assumed as for other 30.5 mm FCs"
+
+[[ports]]
+name = "stack_top"
+kind = "mech"
+type = "bolt-pattern.30.5x30.5.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "Seat on the board top face (height 0.0078 m, S1) for whatever sits above the FC in the stack (top plate on standoffs). Standoff gap and mass are not modelled."
+
+[[ports]]
+name = "vbat_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["ESC8.2", "ESC8.1"]   # BAT, G
+note = "3S-6S LiPo through G and BAT pins/pads of the 8-pin connector or 8 pads on the bottom (S1)"
+
+[[ports]]
+name = "esc_out"
+pins = ["ESC8.3", "ESC8.4", "ESC8.5", "ESC8.6", "ESC8.7", "ESC8.1"]   # M1 .. M4, CUR, G (M5 .. M8 are pads, AUX connector)
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+count = 8
+
+[[ports]]
+name = "serial"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 6
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+pins = ["UART6.4", "UART6.5"]
+note = "SDA and SCL pads on front side"
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "neutral"
+connector = "Type-C"
+pins = ["USBC.A4", "USBC.A7", "USBC.A6", "USBC.A1"]   # VBUS, D-, D+, GND
+
+# ---- Connectors (pin level). Names and roles come from the Betaflight board page (S2: 8-pin FC-ESC connector, DJI 6-pin, UART / power / pad
+# lists) and the ArduPilot page (S3: DJI connector JST-GH-6P, 9 PWM outputs, 5 V / 9 V rails); neither carries pad coordinates or the order
+# inside the pad groups of UART1/2/3/6 (the pinout images are not text), so every pose, and the order within a pad group, is an estimate on
+# the 41.6 x 39.4 mm board. Ground pads exist ('G' in the 8-pin connector); how many are on the pad groups is not stated, so one is listed in PWR.
+[[connectors]]
+id = "ESC8"
+name = "FC-ESC connector (8 pins, SH 1.0 mm)"
+type = "jst-sh-8"
+gender = "neutral"
+pos = [0.0, -0.0185, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+src = "S2"
+fidelity = "literature"
+pose_rationale = "Estimated: bottom side (S1: 'M1 - M4 on bottom side'); the page gives the pin order only. S2: the cable can be plugged in either way."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "BAT", kind = "power", dir = "in", v_min = 9.0, v_max = 25.2, note = "3S - 6S LiPo input (S1); 9 V to 25 V DC (S3)" },
+  { number = 3, name = "M1", kind = "signal", dir = "out", note = "ESC side label S4 (S2)" },
+  { number = 4, name = "M2", kind = "signal", dir = "out", note = "ESC side label S3" },
+  { number = 5, name = "M3", kind = "signal", dir = "out", note = "ESC side label S2" },
+  { number = 6, name = "M4", kind = "signal", dir = "out", note = "ESC side label S1" },
+  { number = 7, name = "CUR", kind = "signal", dir = "in", note = "external current sensor input (S3: ESC connector; the ESC side label is VBAT in the SpeedyBee BLS 55A pairing, S2)" },
+  { number = 8, name = "TEL", kind = "signal", dir = "in", alt = ["UART5 RX (ESC telemetry)"], note = "S2: 'UART5 (R5/TEL): RX only'" },
+]
+
+[[connectors]]
+id = "DJI6"
+name = "DJI air unit connector (JST-GH 6)"
+type = "jst-gh-6"
+gender = "female"
+pos = [0.0185, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S2"
+fidelity = "literature"
+pose_rationale = "Estimated: bottom side; the page gives pin order and function."
+pins = [
+  { number = 1, name = "9V", kind = "power", dir = "out", v = 9.0, note = "VTX power; the page notes manufacturer diagrams list 7.4 - 26.4 V for this pin (S2); 'Pin 1 of the connector is 9v so be careful not to connect this to any peripheral requiring 5v' (S3)" },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "T1", kind = "signal", dir = "out", alt = ["UART1 TX"] },
+  { number = 4, name = "R1", kind = "signal", dir = "in", alt = ["UART1 RX"] },
+  { number = 5, name = "GND", kind = "ground" },
+  { number = 6, name = "SBUS", kind = "signal", dir = "in", alt = ["UART2 RX (R2)"], note = "receiver SBUS passthrough (S2)" },
+]
+
+[[connectors]]
+id = "USBC"
+name = "USB Type-C"
+type = "usb-c"
+gender = "female"
+pos = [-0.0208, 0.0, 0.0039]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 2
+cols = 7
+pitch = 0.0005
+layout = "seq"
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states 'USB Port Type Type-C' only. The USB 2.0 contacts of a USB Type-C receptacle (VBUS A4 / A9 / B4 / B9, D+ A6 / B6, D- A7 / B7, GND A1 / A12 / B1 / B12, CC1 A5, CC2 B5) are listed; whether the board populates SuperSpeed / SBU contacts is not stated, so none are drawn."
+pins = [
+  { number = "A1", name = "GND", kind = "ground" },
+  { number = "A4", name = "VBUS", kind = "power", dir = "in", v = 5.0 },
+  { number = "A5", name = "CC1", kind = "signal", dir = "io" },
+  { number = "A6", name = "D+", kind = "signal", dir = "io" },
+  { number = "A7", name = "D-", kind = "signal", dir = "io" },
+  { number = "A9", name = "VBUS", kind = "power", dir = "in", v = 5.0 },
+  { number = "A12", name = "GND", kind = "ground" },
+  { number = "B12", name = "GND", kind = "ground" },
+  { number = "B9", name = "VBUS", kind = "power", dir = "in", v = 5.0 },
+  { number = "B7", name = "D-", kind = "signal", dir = "io" },
+  { number = "B6", name = "D+", kind = "signal", dir = "io" },
+  { number = "B5", name = "CC2", kind = "signal", dir = "io" },
+  { number = "B4", name = "VBUS", kind = "power", dir = "in", v = 5.0 },
+  { number = "B1", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "UART1"
+name = "UART1 pads (also the analog VTX pads)"
+type = "solder-pad-1x2"
+port_type = "uart"
+gender = "neutral"
+pos = [0.0, -0.0185, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S2"
+fidelity = "literature"
+pose_rationale = "S2: 'bottom edge, shared with the analog VTX pads and the DJI connector'; pad order and pitch estimated."
+pins = [
+  { number = 1, name = "T1", kind = "signal", dir = "out", v = 3.3, alt = ["UART1 TX"] },
+  { number = 2, name = "R1", kind = "signal", dir = "in", v = 3.3, alt = ["UART1 RX"] },
+]
+
+[[connectors]]
+id = "UART2"
+name = "UART2 pads (default serial RX) + SBUS"
+type = "solder-pad-1x3"
+port_type = "uart"
+gender = "neutral"
+pos = [0.0, 0.0185, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "S2"
+fidelity = "literature"
+pose_rationale = "S2: 'top edge, also the SBUS pad and the default serial RX'; pad order estimated."
+pins = [
+  { number = 1, name = "T2", kind = "signal", dir = "out", v = 3.3, alt = ["UART2 TX"] },
+  { number = 2, name = "R2", kind = "signal", dir = "in", v = 3.3, alt = ["UART2 RX"] },
+  { number = 3, name = "SBUS", kind = "signal", dir = "in", alt = ["UART2 RX, inverted (SBUS)"] },
+]
+
+[[connectors]]
+id = "UART3"
+name = "UART3 pads"
+type = "solder-pad-1x2"
+port_type = "uart"
+gender = "neutral"
+pos = [0.0075, 0.0185, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S2"
+fidelity = "literature"
+pose_rationale = "S2: 'top edge'; pad order estimated."
+pins = [
+  { number = 1, name = "T3", kind = "signal", dir = "out", v = 3.3, alt = ["UART3 TX"] },
+  { number = 2, name = "R3", kind = "signal", dir = "in", v = 3.3, alt = ["UART3 RX"] },
+]
+
+[[connectors]]
+id = "UART6"
+name = "UART6 pads with 4V5, SDA, SCL"
+type = "solder-pad-1x5"
+port_type = "uart"
+gender = "neutral"
+pos = [0.0, -0.0185, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.0025
+src = "S2"
+fidelity = "literature"
+pose_rationale = "S2: 'UART6 (T6/R6), bottom edge, grouped with 4V5, SDA, and SCL' (the GPS + compass group); the order inside the group is estimated."
+pins = [
+  { number = 1, name = "4V5", kind = "power", dir = "out", v = 4.5, i_max = 1.0, note = "up to 1 A, live even over USB (S1 / S2)" },
+  { number = 2, name = "T6", kind = "signal", dir = "out", v = 3.3, alt = ["UART6 TX"] },
+  { number = 3, name = "R6", kind = "signal", dir = "in", v = 3.3, alt = ["UART6 RX"] },
+  { number = 4, name = "SDA", kind = "signal", dir = "io", v = 3.3, alt = ["I2C SDA"] },
+  { number = 5, name = "SCL", kind = "signal", dir = "io", v = 3.3, alt = ["I2C SCL"] },
+]
+
+[[connectors]]
+id = "PWR"
+name = "power pads (5V, 9V, 3V3, G)"
+type = "solder-pad-1x4"
+gender = "neutral"
+pos = [-0.0075, 0.0185, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "S1"
+fidelity = "literature"
+pose_rationale = "S1 lists the rails and their current limits ('Four +5V pads, one BZ+ pad, 4 LED 5V pads on the front side', '+9V pad on the front side', 3.3 V up to 500 mA); one pad per rail is drawn, positions and the ground pad count are estimates."
+pins = [
+  { number = 1, name = "5V", kind = "power", dir = "out", v = 5.0, i_max = 3.0, note = "5 V BEC, 3 A total over all 5 V pads (S1)" },
+  { number = 2, name = "9V", kind = "power", dir = "out", v = 9.0, i_max = 3.0, note = "9 V (VTX) rail, 3 A total (S1)" },
+  { number = 3, name = "3V3", kind = "power", dir = "out", v = 3.3, i_max = 0.5, note = "up to 500 mA (S1)" },
+  { number = 4, name = "G", kind = "ground" },
+]
+
+[[connectors]]
+id = "AUX"
+name = "auxiliary pads (M5 - M8, buzzer, LED, camera, RSSI)"
+type = "solder-pad-1x10"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0078]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 10
+pitch = 0.0025
+src = "S2"
+fidelity = "literature"
+pose_rationale = "S2 lists the pads (M5-M8 front side, CAM analog video in, CC camera control, RS analog RSSI, LED WS2812 data, BZ+ / BZ- 5 V buzzer); positions and order are estimates."
+pins = [
+  { number = 1, name = "M5", kind = "signal", dir = "out" },
+  { number = 2, name = "M6", kind = "signal", dir = "out" },
+  { number = 3, name = "M7", kind = "signal", dir = "out" },
+  { number = 4, name = "M8", kind = "signal", dir = "out" },
+  { number = 5, name = "BZ+", kind = "power", dir = "out", v = 5.0, note = "5 V buzzer supply" },
+  { number = 6, name = "BZ-", kind = "signal", dir = "out", note = "buzzer drive" },
+  { number = 7, name = "LED", kind = "signal", dir = "out", note = "WS2812 data (PWM output 9)" },
+  { number = 8, name = "CAM", kind = "signal", dir = "in", note = "analog camera video in" },
+  { number = 9, name = "CC", kind = "signal", dir = "out", note = "camera control" },
+  { number = 10, name = "RS", kind = "signal", dir = "in", note = "analog RSSI input" },
+]
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer"); the part has no [geometry], so the board sits on the base port plane (z = 0)
+src = "V1"
+note = "Black 30.5 mm stack FC board with gold edge pads, USB-C and JST sockets (product render)."
+
+[[visual.elements]]
+gen = "board_fc"
+colors = { pcb = "soldermask-black" }
+
+[[sources]]
+id = "V1"
+url = "https://www.speedybee.com/speedybee-f405-v4-bls-55a-30x30-fc-esc-stack"
+title = "SpeedyBee F405 V4 BLS 55A 30x30 FC&ESC stack product page (appearance render)"
+accessed = "2026-10-07"
+quote = "SpeedyBee F405 V4 BLS 55A 30x30 FC&ESC Stack"
+
+[[sources]]
+id = "S1"
+url = "https://www.speedybee.com/speedybee-f405-v4-bls-55a-30x30-fc-esc-stack/"
+title = "SpeedyBee F405 V4 BLS 55A 30x30 FC&ESC Stack (SpeedyBee product page), FC specification table"
+accessed = "2026-10-07"
+quote = "MCU STM32F405 IMU(Gyro) ICM42688P USB Port Type Type-C Barometer Built-in ... Power Input 3S - 6S Lipo ... 5V Output ... The total current load is 3A. 9V Output ... The total current load is 3A. 3.3V Output ... Up to 500mA current load. 4.5V Output ... Up to 1A current load. ESC Signal M1 - M4 on bottom side and M5-M8 on front side. UART 6 sets(UART1, UART2, UART3, UART4(Dedicated for Bluetooth connection)), UART5(Dedicated for ESC telemetry),UART6 ... Mounting 30.5 x 30.5mm( 4mm hole diameter) Dimension 41.6(L) x 39.4(W) x 7.8(H)mm Weight 10.5g"
+
+[[sources]]
+id = "S2"
+url = "https://betaflight.com/docs/wiki/boards/current/SPEEDYBEEF405V4"
+title = "Betaflight wiki board page SPEEDYBEEF405V4: connectors, UARTs, power, pads (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "8-pin connector (SH 1.0 mm), FC label / ESC label: 1 GND | 2 BAT / CURRENT | 3 M1 / S4 | 4 M2 / S3 | 5 M3 / S2 | 6 M4 / S1 | 7 CUR / VBAT | 8 TEL / GND. DJI 6-pin: 9V, GND, T1, R1, GND, SBUS (R2). UART1 (T1/R1) bottom edge; UART2 (T2/R2) top edge; UART3 (T3/R3) top edge; UART4 Bluetooth; UART5 (R5/TEL) RX only; UART6 (T6/R6) bottom edge, grouped with 4V5, SDA, SCL."
+
+[[sources]]
+id = "S3"
+url = "https://ardupilot.org/plane/docs/common-speedybeef4-v3.html"
+title = "ArduPilot docs: SpeedyBee F4 V3/V4 (read through a page summariser)"
+accessed = "2026-10-09"
+quote = "There are 9 PWM outputs. M1-M4 are on the ESC connector, M5-M8 are on solder pads, and output 9 is the LED pad. ... Input: 9V-25V DC (3S-6S). 5V 2A BEC for peripherals. 9V 2A for video. Pin 1 of the connector is 9v so be careful not to connect this to any peripheral requiring 5v. ... DJI Air Unit connector (JST-GH-6P)"

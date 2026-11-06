@@ -1,0 +1,45 @@
+id = "tmotor-p21x6.3"
+name = "T-Motor P21*6.3 carbon-fibre propeller (21x6.3 in, 2-blade, separated blades)"
+category = "prop"
+vendor = "T-Motor"
+part_number = "P21*6.3"
+url = "https://rcdrone.top/products/t-motor-cf-prop-p21-6-3-prop"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# Series "2blades-separated" (blades bolt to a hub clamp, unlike the integrated P15/P17/P18). Mass: "Weight 14.5g (Single Blade)" is a per-blade figure for a
+# separated-blade prop: prop mass = 2 x 14.5 g = 29 g (derived), hub clamp excluded. No C_T/C_P curve: use uiuc-apce-* reference parts.
+
+[params]
+diameter    = { value = 0.5334, unit = "m", fidelity = "derived", derivation = "Listing size '21*6.3': 21 in x 0.0254 m/in = 0.5334 m." }
+pitch       = { value = 0.16002, unit = "m", fidelity = "derived", derivation = "Listing size '21*6.3': 6.3 in x 0.0254 m/in = 0.16002 m." }
+blade_count = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }                  # "2blades-separated"
+mass_blade  = { value = 0.0145, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass        = { value = 0.029, unit = "kg", fidelity = "derived", derivation = "2 blades x 14.5 g ('Weight 14.5g ... (Single Blade)', S1) = 29 g; hub clamp not included." }
+material    = { value = "CF+Epoxy", unit = "text", src = "S1", fidelity = "datasheet" }
+thrust_limit = { value = 39.23, unit = "N", fidelity = "derived", derivation = "'Thrust Limitation 4kg' (S1) x 9.80665 m/s^2 = 39.23 N." }
+rpm_opt_min = { value = 5000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+rpm_opt_max = { value = 9000, unit = "rpm", src = "S1", fidelity = "datasheet" }
+j_prop      = { value = 6.88e-4, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.029*0.5334^2/12 = 6.88e-4 kg*m^2. Upper bound (real blades have mass nearer the hub)." }
+
+[geometry]
+shape = "cylinder"
+size = [0.2667, 0.0060]       # disc envelope: radius D/2, half-height 6 mm (blade thickness envelope, estimated)
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.6"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+fidelity = "estimated"
+rationale = "Hub bore is not published. 6 mm taken from the sibling NS15*5 drawing (O6 centre hole, parts/propulsion/tmotor-ns15x5.toml S2); separated-blade hubs use their own clamp, so treat as a placeholder."
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/t-motor-cf-prop-p21-6-3-prop"
+title = "rcdrone.top (T-Motor distributor) - T-Motor CF prop P21*6.3 Prop (2PCS/PAIR)"
+accessed = "2026-10-07"
+quote = "Size : 21*6.3 | T-MOTOR Series 2blades-separated Weight 14.5g Material CF+Epoxy (Single Blade) Thrust Limitation 4kg Ambient Temp -40C 658C Optimum RPM 5000-9000 RPM/min Storage -1OFC 50PC/85% Temp/Humidity"

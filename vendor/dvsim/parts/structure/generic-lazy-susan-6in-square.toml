@@ -1,0 +1,103 @@
+id = "generic-lazy-susan-6in-square"
+name = "6 in square lazy-susan ball-bearing turntable, 5/16 in thick, 350 lb (turret azimuth bearing, RF Parts 'LAZY SUSAN Mounting plate, 6 Square')"
+category = "structure.bearing"
+vendor = "RF Parts (price, stock); mass and pitch circle from a Simply Bearings LAZY/6 listing of the same size class"
+part_number = "RF Parts 6 in square lazy susan (no SKU listed)"
+url = "https://www.rfparts.com/lazy-susan.html"
+
+# Buyable for the turret's azimuth axis. NO vendor publishes the fixing-hole pattern of a 6 in square lazy susan (RF Parts: dimensions, 'INSIDE HOLE DIAMETER 4 5/8"', capacity; Simply Bearings LAZY/6: pitch circle
+# 121 mm, inner diameter 119.1 mm, 'fixing holes in both upper and lower plates', no count or diameter; Hardware Tree: nothing). The 121 mm 'pitch circle' is the closest published figure and is NOT a bolt circle
+# (a hole circle of radius 60.5 mm would cut into the 119.1 mm opening). The cad/cuas-lite parameter LS_BOLT_R stays an estimate until the delivered bearing is measured (see docs/cuas-lite/bom.md).
+# Mass is NOT from the RF Parts page: it is the 0.21825 kg of Simply Bearings LAZY/6 (a 6 in x 5/16 in bearing of the same class, literature).
+# Part frame: origin at the centre of the bottom face, +z up the rotation axis. Drawn and collided as the 6 in square plate.
+
+[params]
+width            = { value = 0.1524, unit = "m", src = "S1", fidelity = "datasheet" }   # 6 in square
+length           = { value = 0.1524, unit = "m", src = "S1", fidelity = "datasheet" }
+height           = { value = 0.0079375, unit = "m", src = "S1", fidelity = "datasheet" }   # 5/16 in thick; Simply Bearings: 7.93 mm
+inside_diameter  = { value = 0.1175, unit = "m", src = "S1", fidelity = "datasheet" }   # RF Parts: 4 5/8 in = 117.5 mm (Simply Bearings: 119.1 mm)
+load_rating      = { value = 1556.0, unit = "N", fidelity = "derived", derivation = "350 lb (S1, 'capacity') x 4.4482 N/lb = 1557 N; a static rating, the dynamic / moment rating is not given." }
+mass             = { value = 0.21825, unit = "kg", src = "S2", fidelity = "literature" }   # LAZY/6 of Simply Bearings, not the RF Parts unit
+price        = { value = 4.95, unit = "USD", src = "S1", fidelity = "datasheet" }   # 2026-10-11 (buy 6 for 4.50 each); 'Limited Quantity Available'
+price_hardwaretree_usd = { value = 12.95, unit = "USD", src = "S3", fidelity = "datasheet" }   # the earlier choice (XLAZSUSN6Z), 2026-10-11
+
+# Collision envelope: the 6 in square plate with the 117.5 mm opening (S1, RF Parts) as a square frame of four slabs (the opening taken as its 117.5 mm square: the round hole is inscribed, so this is slightly
+# conservative at the corners only), 7.94 mm thick.
+[[geometry.shapes]]
+shape = "box"
+size = [0.0762, 0.008725, 0.00397]
+pos = [0.0, 0.067475, 0.00397]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0762, 0.008725, 0.00397]
+pos = [0.0, -0.067475, 0.00397]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.008725, 0.05875, 0.00397]
+pos = [0.067475, 0.0, 0.00397]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.008725, 0.05875, 0.00397]
+pos = [-0.067475, 0.0, 0.00397]
+
+[[ports]]
+name = "axis"
+kind = "mech"
+type = "bearing.lazy-susan.6"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Fixing-hole pattern is not given by any listing (see the header); the port records only the rotation axis."
+note = "Both plates are square 152.4 mm; lower plate fixed, upper plate rotates about +z."
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the pan rotor plate's seat_lazy_susan mates here."
+
+[visual]
+src = "V1"
+note = "Two thin square steel plates with a ball ring between them (product photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://www.rfparts.com/lazy-susan.html"
+title = "RF Parts: LAZY SUSAN Mounting plate, 6 Square"
+accessed = "2026-10-11"
+quote = "LAZY SUSAN Mounting plate, 6\" Square ... $4.95 (buy 6 for $4.50 each) ... In Stock ... Limited Quantity Available ... 6\" BY 6\" SQUARE x 5/16 THICK ... INSIDE HOLE DIAMETER 4 5/8\" ... 350 lb"
+
+[[sources]]
+id = "S2"
+url = "https://www.simplybearings.co.uk/products/lazy-6"
+title = "Simply Bearings: 6 inch Square Lazy Susan Turntable Bearing (SKU LAZY/6)"
+accessed = "2026-10-11"
+quote = "6 inch Square Lazy Susan Turntable Bearing ... Outside diameter 6 inch = 152.4mm ... Weight 0.21825kg ... Thickness 7.93mm = 0.312 (5/16) inch ... Max Load Weight 500 lbs ... Inside diameter 119.1mm ... Pitch circle diameter 4.76 inch = 121mm"
+
+[[sources]]
+id = "S3"
+url = "https://hardwaretree.com/products/ball-bearing-swivel-xlazsusn6z"
+title = "Hardware Tree: Ball Bearing Swivel XLAZSUSN6Z"
+accessed = "2026-10-11"
+quote = "Ball Bearing Swivel XLAZSUSN6Z ... $12.95 ... 6″ square lazy susan swivel bearing ... 5/16″ thick ... 500lb capacity"
+
+[[sources]]
+id = "V1"
+url = "https://www.rfparts.com/lazy-susan.html"
+title = "RF Parts listing (appearance from the product category, generic box)"
+accessed = "2026-10-11"
+quote = "LAZY SUSAN Mounting plate, 6\" Square"

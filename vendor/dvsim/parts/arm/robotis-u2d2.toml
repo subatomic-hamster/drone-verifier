@@ -1,0 +1,109 @@
+id = "robotis-u2d2"
+name = "ROBOTIS U2D2 USB to DYNAMIXEL (TTL / RS-485 / UART) communication converter"
+category = "pcb.servo_driver"
+vendor = "ROBOTIS"
+part_number = "U2D2"
+url = "https://emanual.robotis.com/docs/en/parts/interface/u2d2/"
+
+# NOT in the Koch v1.1 BOM: the Koch arms use the Waveshare Bus Servo Adapter (waveshare-bus-servo-adapter-a) as controller board (Koch README and wiring diagram, docs/research/dynamixel.md section 8). Provided as the reference ROBOTIS host adapter.
+# The U2D2 does not power the servos ("U2D2 does not supply power to DYNAMIXEL"); the optional U2D2 Power Hub (3.5-24 V, 10 A, S3) supplies them and is not modelled as a part (not used by Koch).
+
+[params]
+mass            = { value = 0.009, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.048, unit = "m",  src = "S1", fidelity = "datasheet" }
+width           = { value = 0.018, unit = "m",  src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0149, unit = "m", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 6000000, unit = "bit/s", src = "S1", fidelity = "datasheet" }
+host_interface  = { value = "USB Type-C (Micro-B before August 2025), FTDI virtual COM port; set the USB latency timer to 1 ms for reliable high-speed operation", unit = "-", src = "S1", fidelity = "datasheet" }
+ports_summary   = { value = "3-pin TTL (JST EHR-03), 4-pin RS-485 (JST EHR-04), 4-pin UART", unit = "-", src = "S1", fidelity = "datasheet" }
+max_servos      = { value = 253, unit = "1", src = "S4", fidelity = "datasheet" }   # IDs 0-252 (XL330/XL430 e-Manual); the broadcast ID 254 is not a device
+supplies_servo_power = { value = 0, unit = "1", src = "S1", fidelity = "datasheet" } # 0 = no: "U2D2 does not supply power to DYNAMIXEL"
+
+# Electrical / signal only; the board is not part of any mechanical assembly in the Koch build.
+[[ports]]
+name = "ttl"
+pins = ["TTL.2", "TTL.3"]
+kind = "signal"
+type = "dynamixel-ttl"
+gender = "female"
+note = "3-pin TTL connector, JST EHR-03 pinout 1 GND / 2 VDD / 3 DATA (S1). The VDD pin is not fed by the U2D2 (external supply). Level not stated on the page (XL330 3.3 V / XL430 5 V per their e-Manuals)."
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "female"
+note = "USB Type-C (S1); host side not modelled."
+
+# Pin level: connector table of the ROBOTIS e-Manual (P1). The board carries JST B3B-EH-A / B4B-EH-A PCB headers (mating housing EHR-03 / EHR-04). EH pitch 2.5 mm is the JST family pitch, not on the page.
+# Placement: the board frame is not published; the headers are put on the +x short edge of the 48 x 18 mm board, centred at y = +-0.004 (positional estimate).
+[[connectors]]
+id = "TTL"
+name = "TTL (JST B3B-EH-A header)"
+type = "jst-eh-3"
+port_type = "dynamixel-ttl"
+gender = "female"
+pos = [0.024, -0.004, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+rows = 1
+cols = 3
+pitch = 0.0025
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "Header edge and position on the board are not documented: positional estimate."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "in", note = "pass-through for the external servo supply; the U2D2 does not supply it" },
+  { number = 3, name = "DATA", kind = "signal", dir = "io" },
+]
+
+[[connectors]]
+id = "RS485"
+name = "RS-485 (JST B4B-EH-A header)"
+type = "jst-eh-4"
+port_type = "dynamixel-rs485"
+gender = "female"
+pos = [0.024, 0.004, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+rows = 1
+cols = 4
+pitch = 0.0025
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "Header edge and position on the board are not documented: positional estimate."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "VDD", kind = "power", dir = "in", note = "pass-through for the external servo supply; the U2D2 does not supply it" },
+  { number = 3, name = "DATA+", kind = "signal", dir = "io" },
+  { number = 4, name = "DATA-", kind = "signal", dir = "io" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://emanual.robotis.com/docs/en/parts/interface/u2d2/"
+title = "ROBOTIS e-Manual U2D2, 11.1 Connector Information"
+accessed = "2026-10-09"
+quote = "Item | TTL | RS-485 || Pinout | 1 GND 2 VDD 3 DATA | 1 GND 2 VDD 3 DATA+ 4 DATA- || Housing | JST EHR-03 | JST EHR-04 || PCB Header | JST B3B-EH-A | JST B4B-EH-A"
+
+[[sources]]
+id = "S1"
+url = "https://emanual.robotis.com/docs/en/parts/interface/u2d2/"
+title = "ROBOTIS e-Manual U2D2, Specifications, Layout, Baudrate and Supply Power"
+accessed = "2026-10-07"
+quote = "Weight | 9g || Dimensions | 48mm x 18mm x 14.9mm || Ports | 3Pin TTL Level(TTL Communication supported DYNAMIXEL) | 4Pin RS-485(RS-485 Communication supported DYNAMIXEL) | 4Pin UART(Controllers that support 4Pin UART(such as CM-150 and CM-200) || Baudrate | Maximum 6Mbps || Note: The USB port type of U2D2 products has been changed from Micro-B to Type-C from August 2025. || U2D2 does not supply power to DYNAMIXEL, therefore, an external power supply should provide power to DYNAMIXEL as below. || Set the Latency Timer (msec) to 1ms and click OK to confirm the change. || 1,000,000 | 1,000,000 | 0.00 || 4,000,000 | 4,000,000 | 0.00 || 6,000,000 | 6,000,000 | 0.00"
+
+[[sources]]
+id = "S3"
+url = "https://emanual.robotis.com/docs/en/parts/interface/u2d2_power_hub/"
+title = "ROBOTIS e-Manual U2D2 Power Hub Board, Specifications"
+accessed = "2026-10-07"
+quote = "Operating Voltage | 3.5V ~ 24.0V || Maximum Current | 10.0A"
+
+[[sources]]
+id = "S4"
+url = "https://emanual.robotis.com/docs/en/dxl/x/xl330-m288/"
+title = "ROBOTIS e-Manual XL330-M288-T, Specifications (ID range)"
+accessed = "2026-10-07"
+quote = "ID | 253 ID (0 ~ 252)"

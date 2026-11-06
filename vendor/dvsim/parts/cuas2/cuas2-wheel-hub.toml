@@ -1,0 +1,42 @@
+id = "cuas2-wheel-hub"
+name = "cuas2 wheel_hub (3D printed PETG, M3 flywheel hub, 2 instances, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "wheel_hub"
+url = "cad/cuas2/modules/launcher_cartridge.py"
+
+# Mesh authored on the launcher-frame origin in H (hub 28 mm, 14 mm wide, 5 mm bore, set-screw); the two instances are offset +-WZ = 29.6 mm along z by the cradle's seat_wheel_top / seat_wheel_bot.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS (the CAD mass model uses the same for every part)." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/wheel_hub.stl"
+material = "petg"
+bbox_min = [-0.00598, -0.007, -0.041]
+bbox_max = [0.022, 0.007, -0.013]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame, axis +z: 'a' side of the closure mate to the tyre on the same wheel."

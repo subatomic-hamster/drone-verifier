@@ -1,0 +1,57 @@
+id = "bosch-bmi088"
+ports_note = "Data-only sensor chip that lives inside the Pixhawk 6C (holybro-pixhawk-6c); it is never mounted or wired on its own, so it has no ports. Noise/bias numbers feed the IMU model of the flight controller."
+name = "Bosch BMI088 6-axis IMU (Pixhawk 6C secondary IMU, replaces discontinued BMI055)"
+category = "sensor.imu"
+vendor = "Bosch Sensortec"
+part_number = "BMI088"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf"
+
+# Conversions from datasheet units: 1 deg/s = 0.0174533 rad/s; 1 g = 9.80665 m/s2; 1 ug = 9.80665e-6 m/s2.
+[params]
+gyro_noise_density     = { value = 2.4435e-4, unit = "rad/s/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+gyro_rms_noise_47hz    = { value = 1.7453e-3, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_zro_initial       = { value = 0.017453, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_zro_tempco        = { value = 2.618e-4, unit = "rad/s/K", src = "S1", fidelity = "datasheet" }
+gyro_fs_max            = { value = 34.907, unit = "rad/s", src = "S1", fidelity = "datasheet" }
+gyro_resolution_at_2000dps = { value = 1.0647e-3, unit = "rad/s/LSB", src = "S1", fidelity = "datasheet" }
+gyro_odr_max           = { value = 2000, unit = "Hz", src = "S1", fidelity = "datasheet" }
+gyro_odr_min           = { value = 100, unit = "Hz", src = "S1", fidelity = "datasheet" }
+gyro_sensitivity_tolerance = { value = 1.0, unit = "%", src = "S1", fidelity = "datasheet" }
+accel_noise_density_xy = { value = 1.569e-3, unit = "m/s2/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+accel_noise_density_z  = { value = 1.863e-3, unit = "m/s2/sqrt(Hz)", src = "S1", fidelity = "datasheet" }
+accel_zero_g_offset    = { value = 0.19613, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+accel_zero_g_tempco    = { value = 1.961e-3, unit = "m/s2/K", src = "S1", fidelity = "datasheet" }
+accel_fs_max           = { value = 235.36, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+accel_fs_min           = { value = 29.42, unit = "m/s2", src = "S1", fidelity = "datasheet" }
+accel_sensitivity_at_3g = { value = 10920, unit = "LSB/g", src = "S1", fidelity = "datasheet" }
+accel_odr_max          = { value = 1600, unit = "Hz", src = "S1", fidelity = "datasheet" }
+accel_odr_min          = { value = 12.5, unit = "Hz", src = "S1", fidelity = "datasheet" }
+
+[visual]                            # cosmetic only: the bare LGA package, size from the datasheet
+src = "V1"
+note = "3.0 x 4.5 x 0.95 mm LGA housing (datasheet)."
+
+[[visual.elements]]
+gen = "sensor_ic"
+params = { size = [0.0045, 0.003, 0.00095] }
+
+[[sources]]
+id = "V1"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf"
+title = "BMI088 Data sheet BST-BMI088-DS000-19 (package size)"
+accessed = "2026-10-08"
+quote = "are packed into one single LGA 3.0mm x 4.5mm x 0.95mm housing."
+
+[[sources]]
+id = "S1"
+url = "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf"
+title = "BMI088 Data sheet, document BST-BMI088-DS000-19, revision 1.9 (01/2024)"
+accessed = "2026-10-07"
+quote = "Zero-g Offset Off Nominal VDD and VDDIO, 25°C, gFS6g 20 mg ... Output Noise Density nrms gFS3g, TA=25°C 190 µg/√Hz (Z-axis) 160 (X- & Y-axis) ... Zero-rate Offset Off Ωx Ωy and Ωz Nominal VDD supplies TA=25°C, slow and fast offset cancellation off ±1 °/s ... Output Noise nrms rms, BW=47Hz 0.1 °/s (@ 0.014°/s/√Hz)"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/autopilot/pixhawk-6c/technical-specification.md"
+title = "Pixhawk 6C Technical Specification (Holybro docs)"
+accessed = "2026-10-06"
+quote = "Accel/Gyro: BMI088 (BMI055 discontinued due to the end of production of the sensor)"

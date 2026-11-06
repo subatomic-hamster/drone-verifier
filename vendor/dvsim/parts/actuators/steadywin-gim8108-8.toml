@@ -1,0 +1,165 @@
+id = "steadywin-gim8108-8"
+name = "SteadyWin GIM8108-8 planetary joint actuator with integrated CAN driver (8:1 QDD-class)"
+category = "actuator.bldc.qdd"
+vendor = "SteadyWin"
+part_number = "GIM8108-8 (GDS68 driver, dual encoder)"
+url = "https://openelab.com/products/steadywin-gim8108-8-gearmotor-robotics"
+
+# Frame: origin on the output axis at the output face; +z = out of the output face (output axis); cylindrical body, diameter 92 mm, length 55 mm WITH the integrated driver (44 mm without), occupies z in [-0.055, 0].
+# SIDE CONVENTION: torque_peak, torque_rated, speed_*, kv_output, kt_output_published are OUTPUT-shaft values (after the 8:1 gearbox); kt_motor / ke_si / rotor_inertia / r_* are MOTOR-side. Currents are the vendor's "stall" / "nominal" current (DC supply side, not phase RMS).
+# Vendor tables disagree: speed constant 6.04 rpm/V (roboticscenter, S2) vs 6.67 rpm/V (openelab, S1) and inductance 0.37 mH vs 0.45 mH. 6.67 x 48 V = 320 rpm = the published max speed, so 6.67 is used.
+
+[mirror]
+symmetry = "xz"  # cylindrical body, connectors on the x axis (y = 0): the mirrored copy is the same part
+
+[params]
+mass               = { value = 0.396,   unit = "kg",     src = "S1", fidelity = "datasheet" }  # with driver; 378 g motor only
+body_diameter      = { value = 0.092,   unit = "m",      src = "S1", fidelity = "datasheet" }
+body_length        = { value = 0.055,   unit = "m",      src = "S1", fidelity = "datasheet" }  # with driver
+gear_ratio         = { value = 8.0,     unit = "1",      src = "S1", fidelity = "datasheet" }
+v_rated            = { value = 48.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+v_min              = { value = 12.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+v_max              = { value = 56.0,    unit = "V",      src = "S1", fidelity = "datasheet" }
+torque_rated       = { value = 7.5,     unit = "N*m",    src = "S1", fidelity = "datasheet" }  # output side
+torque_peak        = { value = 22.0,    unit = "N*m",    src = "S1", fidelity = "datasheet" }  # "stall torque", output side
+speed_rated        = { value = 11.519,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 110 rpm, output side
+speed_no_load      = { value = 33.510,  unit = "rad/s",  src = "S1", fidelity = "datasheet" }  # 320 rpm "max speed after reduction", output side, at 48 V
+current_rated      = { value = 7.0,     unit = "A",      src = "S1", fidelity = "datasheet" }
+current_peak       = { value = 22.0,    unit = "A",      src = "S1", fidelity = "datasheet" }  # "stall current"
+power_rated        = { value = 336.0,   unit = "W",      src = "S1", fidelity = "datasheet" }
+kv_output          = { value = 6.67,    unit = "rpm/V",  src = "S1", fidelity = "datasheet" }  # output side
+kt_output_published = { value = 1.0,    unit = "N*m/A",  src = "S1", fidelity = "datasheet" }  # output side
+r_phase_to_phase   = { value = 0.67,    unit = "ohm",    src = "S1", fidelity = "datasheet" }  # table says "phase resistance"; line-to-line assumed (as for the CubeMars sheets)
+l_phase_to_phase   = { value = 4.5e-4,  unit = "H",      src = "S1", fidelity = "datasheet" }  # 0.45 mH; S2 says 0.37 mH
+pole_pairs         = { value = 21,      unit = "1",      src = "S1", fidelity = "datasheet" }
+backlash           = { value = 4.363e-3, unit = "rad",   src = "S1", fidelity = "datasheet" }  # 15 arcmin
+load_rating_axial  = { value = 225.0,   unit = "N",      src = "S1", fidelity = "datasheet" }
+load_rating_radial = { value = 900.0,   unit = "N",      src = "S1", fidelity = "datasheet" }
+encoder_driver     = { value = "16 bit (driver) + second output-shaft encoder (single-turn memory)", unit = "-", src = "S1", fidelity = "datasheet" }
+protection         = { value = "IP54", unit = "-",       src = "S1", fidelity = "datasheet" }
+can_protocol       = { value = "vendor CAN (GDS68); MIT mode NOT stated by the vendor", unit = "-", src = "S3", fidelity = "datasheet" }
+
+# --- derived electrical model (Qdd builder inputs: Kt, N, eta, R, Ke) ---
+ke_si = { value = 0.1789, unit = "V*s/rad", fidelity = "derived", derivation = "Ke = 60/(2*pi*KV_motor), KV_motor = kv_output * N = 6.67 * 8 = 53.36 rpm/V -> 0.1789 V*s/rad (motor side)." }
+kt_motor = { value = 0.1789, unit = "N*m/A", fidelity = "derived", derivation = "SI identity Kt = Ke for the motor side (0.1789 N*m/A)." }
+efficiency = { value = 0.699, unit = "1", fidelity = "derived", derivation = "eta = kt_output_published / (kt_motor * N) = 1.0 / (0.1789 * 8) = 0.699. Also = torque_peak / (kt_motor * N * current_peak) = 22 / (0.1789 * 8 * 22). This lumps gearbox loss with the supply-side-vs-phase current definition of the vendor's stall current; it is an effective figure, not a gearbox efficiency." }
+r_phase_equivalent_wye = { value = 0.335, unit = "ohm", fidelity = "derived", derivation = "R_phase_to_phase / 2 = 0.67 / 2 = 0.335 ohm (equivalent wye)." }
+noload_speed_check = { value = 320.0, unit = "rpm", fidelity = "derived", derivation = "48 V * kv_output 6.67 = 320.2 rpm, matching the published max speed." }
+rotor_inertia = { value = 8.0e-5, unit = "kg*m^2", fidelity = "estimated", rationale = "Not published (S1, S2). Scaled from the CubeMars AK70-9 (8.66e-5 kg*m^2 motor-side, same 21 pole pairs, 89 x 49 mm vs 92 x 44 mm here); 8.0e-5 taken. Reflected inertia at the output = J * N^2 = 5.1e-3 kg*m^2." }
+
+# --- Qdd device params (SP2 kernel, docs/models.md "Qdd"; MIT-mode command limits are the convention of the open MIT-mode firmware
+#     family; the GDS68 driver's MIT support is NOT stated by the vendor (can_protocol above): verify before a real build) ---
+kv = { value = 53.36, unit = "rpm/V", fidelity = "derived", derivation = "Motor-side KV = kv_output 6.67 rpm/V x gear_ratio 8 = 53.36 rpm/V; Kt = 60 / (2 pi KV) = 0.1790 N*m/A = kt_motor." }
+i_limit_phase = { value = 22.0, unit = "A", fidelity = "derived", derivation = "= current_peak 22 A. efficiency 0.699 was derived from the same current, so Kt N eta i_limit = 0.179 x 8 x 0.699 x 22 = 22.0 N*m = torque_peak (the pair reproduces the published stall torque)." }
+encoder_cpr = { value = 65536, unit = "1", src = "S1", fidelity = "datasheet" }  # "Resolution of Encoder on Driver | 16 bit"
+c_th_winding = { value = 60.0, unit = "J/K", fidelity = "estimated", rationale = "Not published. Copper + stator teeth of a 378 g 21-pole-pair outrunner, ~150 g at ~0.4 J/(g K) = 60 J/K (lumped winding node; +-50 %)." }
+r_th_winding = { value = 1.35, unit = "K/W", fidelity = "derived", derivation = "current_rated 7 A must settle at temp_derate_start 80 degC from 25 degC ambient under the Qdd thermal law (docs/models.md 'Qdd': C dT/dt = i_q^2 R(T) - (T - T_amb) / R_th, R(T) = r20 (1 + 0.00393 (T - 20))): R(80) = 0.67 x 1.236 = 0.828 ohm, P = 49 x 0.828 = 40.6 W, R_th = 55 K / 40.6 W = 1.35 K/W." }
+can_cmd_hz = { value = 1000.0, unit = "Hz", fidelity = "estimated", rationale = "Driver command processing rate; MIT-mode drivers of this class process CAN frames at 1 kHz or more. The dog sends 500 Hz (spec s6)." }
+can_latency = { value = 0.001, unit = "s", fidelity = "estimated", rationale = "One CAN frame at 1 Mbit/s (~0.13 ms) + driver loop; 1 ms (one physics tick) taken." }
+mit_kp_max = { value = 500.0, unit = "N*m/rad", fidelity = "estimated", rationale = "MIT-mode protocol range convention (KP 0..500)." }
+mit_kd_max = { value = 5.0, unit = "N*m*s/rad", fidelity = "estimated", rationale = "MIT-mode protocol range convention (KD 0..5)." }
+mit_tau_ff_max = { value = 22.0, unit = "N*m", fidelity = "derived", derivation = "= torque_peak (output side): a larger feed-forward is saturated by i_limit_phase anyway." }
+can_timeout = { value = 0.1, unit = "s", fidelity = "estimated", rationale = "Command-loss watchdog of the driver; 0.1 s = 50 missed 500 Hz frames." }
+kd_timeout = { value = 1.0, unit = "N*m*s/rad", fidelity = "estimated", rationale = "Damping-mode gain on command loss (timeout_mode 0): soft enough not to slam a falling leg." }
+temp_fault = { value = 100.0, unit = "degC", fidelity = "estimated", rationale = "GDS68 over-temperature threshold not retrieved; class-H-insulated small BLDC drivers fault near 100 degC." }
+temp_derate_start = { value = 80.0, unit = "degC", fidelity = "estimated", rationale = "20 K below temp_fault (linear current derate, docs/models.md 'Qdd')." }
+
+[params.price]
+value = 213.99
+unit = "USD"
+fidelity = "datasheet"
+src = "S1"
+rationale = "OpenELab sale price seen 2026-10-16 (region US, USD, ex shipping); regular price 229.99. The page lists the SDC104/GDS68 driver as part of the product. Cheaper motor-only offers exist (roboticscenter.ai 85 USD backorder, steadywin-motor.com 93.89 sold out) but do not state that the driver is included."
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "bolt-pattern.steadywin-gim8108-base"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Body mounting pattern is in SteadyWin's 2D drawing (not retrieved); opaque family tag."
+
+[[ports]]
+name = "output"
+kind = "mech"
+type = "flange.steadywin-gim8108-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Output flange pattern is in SteadyWin's 2D drawing (not retrieved); opaque family tag."
+
+[[ports]]
+name = "power"
+pins = ["PWR.1", "PWR.2"]
+kind = "power"
+type = "xt30pw-2+2"
+gender = "male"
+role = "sink"
+v_max = { value = 56.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 7.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 22.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Combined power + CAN terminal is XT30PB(2+2)-M on the sibling GIM6010-8 / GDS68 driver (S4); not stated on the GIM8108-8 pages (assumed same driver family)."
+
+[[ports]]
+name = "can"
+pins = ["PWR.3", "PWR.4"]
+kind = "signal"
+type = "can"
+gender = "male"
+note = "CAN on the shared 2+2 terminal (S4, sibling GDS68 driver); the same pins double as RS485 A/B on RS485 variants."
+
+[[connectors]]
+id = "PWR"
+name = "XT30PB(2+2)-M power + CAN"
+type = "xt30pw-2+2"
+port_type = "xt30pw-2+2"
+gender = "male"
+pos = [0.030, 0.0, -0.055]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+src = "S4"
+fidelity = "estimated"
+rows = 1
+cols = 4
+pitch = 0.0025
+rationale = "Connector family (AMASS XT30(2+2)) is stated for the GDS68 driver of the sibling GIM6010-8 (S4). The vendor pages do not give a pin table: V+, V-, CAN_H, CAN_L order is assumed from the identical AMASS 2+2 connector on the CubeMars AK V3 (colour order red/black/white/blue). VERIFY against the GDS68 manual (Chinese zip on steadywin-motor.com/products/document-download) before wiring a real unit. Pitch 2.5 mm and location are estimates."
+pose_rationale = "Rear-cover placement offset 30 mm from the axis is a positional estimate; no drawing retrieved."
+pins = [
+  { number = 1, name = "V+", kind = "power", dir = "in", v_max = 56.0, i_max = 7.0 },
+  { number = 2, name = "GND", kind = "ground" },
+  { number = 3, name = "CAN_H", kind = "signal", dir = "io" },
+  { number = 4, name = "CAN_L", kind = "signal", dir = "io" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://openelab.com/products/steadywin-gim8108-8-gearmotor-robotics"
+title = "OpenELab SteadyWin GIM8108-8 product page, Technical Specifications table and price"
+accessed = "2026-10-16"
+quote = "Nominal Voltage | 48 V | Voltage Range | 12~56 V | Power | 336 W | Nominal Torque | 7.5 N.M | Stall Torque | 22 N.M | Nominal Speed after Reduce | 110 RPM | Max Speed after Reduce | 320 RPM | Nominal Current | 7 A | Stall Current | 22 A | Phase Resistance | 0.67 Ω | Phase Inductance | 0.45 mH | Speed Constant (KV) | 6.67 rpm/v | Torque Constant (Kt) | 1 N.M/A | Number of Pole Pairs | 21 | Gear Rate | 8:1 | Reducer Gear Backlash | 15 arcmin | Motor Weight with Driver | 396 g | Size with Driver | Ø92*55 mm | Max Axial Load | 225 N | Max Radial Load | 900 N | Communication | CAN & Type-C | Resolution of Encoder on Driver | 16 bit | Regular price $229.99, Sale price $213.99"
+
+[[sources]]
+id = "S2"
+url = "https://www.roboticscenter.ai/store/product/steadywin-gim8108-8-planetary-reducer-servo-motor/"
+title = "Robotics Center GIM8108-8 product page (second table, conflicting KV / inductance)"
+accessed = "2026-10-16"
+quote = "Driver Model | GDS68 | Phase Resistance | 0.67 Ω | Phase Inductance | 0.37 mH | Number Of Pole Pairs | 21 Pairs | Gear Ratio | 8:1 | Motor Weight (Without Driver) | 378 g | Size (Without Driver) | Ø92*44 mm | Speed Constant | 6.04 rpm/v | Torque Constant | 1 N·m/A | Communication | CAN | Price $85.00 (Backorder)"
+
+[[sources]]
+id = "S3"
+url = "https://steadywin-motor.com/products/planetary-reduction-motor-robot-dog-humanoid-robot-joint-module-flat-thin-large-torque"
+title = "SteadyWin GIM8108-8 vendor page (driver and CAN statement)"
+accessed = "2026-10-16"
+quote = "The GDS68 drive board supports CAN communication."
+
+[[sources]]
+id = "S4"
+url = "https://sharingwin.com/product/steadywin-gim6010-8-joint-motor-5nm/"
+title = "SharingWin SteadyWin GIM6010-8 page (GDS68 driver connector text)"
+accessed = "2026-10-16"
+quote = "(paraphrase from a page-fetch summary, not verbatim) the onboard terminal model is XT30PB(2+2)-M, and the mating cable-end connector is XT30(2+2)-F (AMASS); CANH/CANL serve as the A/B lines in RS485 versions"

@@ -1,0 +1,105 @@
+id = "holybro-x500v2-hanger"
+name = "Holybro X500 V2 rail hanger with rubber ring gasket (guide parts 13 + 14; 8 per vehicle)"
+category = "frame.hanger"
+vendor = "Holybro"
+part_number = ""
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+
+# One hanger = the clamp (STEP JIA-GUAN) + its rubber ring gasket (STEP HUAN-GUIJIAO) around a rail rod, screwed to the bottom plate with
+# two M2.5x6 screws (hardware counted in holybro-x500v2-hardware-kit). Mass-only: dimensions and volumes from x500v2-frame.step
+# (OpenCascade); materials are not stated (nylon-class plastic and an elastomer are assumed). No mass is published.
+[params.clamp_cad_volume]
+value = 1.5066e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of one JIA-GUAN solid: bbox 6.0 x 23.0 x 21.0 mm (rail axis x_STEP, y_STEP 0..-23 for the four plate-flush hangers, -3..-26 for the four rear ones). 8 off."
+
+[params.ring_cad_volume]
+value = 1.7992e-6
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade volume of one HUAN-GUIJIAO (hanger rubber ring gasket) solid: bbox 11.4 x 21.0 x 21.0 mm, centred on the rail axis y_STEP = -13.0 mm. 8 off (guide part 13: 'Hanger Rubber Ring Gasket 8pcs')."
+
+[params.plastic_density]
+value = 1300
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Clamp material not stated; plastic assumed, same 1300 kg/m3 estimate as the fibre-reinforced nylon arm connectors (holybro-x500v2-arm-connectors density)."
+
+[params.ring_density]
+value = 1220
+unit = "kg/m3"
+fidelity = "estimated"
+rationale = "Ring material not stated ('rubber ring gasket'); TPU 95A specific gravity 1.22 g/cm3 (parts/common/tpu-95a) is the elastomer stand-in. Solid rubbers span about 1.0-1.5 g/cm3."
+
+[params.mass_clamp]
+value = 0.001959
+unit = "kg"
+fidelity = "derived"
+derivation = "clamp_cad_volume 1.5066e-6 m3 * plastic_density 1300 kg/m3 (estimated) = 1.959 g."
+
+[params.mass_ring]
+value = 0.002195
+unit = "kg"
+fidelity = "derived"
+derivation = "ring_cad_volume 1.7992e-6 m3 * ring_density 1220 kg/m3 (estimated) = 2.195 g."
+
+[params.mass]
+value = 0.004154
+unit = "kg"
+fidelity = "derived"
+derivation = "mass_clamp 0.001959 + mass_ring 0.002195 = 0.004154 kg per hanger (8 per vehicle = 33.2 g)."
+
+[params.mass_tol]
+value = 0.0009
+unit = "kg"
+fidelity = "estimated"
+rationale = "Clamp +-13 % of 1.96 g (plastic grade) = 0.25 g plus ring +-30 % of 2.2 g (elastomer grade) = 0.66 g. Nothing weighed."
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+rationale = "Black glass-filled nylon clamp (the kit's other plastic parts are black); the [geometry] boxes with softened edges."
+
+[[visual.elements]]
+gen = "shapes"
+colors = { "*" = "plastic-dark" }
+
+[geometry]
+# Part frame: origin = the centre of the clamp's TOP face (against the plate underside), z up, x along the rail. Solid boxes; mass is
+# carried by mass_param, not by shape volume * density. The rail rod passes through the real hanger (axis z = -0.013, rod radius
+# 4.7 mm, i.e. z -0.0177..-0.0083), so the two shapes are placed ABOVE and BELOW the rod without touching it (the design-rule
+# checker flags a solid shape that overlaps the rod): the clamp block between plate and rod top, the rubber ring block under the rod.
+material = "nylon-pa66"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.003, 0.0105, 0.00415]
+pos = [0.0, 0.0, -0.00415]
+mass_param = "mass_clamp"
+note = "clamp (6 x 21 x 23 mm in the STEP), the part above the rail rod (z 0 .. -8.3 mm)"
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.0057, 0.0105, 0.0029]
+pos = [0.0, 0.0, -0.0206]
+mass_param = "mass_ring"
+note = "rubber ring gasket (11.4 mm long, ~21 mm across in the STEP; carries the ring mass), placed under the rail rod (z -17.7 .. -23.5 mm)"
+
+[[ports]]
+name = "seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "derived"
+derivation = "Top face centre against the bottom-plate underside (mates 'hangerN' of holybro-x500v2-bottom-plate)."
+
+[[sources]]
+id = "S1"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+title = "X500 v2 Assembly Guide (Holybro PDF), exploded view"
+accessed = "2026-10-07"
+quote = "13. Hanger Rubber Ring Gasket 8pcs ... 14. Hanger 8pcs"

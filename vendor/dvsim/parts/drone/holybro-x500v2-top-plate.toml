@@ -1,0 +1,153 @@
+id = "holybro-x500v2-top-plate"
+name = "Holybro X500 V2 carbon fibre top plate (#510179)"
+category = "frame.plate"
+vendor = "Holybro"
+part_number = "510179"
+url = "https://cdn.shopifycdn.net/s/files/1/0604/5905/7341/files/X500_V2_Assembly_Guide_en.pdf?v=1720853913"
+
+[params]
+size_xy   = { value = 0.144, unit = "m", src = "S1", fidelity = "datasheet" }
+thickness = { value = 0.002, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.cad_bbox_xy]
+value = 0.14372
+unit = "m"
+fidelity = "derived"
+derivation = "Bounding box 143.72 x 2.00 x 143.72 mm of the top-plate solid (centre of mass at height y = +31.0 mm, volume 37310 mm3) in Holybro's x500v2-frame.step, via OpenCascade BRepBndLib."
+
+[params.cad_volume]
+value = 3.731e-5
+unit = "m3"
+fidelity = "derived"
+derivation = "OpenCascade BRepGProp::VolumeProperties on the top-plate solid of x500v2-frame.step (includes all holes and cut-outs)."
+
+[params.mass]
+value = 0.0578
+unit = "kg"
+fidelity = "derived"
+derivation = "cad_volume 3.731e-5 m3 * carbon-fibre-twill-plate estimated density 1550 kg/m3 = 57.8 g. Not weighed."
+
+[params.mass_tol]
+value = 0.0058
+unit = "kg"
+fidelity = "estimated"
+rationale = "Mass comes from CAD volume times an estimated density (carbon-fibre-twill-plate 1550 kg/m3, itself estimated; typical twill laminates are 1.5-1.6 g/cc per that file), so +-10% of 57.8 g is carried; the plate has not been weighed."
+
+[geometry]
+# Part frame: origin at the plate centre, z up when installed (the STEP is Y-up, size [0.07186, 0.001, 0.07186] converted to z-up).
+shape = "box"
+size = [0.07186, 0.07186, 0.001]
+material = "carbon-fibre-twill-plate"
+
+# Arm-connector seats on the UNDERSIDE (upper body-clamp half hangs from the plate). Same radial positions as the bottom plate
+# (the plates are parallel, 28 mm gap): in the assembly the top plate is placed by ONE arm connector and the other three seats
+# are closure mates.
+[[ports]]
+name = "arm1"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]   # ESTIMATED, see holybro-x500v2-bottom-plate arm1
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [0.05501, 0.05501, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [0.7071067812, 0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Radius 77.8 mm = centre of the body-side clamp halves from the frame centre (STEP-derived, docs/research/x500v2-airframe.md and holybro-x500v2-arm-connectors); X frame diagonal 45 deg: 0.0778 * cos45 = 0.05501 m. z = -0.001 is the plate underside (half of the 2 mm thickness, S1). thickness 0.002 = plate thickness (S1). holes = 4 from M3x38 x16 = 4 arms x 4 bolts (airframe doc, step 5); hole positions not recorded."
+
+[[ports]]
+name = "arm2"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [-0.05501, 0.05501, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [-0.7071067812, 0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Same as arm1 rotated 90 deg about z (diagonal at 135 deg)."
+
+[[ports]]
+name = "arm3"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [-0.05501, -0.05501, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [-0.7071067812, -0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Same as arm1 rotated 180 deg about z (diagonal at 225 deg)."
+
+[[ports]]
+name = "arm4"
+hole_pos = [[0.008, 0.010], [-0.008, 0.010], [-0.008, -0.010], [0.008, -0.010]]
+kind = "mech"
+type = "bolt-pattern.x500v2-arm-clamp.m3"
+gender = "neutral"
+pos = [0.05501, -0.05501, -0.001]
+axis = [0.0, 0.0, -1.0]
+ref = [0.7071067812, -0.7071067812, 0.0]
+symmetry = 1
+thickness = 0.002
+holes = 4
+thread = "m3"
+fidelity = "derived"
+derivation = "Same as arm1 rotated 270 deg about z (diagonal at 315 deg)."
+
+[[ports]]
+name = "fc"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Pixhawk 6C seat (flat mount: its hole pattern is only in a drawing image, airframe doc gap 4; Pixhawk 6C is vibration-isolated and normally taped/foamed to the frame). Plate centre = vehicle centre, which is where PX4 expects the IMU (centre of mass); long axis (84.8 mm) along x = vehicle forward. z = +0.001 is the plate top face. Resolve with the Holybro assembly photos."
+
+[[ports]]
+name = "gps_mast"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [-0.040, 0.0, 0.081]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "SUPERSEDED (P1e): x500v2.toml now seats the GPS on holybro-x500v2-gps-mast, which stands on the platform board 99 mm aft of the plate centre (STEP); this port is unused. Original estimate: GPS seat at the top of an UNMODELLED mast (no mast part existed then). x = -0.040 m (aft of the plate centre; the 0.26 m GPS cable, holybro-m8n-gps cable_length, easily reaches the FC), y = 0. Height 0.080 m above the plate top face (0.001) is an assumption: no published mast length (a web search for the Holybro X500 V2 GPS mount pole length found nothing, 2026-10-07; the GPS file's 'height' excludes the mount pole). Resolve with the STEP / guide GPS-mount drawing. The 4 x M3x10 + locknut GPS mount hardware (iso7045-m3x10, din985-m3-locknut) is not mated."
+
+[[ports]]
+name = "sik"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.045, 0.001]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "SiK radio seat (no published mounting; airframe doc does not place it). 45 mm off-centre in +y puts a 53 x 28 mm radio (holybro-sik-telemetry-radio-v3, 28 mm wide) clear of the 44 mm wide Pixhawk (+-22 mm) with 3 mm margin while staying inside the plate (+-72 mm). Resolve with the assembly photos."
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "PX4 Development Kit - X500v2 (Holybro docs), Frame Kit Details"
+accessed = "2026-10-06"
+quote = "Body - Full Carbon Fiber Top & Bottom plate (144 x 144mm, 2mm thick)"

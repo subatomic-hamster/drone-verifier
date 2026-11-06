@@ -1,0 +1,116 @@
+id = "soyo-sy57sth56-2006a-nema23"
+name = "SOYO SY57STH56-2006A NEMA 23 6-lead stepper motor, 56.4x56 mm, 2.0 A (Pololu 1473)"
+category = "motor.stepper"
+vendor = "SOYO / Changzhou Songyang Machinery & Electronics (Pololu item 1473)"
+part_number = "SY57STH56-2006A"
+url = "https://www.pololu.com/product/1473"
+
+# Frame: origin on the shaft axis at the front mounting-flange face; +z = shaft direction (out of the motor); x/y along the square flange sides.
+# Body occupies z in [-0.056, 0]. Six leads, centre-tapped coils; electrical figures are 'per coil'.
+# Hole pattern (NEMA 23) is only in the drawing, not retrievable as text, so the family tag is opaque. Rotor inertia not published.
+
+[params]
+mass               = { value = 0.700,   unit = "kg",    src = "S1", fidelity = "datasheet" }
+flange_size        = { value = 0.0564,  unit = "m",     src = "S1", fidelity = "datasheet" }  # 56.4 mm square
+body_length        = { value = 0.056,   unit = "m",     src = "S1", fidelity = "datasheet" }  # not including the shaft
+step_angle         = { value = 0.031416, unit = "rad",  src = "S2", fidelity = "datasheet" }  # 1.8 deg
+steps_per_rev      = { value = 200,     unit = "1",     src = "S1", fidelity = "datasheet" }
+phases             = { value = 2,       unit = "1",     src = "S2", fidelity = "datasheet" }
+leads              = { value = 6,       unit = "1",     src = "S1", fidelity = "datasheet" }
+rated_current      = { value = 2.0,     unit = "A",     src = "S2", fidelity = "datasheet" }  # per coil
+rated_voltage      = { value = 3.6,     unit = "V",     src = "S2", fidelity = "datasheet" }
+phase_resistance   = { value = 1.8,     unit = "ohm",   src = "S2", fidelity = "datasheet" }  # per coil, +/-10 % at 25 degC
+phase_inductance   = { value = 0.0025,  unit = "H",     src = "S2", fidelity = "datasheet" }  # per coil, +/-20 %
+holding_torque     = { value = 0.90,    unit = "N*m",   src = "S2", fidelity = "datasheet" }  # 90 N.cm (Pololu: 125 oz.in = 0.883 N*m)
+shaft_diameter     = { value = 0.00635, unit = "m",     src = "S1", fidelity = "datasheet" }
+shaft_type         = { value = "1/4 inch (6.35 mm) D-shaft, 0.5 mm flat, 2 ball bearings", unit = "-", src = "S3", fidelity = "datasheet" }
+radial_force_max   = { value = 28, unit = "N", src = "S2", fidelity = "datasheet" }  # 20 mm from the flange
+axial_force_max    = { value = 10, unit = "N", src = "S2", fidelity = "datasheet" }
+temp_rise_max      = { value = 80, unit = "degC", src = "S2", fidelity = "datasheet" }  # at rated current, 2 phases on
+kt_equiv_phase = { value = 0.3182, unit = "N*m/A", fidelity = "derived", derivation = "Torque constant per phase from the holding torque with both phases at rated current: T_hold = sqrt(2)*Kt*I  =>  Kt = 0.90 N*m / (1.4142 * 2.0 A) = 0.3182 N*m/A. Equals the back-EMF constant Ke (V*s/rad) per phase for an ideal motor." }
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "bolt-pattern.nema23"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+note = "NEMA 23 square flange; hole spacing/thread not retrievable as text, opaque family tag."
+
+[[ports]]
+name = "shaft"
+kind = "mech"
+type = "shaft.6.35d"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "1/4 inch (6.35 mm) D-shaft."
+
+[[ports]]
+name = "phases"
+pins = ["PH.1", "PH.2", "PH.3", "PH.4", "PH.5", "PH.6"]
+kind = "power"
+type = "stepper-6wire"
+gender = "neutral"
+role = "sink"
+i_max = { value = 2.0, unit = "A", src = "S2", fidelity = "datasheet" }  # rated current per coil
+note = "Six bare 30 cm leads, centre-tapped coils."
+
+# Pin level: six colour-coded bare leads (P1: red-blue pair = one coil, black-green pair = the other, yellow and white = the centre taps). P1 does not say which centre tap belongs to which coil.
+[[connectors]]
+id = "PH"
+name = "phase leads (6, bare)"
+type = "wire-lead"
+port_type = "stepper-6wire"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.056]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.003
+src = "P1"
+fidelity = "datasheet"
+pose_rationale = "P1 does not say where the leads leave the body: drawn at the centre of the rear face, 3 mm apart (positional estimate)."
+pins = [
+  { number = 1, name = "A1", kind = "power", dir = "in", i_max = 2.0, note = "black wire, coil A end (P1)" },
+  { number = 2, name = "A2", kind = "power", dir = "in", i_max = 2.0, note = "green wire, coil A end (P1)" },
+  { number = 3, name = "B1", kind = "power", dir = "in", i_max = 2.0, note = "red wire, coil B end (P1)" },
+  { number = 4, name = "B2", kind = "power", dir = "in", i_max = 2.0, note = "blue wire, coil B end (P1)" },
+  { number = 5, name = "CT1", kind = "power", dir = "in", note = "yellow wire, centre tap (P1); coil not stated" },
+  { number = 6, name = "CT2", kind = "power", dir = "in", note = "white wire, centre tap (P1); coil not stated" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://www.pololu.com/product/1473"
+title = "Pololu item 1473 product page, Overview"
+accessed = "2026-10-09"
+quote = "The motor has six color-coded wires terminated with bare leads that allow it to be controlled by both unipolar and bipolar stepper motor drivers. When used with a unipolar stepper motor driver, all six leads are used. When used with a bipolar stepper motor driver, the center-tap yellow and white wires can be left disconnected (the red-blue pair gives access to one coil and the black-green pair gives access to the other coil)."
+
+[[sources]]
+id = "S1"
+url = "https://www.pololu.com/product/1473/specs"
+title = "Pololu item 1473 Specs tab (Stepper Motor: Unipolar/Bipolar, 200 Steps/Rev, 57x56mm, 3.6V, 2 A/Phase)"
+accessed = "2026-10-07"
+quote = "Size: | 56.4 mm square × 56 mm| 1| NEMA size: | 23 | Weight: | 700 g | Shaft diameter: | 6.35 mm | General specifications| Shaft type: | 1/4 inch \"D\" | Current rating: | 2000 mA| 2| Voltage rating: | 3.6 V | Holding torque: | 125 oz·in | Steps per revolution: | 200 | Resistance: | 1.8 Ohm| 2| Inductance per phase: | 2.5 mH | Number of leads: | 6 | Lead length: | 30 cm | Notes:| 1| Not including the shaft.| 2| Per coil."
+
+[[sources]]
+id = "S2"
+url = "https://www.pololu.com/file/0J673/SY57STH56-2006A.pdf"
+title = "Changzhou Songyang SY57STH56-2006A technical specification (linked from Pololu item 1473)"
+accessed = "2026-10-07"
+quote = "Step Angle ( °) 1.8 | Rated Voltage (V) 3.6 || Temperature Rise (℃) 80 Max (rated current、2 phase on) | Rated Current (A) 2.0 || Resistance Per Phase ( ±10% Ω) 1.8 (25℃) || Number of Phase 2 | Inductance Per Phase ( ±20% mH) 2.5 || Holding Torque (N.cm) 90 || Max.radial force (N) 28 (20mm from the flange) || Max.axial force (N) 10"
+
+[[sources]]
+id = "S3"
+url = "https://www.pololu.com/product/1473"
+title = "Pololu item 1473 product page, Dimensions"
+accessed = "2026-10-07"
+quote = "Output shaft supported by two ball bearings || Dimensions| The following diagram shows the stepper motor dimensions in mm. The output D-shaft has a 0.25″ (6.35 mm) diameter with a section that is flattened by 0.5 mm"

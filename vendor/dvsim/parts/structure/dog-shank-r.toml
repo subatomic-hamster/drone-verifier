@@ -1,0 +1,52 @@
+id = "dog-shank-r"
+name = "Dog shank, right-hand twin of dog-shank (3D printed PLA, L = 220 mm)"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "shank (right)"
+url = "cad/dog/parts.py"
+
+# Same geometry and mesh as dog-shank: the shank is symmetric about its XZ plane, so its mirror image IS the same solid. Only the knee port differs: its axis
+# is the reflection of dog-shank's (+y instead of -y), which a mirrored sub-assembly needs (a port axis normal to the mirror plane flips under reflection).
+# Variants: dog-shank-200-r, dog-shank-250-r.
+
+[mirror]
+opposite = "dog-shank"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+length          = { value = 0.22, unit = "m", fidelity = "estimated", rationale = "Design value L_SHANK (cad/dog/params.py); the speed study sweeps 0.20-0.25 m." }
+lug_radius      = { value = 0.03, unit = "m", fidelity = "estimated", rationale = "Design value KNEE_R2 = KNEE_R1 x KNEE_RATIO = 20 mm x 1.5 (cad/dog/params.py): study candidate 1 (docs/dog/actuator-study.md)." }
+mass            = { value = 0.0505, unit = "kg", fidelity = "derived", derivation = "Identical to dog-shank (same solid): mesh volume 61.1 cm3 x PLA 1.24 g/cm3, shell = min(V, area x 3 walls x 0.4 mm), 30 % infill elsewhere, by cad/dog/build.py." }
+price           = { value = 1.01, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.0505 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-shank.stl"
+material = "pla"
+bbox_min = [-0.01968, -0.017, -0.224]
+bbox_max = [0.017, 0.017, 0.03419]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee axis, beam mid-plane. Mates the thigh knee port of the right leg (the thigh plate is on the +y side)."
+
+[[ports]]
+name = "foot"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, -0.22]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Foot socket stub, 8.4 mm stud bore for the foot core."

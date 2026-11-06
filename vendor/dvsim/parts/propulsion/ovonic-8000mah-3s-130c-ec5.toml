@@ -1,0 +1,67 @@
+id = "ovonic-8000mah-3s-130c-ec5"
+name = "Ovonic 8000mAh 3S 11.1V 130C LiPo pack, EC5"
+category = "battery.lipo"
+vendor = "Ovonic"
+part_number = "O-130C-8000-3S1P-EC5"
+url = "https://www.ovonicshop.com/products/2-x-ovonic-3s-8000mah-11-1v-130c-lipo-battery-with-ec5-connector-lipo-voltage-checker-for-1-8-1-10-scale-rc-car-truck-boat-rc-airplane-rc-racing"
+
+# Part frame: origin at the pack centre, x along length (146.8 mm), y along width (43.7 mm), z up (40.4 mm). The listing is a 2-pack; one pack is modelled.
+# No burst rating or resistance published.
+
+[params]
+capacity_ah     = { value = 8.0, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 28800.0, unit = "C", fidelity = "derived", derivation = "8.0 Ah x 3600 s/h = 28800 C (coulombs)." }
+cells_series    = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 11.1, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 12.6, unit = "V", fidelity = "derived", derivation = "3S x 4.2 V/cell full-charge LiPo limit = 12.6 V." }
+c_rating_cont   = { value = 130, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 1040.0, unit = "A", fidelity = "derived", derivation = "130 C x 8.0 Ah = 1040 A (rating label only; a marketing figure)." }
+mass            = { value = 0.538, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.1468, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0437, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0404, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "EC5", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0098, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/8.0 = 3.25 mOhm/cell x 3 cells = 9.8 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.0734, 0.02185, 0.0202]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "ec5"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 12.6, unit = "V", fidelity = "derived", derivation = "3S x 4.2 V/cell = 12.6 V." }
+i_max = { value = 1040.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 130 C x 8.0 Ah = 1040 A (S1 label); far above the EC5 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the EC5 plug but not its polarity or contact spacing: + then -, an assumed 12 mm spacing for the EC5 family (no source read). The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (EC5)"
+type = "ec5"
+gender = "neutral"
+pos = [0.0734, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.012
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the EC5 plug but not its polarity or contact spacing: + then -, an assumed 12 mm centre distance for the EC5 family (no source read); pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 12.6, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.ovonicshop.com/products/2-x-ovonic-3s-8000mah-11-1v-130c-lipo-battery-with-ec5-connector-lipo-voltage-checker-for-1-8-1-10-scale-rc-car-truck-boat-rc-airplane-rc-racing"
+title = "Ovonic shop - 2 x Ovonic 3S 8000mAh 11.1V 130C LiPo with EC5 connector"
+accessed = "2026-10-07"
+quote = "Capacity: 8000mAh | Voltage: 11.1V | Discharge Rate: 130C | Configuration: 3S1P | Net Weight: 538g (1.08lb) per pack | Size: 146.8mm x 43.7mm x 40.4mm L*W*H (5.78in x 1.42in x 1.59in) | Connector Type: EC5 Plug | Balancer Connector Type: JST-XHR-4P | Wire Gauge: 12 AWG"

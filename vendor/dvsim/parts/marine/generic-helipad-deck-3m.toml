@@ -1,0 +1,45 @@
+id = "generic-helipad-deck-3m"
+name = "Generic 3 x 3 m aluminium helipad / UAV landing deck with non-skid coating and yellow perimeter, white circle and H (illustrative, not a product)"
+category = "structure.helipad"
+vendor = "generic"
+part_number = "n/a"
+url = "n/a"
+
+# A flat landing surface for small UAVs on a vessel or a pad. PHYSICS: one thin box with `landing = true`, which the design builder emits as a contact surface other
+# vehicles land on (contype 0 / conaffinity 1, so a vehicle's own geoms, contype 1, collide with it) in the ray-visible geom group 3 (rangefinders, rotor ground-effect
+# rays and lidars see it; the vehicle geoms are in group 4, which they skip). Its friction REPLACES the default contact friction (MuJoCo priority 1): 0.9 sliding,
+# the order of a non-skid deck coating against rubber / plastic skids. MARKINGS (the yellow band, white ring and H) are render only (parts/README.md visual layer).
+# The 3 m size is a design choice for ~0.5 m class UAVs.
+# Part frame: origin at the centre of the underside, +z up, the H reads from the stern.
+[params]
+pad_size      = { value = 3.0, unit = "m", fidelity = "estimated", rationale = "Design choice: 3 x 3 m, six times the 0.5 m span of an X500-class UAV, fitting the 3.7 m of beam at the aft deck." }
+pad_thickness = { value = 0.05, unit = "m", fidelity = "estimated", rationale = "5 cm aluminium plate / stiffener thickness seen from above (the landing surface is its top face)." }
+friction      = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "Non-skid deck paint against rubber or plastic skids: sliding friction coefficient 0.7-1.0 (typical engineering range; no test of this surface). Used as the contact friction of the pad's landing geom." }
+mass          = { value = 180.0, unit = "kg", fidelity = "estimated", rationale = "9 m2 of 5 mm aluminium plate (6061, 2700 kg/m3: 121 kg) plus stiffeners and corner posts, about 180 kg. No product weight." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [1.5, 1.5, 0.025]
+pos = [0.0, 0.0, 0.025]
+mass_param = "mass"
+landing = true
+friction = [0.9, 0.005, 0.0001]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside of the pad on the deck seat."
+
+[visual]
+rationale = "Dark non-skid plate, yellow perimeter band, white touchdown circle and H: the layout of an offshore helideck (perimeter, central H, touchdown circle) scaled to 3 m; a drawing choice, no source."
+
+[[visual.elements]]
+gen = "helipad_deck"

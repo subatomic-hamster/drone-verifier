@@ -1,0 +1,66 @@
+id = "ovonic-2200mah-4s-120c-xt60"
+name = "Ovonic 2200mAh 4S 14.8V 120C LiPo pack, XT60 (5-inch freestyle)"
+category = "battery.lipo"
+vendor = "Ovonic"
+part_number = "O-120C-2200-4S1P-XT60-BBX"
+url = "https://www.ovonicshop.com/products/ovonic-4s-120c-2200mah-14-8v-lipo-battery-with-xt60-connector-lipo-voltage-checker-for-5-inch-freestyle-fpv-racing-drone-4-7-inch-long-range-drones"
+
+# Part frame: origin at the pack centre, x along length (106 mm), y along width (34.2 mm), z up (32.3 mm). No burst rating or resistance published.
+
+[params]
+capacity_ah     = { value = 2.2, unit = "Ah", src = "S1", fidelity = "datasheet" }
+capacity        = { value = 7920.0, unit = "C", fidelity = "derived", derivation = "2.2 Ah x 3600 s/h = 7920 C (coulombs)." }
+cells_series    = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+cells_parallel  = { value = 1, unit = "1", src = "S1", fidelity = "datasheet" }
+v_nominal       = { value = 14.8, unit = "V", src = "S1", fidelity = "datasheet" }
+v_full          = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell full-charge LiPo limit = 16.8 V." }
+c_rating_cont   = { value = 120, unit = "C", src = "S1", fidelity = "datasheet" }
+i_max_continuous = { value = 264.0, unit = "A", fidelity = "derived", derivation = "120 C x 2.2 Ah = 264 A (rating label only; a marketing figure)." }
+mass            = { value = 0.239, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.106, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.0342, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0323, unit = "m", src = "S1", fidelity = "datasheet" }
+main_connector  = { value = "XT60", unit = "text", src = "S1", fidelity = "datasheet" }
+discharge_wire_awg = { value = 12, unit = "AWG", src = "S1", fidelity = "datasheet" }
+r_internal_pack = { value = 0.0473, unit = "ohm", fidelity = "estimated", rationale = "No pack resistance published. R_cell = 0.026 ohm*Ah / capacity (rule of parts/propulsion/tattu-1800mah-4s-75c-xt60.toml): 0.026/2.2 = 11.8 mOhm/cell x 4 cells = 47.3 mOhm. Plus-or-minus 50%." }
+
+[geometry]
+shape = "box"
+size = [0.053, 0.0171, 0.01615]
+
+[[ports]]
+name = "power_out"
+kind = "power"
+type = "xt60"
+gender = "neutral"
+role = "source"
+pins = ["OUT.1", "OUT.2"]
+v_max = { value = 16.8, unit = "V", fidelity = "derived", derivation = "4S x 4.2 V/cell = 16.8 V." }
+i_max = { value = 264.0, unit = "A", fidelity = "derived", derivation = "C rating x capacity = 120 C x 2.2 Ah = 264 A (S1 label); far above the XT60 connector's own continuous rating, which a DRC should flag." }
+
+# Pin level: the main discharge plug, drawn on the +x face. S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family. The balance lead has no published pinout and is not drawn.
+[[connectors]]
+id = "OUT"
+name = "main discharge plug (XT60)"
+type = "xt60"
+gender = "neutral"
+pos = [0.053, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 names the XT60 plug but not its polarity or contact spacing: + then -, 7.2 mm of the XT60 family; pose on the pack's +x face."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "out", v = 16.8, note = "v = the port's full-charge v_max" },
+  { number = 2, name = "BAT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.ovonicshop.com/products/ovonic-4s-120c-2200mah-14-8v-lipo-battery-with-xt60-connector-lipo-voltage-checker-for-5-inch-freestyle-fpv-racing-drone-4-7-inch-long-range-drones"
+title = "Ovonic shop - Ovonic 4S 120C 2200mAh 14.8V LiPo with XT60 connector"
+accessed = "2026-10-07"
+quote = "Capacity: 2200mAh | Voltage: 14.8V | Discharge Rate: 120C | Configuration: 4S1P | Net Weight: 239g (0.48lb) per pack | Size: 106mm x 34.2mm x 32.3mm L*W*H (4.18in x 1.35in x 1.27in) | Connector Type: XT60 Plug | Balancer Connector Type: JST-XHR-5P | Wire Gauge: 12 AWG"

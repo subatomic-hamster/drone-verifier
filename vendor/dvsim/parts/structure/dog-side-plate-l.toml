@@ -1,0 +1,51 @@
+id = "dog-side-plate-l"
+name = "Dog chassis side plate, left (3D printed PLA, 4 mm, 420 x 120 mm, inboard top flange, e-stop service hole)"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "side_plate (left)"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py side_plate(); mesh by cad/dog/build.py. Frame: origin at the plate centre, +x forward, the plate normal along y (plate y in [-2, 2] mm); the 12 mm top flange points INBOARD
+# (-y for the left plate, y in [-14, -2] mm, z in [56, 60] mm) and carries the plate under the top deck. A 60 mm service hole at (x, z) = (-100, -18) mm (forward of the rear leg's hub board) clears the e-stop head (a 40 x 40 mm box at the plate's mid height).
+# 420 mm does not fit the 220 mm print bed (its 311 mm diagonal): print it as two 210 mm halves joined with a lap splice; mass and cost are unchanged.
+# Twin: dog-side-plate-r (mirror image about the XZ plane).
+
+[mirror]
+opposite = "dog-side-plate-r"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+mass            = { value = 0.1933, unit = "kg", fidelity = "derived", derivation = "Mesh volume 210.5 cm3 x PLA 1.24 g/cm3, shell = min(V, area x 3 walls x 0.4 mm), 30 % infill elsewhere (assemblies/README.md 'Mass properties'), by cad/dog/build.py." }
+price           = { value = 3.87, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.1933 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-side-plate-l.stl"
+material = "pla"
+bbox_min = [-0.21, -0.014, -0.06]
+bbox_max = [0.21, 0.002, 0.06]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Plate centre, outer face."
+
+[[ports]]
+name = "top"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, -0.008, 0.06]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Top face of the inboard flange (centre line y = -8 mm): lies against the underside of the top deck."

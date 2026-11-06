@@ -1,0 +1,95 @@
+id = "tmotor-mn5212-kv420"
+name = "T-Motor MN5212 KV420 multirotor motor"
+category = "motor.bldc"
+vendor = "T-Motor"
+part_number = "MN5212 KV420"
+url = "https://store.tmotor.com/product/mn5212-kv420-motor-navigator-type.html"
+
+# Part frame: origin at the centre of the stator mounting face, +z along the shaft towards the prop.
+# Ports as a top-level inline-table array (TOML requires it before the first [table] header). No prop adapter is drawn on the S2 drawing.
+ports = [
+  { name = "base", kind = "mech", type = "bolt-circle.25.4.m3", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 4, holes = 4 },
+  { name = "base_32", kind = "mech", type = "bolt-circle.32.3.m2.5", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 3, holes = 3 },
+  { name = "shaft", kind = "mech", type = "shaft.4", gender = "male", pos = [0.0, 0.0, 0.0395], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Derived: tip height = 42.5 mm overall drawing length minus 3 mm rear stub = 39.5 mm (S2 drawing; inference, the drawing does not say which label is the rear stub). Shaft dia from S1." },
+  { name = "phase", pins = ["PH.1", "PH.2", "PH.3"], kind = "power", type = "motor-3phase", gender = "neutral", role = "sink", v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V (upper end of the 4-8S range, S1)." }, i_max = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }, note = "i_max is the 180 s current rating ('Max Continuous Current 180S'); cable is part of the motor" },
+]
+
+[params]
+mass = { value = 0.249, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Including Cables
+mass_no_cable = { value = 0.205, unit = "kg", src = "S1", fidelity = "datasheet" }  # Weight Excluding Cables
+kv = { value = 420, unit = "rpm/V", src = "S1", fidelity = "datasheet" }  # from the model name
+r_winding = { value = 0.069, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Internal Resistance (mOhm on page); the page prints the same 69 mOhm for KV340 and KV420 (report NO. MN.00030 shared)
+i0 = { value = 1.1, unit = "A", src = "S1", fidelity = "datasheet" }  # Idle Current@10v
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }  # test voltage from the 'Idle Current@10v' label
+i_peak = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Max Continuous Current 180S
+p_max = { value = 1440.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Max Power (180S)
+configuration = { value = "24N22P", unit = "text", src = "S1", fidelity = "datasheet" }
+cells_min = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max = { value = 8, unit = "S", src = "S1", fidelity = "datasheet" }
+diameter = { value = 0.059, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+length_body = { value = 0.0335, unit = "m", src = "S1", fidelity = "datasheet" }  # Motor Dimensions
+stator_diameter = { value = 0.052, unit = "m", src = "S1", fidelity = "datasheet" }
+stator_height = { value = 0.012, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+lead_length = { value = 0.6, unit = "m", src = "S1", fidelity = "datasheet" }  # 16# AWG
+kt = { value = 0.022736, unit = "N*m/A", fidelity = "derived", derivation = "60 / (2*pi*Kv) with Kv = 420 rpm/V." }
+
+[tables.thrust_test]
+# VALIDATION TARGET. Vendor bench test, prop 'T-MOTOR 15*5CF', 24 V. All printed rows (7), copied as printed. thrust_N = thrust_g*0.00980665; vendor temp at 100 % throttle: 53 C.
+# Vendor-table inconsistencies kept as printed: the 55 % row shows a torque lower than the 50 % row, and the 60 % row shows 10.5 A with 521.8 W (V*I = 252 W); treat those two rows with caution.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "efficiency_g_per_W", "torque_Nm"]
+rows = [
+  [50, 24.0, 6.8, 162.2, 4976, 11.8072, 1204, 7.42, 0.321],
+  [55, 24.0, 8.7, 208.1, 5487, 14.4942, 1478, 7.10, 0.278],
+  [60, 24.0, 10.5, 521.8, 5947, 17.1224, 1746, 6.94, 0.33],
+  [65, 24.0, 12.6, 302.2, 6376, 19.4466, 1983, 6.56, 0.374],
+  [75, 24.0, 18.8, 450.0, 7287, 25.3894, 2589, 5.75, 0.493],
+  [85, 24.0, 25.0, 599.0, 8042, 31.6755, 3230, 5.39, 0.607],
+  [100, 24.0, 36.7, 881.3, 9091, 40.9428, 4175, 4.74, 0.784],
+]
+prop_label = "T-MOTOR 15*5CF"
+src = "S1"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0295, 0.01975]
+pos = [0.0, 0.0, 0.01975]   # spans z = 0 .. tip height
+
+# Pin level: three 16 AWG phase leads, 600 mm (S1 'AWG|16#|Cable Length|600mm'; the listing names no connector, so they are bare / solder ends).
+# Lead exit and phase naming are conventions, as for the other outrunners in the library (no drawing carries them).
+[[connectors]]
+id = "PH"
+name = "phase leads (3 x 16 AWG, 600 mm)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0295, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.004
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the cable length and gauge (600mm, 16#), not a connector, lead positions or phase labels: leads drawn side by side at the base, 4 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 60.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 60.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 60.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://store.tmotor.com/product/mn5212-kv420-motor-navigator-type.html"
+title = "T-MOTOR store - MN5212 KV420 (specification + test data)"
+accessed = "2026-10-07"
+quote = "Test Item|MN5212 KV420|Report NO.|MN.00030|Internal Resistance|69mΩ|Configuration|24N22P|Shaft Diameter|4mm|Motor Dimensions|Φ59×33.5mm|Stator Diameter|52mm|Stator Height|12mm|AWG|16#|Cable Length|600mm|Weight Including Cables|249g|Weight Excluding Cables|205g|No.of Cells(Lipo)|4-8S|Idle Current@10v|1.1A|Max Power (180S)|1440W|Max Continuous Current 180S|60A. Test row: MN5212 KV420|24|T-MOTOR 15*5CF|50%|6.8|162.2|1204|4976|7.42|0.321"
+
+[[sources]]
+id = "S2"
+url = "https://store.tmotor.com/images/202408/151723707726894123.jpg"
+title = "T-MOTOR MN5212 technical drawing image (Technical Drawing block of the S1 product page)"
+accessed = "2026-10-07"
+quote = "Drawing labels: 42.5, 6, 3, Ø59, Ø4, Ø6, 12, 5-M3, Ø17, 4-M3, Ø25, 3-M2.5, Ø32"

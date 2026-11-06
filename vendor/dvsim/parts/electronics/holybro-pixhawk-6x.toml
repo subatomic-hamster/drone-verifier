@@ -1,0 +1,92 @@
+id = "holybro-pixhawk-6x"
+name = "Holybro Pixhawk 6X flight controller module (FMUv6X, Rev8)"
+category = "pcb.fc"
+vendor = "Holybro"
+part_number = "Pixhawk 6X"
+url = "https://docs.holybro.com/autopilot/pixhawk-6x/technical-specification.md"
+
+# Module only (plugs into a Pixhawk baseboard); baseboard weights/sizes are on the same page but are separate parts.
+# No bolt pattern is published for the bare module, so no mech port is declared.
+[params]
+mass_module        = { value = 0.023, unit = "kg", src = "S1", fidelity = "datasheet" }
+length             = { value = 0.0388, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.0318, unit = "m", src = "S1", fidelity = "datasheet" }
+height             = { value = 0.0146, unit = "m", src = "S1", fidelity = "datasheet" }
+fmu_clock          = { value = 480e6, unit = "Hz", src = "S1", fidelity = "datasheet" }
+max_input_voltage  = { value = 6, unit = "V", src = "S1", fidelity = "datasheet" }
+servo_rail_voltage_max = { value = 36, unit = "V", src = "S1", fidelity = "datasheet" }
+imu_count          = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+pwm_outputs        = { value = 16, unit = "1", src = "S1", fidelity = "datasheet" }
+uart_count         = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+can_buses          = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+telem_gps_port_current_limit = { value = 1.5, unit = "A", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = 248.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "power1"
+kind = "power"
+type = "molex-clik-mate.6"
+gender = "male"
+v_max = { value = 6, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "2 power input ports with SMBus (digital PM02D/PM03D/PM06D class modules, S2); connector family per S2 comparison table"
+
+[[ports]]
+name = "pwm_out"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+count = 16
+level_options = "3.3 V or 5 V hardware switchable (requires base board modification)"
+
+[[ports]]
+name = "serial"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 4
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+count = 2
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+count = 1
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer"); the part has no [geometry]
+src = "V1"
+note = "Black finned aluminium FMU module (product photo)."
+
+[[visual.elements]]
+gen = "board_fc"
+params = { case = true }
+colors = { pcb = "plastic-black", label = "plastic-dark" }
+
+[[sources]]
+id = "V1"
+url = "https://docs.holybro.com/autopilot/pixhawk-6x/overview.md"
+title = "Holybro Pixhawk 6X overview, product photo (pixhawk6x_bundle.jpg)"
+accessed = "2026-10-08"
+quote = "[image] Pixhawk 6X: black anodised FMU module with finned edges, corner screws and an arrow mark on the top face"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/autopilot/pixhawk-6x/technical-specification.md"
+title = "Pixhawk 6X Technical Specification (Holybro docs)"
+accessed = "2026-10-07"
+quote = "FMU Processor: STM32H753 ... Accel/Gyro: 3x ICM-45686 (with BalancedGyro™ Technology) Barometer: ICP20100 & BMP388/580/581 Mag: BMM150 ... Max input voltage: 6V ... Servo Rail Input: 0~36V ... Flight Controller Module: 38.8 x 31.8 x 14.6mm ... Flight Controller Module: 23g ... 16- PWM servo outputs ... 4 general purpose serial ports ... 2 CAN Buses for CAN peripheral ... 2 Power input ports with SMBus ... Operating temperature: -25 ~ 85°c"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module-comparison.md"
+title = "Power Module Comparison (Holybro docs)"
+accessed = "2026-10-07"
+quote = "Digital Power Modules (Applicable for Pixhawk 5X & 6X and other FMUv6X FC) ... Ports XT60 6Pin Molex 2.0mm"

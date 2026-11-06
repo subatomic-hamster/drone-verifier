@@ -1,0 +1,115 @@
+id = "vectornav-vn-100-rugged"
+name = "VectorNav VN-100 Rugged IMU/AHRS (3-axis gyro, accelerometer, magnetometer; serial TTL / RS-232)"
+category = "sensor.imu"
+vendor = "VectorNav"
+part_number = "VN-100 Rugged"
+url = "https://www.vectornav.com/products/detail/vn-100"
+
+# The deck motion sensor ("MRU") of the vessel. A true marine MRU also outputs heave; the VN-100 is an AHRS (attitude and rates), so in this design heave and the deck
+# position come from the RTK base antenna (a 8 Hz RTK fix with 1 cm vertical accuracy, parts/electronics/sparkfun-gps-rtk-sma-16481.toml) and the deck-datalink model
+# (dvsim.cuas.relnav.DeckLink) combines both. S1 gives: "Pitch/Roll accuracy (static) 0.5 deg RMS | (dynamic) 1.0 deg RMS | Heading accuracy (magnetic) 2.0 deg RMS | 400 Hz attitude
+# data | Up to 800 Hz IMU Data | Gyro in-run bias stability < 10 deg/hr | Supply voltage Rugged 4.5 to 5.5 V | Current draw Rugged 40 mA @ 5 V | Weight Rugged 15 g | Dimensions Rugged
+# 36 x 33 x 9 mm | Digital interface Rugged Serial TTL, RS-232 | Connector Rugged 10-pin Harwin".
+# Part frame: origin at the centre of the underside, x along the length, z up.
+[params]
+mass            = { value = 0.015, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.036, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.033, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.009, unit = "m", src = "S1", fidelity = "datasheet" }
+supply_voltage_min = { value = 4.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current  = { value = 0.040, unit = "A", src = "S1", fidelity = "datasheet" }
+attitude_rate_hz = { value = 400.0, unit = "Hz", src = "S1", fidelity = "datasheet" }
+imu_rate_hz     = { value = 800.0, unit = "Hz", src = "S1", fidelity = "datasheet" }
+roll_pitch_static_deg  = { value = 0.5, unit = "deg", src = "S1", fidelity = "datasheet" }
+roll_pitch_dynamic_deg = { value = 1.0, unit = "deg", src = "S1", fidelity = "datasheet" }
+heading_deg     = { value = 2.0, unit = "deg", src = "S1", fidelity = "datasheet" }
+gyro_bias_stability_dph = { value = 10.0, unit = "deg/hr", src = "S1", fidelity = "datasheet" }
+baud_max        = { value = 921600, unit = "baud", src = "S1", fidelity = "datasheet" }
+gyro_fs_max     = { value = 34.907, unit = "rad/s", src = "S1", fidelity = "datasheet" }   # gyro range +-2000 deg/s (S1)
+gyro_noise_density = { value = 6.1e-5, unit = "rad/s/sqrt(Hz)", fidelity = "estimated", rationale = "Not on the product page. The VN-100 datasheet's gyro noise density, recalled as 0.0035 deg/s/sqrt(Hz) = 6.1e-5 rad/s/sqrt(Hz); not re-fetched." }
+gyro_adc_bits   = { value = 16, unit = "bit", fidelity = "estimated", rationale = "Not on the product page; a 16-bit digital output is typical of the MEMS class." }
+accel_fs_max    = { value = 156.906, unit = "m/s2", fidelity = "estimated", rationale = "Not on the product page; +-16 g, typical of this class (VN-100 datasheet range recalled)." }
+accel_noise_density = { value = 1.37e-3, unit = "m/s2/sqrt(Hz)", fidelity = "estimated", rationale = "Not on the product page. Accelerometer noise density recalled as 0.14 mg/sqrt(Hz) = 1.37e-3 m/s2/sqrt(Hz) from the VN-100 datasheet; not re-fetched." }
+accel_adc_bits  = { value = 16, unit = "bit", fidelity = "estimated", rationale = "As gyro_adc_bits." }
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.018, 0.0165, 0.0045]
+pos = [0.0, 0.0, 0.0045]
+mass_param = "mass"
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+thickness = 0.0
+fidelity = "estimated"
+rationale = "Underside; the Rugged unit has mounting holes (not recorded)."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "harwin-10"
+gender = "male"
+role = "sink"
+pins = ["J1.1", "J1.5"]
+v_max = { value = 5.5, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 0.040, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+pins = ["J1.8", "J1.9", "J1.5"]
+note = "TTL serial (3.3 V logic): TX (pin 8), RX (pin 9), ground."
+
+# Pin level. S1 lists the connector ("10-pin Harwin") and the interfaces (Serial TTL, RS-232) but NOT the pin table. The pin assignments below are those of the sibling VN-200 Rugged
+# drawing (same 10-pin Harwin connector, VectorNav's rugged housing family) as reported by a web search over it (navtechgps.com VN200_Rugged_Dimensions-Pinout.pdf, HTTP 403 on
+# fetch, so NOT checked against the VN-100 manual): pin 1 power (5 V nominal), pins 2 and 3 RS-232 serial output and input, pin 4 sync out, pin 5 ground, pin 6 tare / restore (held
+# high at power-on restores factory settings), pin 7 sync in, pins 8 and 9 TTL serial output and input at 3.3 V logic, pin 10 not connected. The order of pins 2 / 3 (and 8 / 9) is TX then RX.
+[[connectors]]
+id = "J1"
+name = "10-pin Harwin connector"
+type = "harwin-10"
+gender = "male"
+pos = [0.018, 0.0, 0.0045]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 10
+pitch = 0.0015
+fidelity = "estimated"
+rationale = "Pin function list taken from the VN-200 Rugged drawing (same connector family) via a search summary; unverified for the VN-100 Rugged. Pin pitch and pose are drawing choices."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "in", v = 5.0, v_min = 4.5, v_max = 5.5 },
+  { number = 2, name = "RS232_TX", kind = "signal", dir = "out", v = 5.0, note = "RS-232 levels" },
+  { number = 3, name = "RS232_RX", kind = "signal", dir = "in", v = 5.0, note = "RS-232 levels" },
+  { number = 4, name = "SYNC_OUT", kind = "signal", dir = "out", v = 3.3 },
+  { number = 5, name = "GND", kind = "ground" },
+  { number = 6, name = "TARE", kind = "signal", dir = "in", v = 3.3 },
+  { number = 7, name = "SYNC_IN", kind = "signal", dir = "in", v = 3.3 },
+  { number = 8, name = "TTL_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = 9, name = "TTL_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = 10, name = "NC", kind = "nc" },
+]
+
+[visual]
+rationale = "Small anodised-aluminium sensor box, drawn from the part's length, width and height."
+
+[[visual.elements]]
+gen = "box_device"
+colors = { body = "alu-anodised-black", label = "label-white", conn = "steel" }
+
+[[sources]]
+id = "S1"
+url = "https://www.vectornav.com/products/detail/vn-100"
+title = "VN-100 (VectorNav product page), specifications"
+accessed = "2026-10-13"
+quote = "Pitch/Roll accuracy (static) 0.5° RMS | Pitch/Roll accuracy (dynamic) 1.0° RMS | Heading accuracy (magnetic) 2.0° RMS | 400 Hz attitude data | Up to 800 Hz IMU Data | Gyro in-run bias stability < 10°/hr (5°/hr typ.) | Supply voltage Rugged: 4.5 to 5.5 V | Current draw Rugged: 40mA @ 5 V | Weight Rugged: 15 g | Dimensions Rugged: 36 x 33 x 9 mm | Digital interface Rugged: Serial TTL, RS-232 | Connector Rugged: 10-pin Harwin"

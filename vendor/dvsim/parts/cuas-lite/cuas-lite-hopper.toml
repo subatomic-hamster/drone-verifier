@@ -1,0 +1,44 @@
+id = "cuas-lite-hopper"
+name = "cuas-lite hopper (3D printed PLA, group pan)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "hopper"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py. The mesh is the CAD's dvsim mesh (m), already in its group frame B (pan group since CAD 987985b: the hopper no longer tilts; balls feed through the hollow right trunnion): the part frame IS frame B.
+# Placement is one mate (hopper--rotor_plate in assemblies/cuas-lite.toml).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/hopper.stl"
+material = "pla"
+bbox_min = [-0.0444, -0.1604, 0.253251]
+bbox_max = [0.0444, -0.0716, 0.391775]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the rotor plate's seat port mates here."
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame, axis +z: the 'a' side of a closure mate to a printed part modelled in the same group frame (bolted pair, identity transform)."

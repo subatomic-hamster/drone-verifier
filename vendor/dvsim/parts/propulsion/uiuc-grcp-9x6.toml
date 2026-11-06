@@ -1,0 +1,81 @@
+id = "uiuc-grcp-9x6"
+name = "Graupner CAM Prop 9x6 propeller - UIUC wind-tunnel C_T/C_P data (reference)"
+category = "prop.reference"
+vendor = "Graupner (propeller); data: UIUC Propeller Data Site (Selig et al.)"
+part_number = "grcp_9x6"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+
+# Literature reference for C_T(J)/C_P(J) of a 9 in x 6 in Graupner CAM Prop prop (pitch/D = 0.67). Tables transcribed from the UIUC .txt files, rounded to 4 decimals (3 for J, eta):
+# static (J = 0, C_T and C_P vs rpm, all 16 rows) and one advancing run at about 5002 rpm (all 9 rows). Shape reference for similar mass-produced props, not a measurement of any specific
+# part. No mass or ports (reference data only).
+
+[params]
+diameter  = { value = 0.2286, unit = "m", src = "S1", fidelity = "literature" }      # 9 in (list value)
+pitch     = { value = 0.1524, unit = "m", src = "S1", fidelity = "literature" }      # 6 in per revolution
+rpm_static_min = { value = 2501, unit = "rpm", src = "S2", fidelity = "literature" }
+rpm_static_max = { value = 6816, unit = "rpm", src = "S2", fidelity = "literature" }
+ct_static_at_max_rpm = { value = 0.1017, unit = "1", src = "S2", fidelity = "literature" }
+cp_static_at_max_rpm = { value = 0.0458, unit = "1", src = "S2", fidelity = "literature" }
+eta_max_approx = { value = 0.573, unit = "1", src = "S3", fidelity = "literature" }   # at J = 0.529 in the 5002 rpm run
+
+[tables.static_ct_cp]
+# UIUC file grcp_9x6_static_pg0915.txt
+columns = ["rpm", "C_T", "C_P"]
+rows = [
+  [2501, 0.0853, 0.0497],
+  [2745, 0.0874, 0.0502],
+  [3110, 0.0892, 0.0494],
+  [3377, 0.0919, 0.0491],
+  [3665, 0.0919, 0.0481],
+  [3931, 0.0932, 0.0480],
+  [4260, 0.0940, 0.0477],
+  [4513, 0.0945, 0.0474],
+  [4801, 0.0959, 0.0475],
+  [5083, 0.0966, 0.0474],
+  [5384, 0.0973, 0.0473],
+  [5666, 0.0984, 0.0471],
+  [5945, 0.1006, 0.0468],
+  [6225, 0.1021, 0.0464],
+  [6530, 0.1020, 0.0462],
+  [6816, 0.1017, 0.0458],
+]
+src = "S2"
+fidelity = "literature"
+
+[tables.advancing_5002rpm]
+# UIUC file grcp_9x6_pg0918_5002.txt (constant rpm about 5002)
+columns = ["J", "C_T", "C_P", "eta"]
+rows = [
+  [0.529, 0.0373, 0.0344, 0.573],
+  [0.559, 0.0327, 0.0323, 0.566],
+  [0.596, 0.0257, 0.0286, 0.534],
+  [0.625, 0.0203, 0.0259, 0.490],
+  [0.658, 0.0143, 0.0225, 0.419],
+  [0.688, 0.0087, 0.0191, 0.315],
+  [0.720, 0.0025, 0.0154, 0.117],
+  [0.752, -0.0032, 0.0118, -0.204],
+  [0.782, -0.0089, 0.0084, -0.832],
+]
+src = "S3"
+fidelity = "literature"
+
+[[sources]]
+id = "S1"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/propDB-volume-1.html"
+title = "UIUC Propeller Database - Volume 1, page notes"
+accessed = "2026-10-07"
+quote = "The propeller size is given in inches, e.g. APC 10x4.7 is a 10-inch diameter propeller with a pitch of 4.7 inch/revolution."
+
+[[sources]]
+id = "S2"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/grcp_9x6_static_pg0915.txt"
+title = "UIUC data file grcp_9x6_static_pg0915.txt"
+accessed = "2026-10-07"
+quote = "RPM CT CP / 2501 0.0853 0.0497 / 4513 0.0945 0.0474 / 6816 0.1017 0.0458"
+
+[[sources]]
+id = "S3"
+url = "https://m-selig.ae.illinois.edu/props/volume-1/data/grcp_9x6_pg0918_5002.txt"
+title = "UIUC data file grcp_9x6_pg0918_5002.txt"
+accessed = "2026-10-07"
+quote = "J CT CP eta / 0.529 0.0373 0.0344 0.573 / 0.658 0.0143 0.0225 0.419 / 0.782 -0.0089 0.0084 -0.832"

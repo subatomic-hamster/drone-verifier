@@ -1,0 +1,60 @@
+id = "generic-rocket-landing-leg"
+name = "Splayed rocket landing leg: 10 mm carbon tube, 0.25 m, 20 deg from the axis, soft TPU foot (design of this repo)"
+category = "rocket.landing-leg"
+vendor = "custom (cut carbon tube + FDM printed foot)"
+part_number = "n/a"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+
+# Part frame: origin at the hinge point (where the leg meets the airframe), the airframe axis is +z, the leg runs outwards along +x and down:
+# the foot is at (0.0855, 0, -0.2349), 0.25 m from the origin, 20 deg from the axis. Mount four of them 90 deg apart (rotate about z).
+# The foot's contact is a SOFT MuJoCo contact (shape key `solref` = [time constant s, damping ratio]); the rod collides with the same (stiff) default.
+# A real landing leg (a spring-loaded telescoping strut, as on propulsive-landing rockets) is not modelled: the compliance is the foot's.
+[params]
+length = { value = 0.25, unit = "m", fidelity = "estimated", rationale = "Design choice: a leg long enough that a 0.9 m, 1 kg-class rocket has a 0.3 m track (2 x 0.0855 + body) and a margin against tipping." }
+splay  = { value = 0.349, unit = "rad", fidelity = "estimated", rationale = "Design choice: 20 deg from the airframe axis; tip-over angle of the rocket on its feet = atan(track / 2 / CG height) must exceed the landing tilt budget." }
+rod_mass = { value = 0.0114, unit = "kg", fidelity = "derived", derivation = "0.0456 kg/m (parts/structure/cf-tube-10x8, datasheet) x 0.25 m = 0.0114 kg." }
+foot_mass = { value = 0.0088, unit = "kg", fidelity = "derived", derivation = "Solid TPU sphere of radius 0.012 m: 4/3 pi 0.012^3 = 7.24e-6 m3 x 1220 kg/m3 (parts/common/tpu-95a, datasheet) = 0.0088 kg (infill-less upper bound)." }
+mass = { value = 0.0202, unit = "kg", fidelity = "derived", derivation = "rod_mass + foot_mass = 0.0114 + 0.0088 kg." }
+foot_friction = { value = 0.8, unit = "1", fidelity = "estimated", rationale = "TPU on dry ground / concrete is ~0.6-1.0; 0.8 mid-range, not measured. Replaces the floor's friction (geom priority 1)." }
+contact_timeconst = { value = 0.02, unit = "s", fidelity = "estimated", rationale = "MuJoCo solref time constant of the foot contact: with the default solimp the contact acts like a spring-damper of stiffness ~ m_eff / (0.95 tc)^2 = 0.5 kg / 3.6e-4 s2 ~ 1.4e3 N/m (m_eff of about a quarter of a 2 kg rocket) and damping ratio 1: a crushable foot that takes ~4 mm of a 5 N hover load. Chosen for a gentle, non-bouncing landing; a stiffer foot is a smaller value (min 2 x the 1 ms step)." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.005, 0.125]
+pos = [0.04275, 0.0, -0.11745]
+zaxis = [0.342020143, 0.0, -0.939692621]
+mass_param = "rod_mass"
+
+[[geometry.shapes]]
+shape = "sphere"
+size = [0.012]
+pos = [0.0855, 0.0, -0.2349]
+friction = [0.8, 0.005, 0.0001]
+solref = [0.02, 1.0]
+mass_param = "foot_mass"
+
+[[ports]]
+name = "hinge"
+kind = "mech"
+type = "leg-mount.rocket"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+thickness = 0.003
+fidelity = "estimated"
+rationale = "Fixed to a bracket on the airframe's outer wall (no hinge DOF, the leg is rigid); a placeholder interface family."
+
+[visual]
+rationale = "Design of this repo: 10 x 8 mm carbon tube at the part's splay, TPU ball foot, small aluminium hinge block on the tube side."
+
+[[visual.elements]]
+gen = "landing_leg"
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+title = "10mm (8mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table (via parts/structure/cf-tube-10x8)"
+accessed = "2026-10-07"
+quote = "Outside Diameter (OD) | 10 | mm ... Weight per metre | 45.6 | g"

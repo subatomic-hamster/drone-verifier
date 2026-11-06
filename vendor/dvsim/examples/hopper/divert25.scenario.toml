@@ -1,0 +1,760 @@
+# dvsim program examples/hopper/divert25.scenario.toml --runs-dir <dir>
+# Mission (b): the EDF hopper of assemblies/hopper.toml climbs to 25 m, crosses 10 m sideways (8 m east, 6 m north) to a SECOND pad and lands on it, in a light breeze with Dryden turbulence.
+# The pads are only a point in the GNSS frame: the precision comes from the RTK receiver (parts/electronics/ublox-zed-f9p; the M8N of the lander could not do 0.3 m, examples/hopper/mc.py
+# sensitivity table) and the lidar-governed final approach. hopper/hop.py OWNS the Sim, steps hopper/flight.py and writes trace.csv / replay.dvsimog / native.json / telemetry.jsonl.
+# One flight is not the claim: the claim is the success rate over the scatter (examples/hopper/mc.py, README.md).
+name = "hopper-divert25"
+
+[model]
+script = "scene.py"
+
+[interfaces.native]
+
+[program]
+cmd = ["python", "{dir}/hop.py", "divert25.scenario.toml"]
+
+[limits]
+wall_s = 900
+cpu_s = 900
+
+[[parameters]]
+name = "seed"
+type = "int"
+default = 1
+min = 1
+max = 1000000
+group = "run"
+label = "Seed"
+doc = "Seeds the sensor noise, the Dryden turbulence and every scatter draw: the same seed and parameters replay to the same state hash."
+
+[[parameters]]
+name = "max_s"
+type = "float"
+default = 90.0
+min = 10.0
+max = 200.0
+unit = "s"
+group = "run"
+label = "Longest flight"
+
+[[parameters]]
+name = "alt_m"
+type = "float"
+default = 25.0
+min = 2.0
+max = 40.0
+unit = "m"
+group = "mission"
+label = "Cruise height"
+
+[[parameters]]
+name = "hold_s"
+type = "float"
+default = 2.0
+min = 0.0
+max = 30.0
+unit = "s"
+group = "mission"
+label = "Hover time above the second pad"
+
+[[parameters]]
+name = "dx_m"
+type = "float"
+default = 8.0
+min = -30.0
+max = 30.0
+unit = "m"
+group = "mission"
+label = "Second pad east of the first"
+
+[[parameters]]
+name = "dy_m"
+type = "float"
+default = 6.0
+min = -30.0
+max = 30.0
+unit = "m"
+group = "mission"
+label = "Second pad north of the first"
+
+[[parameters]]
+name = "t_launch"
+type = "float"
+default = 3.0
+min = 2.5
+max = 10.0
+unit = "s"
+group = "mission"
+label = "Spool-up time"
+
+[[parameters]]
+name = "vmax_xy"
+type = "float"
+default = 2.5
+min = 0.5
+max = 5.0
+unit = "m/s"
+group = "flight"
+label = "Largest transit speed"
+
+[[parameters]]
+name = "vmax_up"
+type = "float"
+default = 3.5
+min = 0.5
+max = 6.0
+unit = "m/s"
+group = "flight"
+label = "Largest climb speed"
+
+[[parameters]]
+name = "vmax_down"
+type = "float"
+default = 3.0
+min = 0.5
+max = 6.0
+unit = "m/s"
+group = "flight"
+label = "Largest descent speed (above the final approach)"
+
+[[parameters]]
+name = "v_sink_min"
+type = "float"
+default = 0.25
+min = 0.1
+max = 0.6
+unit = "m/s"
+group = "flight"
+label = "Touchdown sink rate"
+
+[[parameters]]
+name = "wn_att"
+type = "float"
+default = 9.0
+min = 4.0
+max = 20.0
+unit = "rad/s"
+group = "flight"
+label = "Roll / pitch loop bandwidth"
+
+[[parameters]]
+name = "t_lead"
+type = "float"
+default = 0.065
+min = 0.0
+max = 0.15
+unit = "s"
+group = "flight"
+label = "Servo-lag lead of the gyroscopic feed-forward"
+
+[[parameters]]
+name = "kp_xy"
+type = "float"
+default = 2.5
+min = 0.2
+max = 3.0
+unit = "1/s^2"
+group = "flight"
+label = "Horizontal position gain"
+
+[[parameters]]
+name = "kd_xy"
+type = "float"
+default = 3.3
+min = 0.5
+max = 5.0
+unit = "1/s"
+group = "flight"
+label = "Horizontal velocity gain"
+
+[[parameters]]
+name = "ki_xy"
+type = "float"
+default = 1.0
+min = 0.0
+max = 2.0
+unit = "1/s^3"
+group = "flight"
+label = "Horizontal position integral gain"
+
+[[parameters]]
+name = "tilt_max_deg"
+type = "float"
+default = 20.0
+min = 5.0
+max = 30.0
+unit = "deg"
+group = "flight"
+label = "Largest commanded lean"
+
+[[parameters]]
+name = "wind_ms"
+type = "float"
+default = 2.0
+min = 0.0
+max = 8.0
+unit = "m/s"
+group = "environment"
+label = "Wind (upper bound or fixed value)"
+doc = "Steady horizontal wind; the Dryden turbulence intensity follows it (w20 = this) unless w20_ms is set. With wind_fixed off, the speed of a flight is uniform in 0.4..1 x this."
+
+[[parameters]]
+name = "wind_fixed"
+type = "bool"
+default = true
+group = "environment"
+label = "Wind speed fixed"
+
+[[parameters]]
+name = "wind_dir_deg"
+type = "float"
+default = 200.0
+min = -1.0
+max = 360.0
+unit = "deg"
+group = "environment"
+label = "Wind direction"
+doc = "Direction the wind blows towards, from world +x towards +y; -1 = drawn from the seed."
+
+[[parameters]]
+name = "w20_ms"
+type = "float"
+default = -1.0
+min = -1.0
+max = 12.0
+unit = "m/s"
+group = "environment"
+label = "Gust reference wind"
+doc = "W20 of the Dryden model (MIL-F-8785C); -1 = equal to the mean wind."
+
+[[parameters]]
+name = "disperse"
+type = "bool"
+default = true
+group = "scatter"
+label = "Vehicle and sensor scatter on"
+doc = "Off: the nominal vehicle (the numbers of the parts); on: the scatter below, drawn from the seed."
+
+[[parameters]]
+name = "thrust_tol"
+type = "float"
+default = 0.05
+min = 0.0
+max = 0.15
+group = "scatter"
+label = "Fan thrust (uniform +-)"
+doc = "Relative error of the fan's thrust and torque coefficients against the part's table: uniform within this bound."
+
+[[parameters]]
+name = "mass_tol"
+type = "float"
+default = 0.03
+min = 0.0
+max = 0.1
+group = "scatter"
+label = "Mass (uniform +-)"
+doc = "Every part's mass scaled by the same factor; the flight computer still believes the design's mass."
+
+[[parameters]]
+name = "cg_tol_m"
+type = "float"
+default = 0.004
+min = 0.0
+max = 0.02
+unit = "m"
+group = "scatter"
+label = "Centre-of-mass offset (uniform +-, each axis)"
+doc = "Realised as a battery shift of 4 x this (the pack is 25 % of the mass)."
+
+[[parameters]]
+name = "soc_drop"
+type = "float"
+default = 0.3
+min = 0.0
+max = 0.6
+group = "scatter"
+label = "Battery charge at start: 1 - U(0, this)"
+
+[[parameters]]
+name = "noise_extra"
+type = "float"
+default = 0.5
+min = 0.0
+max = 2.0
+group = "scatter"
+label = "Sensor noise: x (1 + U(0, this)) the datasheet value"
+doc = "Applied to the IMU, barometer and lidar noise separately."
+
+[[parameters]]
+name = "backlash_deg"
+type = "float"
+default = 0.5
+min = 0.0
+max = 3.0
+unit = "deg"
+group = "scatter"
+label = "Servo backlash (half width, upper bound)"
+doc = "Play of the vane servos' gear trains: uniform in 0..this per flight."
+
+[[parameters]]
+name = "servo_p_drop"
+type = "float"
+default = 0.3
+min = 0.0
+max = 0.8
+group = "scatter"
+label = "Servo stiffness: x (1 - U(0, this))"
+doc = "Position gain of all four servos scaled down per flight (slower, softer vanes: the lag dispersion)."
+
+[[parameters]]
+name = "gyro_bias_dps"
+type = "float"
+default = 0.25
+min = 0.0
+max = 1.0
+unit = "deg/s"
+group = "scatter"
+label = "Gyro zero-rate offset (1 sigma)"
+
+[[parameters]]
+name = "accel_bias_ms2"
+type = "float"
+default = 0.1
+min = 0.0
+max = 0.5
+unit = "m/s^2"
+group = "scatter"
+label = "Accelerometer offset (1 sigma)"
+
+[[parameters]]
+name = "gnss_rtk"
+type = "bool"
+default = true
+group = "scatter"
+label = "RTK GNSS (off: the NEO-M8N of the lander)"
+
+[[parameters]]
+name = "fault_servo"
+type = "bool"
+default = false
+group = "faults"
+label = "Degrade one servo"
+doc = "At t_fault one of the four vane servos (drawn from the seed) loses its torque limit (35 %) and half its stiffness."
+
+[[parameters]]
+name = "fault_torque"
+type = "float"
+default = 0.35
+min = 0.1
+max = 1.0
+group = "faults"
+label = "Faulty servo torque limit (share)"
+
+[[parameters]]
+name = "fault_p"
+type = "float"
+default = 0.5
+min = 0.1
+max = 1.0
+group = "faults"
+label = "Faulty servo stiffness (share)"
+
+[[parameters]]
+name = "fault_batt_v"
+type = "float"
+default = 0.0
+min = 0.0
+max = 5.0
+unit = "V"
+group = "faults"
+label = "Battery voltage step"
+doc = "3 s after t_fault the pack's open-circuit voltage drops by this much; 0 = none."
+
+[[parameters]]
+name = "t_fault"
+type = "float"
+default = 20.0
+min = 5.0
+max = 60.0
+unit = "s"
+group = "faults"
+label = "Time of the servo fault"
+
+[[telemetry]]
+name = "state"
+kind = "string"
+group = "flight"
+label = "Flight state"
+doc = "PAD, READY, SPOOL, CLIMB, TRANSIT, HOVER, DESCENT, FINAL, TOUCHDOWN, LANDED, ABORT_LAND or FAULT."
+
+[[telemetry]]
+name = "est.alt_m"
+unit = "m"
+group = "navigation"
+label = "Height (estimate)"
+min = 0
+max = 30
+
+[[telemetry]]
+name = "est.vz_ms"
+unit = "m/s"
+group = "navigation"
+label = "Vertical speed (estimate)"
+min = -5
+max = 5
+
+[[telemetry]]
+name = "est.x_m"
+unit = "m"
+group = "navigation"
+label = "East of the pad (estimate)"
+
+[[telemetry]]
+name = "est.y_m"
+unit = "m"
+group = "navigation"
+label = "North of the pad (estimate)"
+
+[[telemetry]]
+name = "est.vx_ms"
+unit = "m/s"
+group = "navigation"
+label = "East speed (estimate)"
+
+[[telemetry]]
+name = "est.vy_ms"
+unit = "m/s"
+group = "navigation"
+label = "North speed (estimate)"
+
+[[telemetry]]
+name = "est.tilt_deg"
+unit = "deg"
+group = "attitude"
+label = "Tilt from vertical (estimate)"
+min = 0
+max = 30
+
+[[telemetry]]
+name = "est.roll_deg"
+unit = "deg"
+group = "attitude"
+label = "Roll (estimate)"
+
+[[telemetry]]
+name = "est.pitch_deg"
+unit = "deg"
+group = "attitude"
+label = "Pitch (estimate)"
+
+[[telemetry]]
+name = "est.yaw_deg"
+unit = "deg"
+group = "attitude"
+label = "Yaw (estimate)"
+
+[[telemetry]]
+name = "setpoint.x_m"
+unit = "m"
+group = "setpoint"
+label = "East setpoint"
+
+[[telemetry]]
+name = "setpoint.y_m"
+unit = "m"
+group = "setpoint"
+label = "North setpoint"
+
+[[telemetry]]
+name = "setpoint.alt_m"
+unit = "m"
+group = "setpoint"
+label = "Height setpoint"
+
+[[telemetry]]
+name = "setpoint.vz_ms"
+unit = "m/s"
+group = "setpoint"
+label = "Vertical speed setpoint"
+
+[[telemetry]]
+name = "throttle"
+group = "propulsion"
+label = "ESC throttle"
+min = 0
+max = 1
+
+[[telemetry]]
+name = "thrust_N"
+unit = "N"
+group = "propulsion"
+label = "Thrust (truth)"
+min = 0
+max = 25
+
+[[telemetry]]
+name = "thrust_cmd_N"
+unit = "N"
+group = "propulsion"
+label = "Thrust command"
+
+[[telemetry]]
+name = "thrust_est_N"
+unit = "N"
+group = "propulsion"
+label = "Thrust (accelerometer estimate)"
+
+[[telemetry]]
+name = "motor.rpm"
+unit = "rpm"
+group = "propulsion"
+label = "Fan speed"
+min = 0
+max = 36000
+
+[[telemetry]]
+name = "battery.v"
+unit = "V"
+group = "power"
+label = "Battery voltage"
+min = 16
+max = 26
+
+[[telemetry]]
+name = "battery.i_a"
+unit = "A"
+group = "power"
+label = "Battery current"
+min = 0
+max = 90
+
+[[telemetry]]
+name = "battery.soc"
+group = "power"
+label = "Battery state of charge"
+min = 0
+max = 1
+
+[[telemetry]]
+name = "vanes.a1_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 1 angle (+x)"
+min = -20
+max = 20
+
+[[telemetry]]
+name = "vanes.a2_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 2 angle (+y)"
+min = -20
+max = 20
+
+[[telemetry]]
+name = "vanes.a3_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 3 angle (-x)"
+min = -20
+max = 20
+
+[[telemetry]]
+name = "vanes.a4_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 4 angle (-y)"
+min = -20
+max = 20
+
+[[telemetry]]
+name = "vanes.g1_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 1 goal"
+
+[[telemetry]]
+name = "vanes.g2_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 2 goal"
+
+[[telemetry]]
+name = "vanes.g3_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 3 goal"
+
+[[telemetry]]
+name = "vanes.g4_deg"
+unit = "deg"
+group = "vanes"
+label = "Vane 4 goal"
+
+[[telemetry]]
+name = "vanes.f1_N"
+unit = "N"
+group = "vanes"
+label = "Vane 1 force"
+
+[[telemetry]]
+name = "vanes.f2_N"
+unit = "N"
+group = "vanes"
+label = "Vane 2 force"
+
+[[telemetry]]
+name = "vanes.f3_N"
+unit = "N"
+group = "vanes"
+label = "Vane 3 force"
+
+[[telemetry]]
+name = "vanes.f4_N"
+unit = "N"
+group = "vanes"
+label = "Vane 4 force"
+
+[[telemetry]]
+name = "torque_cmd_Nm.x"
+unit = "N*m"
+group = "control"
+label = "Roll torque command"
+
+[[telemetry]]
+name = "torque_cmd_Nm.y"
+unit = "N*m"
+group = "control"
+label = "Pitch torque command"
+
+[[telemetry]]
+name = "torque_cmd_Nm.z"
+unit = "N*m"
+group = "control"
+label = "Yaw torque command"
+
+[[telemetry]]
+name = "lidar_m"
+unit = "m"
+group = "sensors"
+label = "Lidar range (0 = no return)"
+min = 0
+max = 8
+
+[[telemetry]]
+name = "flags.abort"
+kind = "string"
+group = "flight"
+label = "Abort reason"
+doc = "Empty until an abort is raised: tilt, battery, gnss or off-plan."
+
+[[telemetry]]
+name = "flags.vane_sat"
+kind = "bool"
+group = "control"
+label = "Roll / pitch vane command at the limit"
+
+[[telemetry]]
+name = "flags.yaw_sat"
+kind = "bool"
+group = "control"
+label = "Yaw command cut short by the vane range"
+
+[[telemetry]]
+name = "truth.alt_m"
+unit = "m"
+group = "truth"
+label = "Height (truth)"
+
+[[telemetry]]
+name = "truth.vz_ms"
+unit = "m/s"
+group = "truth"
+label = "Vertical speed (truth)"
+
+[[telemetry]]
+name = "truth.x_m"
+unit = "m"
+group = "truth"
+label = "East of the first pad (truth)"
+
+[[telemetry]]
+name = "truth.y_m"
+unit = "m"
+group = "truth"
+label = "North of the first pad (truth)"
+
+[[telemetry]]
+name = "truth.tilt_deg"
+unit = "deg"
+group = "truth"
+label = "Tilt (truth)"
+
+# ---- monitors (judged on trace.csv) ----------------------------------------------------------------------------------------------------------------------
+[[monitors]]
+name = "stands_on_the_pad"
+column = "tilt_deg"
+op = "always"
+from = 0.1
+to = 2.9
+hi = 0.5
+
+[[monitors]]
+name = "reaches_cruise_height"         # 25 m
+column = "z_m"
+op = "eventually"
+lo = 24.0
+
+[[monitors]]
+name = "diverts_ten_metres"            # the second pad is 10 m from the first
+column = "range_m"
+op = "eventually"
+lo = 9.5
+
+[[monitors]]
+name = "no_abort"
+column = "abort"
+op = "final"
+hi = 0.5
+
+[[monitors]]
+name = "touchdown_speed"               # < 0.5 m/s (the hardest ground contact counts)
+column = "td_speed_ms"
+op = "final"
+hi = 0.5
+
+[[monitors]]
+name = "touchdown_tilt"                # < 5 deg
+column = "td_tilt_deg"
+op = "final"
+hi = 5
+
+[[monitors]]
+name = "lands_on_the_second_pad"       # within 0.3 m of its centre
+column = "td_dist_m"
+op = "final"
+hi = 0.3
+
+[[monitors]]
+name = "battery_voltage"
+column = "vbat_v"
+op = "always"
+lo = 18.0
+
+[[monitors]]
+name = "battery_charge"
+column = "soc"
+op = "final"
+lo = 0.15
+
+[[monitors]]
+name = "stays_upright"
+column = "tilt_deg"
+op = "final"
+hi = 5
+
+[[monitors]]
+name = "vane_saturation"               # < 10 % of the powered time with a roll / pitch vane command at the 17 deg limit
+column = "sat_frac"
+op = "final"
+hi = 0.10

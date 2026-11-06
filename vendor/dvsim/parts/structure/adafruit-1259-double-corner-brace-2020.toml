@@ -1,0 +1,31 @@
+id = "adafruit-1259-double-corner-brace-2020"
+name = "Cast aluminium double corner brace support for 20x20 extrusion (Adafruit 1259)"
+category = "structure.bracket"
+vendor = "Adafruit"
+part_number = "1259"
+url = "https://www.adafruit.com/product/1259"
+
+# Frame: origin at the inside corner, legs along +x and +y. Leg length, thickness and hole positions are not in the published text.
+[params]
+mass       = { value = 0.0176, unit = "kg", src = "S1", fidelity = "datasheet" }
+hole_count = { value = 4, unit = "1", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "face"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "Two holes in each corner (S1) bolt it to two extrusion faces at 90 degrees; hole positions are not in the text, so only a flat seat is filed."
+note = "Use T-nuts and 10 mm screws (8 mm also works) per S1."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1259"
+title = "Adafruit product 1259: Aluminum Extrusion Double Corner Brace Support (for 20x20)"
+accessed = "2026-10-07"
+quote = "double corner brace supports when working on a project with 20x20 extrusion. They're nice and solid, made of cast aluminum so they are stronger than extruded corner supports. Four holes, two in each corner allow you to easily connect two pieces at a 90 degree angle. ... Technical Details | Weight: 17.6g"

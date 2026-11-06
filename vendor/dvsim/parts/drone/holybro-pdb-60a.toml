@@ -1,0 +1,250 @@
+id = "holybro-pdb-60a"
+name = "Holybro Power Distribution Board (PDB) 60A, XT30 pre-soldered (X500 V2 kit)"
+category = "pcb.pdb"
+vendor = "Holybro"
+part_number = "18069A"
+url = "https://holybro.com/products/power-distribution-board-pdb"
+
+# Kit PDB: XT60 in from the PM02 module/battery side, XT30 plugs out to the four ESCs and peripherals.
+# Copper resistance and dimensions are not published numerically (a dimensions drawing exists only as an image).
+
+[params]
+current_rated  = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+current_max    = { value = 120.0, unit = "A", src = "S1", fidelity = "datasheet" }    # < 60 s
+mount_pattern  = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }    # 45x45 mm mounting holes
+mass           = { value = 0.015, unit = "kg", fidelity = "estimated", rationale = "No bare-board mass published (Holybro shipping weights are packaged: 40-50 g). Assumed ~15 g for a ~50 mm 2-layer heavy-copper PCB with XT60 and 4-5 XT30 plugs soldered; unverified." }
+r_path         = { value = 0.0005, unit = "ohm", fidelity = "estimated", rationale = "Board copper path resistance unpublished. A 60 A continuous board needs well under 1 mOhm from XT60 pad to each XT30 pad; 0.5 mOhm assumed (loss at 60 A would be 1.8 W). Plug contact resistance modelled separately via amass-xt60." }
+
+[params.mass_tol]
+value = 0.010
+unit = "kg"
+fidelity = "estimated"
+rationale = "mass (15 g) is itself an estimate with no published bare-board value; Holybro's packaged shipping weights are 40-50 g (this file's mass rationale), so a one-sided +-10 g bound is carried."
+
+[params.board_size_xy]
+value = 0.050
+unit = "m"
+fidelity = "estimated"
+rationale = "Dimensions are published only as an image. The board carries 45x45 mm mounting holes (S1) and its mass rationale above assumes a ~50 mm board; 50 mm leaves 2.5 mm from each hole centre to the edge."
+
+[params.board_height]
+value = 0.006
+unit = "m"
+fidelity = "estimated"
+rationale = "PCB plus soldered XT60/XT30 plugs and wire stubs stand roughly 5-6 mm above the board face; not published. Visual/collision envelope only."
+
+[geometry]
+# Part frame: origin at the centre of the board underside (mounting face), z up (board normal, component side up), x forward.
+shape = "box"
+size = [0.025, 0.025, 0.003]      # half-extents of board_size_xy x board_size_xy x board_height (estimated)
+pos = [0.0, 0.0, 0.003]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.45x45.m3"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 4
+thickness = 0.0016
+holes = 4
+thread = "m3"
+fidelity = "derived"
+src = "S1"
+derivation = "45 x 45 mm mounting-hole pattern from S1 ('45x45mm Mounting Holes'). pos/axis/ref follow the library convention (origin at the mounting-face centre, axis = outward normal of the mounting face = -z). thickness 0.0016 m is a typical 1.6 mm PCB (estimated, not published; the 60 A heavy-copper board may be 2 mm); the thread size M3 is assumed (not stated)."
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "xt60"
+gender = "female"
+role = "passthrough"
+i_max = { value = 60.0, unit = "A", src = "S1", fidelity = "datasheet" }
+pins = ["IN.1", "IN.2"]
+note = "Pre-soldered XT60 for the power module and battery (S1). Gender female so the PM02 power_out (male) plugs in; Holybro does not state the gender. i_max = 'Rated Current: 60A' (120 A max < 60 s). No input voltage rating is published."
+
+[[ports]]
+name = "out1"
+kind = "power"
+type = "xt30"
+gender = "female"
+role = "passthrough"
+pins = ["O1.1", "O1.2"]
+note = "Pre-soldered XT30 for ESC 1 (S2: 'XT30 plug for ESCs & peripherals'); mates the ESC power_in (male). No per-output current rating is published. The kit lists XT30 plugs for 'ESCs & peripherals': 4 are modelled, any extra peripheral outputs are not."
+
+[[ports]]
+name = "out2"
+kind = "power"
+type = "xt30"
+gender = "female"
+role = "passthrough"
+pins = ["O2.1", "O2.2"]
+note = "As out1, for ESC 2."
+
+[[ports]]
+name = "out3"
+kind = "power"
+type = "xt30"
+gender = "female"
+role = "passthrough"
+pins = ["O3.1", "O3.2"]
+note = "As out1, for ESC 3."
+
+[[ports]]
+name = "out4"
+kind = "power"
+type = "xt30"
+gender = "female"
+role = "passthrough"
+pins = ["O4.1", "O4.2"]
+note = "As out1, for ESC 4."
+
+# Pin level: XT60 input and four XT30 outputs soldered to the board (S1 / S2). Poses are estimates on the 50 x 50 mm board; polarity and
+# spacing are the XT family's (XT60 7.2 mm, XT30 5.0 mm, pin 1 +), which Holybro does not print: estimated.
+[[connectors]]
+id = "IN"
+name = "XT60 input"
+type = "xt60"
+gender = "female"
+pos = [-0.025, 0.0, 0.006]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "S1: 'Pre-soldered XT60 for Power Module & Battery, Rated Current: 60A'; polarity and spacing assumed from the XT60 family."
+pins = [
+  { number = 1, name = "IN+", kind = "power", dir = "in", i_max = 60.0 },
+  { number = 2, name = "IN-", kind = "ground", i_max = 60.0 },
+]
+
+[[connectors]]
+id = "O1"
+name = "XT30 output 1"
+type = "xt30"
+gender = "female"
+pos = [0.025, 0.015, 0.006]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "estimated"
+rationale = "S2: 'XT30 plug for ESCs & peripherals'; polarity and 5 mm spacing assumed from the XT30 family; board layout estimated."
+pins = [
+  { number = 1, name = "OUT+", kind = "power", dir = "out" },
+  { number = 2, name = "OUT-", kind = "ground" },
+]
+
+[[connectors]]
+id = "O2"
+name = "XT30 output 2"
+type = "xt30"
+gender = "female"
+pos = [0.025, -0.015, 0.006]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "estimated"
+rationale = "As O1."
+pins = [
+  { number = 1, name = "OUT+", kind = "power", dir = "out" },
+  { number = 2, name = "OUT-", kind = "ground" },
+]
+
+[[connectors]]
+id = "O3"
+name = "XT30 output 3"
+type = "xt30"
+gender = "female"
+pos = [0.0, 0.025, 0.006]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "estimated"
+rationale = "As O1."
+pins = [
+  { number = 1, name = "OUT+", kind = "power", dir = "out" },
+  { number = 2, name = "OUT-", kind = "ground" },
+]
+
+[[connectors]]
+id = "O4"
+name = "XT30 output 4"
+type = "xt30"
+gender = "female"
+pos = [0.0, -0.025, 0.006]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+src = "S2"
+fidelity = "estimated"
+rationale = "As O1."
+pins = [
+  { number = 1, name = "OUT+", kind = "power", dir = "out" },
+  { number = 2, name = "OUT-", kind = "ground" },
+]
+
+# Tap pads: the board is a bus bar, so a peripheral (a companion-computer regulator) is soldered across the battery rail next to an XT30 output.
+# S2 says the XT30 plugs are for 'ESCs & peripherals' without giving their number; no separate pad set is published.
+[[connectors]]
+id = "TAP"
+name = "battery-rail solder pads (peripheral tap)"
+type = "solder-pad-1x2"
+gender = "neutral"
+pos = [0.025, -0.015, 0.003]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.005
+joinable = true   # bare solder pads on a bus bar: a tap is soldered on beside the XT30 lead (the editing ops accept these pins on a wire from out1, as the assembly loader does)
+src = "S2"
+fidelity = "estimated"
+rationale = "No datasheet lists spare pads. The PDB is a copper bus (r_path 0.5 mOhm), so a solder tap on the rail beside an XT30 output is physically available; two pads, + then -, at the XT30 spacing, on the same net as out1 (pdb.out1)."
+pins = [
+  { number = 1, name = "TAP+", kind = "power", dir = "out" },
+  { number = 2, name = "TAP-", kind = "ground" },
+]
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer")
+src = "V1"
+note = "Yellow PDB board with gold solder pads and yellow XT connectors (kit photo)."
+
+[[visual.elements]]
+gen = "board_power"
+colors = { pcb = [0.93, 0.68, 0.06], conn = "plastic-yellow" }
+
+[[sources]]
+id = "V1"
+url = "https://holybro.com/products/x500-v2-kits"
+title = "Holybro X500 V2 kits product page (PDB photo, appearance only)"
+accessed = "2026-10-07"
+quote = "X500 V2 Kits"
+
+[[sources]]
+id = "S1"
+url = "https://holybro.com/products/power-distribution-board-pdb"
+title = "Holybro - Power Distribution Board (PDB) 60A"
+accessed = "2026-10-06"
+quote = "Pre-soldered XT60 for Power Module & Battery Rated Current: 60A Max Current: 120A (<60 sec) 45x45mm Mounting Holes"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/drone-development-kit/px4-development-kit-x500v2.md"
+title = "Holybro docs - PX4 Development Kit - X500v2"
+accessed = "2026-10-06"
+quote = "Power Distribution Board (XT60 plug for battery & XT30 plug for ESCs & peripherals)"

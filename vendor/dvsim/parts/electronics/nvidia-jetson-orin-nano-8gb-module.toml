@@ -1,0 +1,76 @@
+id = "nvidia-jetson-orin-nano-8gb-module"
+name = "NVIDIA Jetson Orin Nano 8GB module (260-pin SO-DIMM)"
+category = "computer.sbc"
+vendor = "NVIDIA"
+part_number = "Jetson Orin Nano 8GB (900-13767-0030-000)"
+url = "https://connecttech.com/ftp/pdf/nvidia_jetson_orin_datasheet.pdf"
+
+# Module only (not the developer kit). The data sheet states no module mass and no idle power; the developer-kit user
+# guide page fetched (hardware layout) carries no numbers, so dev-kit mass/size are not recorded.
+# 7 W / 15 W are the module power MODES (configured budget), not measured draw.
+[params]
+length              = { value = 0.0696, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+supply_voltage_min  = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_voltage_max  = { value = 20, unit = "V", src = "S1", fidelity = "datasheet" }
+power_mode_low      = { value = 7, unit = "W", src = "S1", fidelity = "datasheet" }
+power_mode_high     = { value = 15, unit = "W", src = "S1", fidelity = "datasheet" }
+ai_performance_int8_sparse = { value = 40, unit = "TOPS", src = "S1", fidelity = "datasheet" }
+cuda_cores          = { value = 1024, unit = "1", src = "S1", fidelity = "datasheet" }
+junction_temp_min   = { value = 248.15, unit = "K", src = "S1", fidelity = "datasheet" }
+junction_temp_max   = { value = 363.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "carrier"
+kind = "mech"
+type = "so-dimm-260"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "260-pin SO-DIMM edge connector into a carrier board"
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "so-dimm-260-supply"
+gender = "male"
+v_max = { value = 20, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "Supported Power Input: 5V - 20V on the module supply pins (carrier sets the actual connector)"
+
+[[ports]]
+name = "uart"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 3
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+count = 4
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+count = 1
+
+[[ports]]
+name = "usb"
+kind = "signal"
+type = "usb"
+gender = "neutral"
+note = "up to 3x USB 3.2, 3x USB 2.0 on the module pins"
+
+[[sources]]
+id = "S1"
+url = "https://connecttech.com/ftp/pdf/nvidia_jetson_orin_datasheet.pdf"
+title = "NVIDIA Jetson Orin Nano Series Data Sheet (copy hosted by Connect Tech)"
+accessed = "2026-10-07"
+quote = "Jetson Orin Nano 8GB: Up to 40 (Sparse) INT8 TOPs and 20 (Dense) INT8 TOPs ... Jetson Orin Nano 8GB: 1024 NVIDIA CUDA cores | 32 Tensor cores ... 3x USB 3.2, 3x USB 2.0 ... 3x UART | 2x SPI | 4x I2C | 1x CAN ... Module Size: 69.6 mm x 45 mm | 260 pin SO-DIMM Connector ... Temp. Range (TJ)*: -25°C – 90°C | Supported Power Input: 5V – 20V Jetson Orin Nano 8GB Modes: 7W | 15W"

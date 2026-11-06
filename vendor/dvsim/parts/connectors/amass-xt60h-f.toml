@@ -1,0 +1,86 @@
+id = "amass-xt60h-f"
+name = "Amass XT60H-F connector (XT60 family, female, wire-solder, 1000-cycle)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "XT60H-F"
+url = "https://www.china-amass.net/xt60h-f-product/"
+
+# Ratings are the Amass product-page values (35 A at 12 AWG, 85 K rise); see amass-xt60h-m for the difference to the 30 A figures. No mass published.
+[params]
+current_rated       = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0012, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 1000, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "12 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "xt60"
+gender = "female"
+v_max = { value = 80, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "35 A on 12 AWG at a temperature rise <= 85 K"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 35, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, 12 AWG"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line, solder cup n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "xt60"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the family (XT60, 2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0072
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/xt60h-f-product/"
+title = "AMASS XT60H-F product page (Amass), electrical SPEC"
+accessed = "2026-10-07"
+quote = "Electrical specifications | Current rating | 35A (12AWG△≤85K) | Rated voltage | 80V DC | Insulation Resistance | ≥2000MΩ | Contact Resistance | ≤1.2mΩ | Mechanical characteristics | Plug Life. | 1000 times | Environmental resistance | Work Temperature | -20℃ to 120℃"

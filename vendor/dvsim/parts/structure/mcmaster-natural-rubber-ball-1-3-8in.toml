@@ -1,0 +1,55 @@
+id = "mcmaster-natural-rubber-ball-1-3-8in"
+name = "McMaster-Carr natural rubber ball, 1-3/8 in diameter, ASTM D2000, 45A (foot tread of the dog)"
+category = "rubber.foot"
+vendor = "McMaster-Carr"
+part_number = "96385K64 (natural rubber ball 1-3/8 in, 45A, per the Natural Rubber Balls page)"
+url = "https://www.mcmaster.com/products/natural-rubber-balls"
+
+# The tread of each foot: a solid rubber ball seated in the printed foot core (cad: dog-foot-core). A sphere makes rolling contact over rocks and a point-like contact for the ground-contact device.
+# Part frame: origin at the sphere centre. The page lists balls of 1, 1 1/8 and 1 3/8 in in 55A (and 45A); 1 3/8 in = 34.9 mm.
+
+[mirror]
+symmetry = "xz"  # a sphere; its one port lies on the z axis
+
+[params]
+diameter ={ value = 0.034925, unit = "m", src = "S1", fidelity = "datasheet" }  # 1 3/8 in
+tolerance = { value = 0.0030, unit = "m", src = "S1", fidelity = "datasheet" }  # -0.115 to 0.125 in as printed in the catalogue row for this family; 3 mm half-range (diameter tolerance, sic)
+durometer_shore_a = { value = 45.0, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_max = { value = 373.15, unit = "K", src = "S1", fidelity = "datasheet" }  # 0 to 212 degF rating -> 100 degC
+density = { value = 1100.0, unit = "kg/m3", fidelity = "estimated", rationale = "Not published; natural rubber compounds are 920-1100 kg/m3, filled 55A grades near 1100." }
+friction_dry_hard = { value = 0.9, unit = "1", fidelity = "estimated", rationale = "Rubber on rough dry rock / concrete is 0.8-1.0 in the tribology literature; a design value for the sim, not measured on this ball." }
+
+[params.mass]
+value = 0.0245
+unit = "kg"
+fidelity = "derived"
+derivation = "Sphere volume 4/3 * pi * (0.0174625 m)^3 = 2.23e-5 m^3 x density 1100 kg/m3 = 0.0245 kg (solid ball)."
+
+[params.price]
+value = 6.0
+unit = "USD"
+fidelity = "estimated"
+rationale = "The McMaster page text retrieved shows no price for this size. A solid 35 mm natural-rubber ball is a 3-8 USD item at industrial suppliers; 6 USD taken (+-60 %)."
+
+[[geometry.shapes]]
+shape = "sphere"
+size = [0.0174625]
+pos = [0.0, 0.0, 0.0]
+
+[[ports]]
+name = "seat"
+kind = "mech"
+type = "sphere-seat.35"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0174625]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "The ball is glued / press-seated in a spherical socket of the foot core; the port sits on the top of the sphere."
+
+[[sources]]
+id = "S1"
+url = "https://www.mcmaster.com/products/natural-rubber-balls"
+title = "McMaster-Carr Natural Rubber Balls (web-search / page-fetch summary)"
+accessed = "2026-10-16"
+quote = "Natural rubber balls, 1 3/8 in row: part number 96385K64, Durometer 45A (Medium Soft), tolerance -0.115 to 0.125 in, Ultra-Stretchable Abrasion-Resistant Natural Rubber (page-fetch summary, not verbatim); temperature rating 0 to 212 F from a search listing of the ASTM D2000 balls (55A grade)"

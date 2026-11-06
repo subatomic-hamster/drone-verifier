@@ -1,0 +1,41 @@
+id = "iso7380-m5x10"
+name = "Button head socket screw ISO 7380-1 M5x10, steel"
+category = "fastener"
+vendor = "generic (ISO 7380-1 / DIN 7380)"
+part_number = "ISO 7380-1 M5x10"
+url = "https://fasten.it/norms/norm/din_en_iso_7380-1"
+
+[params]
+mass            = { value = 2.03e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+thread_diameter = { value = 5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+length          = { value = 10e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+thread_pitch    = { value = 0.8e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+head_diameter   = { value = 9.5e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+head_height     = { value = 2.75e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+steel_density   = { value = 7850, unit = "kg/m3", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.010
+note = "Shank thread, axis points out of the shank tip; pos at underside of head"
+
+[[sources]]
+id = "S1"
+url = "https://fasten.it/norms/norm/din_en_iso_7380-1"
+title = "DIN EN ISO 7380-1 button head screws (fasten.it), approximate mass table"
+accessed = "2026-10-07"
+quote = "DIN 7380 - 1 Approximate mass, in kg x1000 pcs, (ρ=7.85 kg/dm3) commercial sizes ... 10 0.59 1.15 2.03 2.92 6.01  (row l=10; columns M3 M4 M5 M6 M8; M5 = 2.03 kg per 1000 pcs)"
+
+[[sources]]
+id = "S2"
+url = "https://fasten.it/norms/norm/din_en_iso_7380-1"
+title = "DIN EN ISO 7380-1 key dimensions table (fasten.it)"
+accessed = "2026-10-07"
+quote = "M 5 0.8 9.5 9.14 3 3.44 2.75 2.5 1.56 0.38  (d, P, dk max, dk min, s nom, e min, k max, k min, t min, w min)"

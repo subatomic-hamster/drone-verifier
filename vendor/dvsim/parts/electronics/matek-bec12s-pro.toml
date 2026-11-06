@@ -1,0 +1,92 @@
+id = "matek-bec12s-pro"
+name = "Matek BEC12S-PRO (9-55 V to 5.2/8/12 V, 5 A)"
+category = "pcb.bec"
+vendor = "Matek Systems"
+part_number = "BEC12S-PRO"
+url = "https://www.mateksys.com/?portfolio=bec12s-pro"
+
+# Efficiency is quoted as a range (no curve published); there is no reverse-input protection.
+[params]
+mass                = { value = 0.005, unit = "kg", src = "S1", fidelity = "datasheet" }
+length              = { value = 0.035, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.024, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.0055, unit = "m", src = "S1", fidelity = "datasheet" }
+input_voltage_min   = { value = 9, unit = "V", src = "S1", fidelity = "datasheet" }
+input_voltage_max   = { value = 55, unit = "V", src = "S1", fidelity = "datasheet" }
+output_current_cont = { value = 5, unit = "A", src = "S1", fidelity = "datasheet" }
+output_current_peak = { value = 9, unit = "A", src = "S1", fidelity = "datasheet" }
+efficiency_min      = { value = 0.88, unit = "1", src = "S1", fidelity = "datasheet" }
+efficiency_max      = { value = 0.96, unit = "1", src = "S1", fidelity = "datasheet" }
+standby_current_max = { value = 0.010, unit = "A", src = "S1", fidelity = "datasheet" }
+dropout_voltage     = { value = 2, unit = "V", src = "S1", fidelity = "datasheet" }
+pin_pitch           = { value = 3.81e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "vin"
+pins = ["VIN.1", "VIN.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 55, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+
+[[ports]]
+name = "vout"
+pins = ["VOUT.1", "VOUT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+v_max = { value = 12, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 5, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "source"
+note = "Selectable 5.2 V (default), 8 V or 12 V; input must be >= 14 V for stable 12 V"
+
+# Pin level (estimated): two solder-pad pairs, input and output; the page text gives the pad pitch (3.81 mm) but not the pad labels or board positions.
+[[connectors]]
+id = "VIN"
+name = "input pads"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [-0.0155, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.00381
+src = "S1"
+fidelity = "estimated"
+rationale = "A DC-DC converter with a single input has a positive and a negative pad; their order and board positions are not on the page. Pitch 3.81 mm is the page's 'Pins distance'."
+pose_rationale = "Board layout is not published: input pads at the -x end, output at the +x end (positional estimate)."
+pins = [
+  { number = 1, name = "VIN+", kind = "power", dir = "in", v_max = 55.0 },
+  { number = 2, name = "VIN-", kind = "ground" },
+]
+
+[[connectors]]
+id = "VOUT"
+name = "output pads"
+type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [0.0155, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.00381
+src = "S1"
+fidelity = "estimated"
+rationale = "As VIN; output is selectable 5.2 V / 8 V / 12 V (page), 5 A continuous."
+pose_rationale = "As VIN."
+pins = [
+  { number = 1, name = "VOUT+", kind = "power", dir = "out", v_max = 12.0, i_max = 5.0 },
+  { number = 2, name = "VOUT-", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.mateksys.com/?portfolio=bec12s-pro"
+title = "BEC12S-PRO, 9-55V to 5V/8V/12V-5A (Matek Systems product page)"
+accessed = "2026-10-07"
+quote = "Wide 9V to 55V Operating Input Range with TVS protection 3x Output voltage options, 5.2V, 8V or 12V. Default 5.2V. Synchronous switching step-down (buck) regulator with typical efficiencies of 88% to 96% Supports continuous output current of up to 5A, peak current of 9A. ... Standby current: 5~10mA No reverse-input voltage protection ... Dropout voltage: 2V (Input>=14V is required for stable 12V output) Pins distance: 3.81mm Size & Weight: 35 x 24 x 5.5mm, 5g"

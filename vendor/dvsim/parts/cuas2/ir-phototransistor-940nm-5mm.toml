@@ -1,0 +1,66 @@
+id = "ir-phototransistor-940nm-5mm"
+name = "5 mm 940 nm infrared phototransistor, daylight-filter lens (cuas2 muzzle / breech beam receiver)"
+category = "sensor.optical"
+vendor = "generic (ProtoSupplies 940 nm phototransistor class)"
+part_number = "5 mm phototransistor 940 nm"
+url = "https://protosupplies.com/product/phototransistor-940nm/"
+
+# Part frame: origin at the base of the 5 mm body, +z towards the lens (looking at the emitter), body 8 mm long, leads towards -z.
+# Circuit: collector to 3V3 through a 10 k pull-up, emitter to ground; the collector node goes LOW when the beam arrives and HIGH when a ball blocks it.
+
+[params]
+mass          = { value = 0.0003, unit = "kg", fidelity = "estimated", rationale = "As a 5 mm LED." }
+wavelength    = { value = 940.0, unit = "nm", src = "S1", fidelity = "datasheet" }
+diameter      = { value = 0.005, unit = "m", fidelity = "estimated", rationale = "5 mm package (listing: 940 nm phototransistor, 5 mm class)." }
+length_body   = { value = 0.008, unit = "m", fidelity = "estimated", rationale = "As the LED." }
+v_ce_max      = { value = 30.0, unit = "V", fidelity = "estimated", rationale = "Class value for a 5 mm phototransistor; used only at 3.3 V." }
+price         = { value = 0.30, unit = "USD", fidelity = "estimated", rationale = "Allowance: ProtoSupplies lists 5-packs (price not read in the snippet); generic parts are 0.2-0.4 each." }
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0025, 0.004]
+pos = [0.0, 0.0, 0.004]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "out"
+kind = "signal"
+type = "open-collector"
+gender = "neutral"
+pins = ["T.1", "T.2"]
+note = "Collector (pin 1, signal) and emitter (pin 2, ground); open collector, needs a pull-up."
+
+[[connectors]]
+id = "T"
+name = "phototransistor leads (collector, emitter)"
+type = "axial-leads"
+gender = "male"
+joinable = true
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.00254
+fidelity = "estimated"
+rationale = "Standard 2.54 mm lead spacing of a 5 mm package."
+pins = [
+  { number = 1, name = "C", kind = "signal", dir = "out", v_max = 30.0, i_max = 0.02 },
+  { number = 2, name = "E", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://protosupplies.com/product/phototransistor-940nm/"
+title = "ProtoSupplies: Phototransistor 940nm (search snippet)"
+accessed = "2026-10-27"
+quote = "phototransistor 940nm"

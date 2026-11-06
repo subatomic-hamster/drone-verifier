@@ -1,0 +1,534 @@
+// Device configuration (milestone N2): C++ physics models stepped inside MujocoSolver::step. Declared in the MJCF as
+//   <custom><text name="dvsim.devices" data='{ ...this schema as JSON... }'/></custom>
+// mj_saveModel keeps custom text, so replay headers / load_mujoco_bytes / clone carry it. Parsed with flatbuffers::Parser
+// (strict_json: quoted names, unknown field = error) in src/mujoco/devices/devices.cpp, then copied into plain structs.
+// Kept apart from dvsim.fbs on purpose: dvsim.fbs's hash is in replay logs, and this file is solver-private.
+//
+// Units: SI everywhere except where a field name says otherwise (kv: rpm/V, capacity_ah, awg, temperatures degC).
+// Every device table has `name` (unique over ALL devices; becomes prim /devices/<name>) and `parts` (part ids from the
+// parts DB: provenance for the fidelity report, stored only). Electrical nodes are small ints: 0 = ground (implicit),
+// 1..32 = network nodes.
+//
+namespace dvsim.dev;
+
+// DC motor behind an averaged ESC / H-bridge (shared by `Esc` here and the servo of S3).
+// Kt = Ke = 60/(2 pi kv). R(T) = r20 (1 + alpha (T - 20)). Friction torque = Kt i0 tanh(w / w_s).
+table MotorParams {
+  kv: double;             // rpm/V
+  r20: double;            // winding resistance at 20 degC, ohm (line-to-line, as the datasheet gives it)
+  i0: double;             // no-load current, A (drives the friction torque)
+  rotor_inertia: double;  // kg m^2, about the shaft; SET as the joint's dof_armature (times N^2 for geared servos)
+  w_s: double = 5.0;      // friction smoothing speed, rad/s (explicit-integration stability: dt < 2 J w_s / (Kt i0))
+  c_th: double;           // winding thermal capacity, J/K
+  r_th: double;           // winding-to-ambient thermal resistance, K/W
+  t_amb: double = 25.0;   // ambient = initial temperature, degC
+  alpha: double = 0.00393;  // copper temperature coefficient, 1/K
+  // Speed-dependent no-load loss. i0 is the loss at the shaft speed i0_w (rad/s, where the datasheet measured it:
+  // (V_test - R i0) / Ke). Loss torque (motor shaft):
+  //   tau_loss(w) = Kt i0 [ (1 - i0_visc - i0_quad) tanh(w / w_s) + i0_visc w / i0_w + i0_quad w |w| / i0_w^2 ].
+  // i0_visc: share of the I0 torque that is viscous (bearing grease + hysteresis iron loss, ~ w); i0_quad: share ~ w |w|
+  // (windage + eddy-current loss). Both 0 (default) = the original constant Coulomb friction Kt i0 tanh(w / w_s).
+  // Needs i0_w > 0 when either is > 0; i0_visc, i0_quad >= 0, sum <= 1.
+  i0_w: double;
+  i0_visc: double;
+  i0_quad: double;
+}
+
+// Thevenin battery: E = OCV(SoC) - v_rc behind r0; one RC pair (r1, c1). ocv_soc strictly increasing in [0,1].
+table Battery {
+  name: string (required); parts: [string];
+  node: int; ocv_soc: [double]; ocv_v: [double];
+  capacity_ah: double; r0: double; r1: double; c1: double;
+  soc0: double = 1.0;
+  seed: uint64;           // 0 = derived from Devices.seed + device index
+}
+
+// Ideal voltage behind r_series. i_limit > 0: constant-current limit. `enabled` is the initial value of the input.
+table Psu {
+  name: string (required); parts: [string];
+  node: int; voltage: double; r_series: double; i_limit: double; enabled: bool = true;
+}
+
+// Resistive edge between two nodes (either may be 0 = ground). Either `resistance` (connectors, shunts), or
+// awg + length_m (round trip: conductors = 2 for a two-wire run).
+table Wire {
+  name: string (required); parts: [string];
+  a: int; b: int;
+  resistance: double;
+  awg: int; length_m: double; conductors: int = 1;
+}
+
+// Static load from a node to ground: I = g V - i0 (i0 < 0: constant-current sink of |i0| amps).
+table Load {
+  name: string (required); parts: [string];
+  node: int; g: double; i0: double;
+}
+
+// Averaged ESC + BLDC motor on a hinge joint (the rotor; its parent body is the stator).
+table Esc {
+  name: string (required); parts: [string];
+  node: int; joint: string (required);
+  motor: MotorParams (required);
+  complementary: bool;    // true: phase current may go negative (braking / regen); false: diode freewheel, I_m >= 0
+  i_limit: double;        // > 0: motor-current limit, A
+  seed: uint64;
+  // ESC losses (all default 0 = ideal, the original model, bitwise). Motoring, averaged over a PWM period:
+  //   r_on:    ohm, FET conduction resistance in series with the winding (two conducting FETs + traces): the phase current is
+  //            I_m = (d V - Ke w) / (R(T) + r_on); the loss r_on I_m^2 heats the ESC, not the winding.
+  //   sw_loss: dimensionless, switching + dead-time diode loss as a fraction of the motor-side power: bus current
+  //            I_bus = (d + sw_loss) I_m + i_q (= f_sw (t_r + t_f) / 2 + 2 t_dead f_sw V_f / V, see parts / docs/models.md).
+  //            Assumes I_m >= 0; in regen (complementary ESC, I_m < 0) it overstates the returned current by sw_loss |I_m|.
+  //   i_q:     A, quiescent bus current of the ESC electronics (MCU, gate drivers, regulator), drawn also at zero throttle.
+  r_on: double;
+  sw_loss: double;
+  i_q: double;
+  // bidirectional = true: a centre-stop ESC (e.g. the Blue Robotics Basic ESC, BLHeli_S): `throttle` in [-1, 1], its sign is the direction of
+  // rotation (a negative duty reverses the bridge). Default false: forward only, throttle in [0, 1], the model above bit for bit. Zero
+  // throttle is an open phase either way; sw_loss then applies to |duty|.
+  bidirectional: bool;
+}
+
+// STS3215-like bus servo (S3): DC motor + gearbox + output encoder + firmware position loop, on the gear OUTPUT
+// hinge `joint` (its parent body is the housing). Motor numbers as for the Esc; rotor_inertia is reflected: SET as
+// the dof's armature J N^2. No default for any physical parameter: a missing (0) gear_ratio / efficiency /
+// encoder_cpr / firmware_hz / pid_scale / max_torque fails the load. firmware_hz must give an integer number of
+// simulation ticks per firmware step (1 / (firmware_hz dt) integral), checked at bind.
+// Firmware (every firmware step; calibration notes in servo.cpp):
+//   e = round(setpoint * cpr / 2 pi) - counts, |e| <= deadband -> 0;
+//   u = (p e + i sum(e)) / pid_scale + d (e - e_prev) / (d_scale > 0 ? d_scale : pid_scale);
+//   duty = clamp(u, -max_torque / 1000, +max_torque / 1000), held until the next firmware step.
+// Runtime inputs (set): goal_position (rad), goal_speed (rad/s, 0 = no profile), torque_enable (0 / 1, power-up 0).
+table Servo {
+  name: string (required); parts: [string];
+  node: int; joint: string (required);
+  motor: MotorParams (required);
+  gear_ratio: double;     // N > 0, motor turns per output turn
+  efficiency: double;     // eta in (0, 1], applied to the output torque in the drive direction only
+  encoder_cpr: int;       // counts per output revolution
+  firmware_hz: double;
+  p: double; i: double; d: double;  // register units (>= 0)
+  pid_scale: double;      // > 0: register units -> duty; a calibration knob (the true Feetech scaling is not public)
+  d_scale: double;        // > 0: register units -> duty for the D term only (the Feetech table scales D by 1/8, P by 1/4);
+                          // 0 (default) = use pid_scale for D as well
+  deadband: double;       // counts, >= 0 (default 0 = none)
+  max_torque: double;     // register 0..1000 (here (0, 1000]): |duty| limit = max_torque / 1000
+  i_limit: double;        // > 0: motor-current limit, A (default 0 = none)
+  backlash_joint: string; // default empty = no backlash: name of a limited hinge (range -b..+b) between gear output and load
+  // Firmware protection (initial values of runtime attrs; 0 = that protection off, so no default turns one on):
+  // alarm bits (STS status byte): 1 input voltage outside [min_voltage, max_voltage] (V), 4 winding temperature above
+  // max_temp (degC), 32 overload = |duty| > overload_load (fraction of full duty) for overload_time (s). Bits latch until
+  // the torque is switched off for a tick. unload_mask: alarm bits (same bit values) that release the torque (open phase).
+  min_voltage: double; max_voltage: double; max_temp: double;
+  overload_load: double; overload_time: double; unload_mask: int;
+}
+
+// Propeller aero on a rotor body (S2). `joint` is the hinge the rotor spins on (typically the one an Esc drives):
+// its world axis a is the thrust axis. dir = +1: design spin is positive about a, dir = -1: negative; spinning in the
+// design direction pushes along +a, reverse spin pushes along -a. j / ct / cq: equal-length tables (>= 1 point, j
+// strictly increasing), linear interpolation, clamped at the ends; j = V_axial / (|n| D), n in rev/s. Static values at j = 0.
+// Forces are applied at the rotor body's CoM (xfrc_applied). Ground effect: ray from the CoM along -a, ignoring the
+// rotor body and every geom whose group is not set in `ray_groups` (bit g = geom group g, g = 0..5; default = all):
+// put the vehicle's own geoms in a group outside the mask so the ray does not hit them.
+table Rotor {
+  name: string (required); parts: [string];
+  body: string (required); joint: string (required);
+  diameter: double; dir: int = 1;
+  j: [double]; ct: [double]; cq: [double];
+  k_h: double;            // H-force: F = -k_h |w| v_perp (units kg), v_perp = in-plane air-relative CoM velocity
+  ground_effect: bool;
+  ray_groups: uint = 63;
+  // Optional Reynolds / rotor-speed dependence (all three empty = off, the default): C_T(J, n) = C_T(J) f_T(x),
+  // C_Q(J, n) = C_Q(J) f_Q(x), x = |n| D^2 (m^2/s, a Reynolds-number proxy: Re ~ n D^2 (chord / D)), piecewise linear,
+  // clamped at the ends. re_x strictly increasing and > 0; re_ft / re_fq > 0, equal length. The j / ct / cq tables are
+  // then the coefficients at the x where f = 1 (the caller's reference).
+  re_x: [double]; re_ft: [double]; re_fq: [double];
+  // water = true: a marine propeller in the Sea (needs one): rho = the sea's, relative velocity = body velocity - current, no wind /
+  // H-force / ground effect, thrust and torque x immersion = clamp(1/2 + (eta - z_hub) / diameter, 0, 1) (ventilation at the surface).
+  // C_T / C_Q are the usual K_T / K_Q of the open-water curve (same definitions, rho = water). The outputs `rho` = the water density
+  // and `ge_ratio` = the immersion factor (the ground-effect field is unused in water).
+  water: bool;
+  // Ducted fan with a stator (EDF): the stator vanes behind the fan take back `swirl_recovery` (0..1) of the fan's reaction torque from
+  // the air, so that only (1 - swirl_recovery) of the aero torque -sgn(w) Q a acts on the vehicle: +swirl_recovery sgn(w) Q a is applied
+  // to `stator_body` (the housing). 0 / empty = a bare propeller (nothing changes, bitwise).
+  stator_body: string;
+  swirl_recovery: double;
+  // Thrust factor in reverse spin (foils are asymmetric: T200 3.71 kgf forward, 2.92 kgf reverse at 12 V). Multiplies the thrust only
+  // (the torque is the mirrored table). 1 = symmetric (default, bitwise unchanged).
+  rev_thrust: double = 1.0;
+  // Rain (only with a Rain device and rate > 0; docs/models.md "Rain"): thrust x (1 - rain_kt LWC / 23 g/m^3), aero torque x
+  // (1 + rain_kq LWC / 23 g/m^3), LWC = liquid water content of the rain. First-order estimates, not rotor measurements.
+  rain_kt: double = 0.10;
+  rain_kq: double = 0.15;
+}
+
+// Jet vane: a flat plate on a hinge in the exhaust of a Rotor (a ducted fan, a slipstream), the thrust-vectoring surface of a
+// hobby EDF hopper. On `body` (the plate, whose hinge a servo drives), `site` on that body: origin = the aerodynamic centre (the
+// force acts there, so the hinge moment is the servo's load), z = the chord pointing downstream at zero deflection, x = the plate
+// normal. Exhaust: direction e = -sgn(T) a (a = the rotor's world axis, T = its thrust of this tick), momentum-theory exit speed
+// v_e = jet_factor sqrt(|T| / (rho exit_area)), q = 1/2 rho v_e^2 (rho of the rotor). Angle of attack alpha = atan2(e.n, e.c) with the
+// plate's c, n turned so that e.c > 0 (a symmetric plate). Force at the site:
+//   F = q area [ C_N n + cd0 c ],   C_N = cn_max tanh(cn_alpha sin(alpha) / cn_max)
+// (normal-force slope cn_alpha at small alpha, saturating at the stalled-plate value cn_max; chord-wise drag cd0; the normal force's
+// component along e is the induced drag). The rotor's swirl, the plate's wake interference and the velocity profile of the jet
+// are not modelled (jet_factor is the one lump). Force and torque about the body CoM go to xfrc_applied.
+table JetVane {
+  name: string (required); parts: [string];
+  body: string (required); site: string (required);
+  rotor: string (required);   // name of the Rotor device whose exhaust this is
+  area: double;               // m^2, plate area (chord x immersed span)
+  exit_area: double;          // m^2, exhaust (nozzle exit) area of the duct
+  cn_alpha: double;           // 1/rad, normal-force slope on `area`
+  cn_max: double = 1.2;       // normal-force coefficient of the stalled plate
+  cd0: double;                // chord-wise drag coefficient on `area`
+  jet_factor: double = 1.0;   // mean exhaust speed over the vane / momentum-theory exit speed
+}
+
+// Terrain-aware wind (windfield.cpp), at most one, needs an Environment. Replaces the one uniform wind vector by a field evaluated at
+// every rotor hub / drag body (Environment.wind = the steady wind at height z_ref above local ground, far from relief). Components:
+//  - boundary layer: horizontal wind x ln(h / z0) / ln(z_ref / z0), h = height above ground (hfield surface under the point, else
+//    ground_z) clamped to [2 z0, h_max] (neutral log law; z0 = 0 turns it off);
+//  - ridge flow (an estimate): linear potential flow over hills (Jackson & Hunt 1975 / Hunt et al. 1988 flavour). With h_L, h_B the
+//    terrain smoothed over ridge_len and 4 ridge_len, U the local wind speed along u = wind_xy / |wind_xy|, d = exp(-h / ridge_len):
+//    along-wind speed-up dU = ridge_gain U d (h_L - h_B) / ridge_len (clamped to [-0.5, 1] U), vertical wind
+//    w = ridge_gain U d u.grad(h_L) (clamped to +-U): updraft on windward slopes, downdraft on lee slopes. Needs an hfield_geom;
+//  - lee separation (an estimate): where an upwind slope (sampled 0..3 ridge_len upwind) exceeds ~0.15..0.4, the lee zone adds a
+//    downdraft lee_down U and multiplies the Dryden turbulence by up to lee_turb (decaying with 2 ridge_len of height, 4 ridge_len of distance);
+//  - discrete gusts (input `gust`, "1 - cos" of FAR 25.341 / MIL-F-8785C), see windfield.cpp.
+// Dryden turbulence then uses the height above LOCAL ground. Without this device nothing changes, bitwise.
+table WindField {
+  name: string (required); parts: [string];
+  hfield_geom: string;       // static, unrotated hfield geom giving the ground; empty = flat ground at ground_z
+  ground_z: double;          // m (world z) of the flat ground when hfield_geom is empty
+  z0: double;                // roughness length, m (grass 0.03, bare rock / snow 0.001..0.01); 0 = no profile
+  z_ref: double = 10.0;      // m AGL where Environment.wind is given
+  h_max: double = 300.0;     // m AGL above which the profile stops growing
+  ridge_gain: double;        // scale of the ridge speed-up / lift (1 = linear theory, 0 = off)
+  ridge_len: double = 80.0;  // m, smoothing length and decay height of the ridge flow
+  lee_turb: double = 2.0;    // Dryden intensity multiplier in the lee separation zone
+  lee_down: double = 0.2;    // lee downdraft, fraction of the local wind speed
+}
+
+// At most one. World frame, z up; world z = 0 is ground level (AGL for turbulence) and origin_alt metres MSL (ISA).
+// Turbulence = Dryden (MIL-F-8785C low altitude) of reference height h: z of `ref_body` if given, else `ref_height`
+// (m above world z = 0). One frozen turbulence vector for the whole scene. w20 = wind speed at 6.1 m (20 ft), 0 = off.
+table Environment {
+  name: string (required); parts: [string];
+  origin_alt: double;     // m MSL of world z = 0
+  wind: [double];         // steady wind, 3 values (m/s, world), empty = calm; settable at run time
+  w20: double;
+  seed: uint64;           // 0 = derived from Devices.seed + device index
+  ref_body: string;       // empty: use ref_height
+  ref_height: double = 10.0;
+}
+
+// Quadratic body drag at the body CoM: F = -1/2 rho(z) Cd A |v_rel| v_rel, v_rel = CoM velocity - wind.
+table BodyDrag {
+  name: string (required); parts: [string];
+  body: string (required); cd: double; area: double;
+}
+
+// Error model of one triad (gyro or accel) of an Imu, per axis i:
+//   out_i = clamp(round_lsb((1 + scale_i) truth_i + bias_i + sigma g), +-full_scale),
+//   sigma = noise_density sqrt(rate / 2),
+// bias_i += rw_density sqrt(1 / rate) g' at every sample (g, g' ~ N(0,1)); round_lsb: nearest multiple of
+// lsb = 2 full_scale / 2^bits. Zero = off: noise_density 0 no noise, rw_density 0 no walk, bits 0 no quantisation
+// (bits > 0 needs full_scale > 0), full_scale 0 no saturation. bias / scale: 3 values each, or empty (= 0).
+// Units (gyro | accel): bias rad/s | m/s^2, noise_density rad/s/sqrt(Hz) | m/s^2/sqrt(Hz),
+// rw_density rad/s/sqrt(s) | m/s^2/sqrt(s), full_scale rad/s | m/s^2.
+table InertialErr {
+  bias: [double]; scale: [double];
+  noise_density: double; rw_density: double; full_scale: double; bits: int;
+}
+
+// The sensors of S4 sit on a named MJCF <site> and sample at rate_hz (1 / (rate_hz dt) must be an integer >= 1),
+// holding the sample between sample ticks. Timing and fidelity notes: src/mujoco/devices/sensors.cpp. seed: 0 =
+// derived.
+// IMU: gyro = angular velocity of the site frame in the site frame, accel = specific force in the site frame.
+table Imu {
+  name: string (required); parts: [string];
+  site: string (required); rate_hz: double;
+  gyro: InertialErr (required); accel: InertialErr (required);
+  seed: uint64;
+}
+
+// Barometer: ISA pressure at origin_alt (of the environment device, else 0) + site z, plus bias, noise, quantisation.
+table Baro {
+  name: string (required); parts: [string];
+  site: string (required); rate_hz: double;
+  bias: double;           // Pa
+  noise_std: double;      // Pa, white
+  resolution: double;     // Pa, 0 = none
+  seed: uint64;
+}
+
+// Magnetometer: earth field (3 values, world frame, tesla) rotated into the site frame, plus bias (3, or empty) and
+// noise.
+table Mag {
+  name: string (required); parts: [string];
+  site: string (required); rate_hz: double;
+  earth_field: [double]; bias: [double];
+  noise_std: double;      // T, white, per axis
+  seed: uint64;
+}
+
+// GNSS: local frame world x = East, y = North, z = Up; the world origin is (lat0 deg, lon0 deg, alt0 m). Flat-earth
+// conversion with the WGS84 radii at lat0. horiz_std: per north / east coordinate, vert_std: altitude, vel_std: each
+// NED velocity component. latency_s: outputs lag by round(latency_s rate_hz) samples (at most 63).
+// Position error model: corr_time_s = 0 (default): white Gaussian, sigma = horiz_std / vert_std per sample. corr_time_s > 0:
+// the same total sigma, split into a first-order Gauss-Markov part (time constant corr_time_s, variance fraction
+// corr_frac in [0, 1], started in its stationary distribution) plus a white part (the rest). Velocity stays white.
+table Gnss {
+  name: string (required); parts: [string];
+  site: string (required); rate_hz: double;
+  lat0: double; lon0: double; alt0: double;
+  horiz_std: double; vert_std: double; vel_std: double;  // m, m, m/s
+  latency_s: double;
+  seed: uint64;
+  corr_time_s: double;    // s, 0 = white
+  corr_frac: double;      // 0..1, share of the position variance that is Gauss-Markov
+}
+
+// Pneumatic pellet launcher (counter-UAS demo; a generic small-bore air-rifle class effector, point-mass ballistics, nothing else
+// is modelled). `site` is the muzzle: its world position is where a pellet starts and its +z axis is the barrel axis; the pellet
+// leaves at muzzle_velocity along it plus the site's own world velocity (the barrel body moves). Flight, per tick:
+//   a = g - k |v - w| (v - w),  k = rho(z) cd A / (2 m),  A = pi d^2 / 4,  w = wind of the environment device (0 without one),
+// RK4 over the tick with rho and w held. Hit test: the tick's segment is cast with mj_ray against every geom in `ray_groups`
+// (all bodies but the barrel's own); a hit ends the flight and is recorded in a ring (body id, point, time). The ground (world
+// body) and age > max_time end it too. Input: `fire` (set 1: one pellet at the next tick, resets itself). Pool of 16 pellets; a
+// shot with the pool full is counted in `dropped`. Optional dispersion (muzzle speed sigma, direction sigma) from the device RNG.
+// visual_bodies: names of mocap bodies, one per pool slot (at most 16), moved onto the pellets (parked 1000 m down when free).
+table Launcher {
+  name: string (required); parts: [string];
+  site: string (required);
+  muzzle_velocity: double;  // m/s
+  pellet_mass: double;      // kg
+  diameter: double;         // m (calibre)
+  cd: double;               // drag coefficient on the calibre cross-section
+  max_time: double = 6.0;   // s of flight before a pellet is dropped
+  v_std: double;            // m/s, muzzle speed 1-sigma (0 = none)
+  spread_std: double;       // rad, direction 1-sigma per axis (0 = none)
+  ray_groups: uint = 63;
+  visual_bodies: [string];
+  seed: uint64;
+  // cuas2 tail (default 0 = off; both 0 -> bit-identical to before, no extra state):
+  cl_k: double;             // Magnus lift slope C_L = cl_k * S, S = omega r / |v_rel|, saturated at 0.25; > 0 adds the per-shot input attrs
+  spin_tau: double;         // s, spin decay exp(-t / tau); 0 = none; > 0 also adds the per-shot input attrs
+}
+
+// Camera (no physics): a pose output for the Python frame API. Looks along the site +z axis, image up = site +x. fov_v: vertical
+// field of view in rad; width / height: pixels of the frames the program gets; rate_hz: nominal frame rate (stored for the program).
+table Camera {
+  name: string (required); parts: [string];
+  site: string (required);
+  fov_v: double; width: int; height: int; rate_hz: double;
+}
+
+// Solid rocket motor (phase 5): thrust from a published thrust curve (RASP .eng points, linear between points, (0, 0) implied at
+// t = 0 unless time[0] = 0), applied at `site` along the site +z axis (site +z = towards the nose; the site sits at the nozzle exit).
+// `ignite` (input, set 1: consumed by the next tick) starts the clock; thrust begins `ignition_delay` s later. Per tick the force is
+// the mean of the curve over the tick, so the delivered impulse equals the curve's integral exactly whatever dt is. The propellant
+// burns in proportion to the impulse delivered: mass = total_mass - propellant_mass * (impulse fraction of the curve). The device
+// OWNS the inertia of `body` (it must hold the motor only): mass, a uniform cylinder (axis = site z, centre half a length ahead of
+// the site), recomputed from the state at the start of every tick, so a restored / cloned / replayed run is bitwise the same.
+table SolidMotor {
+  name: string (required); parts: [string];
+  body: string (required); site: string (required);
+  time: [double]; thrust: [double];  // curve: s, N; equal length, time strictly increasing, last thrust 0
+  propellant_mass: double;           // kg
+  total_mass: double;                // kg, loaded motor (casing + propellant + delay element)
+  diameter: double; length: double;  // m, casing outer (inertia only)
+  ignition_delay: double;            // s from the command to first thrust
+  thrust_scale: double = 1.0;        // initial value of the input (lot variation / a degraded motor); the burn progress is unaffected
+}
+
+// Slender-body aerodynamics of a rocket airframe (Barrowman-style), on `body`, axis = site +z (towards the nose). Relative air
+// velocity v at the centre of pressure (site + x_cp z, wind and turbulence of the environment device subtracted), split into the
+// axial part v_a = v.z and the cross-flow part v_p; rho = ISA at the body:
+//   F_axial = -1/2 rho s_ref cd |v_a| v_a z   (cd = cd0 for v_a >= 0, cd_rev for v_a < 0: tail-first flow)
+//   F_cross = -1/2 rho [ s_ref cn_alpha |v_a| + s_plan cd_cross |v_p| ] v_p
+// (small angle: F_cross = q s_ref cn_alpha alpha; large angle: cross-flow drag on the planform). Applied at the CP.
+table Airframe {
+  name: string (required); parts: [string];
+  body: string (required); site: string (required);
+  s_ref: double;          // m^2, reference area (body cross-section)
+  cd0: double;            // axial drag coefficient on s_ref, nose-first flow
+  cd_rev: double;         // axial drag coefficient on s_ref, tail-first flow (0 = same as cd0)
+  cn_alpha: double;       // normal-force slope per rad on s_ref (Barrowman sum)
+  x_cp: double;           // m, centre of pressure ahead of the site along +z (negative = behind)
+  s_plan: double;         // m^2, planform area for the cross-flow term (0 = none)
+  cd_cross: double = 1.2; // cross-flow drag coefficient of the planform
+}
+
+// A displacement hull of a Vessel: a prismatic body sampled into cells (cell volumes sum to the analytic volume). `shape` "box":
+// size = full extents x, y, z; "cylinder": axis x, size = (length, width, height) of the elliptical section. pos = centre in the
+// body frame. n = cells along x, y, z.
+table Hull {
+  shape: string; pos: [double]; size: [double]; n: [int];
+}
+// One regular wave component: surface eta = amplitude cos(k (x cos dir + y sin dir) - w t + phase), w from the period T (deep water,
+// or finite depth if the Sea has depth > 0).
+table Wave { amplitude: double; period: double; direction: double; phase: double; }
+// JONSWAP sea (unidirectional): n components, one frequency drawn per bin over [0.5, 3.5] wp, amplitude sqrt(2 S dw), random phases,
+// S normalised so that Hm0 = hs. seed 0 = derived.
+table Jonswap { hs: double; tp: double; gamma: double = 3.3; n: int = 24; direction: double; seed: uint64; }
+
+// The water of the scene (at most one): still-water level (world z), density, uniform steady current, regular waves and / or a
+// JONSWAP sea. Surface elevation eta(x, y, t) = level + wave_scale * sum a_i cos(k_i (x cos th_i + y sin th_i) - w_i t + phi_i) with
+// t = the device's own clock (starts at 0 with the sim). No orbital velocities, no spatial current shear. Rotors with `water` and
+// every Vessel use it.
+table Sea {
+  name: string (required); parts: [string];
+  rho: double = 998.2;    // kg/m^3 (fresh water at 20 degC; seawater ~1025)
+  level: double;          // m, still-water surface height
+  depth: double;          // m, water depth for the wave dispersion (0 = deep water)
+  current: [double];      // 3 values m/s world (the vertical part is ignored), empty = still; settable
+  waves: [Wave];
+  jonswap: Jonswap;
+}
+
+// A body that floats and moves in the Sea (Fossen 6-DOF with diagonal body-frame coefficients; body frame x forward, y left, z up;
+// the vessel's rigid-body mass / inertia are MuJoCo's). `hulls` give the buoyancy: per cell f = clamp(1/2 + (eta - z_c) / e_z, 0, 1),
+// e_z = the cell's vertical extent in the world, force rho g v f up at the cell centre. Hydrodynamics scale with the wetted
+// fraction fw = min(1, rho sum(v f) / M), M = the body's subtree mass (the displacement relative to the design one: 1 at the design
+// waterline, less as the hull lifts out), with v_r = body velocity - current:
+//   tau_D = -fw [ D_lin v_r + D_quad |v_r| v_r ],   tau_A = -fw [ M_A dv_r/dt + C_A(v_r) v_r ]   (3-DOF Munk terms)
+// added_mass / damp_lin / damp_quad: 6 values each in the order surge, sway, heave, roll, pitch, yaw (positive: kg, N s/m, N s^2/m^2,
+// kg m^2, N m s, N m s^2 per axis), or empty (= 0). Added mass is solved exactly against the rest of the multibody (Woodbury,
+// vessel.cpp), not lagged.
+//
+// `fins`: fixed vertical lifting surfaces (skegs, keels) under the hull. A fin at body position pos (its centre) with side area A, depth
+// (span) h, lift-curve slope cl_alpha (per rad, whole fin, at the aspect ratio including the hull's end-plate effect) and cross-flow
+// drag coefficient cd_cross sees the water velocity at its centre (u forward, w to the left, relative to the current) and pushes
+// sideways with   F_y = -imm (rho / 2) A (cl_alpha |u| w + cd_cross |w| w),   imm = clamp(1/2 + (eta - z) / h, 0, 1)
+// (the normal force of a flat plate at incidence alpha = atan(w / |u|): C_N = cl_alpha sin(alpha) |cos(alpha)| + cd_cross sin(alpha) |sin(alpha)|
+// on A V^2 rho / 2). The force acts at the fin centre, so it gives a sway force and a yaw moment: a fin aft of the centre of gravity
+// opposes the destabilising Munk moment of the hull. Quasi-steady: no stall delay, no hull-fin interference beyond the effective aspect
+// ratio the caller put into cl_alpha, no free-surface effect other than the immersion factor.
+table Fin {
+  pos: [double];          // 3 values, body frame
+  area: double; span: double; cl_alpha: double; cd_cross: double;
+}
+table Vessel {
+  name: string (required); parts: [string];
+  body: string (required);
+  hulls: [Hull];
+  added_mass: [double]; damp_lin: [double]; damp_quad: [double];
+  fins: [Fin];
+  // true: the translational damping and added mass (surge, sway, heave) act in the HEADING frame (body yaw only, z = world up) instead of
+  // the body frame. A pitched hull heaving in waves then gets a vertical heave force, not one tilted by the pitch angle, which rectifies
+  // into a net surge force (a self-propulsion artefact). Rotational terms and the Munk terms stay in the body frame. Default false = as before.
+  heading_frame: bool = false;
+}
+
+// Range sensor on a site (depth camera, ToF, lidar): deterministic CPU ray casts (mj_multiRay) against the geoms of `ray_groups`,
+// every 1 / rate_hz s, from the pose of the sampling tick. Frame as the Camera: looks along site +z, image up = site +x, right = +y.
+//   projection "pinhole" (depth camera): pixel (i row from the top, j column from the left) looks along
+//     (tan(fov_v/2) (1 - 2(i+0.5)/n_v), tan(fov_h/2) (2(j+0.5)/n_h - 1), 1); the output is the depth along +z = range / |that vector|.
+//   projection "spherical" (lidar / ToF): azimuth about the site +x axis (from +z towards +y) a_j = fov_h ((j+0.5)/n_h - 1/2),
+//     elevation (towards +x) e_i = fov_v (1/2 - (i+0.5)/n_v); the output is the range along the ray.
+// Outputs (row-major n_v x n_h): 0 = no return (out of [min_range, max_range] or dropped). Error model per valid ray:
+//   r' = r + (sigma0 + sigma1 r + sigma2 r^2) g, rounded to `resolution`, then dropped with probability `dropout`;
+//   a result outside [min_range, max_range] is 0. Draws from the device RNG: g (if the sigma is non-zero), then the dropout uniform
+//   (if dropout > 0), per valid ray in row-major order.
+table Rangefinder {
+  name: string (required); parts: [string];
+  site: string (required); rate_hz: double;
+  projection: string;       // "pinhole" (default) | "spherical"
+  fov_h: double; fov_v: double;  // rad, full angles
+  n_h: int; n_v: int;
+  min_range: double; max_range: double;
+  sigma0: double; sigma1: double; sigma2: double;
+  resolution: double; dropout: double;
+  ray_groups: uint = 63;
+  seed: uint64;
+  // Rain (only with a Rain device and rate > 0; docs/models.md "Rain"): extinction alpha = rain_a R^rain_b (1/m, R in mm/h;
+  // Marshall-Palmer drops, Q_ext = 2), two-way loss 8.686 alpha r dB, detection logistic of (rain_margin_db + 20 log10(max/r) - loss),
+  // range sigma x 10^(loss/20); false near returns from drops: beam diameter rain_beam (m), zone to rain_zone (m), detectable
+  // fraction rain_det. Defaults: a 905 nm-class lidar / ToF; rain_det = 0 turns the false returns off.
+  rain_a: double = 1.82e-4; rain_b: double = 0.63; rain_margin_db: double = 6.0;
+  rain_beam: double = 0.02; rain_zone: double = 1.5; rain_det: double = 0.01;
+  // Water film on the sensor window / wet targets: extra two-way loss rain_window_db (dB at 25 mm/h, x sqrt(R / 25)), an estimate.
+  rain_window_db: double = 1.5;
+  // projection "rosette" (Livox Mid-360-like non-repetitive scan, SP2; docs/models.md "Rosette scan pattern"): ray m = frame * rays_per_frame + k of
+  // the sensor's life points along azimuth a = fov_h (u1 - 1/2), elevation e = fov_v_min + (fov_v_max - fov_v_min) u2, (u1, u2) = the R2
+  // low-discrepancy sequence (additive recurrence with the inverse powers of the plastic number) offset by pattern_seed, in the spherical frame
+  // of "spherical" (azimuth about site +x, elevation towards +x: +x is the sensor's up axis). The image is 1 x rays_per_frame (n_h, n_v,
+  // fov_v are ignored); a later frame continues the sequence, so successive frames fill the field of view without repeating.
+  fov_v_min: double; fov_v_max: double;  // rad, elevation limits (e.g. -7 deg .. 52 deg)
+  rays_per_frame: int;
+  pattern_seed: uint64;
+}
+
+// Rain: precipitation of the whole scene (needs an Environment for the wind the drops drift with; rotors, rangefinders and the
+// film body read it). `rate` mm/h is settable at run time (0 = dry: every effect off, nothing changes bitwise). Marshall-Palmer
+// drops; LWC = 0.072 R^0.88 g/m^3; fall speed v = R / LWC (so the mass flux equals the rain rate). The `body` (a vehicle root) catches
+// rain: momentum force LWC A |u| u (u = drop velocity - body velocity, drops drift with the wind) at its CoM, and a water film
+// that adds weight: dm/dt = collect_eff LWC A |u| - m / film_tau, m <= 1000 kg/m^3 film_depth wet_area.
+table Rain {
+  name: string (required); parts: [string];
+  rate: double;
+  body: string; catch_area: double; wet_area: double;
+  film_depth: double = 3e-4; film_tau: double = 20.0; collect_eff: double = 0.3;
+}
+
+// Quasi-direct-drive actuator in MIT mode over CAN (SP2, qdd.cpp): FOC motor + planetary gearbox on the gear OUTPUT hinge
+// `joint` (parent body = housing). motor: as the Servo (rotor_inertia is reflected: SET as the dof's armature J N^2; c_th /
+// r_th are the winding thermal model). No default for any physical parameter: a missing (0) gear_ratio / efficiency /
+// encoder_cpr / cmd_hz / i_limit / kp_max / kd_max / tau_ff_max / timeout_s / t_max fails the load.
+// Command (settable attrs p_des, v_des, kp, kd, tau_ff, enable) sampled at cmd_hz, applied after latency_s (an integer
+// number of ticks, checked at bind); each set of one of them counts as a received CAN frame (timeout bookkeeping).
+//   tau_cmd = clamp(kp,0,kp_max) (p_des - q_enc) + clamp(kd,0,kd_max) (v_des - dq) + clamp(tau_ff, +-tau_ff_max)
+// then the averaged FOC current and voltage limits (docs/models.md "Qdd"). No command frame for more than timeout_s while
+// enabled: timeout_mode 0 = damping, tau = kd_timeout (0 - dq); 1 = open (zero current).
+// Thermal: winding C_th dT/dt = i_q^2 R(T) - (T - T_amb) / R_th; the current limit is derated linearly from 1 at
+// derate_start to 0 at t_max, fault (latched, torque off) at T >= t_max; cleared by enable = 0 once T < t_max.
+table Qdd {
+  name: string (required); parts: [string];
+  node: int; joint: string (required);
+  motor: MotorParams (required);
+  gear_ratio: double;     // N > 0, motor turns per output turn
+  efficiency: double;     // eta in (0, 1], applied to the output torque in the drive direction only
+  encoder_cpr: int;       // output-encoder counts per revolution
+  cmd_hz: double;         // command sampling rate; 1 / (cmd_hz dt) integral
+  latency_s: double;      // CAN + driver latency, >= 0; latency_s / dt integral, latency_s <= 14 / cmd_hz
+  i_limit: double;        // > 0: phase (q-axis) current limit, A
+  kp_max: double; kd_max: double; tau_ff_max: double;  // limits of the commanded gains / feed-forward, > 0
+  timeout_s: double;      // > 0
+  timeout_mode: int;      // 0 damping, 1 open
+  kd_timeout: double;     // N m s/rad, mode 0: > 0
+  t_max: double;          // degC, fault temperature (> derate_start)
+  derate_start: double;   // degC
+}
+
+// Foot / tip contact sensor (SP2, contact.cpp) on a geom: `force` = normal force summed over ALL contacts of the geom
+// (N, from MuJoCo's solved contact forces), plus white noise noise_std (N), clipped to [0, f_max]. Sampled at rate_hz (held
+// between samples). `contact` is a comparator on `force` with hysteresis (on above hysteresis_on, off below hysteresis_off,
+// hysteresis_on >= hysteresis_off >= 0) and a debounce: a change of the comparator must persist for debounce_s before the
+// output follows. mode 0 = force sensor, 1 = binary switch (same outputs; mode is metadata for the part).
+table FootContact {
+  name: string (required); parts: [string];
+  geom: string (required);
+  mode: int;
+  f_max: double;
+  noise_std: double;
+  hysteresis_on: double; hysteresis_off: double;
+  debounce_s: double;
+  rate_hz: double;
+  seed: uint64;
+}
+
+table Devices {
+  seed: uint64;           // top-level seed for per-device RNG streams
+  batteries: [Battery]; psus: [Psu]; wires: [Wire]; loads: [Load]; escs: [Esc];
+  rotors: [Rotor]; environments: [Environment]; body_drags: [BodyDrag]; servos: [Servo];
+  imus: [Imu]; baros: [Baro]; mags: [Mag]; gnss_receivers: [Gnss];
+  launchers: [Launcher]; cameras: [Camera];
+  solid_motors: [SolidMotor]; airframes: [Airframe]; seas: [Sea]; vessels: [Vessel]; rangefinders: [Rangefinder];
+  jet_vanes: [JetVane];
+  wind_fields: [WindField];
+  rains: [Rain];
+  qdds: [Qdd];
+  foot_contacts: [FootContact];
+}
+
+root_type Devices;

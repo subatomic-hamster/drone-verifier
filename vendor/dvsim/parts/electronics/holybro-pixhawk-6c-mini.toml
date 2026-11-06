@@ -1,0 +1,449 @@
+id = "holybro-pixhawk-6c-mini"
+name = "Holybro Pixhawk 6C Mini flight controller (Model A, current)"
+category = "pcb.fc"
+vendor = "Holybro"
+part_number = "Pixhawk 6C Mini"
+url = "https://docs.holybro.com/autopilot/pixhawk-6c-mini/technical-specification.md"
+
+# Sensors: ICM-42688-P + BMI088 IMUs, IST8310 mag, MS5611 baro (see parts tdk-icm-42688-p, bosch-bmi088, isentek-ist8310,
+# te-ms5611-01ba03). Three Model variants exist; Model A (Current) is recorded, others differ in size and mass.
+[params]
+mass_model_a_current = { value = 0.0424, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass_model_a_legacy  = { value = 0.0392, unit = "kg", src = "S1", fidelity = "datasheet" }
+mass_model_b         = { value = 0.0468, unit = "kg", src = "S1", fidelity = "datasheet" }
+length             = { value = 0.0543, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.039, unit = "m", src = "S1", fidelity = "datasheet" }
+height             = { value = 0.0175, unit = "m", src = "S1", fidelity = "datasheet" }
+fmu_clock          = { value = 480e6, unit = "Hz", src = "S1", fidelity = "datasheet" }
+max_input_voltage  = { value = 6, unit = "V", src = "S1", fidelity = "datasheet" }
+servo_rail_voltage_max = { value = 36, unit = "V", src = "S1", fidelity = "datasheet" }
+imu_count          = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+pwm_outputs        = { value = 14, unit = "1", src = "S1", fidelity = "datasheet" }
+uart_count         = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+can_buses          = { value = 2, unit = "1", src = "S1", fidelity = "datasheet" }
+operating_temp_min = { value = 248.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "jst-gh.6"
+gender = "male"
+v_max = { value = 6, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+pins = ["POWER1.1", "POWER1.2", "POWER1.3", "POWER1.4", "POWER1.5", "POWER1.6"]
+note = "1 analog power input port; analog PM02 V3/PM06 V2/PM07 list a 6Pin GHR 1.25mm connector for this FC family (S2)"
+
+[[ports]]
+name = "pwm_out"
+kind = "signal"
+type = "pwm"
+gender = "neutral"
+count = 14
+level_options = "3.3 V or 5 V hardware switchable"
+
+[[ports]]
+name = "telem"
+kind = "signal"
+type = "uart"
+gender = "neutral"
+count = 2
+
+[[ports]]
+name = "can"
+kind = "signal"
+type = "can"
+gender = "neutral"
+count = 2
+
+[[ports]]
+name = "i2c"
+kind = "signal"
+type = "i2c"
+gender = "neutral"
+count = 1
+
+[visual]                            # cosmetic only (parts/README.md "Visual layer"); the part has no [geometry]
+src = "V1"
+note = "Black matte aluminium case, connector sockets in the lower step (product photo)."
+
+[[visual.elements]]
+gen = "board_fc"
+params = { case = true }
+colors = { pcb = "plastic-black", label = "plastic-dark" }
+
+# ---- Connectors (pin level). Pin tables: S3 (Holybro Pixhawk 6C Mini ports page: pin number, colour, signal, level); "All connectors are JST GH
+# 1.25 mm Pitch unless noted otherwise" (S3), DSM is JST-ZH 1.5 mm, the debug port JST-SH 1 mm. Pin 1 location is a diagram (not text) on the page.
+# Poses are estimates on the 54.3 x 39 x 17.5 mm case (no drawing in the page text): GH ports along -y, small ports along +y, the PWM headers on
+# the ends. The part frame origin is the case centre.
+[[connectors]]
+id = "POWER1"
+name = "POWER1"
+type = "jst-gh-6"
+gender = "male"
+pos = [-0.020, -0.0195, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated (the ports page gives photos, not a drawing)."
+pins = [
+  { number = 1, name = "VDD5V_BRICK1", kind = "power", dir = "in", v = 5.0, v_max = 6.0, note = "red" },
+  { number = 2, name = "VDD5V_BRICK1", kind = "power", dir = "in", v = 5.0, v_max = 6.0 },
+  { number = 3, name = "CURRENT1", kind = "signal", dir = "in", v = 3.3 },
+  { number = 4, name = "VOLTAGE1", kind = "signal", dir = "in", v = 3.3 },
+  { number = 5, name = "GND", kind = "ground" },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "TELEM1"
+name = "TELEM1"
+type = "jst-gh-6"
+gender = "male"
+pos = [-0.009, -0.0195, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "out", v = 5.0, note = "red" },
+  { number = 2, name = "UART7_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = 3, name = "UART7_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = 4, name = "UART7_CTS", kind = "signal", dir = "in", v = 3.3 },
+  { number = 5, name = "UART7_RTS", kind = "signal", dir = "out", v = 3.3 },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "TELEM2"
+name = "TELEM2"
+type = "jst-gh-6"
+gender = "male"
+pos = [0.002, -0.0195, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "out", v = 5.0, note = "red" },
+  { number = 2, name = "UART5_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = 3, name = "UART5_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = 4, name = "UART5_CTS", kind = "signal", dir = "in", v = 3.3 },
+  { number = 5, name = "UART5_RTS", kind = "signal", dir = "out", v = 3.3 },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "GPS1"
+name = "GPS1"
+type = "jst-gh-10"
+gender = "male"
+pos = [0.015, -0.0195, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 10
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "out", v = 5.0, note = "red" },
+  { number = 2, name = "TX1", kind = "signal", dir = "out", v = 3.3, alt = ["UART TX"] },
+  { number = 3, name = "RX1", kind = "signal", dir = "in", v = 3.3, alt = ["UART RX"] },
+  { number = 4, name = "SCL1", kind = "signal", dir = "io", v = 3.3, alt = ["I2C SCL"] },
+  { number = 5, name = "SDA1", kind = "signal", dir = "io", v = 3.3, alt = ["I2C SDA"] },
+  { number = 6, name = "SAFETY_SWITCH", kind = "signal", dir = "in", v = 3.3 },
+  { number = 7, name = "SAFETY_SWITCH_LED", kind = "signal", dir = "out", v = 3.3 },
+  { number = 8, name = "IO_VDD_3V3", kind = "power", dir = "out", v = 3.3 },
+  { number = 9, name = "BUZZER-", kind = "signal", dir = "out", v = 5.0, note = "0 to 5 V" },
+  { number = 10, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "GPS2"
+name = "GPS2"
+type = "jst-gh-6"
+gender = "male"
+pos = [-0.020, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "out", v = 5.0, note = "red" },
+  { number = 2, name = "UART8_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = 3, name = "UART8_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = 4, name = "I2C2_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 5, name = "I2C2_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "I2C"
+name = "I2C"
+type = "jst-gh-4"
+gender = "male"
+pos = [-0.009, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "out", v = 5.0, note = "red" },
+  { number = 2, name = "I2C2_SCL", kind = "signal", dir = "io", v = 3.3 },
+  { number = 3, name = "I2C2_SDA", kind = "signal", dir = "io", v = 3.3 },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "CAN1"
+name = "CAN1 and CAN2"
+type = "jst-gh-4"
+gender = "male"
+pos = [-0.001, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 4
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3 (one table titled 'CAN1 & CAN2 Port', so the two ports share it and only CAN1 is drawn); position on the case estimated."
+pins = [
+  { number = 1, name = "VCC", kind = "power", dir = "out", v = 5.0, note = "red" },
+  { number = 2, name = "CAN1_H", kind = "signal", dir = "io", v = 3.3 },
+  { number = 3, name = "CAN1_L", kind = "signal", dir = "io", v = 3.3 },
+  { number = 4, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "DSM"
+name = "DSM RC (JST-ZH 1.5 mm)"
+type = "jst-zh-3"
+gender = "male"
+pos = [0.008, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.0015
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3; position on the case estimated."
+pins = [
+  { number = 1, name = "VDD_3V3_SPEKTRUM", kind = "power", dir = "out", v = 3.3, note = "yellow" },
+  { number = 2, name = "GND", kind = "ground", note = "black" },
+  { number = 3, name = "DSM_IN", kind = "signal", dir = "in", v = 3.3, note = "gray; DSM/SPEKTRUM IN" },
+]
+
+[[connectors]]
+id = "PPM_SBUS"
+name = "PPM / SBUS RC input (legacy)"
+type = "jst-gh-5"
+gender = "male"
+pos = [0.018, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.00125
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3 (the connector family is not named for this port; the page's blanket 'JST GH 1.25 mm unless noted' is used); position on the case estimated."
+pins = [
+  { number = 1, name = "VDD_5V_PPM_SBUS", kind = "power", dir = "out", v = 5.0 },
+  { number = 2, name = "PPM&SBUS_IN", kind = "signal", dir = "in", v = 3.3, note = "yellow" },
+  { number = 3, name = "RSSI_IN", kind = "signal", dir = "in", v = 3.3 },
+  { number = 4, name = "NC", kind = "nc", note = "red; not connected" },
+  { number = 5, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "RSSI"
+name = "RSSI"
+type = "pin-header-3"
+gender = "male"
+pos = [0.024, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3 (pin name, no connector family named: a 2.54 mm servo-style header is assumed from the S/+/- siblings); position on the case estimated."
+pins = [
+  { number = 1, name = "VDD", kind = "power", dir = "out", v = 5.0 },
+  { number = 2, name = "RSSI", kind = "signal", dir = "in", v = 3.3 },
+  { number = 3, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "RC_IN"
+name = "RC IN (S / + / -)"
+type = "pin-header-3"
+gender = "male"
+pos = [0.0, 0.0195, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [-1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.00254
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3 (pins named S, +, -); 2.54 mm pitch and the position on the case are estimated."
+pins = [
+  { number = "S", name = "SBUS_PPM_IN", kind = "signal", dir = "in", v = 3.3 },
+  { number = "+", name = "VDD_5V_RC", kind = "power", dir = "out", v = 5.0 },
+  { number = "-", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "FMU_PWM"
+name = "FMU PWM OUT (AUX OUT), 6 channels"
+type = "pin-header-3x6"
+gender = "male"
+pos = [-0.027, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 3
+cols = 6
+pitch = 0.00254
+layout = "seq"
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "S3 gives per-channel S / + / - pins (FMU_CH1~6, VDD_SERVO 0~36 V, GND); the 3 x 6 header grid (row S, row +, row -) with 2.54 mm pitch and its position are estimated."
+pins = [
+  { number = "S1", name = "FMU_CH1", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S2", name = "FMU_CH2", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S3", name = "FMU_CH3", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S4", name = "FMU_CH4", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S5", name = "FMU_CH5", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S6", name = "FMU_CH6", kind = "signal", dir = "out", v = 3.3 },
+  { number = "V1", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0, note = "servo rail, 0 to 36 V" },
+  { number = "V2", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V3", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V4", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V5", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V6", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "G1", name = "GND", kind = "ground" },
+  { number = "G2", name = "GND", kind = "ground" },
+  { number = "G3", name = "GND", kind = "ground" },
+  { number = "G4", name = "GND", kind = "ground" },
+  { number = "G5", name = "GND", kind = "ground" },
+  { number = "G6", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "IO_PWM"
+name = "I/O PWM OUT (MAIN OUT), 8 channels"
+type = "pin-header-3x8"
+gender = "male"
+pos = [0.027, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 3
+cols = 8
+pitch = 0.00254
+layout = "seq"
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "S3 gives per-channel S / + / - pins (IO_CH1~8, VDD_SERVO 0~36 V, GND); the 3 x 8 header grid with 2.54 mm pitch and its position are estimated."
+pins = [
+  { number = "S1", name = "IO_CH1", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S2", name = "IO_CH2", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S3", name = "IO_CH3", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S4", name = "IO_CH4", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S5", name = "IO_CH5", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S6", name = "IO_CH6", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S7", name = "IO_CH7", kind = "signal", dir = "out", v = 3.3 },
+  { number = "S8", name = "IO_CH8", kind = "signal", dir = "out", v = 3.3 },
+  { number = "V1", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0, note = "servo rail, 0 to 36 V" },
+  { number = "V2", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V3", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V4", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V5", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V6", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V7", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "V8", name = "VDD_SERVO", kind = "power", dir = "in", v_max = 36.0 },
+  { number = "G1", name = "GND", kind = "ground" },
+  { number = "G2", name = "GND", kind = "ground" },
+  { number = "G3", name = "GND", kind = "ground" },
+  { number = "G4", name = "GND", kind = "ground" },
+  { number = "G5", name = "GND", kind = "ground" },
+  { number = "G6", name = "GND", kind = "ground" },
+  { number = "G7", name = "GND", kind = "ground" },
+  { number = "G8", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "DEBUG"
+name = "FMU debug (JST-SH 1 mm)"
+type = "jst-sh-6"
+gender = "male"
+pos = [0.0, -0.0195, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 6
+pitch = 0.001
+src = "S3"
+fidelity = "datasheet"
+pose_rationale = "Pin table from S3 (JST SH 1 mm pitch); position on the case estimated."
+pins = [
+  { number = 1, name = "FMU_VDD_3V3", kind = "power", dir = "out", v = 3.3, note = "red" },
+  { number = 2, name = "FMU_USART3_TX", kind = "signal", dir = "out", v = 3.3 },
+  { number = 3, name = "FMU_USART3_RX", kind = "signal", dir = "in", v = 3.3 },
+  { number = 4, name = "FMU_SWD_IO", kind = "signal", dir = "io", v = 3.3 },
+  { number = 5, name = "FMU_SWD_CK", kind = "signal", dir = "io", v = 3.3 },
+  { number = 6, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S3"
+url = "https://docs.holybro.com/autopilot/pixhawk-6c-mini/pixhawk-6c-mini-ports"
+title = "Pixhawk 6C Mini Ports (Holybro docs), pinout tables (Holybro llms-full.txt text export)"
+accessed = "2026-10-09"
+quote = "All connectors are JST GH 1.25 mm Pitch unless noted otherwise. || Power1 | 1(red) VDD5V_BRICK1 (in) +5V | 2(black) VDD5V_BRICK1 (in) +5V | 3 CURRENT1 +3.3V | 4 VOLTAGE1 +3.3V | 5 GND | 6 GND || Telem 1 | 1(red) VCC +5V | 2 UART7_TX(out) | 3 UART7_RX(in) | 4 UART7_CTS(in) | 5 UART7_RTS(out) | 6 GND || GPS 1 | 1 VCC | 2 TX1(out) | 3 RX1(in) | 4 SCL1 | 5 SDA1 | 6 SAFETY_SWITCH | 7 SAFETY_SWITCH_LED | 8 IO_VDD_3V3 | 9 BUZZER- 0~5V | 10 GND || FMU PWM OUT Port (AUX OUT) | S FMU_CH1~6 | + VDD_SERVO 0~36V | - GND || I/O PWM OUT Port (MAIN OUT) | S IO_CH1~8 | + VDD_SERVO 0~36V | - GND || FMU Debug Port (JST SH 1mm Pitch) | 1 FMU_VDD_3V3 | 2 FMU_USART3_TX | 3 FMU_USART3_RX | 4 FMU_SWD_IO | 5 FMU_SWD_CK | 6 GND"
+
+[[sources]]
+id = "V1"
+url = "https://docs.holybro.com/autopilot/pixhawk-6c-mini/overview.md"
+title = "Holybro Pixhawk 6C Mini overview, product photo (SKU11088)"
+accessed = "2026-10-08"
+quote = "[image] Pixhawk 6C Mini: black matte case with white port labels on the top face, connector block on the lower end"
+
+[[sources]]
+id = "S1"
+url = "https://docs.holybro.com/autopilot/pixhawk-6c-mini/technical-specification.md"
+title = "Pixhawk 6C Mini Technical Specification (Holybro docs)"
+accessed = "2026-10-07"
+quote = "Accel/Gyro: ICM-42688-P Accel/Gyro: BMI088 ... Mag: IST8310 Barometer: MS5611 ... Max input voltage: 6V ... Servo Rail Input: 0~36V ... Dimensions (Model A Current): 54.3x39x17.5 mm ... Weight (Model A Legacy): 39.2g Weight (Model A Current): 42.4g Weight (Model B): 46.8g ... 14- PWM servo outputs (8 from IO, 6 from FMU) ... 2 CAN Buses ... 1 Power input port (Analog)"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module-comparison.md"
+title = "Power Module Comparison (Holybro docs)"
+accessed = "2026-10-07"
+quote = "Analog Power Module (Applicable for Pixhawk 6C & 6C Mini, Pix32 V6, Cube Orange, etc) ... PM02 V3 ... Ports XT60 6Pin GHR 1.25mm"

@@ -1,0 +1,126 @@
+id = "iflight-blitz-e80-single"
+name = "iFlight BLITZ E80 2-8S 80A single ESC (BLHeli32)"
+category = "esc"
+vendor = "iFlight"
+part_number = "BLITZ E80 Single"
+url = "https://rcdrone.top/products/src-iflight-1797-blitz-e80-single-esc"
+
+# Part frame: origin at the centre of the ESC body's underside, z up; body 43.5 x 20 x 8.5 mm (L along x, W along y). Single-channel board
+# with solder pads (no mounting holes in the spec); pad positions unpublished, so ports carry no pos.
+# NOTE: the older iFlight listing (iflight-blitz-e80) gives Size 40*17mm; the newer spec table (S1, used here) gives 43.5*20*8.5mm.
+
+[params]
+mass            = { value = 0.0145, unit = "kg", src = "S1", fidelity = "datasheet" }         # 14.5 g (+-2 g)
+mass_tol        = { value = 0.002, unit = "kg", src = "S1", fidelity = "datasheet" }
+length          = { value = 0.0435, unit = "m", src = "S1", fidelity = "datasheet" }
+width           = { value = 0.020, unit = "m", src = "S1", fidelity = "datasheet" }
+height          = { value = 0.0085, unit = "m", src = "S1", fidelity = "datasheet" }
+cells_min       = { value = 2, unit = "S", src = "S1", fidelity = "datasheet" }
+cells_max       = { value = 8, unit = "S", src = "S1", fidelity = "datasheet" }
+i_cont          = { value = 80.0, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst         = { value = 100.0, unit = "A", src = "S1", fidelity = "datasheet" }
+mcu             = { value = "STM32G071", unit = "text", src = "S1", fidelity = "datasheet" }
+bec             = { value = "none", unit = "text", src = "S1", fidelity = "datasheet" }
+firmware        = { value = "BLHeli32", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[geometry]
+shape = "box"
+size = [0.02175, 0.01, 0.00425]
+
+[[ports]]
+name = "power_in"
+pins = ["BAT.1", "BAT.2"]
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "8S x 4.2 V/cell = 33.6 V ('Input Voltage 2-8S', S1)." }
+i_max = { value = 80.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "motor_out"
+pins = ["MOT.1", "MOT.2", "MOT.3"]
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+v_max = { value = 33.6, unit = "V", fidelity = "derived", derivation = "Output follows battery input, 8S x 4.2 V = 33.6 V." }
+i_max = { value = 80.0, unit = "A", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "signal"
+pins = ["SIG.1", "SIG.2"]
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+
+# ---- Connectors (pin level). S1 is a spec table (2-8S, 80 A, 43.5 x 20 x 8.5 mm, current sensor, telemetry supported, DShot150/300/600) with no wiring
+# description; the part itself notes a solder-pad board. Battery and motor pads at the ends (battery on -x, motor and signal on +x); the signal
+# pair and the missing telemetry/current pins are not documented, so only the DShot input and its ground are listed. All of it is estimated.
+[[connectors]]
+id = "BAT"
+name = "battery solder pads"
+type = "solder-pad-1x2"
+gender = "neutral"
+joinable = true
+pos = [-0.02175, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.006
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 states the 2-8S range and 80 A rating, nothing on the pads: two pads (+, -), their end and spacing assumed."
+pins = [
+  { number = 1, name = "BAT+", kind = "power", dir = "in", v_max = 33.6, i_max = 80.0, fidelity = "derived", derivation = "v_max 8S x 4.2 V (S1 'Input Voltage 2-8S'); i_max the 80 A continuous rating (S1)." },
+  { number = 2, name = "BAT-", kind = "ground", i_max = 80.0, fidelity = "derived", derivation = "The 80 A continuous rating (S1)." },
+]
+
+[[connectors]]
+id = "MOT"
+name = "motor solder pads"
+type = "solder-pad-1x3"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.02175, 0.0, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.005
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 gives the 80 A / 100 A rating only; three phase pads A B C by convention (swapping two reverses the motor), end and spacing assumed."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "out", i_max = 80.0 },
+  { number = 2, name = "B", kind = "power", dir = "out", i_max = 80.0 },
+  { number = 3, name = "C", kind = "power", dir = "out", i_max = 80.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "signal lead"
+type = "servo-lead-2"
+gender = "neutral"
+pos = [0.02175, 0.007, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0025
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 lists DShot input, telemetry and a current sensor but no connector or pinout; only the DShot signal + ground pair the port stands for is listed (BEC: N/A, S1)."
+pins = [
+  { number = 1, name = "SIGNAL", kind = "signal", dir = "in" },
+  { number = 2, name = "GND", kind = "ground" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://rcdrone.top/products/src-iflight-1797-blitz-e80-single-esc"
+title = "rcdrone.top (iFlight listing) - BLITZ E80 2-8S 80A Single ESC (BLHeli32), Specifications"
+accessed = "2026-10-07"
+quote = "Product Name|BLITZ E80 Single ESC|Input Voltage|2-8S|Max. Continuous Current|80A|Max. Burst Current|100A|MCU|STM32G071|BEC|N/A|Firmware|BLHeli32|Current Sensor|Yes|Telemetry|Supported|Dimensions|43.5*20*8.5mm|Weight|14.5g (±2g)|Protocol|DShot150/300/600"

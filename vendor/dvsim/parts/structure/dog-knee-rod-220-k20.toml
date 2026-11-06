@@ -1,0 +1,83 @@
+id = "dog-knee-rod-220-k20"
+name = "Dog knee push rod for the 220 mm leg, knee linkage ratio 2.0: 147.6 mm of 10 x 8 mm carbon tube with a bonded M5 stud at each end (pin centres 201.6 mm with PHS5 rod ends)"
+category = "structure.rod"
+vendor = "dvsim dog (own design: Easy Composites tube cut to length, bonded M5 studs)"
+part_number = "knee_rod 220 (ratio 2.0)"
+url = "docs/dog/actuator-study.md"
+
+# Leg study (docs/dog/leg-study.md). As dog-knee-rod-220 with the pin length of the ratio 2.0 four-bar (lug pin 40 mm from the knee, crank pin 20 mm from the hip). Frame: origin at the
+# rod centre, z along the rod, end_b at +z. pin_length = tube length + 2 x 27 mm. Symmetric about XZ.
+
+[mirror]
+symmetry = "xz"
+
+[params]
+pin_length            = { value = 0.2016, unit = "m", fidelity = "derived", derivation = "cad/dog/params.py linkage(0.22) with DOG_KNEE_RATIO = 2.0 (R1 = 20 mm, R2 = 40 mm): 'ell' = 201.6 mm." }
+tube_length           = { value = 0.1476, unit = "m", fidelity = "derived", derivation = "pin_length 0.2016 m - 2 x 0.027 m (PHS5 ball centre to shoulder, generic-phs5-rod-end-m5.centre_to_shoulder)." }
+outer_diameter        = { value = 0.010, unit = "m", fidelity = "datasheet", src = "S1" }
+inner_diameter        = { value = 0.008, unit = "m", fidelity = "datasheet", src = "S1" }
+youngs_modulus_axial  = { value = 64e9, unit = "Pa", fidelity = "datasheet", src = "S1" }
+
+[params.buckling_load]
+value = 4505.0
+unit = "N"
+fidelity = "derived"
+derivation = "Euler, pinned-pinned over the full pin length: P = pi^2 E I / pin_length^2 with E = 64 GPa, I = 2.898e-10 m^4 (cf-tube-10x8) and pin_length 0.2016 m: 4505 N."
+
+[params.mass]
+value = 0.01173
+unit = "kg"
+fidelity = "derived"
+derivation = "0.1476 m x 45.6 g/m (cf-tube-10x8) = 6.73 g + 2 x 2 g steel studs (estimated) + 1 g adhesive (estimated) = 11.73 g. The two rod ends (18 g each) are separate parts."
+
+[params.price]
+value = 3.01
+unit = "USD"
+fidelity = "derived"
+derivation = "0.1476 m x 13.64 USD/m (cf-tube-10x8 price_per_m) = 2.01 USD + 1.00 USD for two M5 studs and adhesive (estimated)."
+
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.005, 0.07379]
+pos = [0.0, 0.0, 0.0]
+mass_param = "mass"
+
+[[ports]]
+name = "mount"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Rod centre; rigid on the thigh bracket's rod port (the Qdd models the linkage as a constant ratio)."
+
+[[ports]]
+name = "end_a"
+kind = "mech"
+type = "thread.m5"
+gender = "male"
+pos = [0.0, 0.0, -0.07379]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Lower end (shank lug side): bonded M5 stud."
+
+[[ports]]
+name = "end_b"
+kind = "mech"
+type = "thread.m5"
+gender = "male"
+pos = [0.0, 0.0, 0.07379]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Upper end (crank side): bonded M5 stud."
+
+[[sources]]
+id = "S1"
+url = "https://www.easycomposites.eu/10mm-8mm-woven-finish-carbon-fibre-tube"
+title = "10mm (8mm) Woven Finish Carbon Fibre Tube (Easy Composites), Weight and Dimensions table (as parts/structure/cf-tube-10x8.toml)"
+accessed = "2026-10-07"
+quote = "Outside Diameter (OD) | 10 | mm ... Inside Diameter (ID) | 8 | mm ... Tensile Modulus (lengthways) | 64 | GPa"

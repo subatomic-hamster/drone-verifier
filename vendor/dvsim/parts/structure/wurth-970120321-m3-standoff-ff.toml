@@ -1,0 +1,52 @@
+id = "wurth-970120321-m3-standoff-ff"
+name = "Wurth Elektronik 970120321 hex standoff M3 female-female, steel, 12 mm"
+category = "structure.standoff"
+vendor = "Wurth Elektronik"
+part_number = "970120321"
+url = "https://www.element14.cn/en-CN/wurth-elektronik/970120321/standoff-hex-female-female-12mm/dp/2884529"
+
+# WA-SSTII series, gloss-zinc steel, 5.5 mm hex. Frame: origin on the axis at one end face, +z toward the other end.
+[params]
+thread_diameter = { value = 3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 12e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 5.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 1.819e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+inner_thread_length = { value = 12e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "thread_a"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.012
+note = "Internal M3 thread, 'Inner Thread Length Tli 12 mm' (S2) equals the body length, i.e. threaded right through; end face at z = 0."
+
+[[ports]]
+name = "thread_b"
+kind = "mech"
+type = "thread.m3"
+gender = "female"
+pos = [0.0, 0.0, 0.012]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.012
+note = "Same through thread seen from the other end face (z = 12 mm); the two thread lengths overlap, so only 12 mm of thread exists in total."
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/wurth-elektronik/970120321/standoff-hex-female-female-12mm/dp/2884529"
+title = "Wurth Elektronik 970120321 WA-SSTII standoff (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Steel Thread Size - Metric M3 Standoff Type Hex Female-Female Body Length 12mm External Width 5.5mm Product Range WA-SSTII ... Weight (kg): .001819"
+
+[[sources]]
+id = "S2"
+url = "https://www.we-online.com/katalog/datasheet/970120321.pdf"
+title = "Wurth Elektronik datasheet 970120321 WA-SSTII Steel Spacer"
+accessed = "2026-10-07"
+quote = "Material Steel; Surface Gloss zinc; Length L 12 mm; Inner Thread Ti M3; Inner Thread Length Tli 12 mm; Wrench SW 5.5"

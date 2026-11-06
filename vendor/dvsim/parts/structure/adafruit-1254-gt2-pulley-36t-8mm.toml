@@ -1,0 +1,68 @@
+id = "adafruit-1254-gt2-pulley-36t-8mm"
+name = "Aluminium GT2 timing pulley, 36 teeth, 8 mm bore, for 6 mm belt (Adafruit 1254)"
+category = "structure.pulley"
+vendor = "Adafruit"
+part_number = "1254"
+url = "https://www.adafruit.com/product/1254"
+
+# Frame: origin on the bore axis at one end, +z along the axis. Overall length is not stated as such: '25.5mm x 16mm' is read as 25.5 mm outer
+# diameter by 16 mm length.
+[params]
+price = { value = 11.95, unit = "USD", src = "S1", fidelity = "datasheet" }  # Adafruit page, quantity 1-9, seen 2026-10-16; page marks the item 'No longer stocked'
+teeth           = { value = 36, unit = "1", src = "S1", fidelity = "datasheet" }
+bore_diameter   = { value = 8e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter  = { value = 25.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+belt_width_max  = { value = 6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 0.013, unit = "kg", src = "S1", fidelity = "datasheet" }
+belt_pitch      = { value = 2e-3, unit = "m", src = "S2", fidelity = "datasheet" }
+
+[params.length]
+value = 16e-3
+unit = "m"
+src = "S1"
+fidelity = "estimated"
+rationale = "Page lists 'Outer Diameter: 25.5mm x 16mm / 1\" x 0.6\"' without saying which is the length; 25.5 mm is the toothed-section diameter and 16 mm the flange / length, as for the 20-tooth siblings (16 mm long, 16 mm flange)."
+
+[params.pitch_diameter]
+value = 22.92e-3
+unit = "m"
+fidelity = "derived"
+derivation = "teeth x belt pitch / pi = 36 x 2 mm / pi = 22.92 mm; the 2GT catalogue table (S2) prints 22.92 mm for 36 teeth."
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "8 mm bore, 'Two set screws can be used to attach it firmly to any 8mm diameter shaft' (S1)."
+
+[[ports]]
+name = "belt"
+kind = "mech"
+type = "belt.gt2.6"
+gender = "neutral"
+pos = [0.0, 0.0, 0.008]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+fidelity = "estimated"
+rationale = "Belt seat assumed 8 mm along the axis (mid-length of the 16 mm part); the page gives no tooth-section offset."
+note = "GT2 (2 mm pitch) belt, 6 mm wide."
+
+[[sources]]
+id = "S1"
+url = "https://www.adafruit.com/product/1254"
+title = "Adafruit product 1254: Aluminum GT2 Timing Pulley - 6mm Belt - 36 Tooth - 8mm Bore"
+accessed = "2026-10-07"
+quote = "This pulley has 36 teeth, and a 8mm inner bore. Two set screws can be used to attach it firmly to any 8mm diameter shaft. ... Outer Diameter: 25.5mm x 16mm / 1\" x 0.6\"| Inner Diameter: 8mm / 0.3\"| Weight: 13g"
+
+[[sources]]
+id = "S2"
+url = "https://cdn-shop.adafruit.com/product-files/1184/C1373_dendo_cat-b02-15_P014_087.pdf"
+title = "Gates Unitta Asia POWER GRIP GT catalogue (Adafruit's datasheet for the GT2 belt), 2GT pitch-diameter table"
+accessed = "2026-10-07"
+quote = "歯 数 12 14 16 18 20 22 24 26 28 30 32 36 40 44 48 50 60 72 ピッチ径（mm） 7.64 8.91 10.19 11.46 12.73 14.01 15.28 16.55 17.83 19.10 20.37 22.92 25.46 28.01 30.56 31.83 38.20 45.84"

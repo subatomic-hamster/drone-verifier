@@ -1,0 +1,260 @@
+id = "raspberry-pi-zero-2-w"
+name = "Raspberry Pi Zero 2 W (RP3A0, BCM2710A1, 512MB)"
+category = "computer.sbc"
+vendor = "Raspberry Pi Ltd"
+part_number = "Raspberry Pi Zero 2 W"
+url = "https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf"
+
+# Mass and idle/max power draw are not in the product brief and are not recorded here.
+[params]
+length              = { value = 0.065, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.030, unit = "m", src = "S1", fidelity = "datasheet" }
+supply_voltage      = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+supply_current_rated = { value = 2.5, unit = "A", src = "S1", fidelity = "datasheet" }
+operating_temp_min  = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+operating_temp_max  = { value = 343.15, unit = "K", src = "S1", fidelity = "datasheet" }
+cpu_clock           = { value = 1e9, unit = "Hz", src = "S1", fidelity = "datasheet" }
+
+[params.mount_hole_spacing_long]
+value = 0.058
+unit = "m"
+fidelity = "derived"
+derivation = "S1 form factor 65 mm; the drawing shows holes 3.5 mm from the short edges, so spacing = 65 - 2 x 3.5 = 58 mm."
+
+[params.mount_hole_spacing_short]
+value = 0.023
+unit = "m"
+fidelity = "derived"
+derivation = "S1 drawing labels 23 mm between the two hole rows (30 - 2 x 3.5 = 23 for the 30 mm width)."
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "bolt-pattern.58x23.m2.5"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+note = "Hole diameter is not legible in the extracted drawing text; the Zero family uses M2.5 screws in practice (inference)"
+
+[[ports]]
+name = "power_in"
+pins = ["PWR.1", "PWR.5"]   # VBUS, GND
+kind = "power"
+type = "usb-micro-b"
+gender = "female"
+v_max = { value = 5, unit = "V", src = "S1", fidelity = "datasheet" }
+role = "sink"
+note = "Powered via a micro USB socket, 5V DC 2.5A"
+
+[[ports]]
+name = "gpio_uart"
+pins = ["J8.8", "J8.10", "J8.6"]   # TXD0, RXD0, GND
+kind = "signal"
+type = "uart"
+gender = "male"
+connector = "HAT-compatible 40-pin I/O header footprint (unpopulated)"
+
+[[ports]]
+name = "gpio_i2c"
+pins = ["J8.3", "J8.5", "J8.9"]   # SDA1, SCL1, GND
+kind = "signal"
+type = "i2c"
+gender = "male"
+connector = "HAT-compatible 40-pin I/O header footprint (unpopulated)"
+
+[[ports]]
+name = "usb_otg"
+pins = ["USB.1", "USB.2", "USB.3", "USB.4", "USB.5"]
+kind = "signal"
+type = "usb"
+gender = "female"
+connector = "1 x USB 2.0 with OTG (micro USB)"
+
+[[ports]]
+name = "csi"
+pins = ["CAM.1", "CAM.2", "CAM.3", "CAM.4", "CAM.5", "CAM.6", "CAM.7", "CAM.8", "CAM.9", "CAM.10", "CAM.11", "CAM.12", "CAM.13", "CAM.14", "CAM.15", "CAM.16", "CAM.17", "CAM.18", "CAM.19", "CAM.20", "CAM.21", "CAM.22"]
+kind = "signal"
+type = "csi"
+gender = "female"
+connector = "CSI-2 camera connector"
+
+# ---- Connectors (pin level). J8: the 40-pin header footprint (unpopulated, S1), the same Raspberry Pi pinout as every 40-pin board (P1, pinout.xyz;
+# P2: 0.1 in pitch on all boards, 16 mA per pin). PWR / USB: the two micro-B sockets (P3, USB micro-B contact assignments). CAM: the 22-pin 0.5 mm
+# camera connector (P4, Arducam's table of the 22-pin Raspberry Pi connector, camera-side directions; the Pi side is the reverse). All poses are
+# estimated from the board outline (65 x 30 mm, header on the +y long edge, sockets on the -y edge, camera connector on the +x short edge).
+[[connectors]]
+id = "J8"
+name = "40-pin GPIO header footprint (unpopulated)"
+type = "header-2x20-2.54mm"
+gender = "neutral"
+pos = [0.0, 0.0115, 0.0016]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 2
+cols = 20
+pitch = 0.00254
+layout = "dual"
+src = "P1"
+fidelity = "literature"
+pose_rationale = "Pin names and numbers from P1; the header sits 3.5 mm from the long edge (HAT-compatible footprint, S1) and is centred on the 65 mm length; the exact outline is estimated."
+note = "Holes only on delivery (S1: 'unpopulated'); the pins listed are those of a soldered-in 2 x 20 header. GPIO levels 3.3 V, 16 mA per pin (P2)."
+pins = [
+  { number = 1, name = "3V3", kind = "power", dir = "out", v = 3.3 },
+  { number = 2, name = "5V", kind = "power", dir = "out", v = 5.0 },
+  { number = 3, name = "GPIO2", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "I2C1 SDA (P1); fixed pull-up (P2)" },
+  { number = 4, name = "5V", kind = "power", dir = "out", v = 5.0 },
+  { number = 5, name = "GPIO3", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "I2C1 SCL (P1); fixed pull-up (P2)" },
+  { number = 6, name = "GND", kind = "ground" },
+  { number = 7, name = "GPIO4", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "GPCLK0 (P1)" },
+  { number = 8, name = "GPIO14", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "UART0 TX (P1)" },
+  { number = 9, name = "GND", kind = "ground" },
+  { number = 10, name = "GPIO15", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "UART0 RX (P1)" },
+  { number = 11, name = "GPIO17", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 12, name = "GPIO18", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "PCM CLK (P1)" },
+  { number = 13, name = "GPIO27", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 14, name = "GND", kind = "ground" },
+  { number = 15, name = "GPIO22", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 16, name = "GPIO23", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 17, name = "3V3", kind = "power", dir = "out", v = 3.3 },
+  { number = 18, name = "GPIO24", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 19, name = "GPIO10", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "SPI0 MOSI (P1)" },
+  { number = 20, name = "GND", kind = "ground" },
+  { number = 21, name = "GPIO9", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "SPI0 MISO (P1)" },
+  { number = 22, name = "GPIO25", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 23, name = "GPIO11", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "SPI0 SCLK (P1)" },
+  { number = 24, name = "GPIO8", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "SPI0 CE0 (P1)" },
+  { number = 25, name = "GND", kind = "ground" },
+  { number = 26, name = "GPIO7", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "SPI0 CE1 (P1)" },
+  { number = 27, name = "GPIO0", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "EEPROM SDA (P1, ID_SD); GPIO0 and 1 are reserved for advanced use (P2)" },
+  { number = 28, name = "GPIO1", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "EEPROM SCL (P1, ID_SC); reserved for advanced use (P2)" },
+  { number = 29, name = "GPIO5", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 30, name = "GND", kind = "ground" },
+  { number = 31, name = "GPIO6", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 32, name = "GPIO12", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "PWM0 (P1)" },
+  { number = 33, name = "GPIO13", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "PWM1 (P1)" },
+  { number = 34, name = "GND", kind = "ground" },
+  { number = 35, name = "GPIO19", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "PCM FS (P1)" },
+  { number = 36, name = "GPIO16", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 37, name = "GPIO26", kind = "signal", dir = "io", v = 3.3, i_max = 0.016 },
+  { number = 38, name = "GPIO20", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "PCM DIN (P1)" },
+  { number = 39, name = "GND", kind = "ground" },
+  { number = 40, name = "GPIO21", kind = "signal", dir = "io", v = 3.3, i_max = 0.016, note = "PCM DOUT (P1)" },
+]
+
+[[connectors]]
+id = "PWR"
+name = "PWR IN micro-USB socket"
+type = "usb-micro-b"
+gender = "female"
+pos = [0.0215, -0.015, 0.0016]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.00065
+src = "P3"
+fidelity = "estimated"
+rationale = "S1 states power via a micro USB socket at 5 V DC 2.5 A; the contacts follow the USB micro-B assignment (P3). Only the two contacts a power-only input uses are listed (whether the data contacts of this socket are wired is not stated). Pose estimated; pitch is the micro-B contact pitch."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "in", v = 5.0, i_max = 2.5, at = [0, 0] },
+  { number = 5, name = "GND", kind = "ground", at = [4, 0] },
+]
+
+[[connectors]]
+id = "USB"
+name = "USB OTG micro-USB socket"
+type = "usb-micro-b"
+gender = "female"
+pos = [0.0089, -0.015, 0.0016]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 5
+pitch = 0.00065
+src = "P3"
+fidelity = "literature"
+pose_rationale = "S1: '1 x USB 2.0 interface with OTG' on a micro USB socket; contact order from P3. Pose estimated."
+pins = [
+  { number = 1, name = "VBUS", kind = "power", dir = "io", v = 5.0 },
+  { number = 2, name = "D-", kind = "signal", dir = "io" },
+  { number = 3, name = "D+", kind = "signal", dir = "io" },
+  { number = 4, name = "ID", kind = "signal", dir = "in", note = "OTG ID (P3: tied to GND in a Type-A plug, open in a Type-B plug)" },
+  { number = 5, name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "CAM"
+name = "CSI-2 camera connector (22-pin FPC, 0.5 mm)"
+type = "fpc-22-0.5mm"
+port_type = "csi"
+gender = "female"
+pos = [0.0305, 0.0, 0.0035]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 22
+pitch = 0.0005
+src = "P4"
+fidelity = "literature"
+pose_rationale = "S1: 'CSI-2 camera connector'; P4 gives the 22-pin 0.5 mm Molex right-angle connector of the Zero family and its pin table (camera-side signal names; the Pi side drives the enables / clock and receives the data, reversed). Whether the Zero wires lanes 2 and 3 is not stated in P4 (its SoC receiver is believed to be 2-lane: estimated). Pose estimated."
+pins = [
+  { number = 1, name = "GND", kind = "ground" },
+  { number = 2, name = "CAM_D0_N", kind = "signal", dir = "in", note = "MIPI data lane 0 negative" },
+  { number = 3, name = "CAM_D0_P", kind = "signal", dir = "in", note = "MIPI data lane 0 positive" },
+  { number = 4, name = "GND", kind = "ground" },
+  { number = 5, name = "CAM_D1_N", kind = "signal", dir = "in", note = "MIPI data lane 1 negative" },
+  { number = 6, name = "CAM_D1_P", kind = "signal", dir = "in", note = "MIPI data lane 1 positive" },
+  { number = 7, name = "GND", kind = "ground" },
+  { number = 8, name = "CAM_CK_N", kind = "signal", dir = "in", note = "MIPI clock lane negative" },
+  { number = 9, name = "CAM_CK_P", kind = "signal", dir = "in", note = "MIPI clock lane positive" },
+  { number = 10, name = "GND", kind = "ground" },
+  { number = 11, name = "CAM_D2_N", kind = "signal", dir = "in", note = "MIPI data lane 2 negative (likely unused on the Zero, estimated)" },
+  { number = 12, name = "CAM_D2_P", kind = "signal", dir = "in", note = "MIPI data lane 2 positive (likely unused on the Zero, estimated)" },
+  { number = 13, name = "GND", kind = "ground" },
+  { number = 14, name = "CAM_D3_N", kind = "signal", dir = "in", note = "MIPI data lane 3 negative (likely unused on the Zero, estimated)" },
+  { number = 15, name = "CAM_D3_P", kind = "signal", dir = "in", note = "MIPI data lane 3 positive (likely unused on the Zero, estimated)" },
+  { number = 16, name = "GND", kind = "ground" },
+  { number = 17, name = "POWER-EN", kind = "signal", dir = "out", note = "camera power enable (the camera-side 'Input')" },
+  { number = 18, name = "LED-EN", kind = "signal", dir = "io", note = "LED enable / XCLK" },
+  { number = 19, name = "GND", kind = "ground" },
+  { number = 20, name = "SCL", kind = "signal", dir = "out", note = "SCCB serial interface clock" },
+  { number = 21, name = "SDA", kind = "signal", dir = "io", note = "SCCB serial interface data" },
+  { number = 22, name = "VCC", kind = "power", dir = "out", v = 3.3, note = "3.3 V supply to the camera" },
+]
+
+[[sources]]
+id = "P1"
+url = "https://pinout.xyz/"
+title = "Raspberry Pi GPIO Pinout (pinout.xyz), 40-pin header table"
+accessed = "2026-10-09"
+quote = "3v3 Power physical pin 1 | GPIO 2 (I2C1 SDA) physical pin 3 | GPIO 3 (I2C1 SCL) physical pin 5 | GPIO 4 (GPCLK0) physical pin 7 | Ground physical pin 9 | GPIO 17 physical pin 11 | GPIO 27 physical pin 13 | GPIO 22 physical pin 15 | 3v3 Power physical pin 17 | GPIO 10 (SPI0 MOSI) physical pin 19 | GPIO 9 (SPI0 MISO) physical pin 21 | GPIO 11 (SPI0 SCLK) physical pin 23 | Ground physical pin 25 | GPIO 0 (EEPROM SDA) physical pin 27 | GPIO 5 physical pin 29 | GPIO 6 physical pin 31 | GPIO 13 (PWM1) physical pin 33 | GPIO 19 (PCM FS) physical pin 35 | GPIO 26 physical pin 37 | Ground physical pin 39 | 5v Power physical pin 2 | 5v Power physical pin 4 | Ground physical pin 6 | GPIO 14 (UART0 TX) physical pin 8 | GPIO 15 (UART0 RX) physical pin 10 | GPIO 18 (PCM CLK) physical pin 12 | Ground physical pin 14 | GPIO 23 physical pin 16 | GPIO 24 physical pin 18 | Ground physical pin 20 | GPIO 25 physical pin 22 | GPIO 8 (SPI0 CE0) physical pin 24 | GPIO 7 (SPI0 CE1) physical pin 26 | GPIO 1 (EEPROM SCL) physical pin 28 | Ground physical pin 30 | GPIO 12 (PWM0) physical pin 32 | Ground physical pin 34 | GPIO 16 physical pin 36 | GPIO 20 (PCM DIN) physical pin 38 | GPIO 21 (PCM DOUT) physical pin 40"
+
+[[sources]]
+id = "P2"
+url = "https://www.raspberrypi.com/documentation/computers/raspberry-pi.html"
+title = "Raspberry Pi documentation: GPIO and the 40-pin header (read through a page summariser)"
+accessed = "2026-10-08"
+quote = "The GPIO headers on all boards have a 0.1in (2.54 mm) pin pitch. || Pins GPIO2 and GPIO3 have fixed pull-up resistors, but for other pins this can be configured in software. || GPIO pins 0 and 1 are present on the board (physical pins 27 and 28), but are reserved for advanced use. || each pin can individually draw up to 16mA"
+
+[[sources]]
+id = "P3"
+url = "https://en.wikipedia.org/wiki/USB_hardware"
+title = "USB hardware (Wikipedia), Mini and Micro connector pin assignments"
+accessed = "2026-10-09"
+quote = "Pin Name Wire color Description: 1 VBUS Red +5 V | 2 D- White Data- | 3 D+ Green Data+ | 4 ID None (only used in plug): When a cable is connected to a Mini- or Micro-AB receptacle, the ID pin indicates to the On-The-Go device whether the plug is the Type-A (host) or Type-B (peripheral device) end of its cable ... Type-A plug (host end): connected to GND; Type-B plug (peripheral device end): not connected | 5 GND Black Signal ground"
+
+[[sources]]
+id = "P4"
+url = "https://docs.arducam.com/Raspberry-Pi-Camera/raspberry-pi-camera-pinout/"
+title = "Arducam Wiki: Raspberry Pi Camera Pinout, 22-pin MIPI-CSI connector"
+accessed = "2026-10-09"
+quote = "That of 22-pin is on Raspberry Pi 5, Pi Zero Series and Compute Module IO Board. ... Pi Board (Zero & Zero W & Zero 2 W) WM8828DKR-ND Molex Right Angle 22 0.5mm ... Pin # Name Type Description: 1 GND | 2 CAM_D0_N Output | 3 CAM_D0_P Output | 4 GND | 5 CAM_D1_N | 6 CAM_D1_P | 7 GND | 8 CAM_CK_N | 9 CAM_CK_P | 10 GND | 11 CAM_D2_N | 12 CAM_D2_P | 13 GND | 14 CAM_D3_N | 15 CAM_D3_P | 16 GND | 17 POWER-EN Input | 18 LED-EN I/O | 19 GND | 20 SCL Input | 21 SDA I/O | 22 VCC Power 3.3V Power Supply. The pin definition of the camera board; the signals are input or output type. Vice versa these pins on the RPI board are in reverse direction."
+
+[[sources]]
+id = "S1"
+url = "https://datasheets.raspberrypi.com/rpizero2/raspberry-pi-zero-2-w-product-brief.pdf"
+title = "Raspberry Pi Zero 2 W Product Brief (Raspberry Pi Ltd)"
+accessed = "2026-10-07"
+quote = "Form factor: 65mm × 30mm Processor: Broadcom BCM2710A1, quad-core 64-bit SoC (Arm Cortex-A53 @ 1GHz) Memory: 512MB LPDDR2 ... 1 × USB 2.0 interface with OTG HAT-compatible 40-pin I/O header footprint ... CSI-2 camera connector ... Input power: 5V DC 2.5A Operating temperature: -20°C to +70°C ... It is powered via a micro USB socket"

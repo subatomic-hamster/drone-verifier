@@ -1,0 +1,102 @@
+id = "generic-estop-22mm-nc"
+name = "Red mushroom emergency-stop button, 22 mm panel hole, 1 NC contact, push-to-lock / twist-to-release (LA38 / XB2 class)"
+category = "switch.estop"
+vendor = "generic (listing: VXB)"
+part_number = "22 mm NC latching E-stop, 600 V Ui / 10 A Ith"
+url = "https://vxb.com/fr/products/red-mushroom-emergency-stop-button-switch-22mm-nc"
+
+# Hardware E-stop of cuas-lite: the NC contact is in series with the flywheel / pusher enable path, so pressing it (or a broken wire) opens the circuit regardless of software; a second read-only tap
+# of the same net goes to a Pico GPIO. The NC (normally closed, opens when pressed) contact is the one a safety function must use (a welded NO contact cannot be detected as a failure).
+# The listing sells a 2-pack. Its price line is inconsistent (regular 39.99, 'sale' 80.00 USD) and Walmart marketplace listings of similar 22 mm NC latching units were 8-14 USD each in a web search, so the price below is an estimate.
+# This is an unbranded part with no certification marks in the listing: for a real firing system a certified E-stop (EN ISO 13850 / positive-opening NC contact) is the right part; the project's own safety layer must not rely on this one alone.
+# Part frame: origin at the centre of the panel-side flange face, +z = out of the panel towards the red head, the contact block behind the panel at -z.
+
+[params]
+mass                = { value = 0.080, unit = "kg", src = "S1", fidelity = "datasheet" }   # 'weight ~80 g per switch'
+head_diameter       = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }   # mushroom head 40 mm
+panel_hole_diameter = { value = 0.022, unit = "m", src = "S1", fidelity = "datasheet" }
+panel_thickness_max = { value = 0.0085, unit = "m", src = "S1", fidelity = "datasheet" }
+contact_form        = { value = "1 NC contact, latching, 2 terminals", unit = "-", src = "S1", fidelity = "datasheet" }
+voltage_ui          = { value = 600.0, unit = "V", src = "S1", fidelity = "datasheet" }   # rated insulation voltage
+current_ith         = { value = 10.0, unit = "A", src = "S1", fidelity = "datasheet" }   # conventional thermal current
+length              = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+width               = { value = 0.040, unit = "m", src = "S1", fidelity = "datasheet" }
+height              = { value = 0.055, unit = "m", fidelity = "estimated", rationale = "Head height above the panel plus the contact block behind it: not in the listing (its 'dimensions' line is the shipping box); about 20 mm head + 35 mm block is typical for a 22 mm E-stop unit." }
+price           = { value = 11.0, unit = "USD", fidelity = "estimated", rationale = "Not a firm price: the VXB listing (S1) shows 39.99 / 80.00 USD for a 2-pack (inconsistent, 20 USD each at best) while a web search of Walmart marketplace listings of similar 22 mm NC latching E-stops showed 8-14 USD each (e.g. a twist-release unit at 10.99 USD; https://www.walmart.com/c/kp/mushroom-stop-button); 11 USD is taken." }
+
+# Envelope (collision, wire clearance): the contact block behind the panel (a 21 mm cylinder through the 22 mm hole, 35 mm deep, estimated) and the 40 mm mushroom head 20 mm in front of the panel face (estimated;
+# 'height' above is their sum).
+[[geometry.shapes]]
+shape = "cylinder"
+size = [0.0105, 0.0175]
+pos = [0.0, 0.0, -0.0175]
+
+[[geometry.shapes]]
+shape = "box"
+size = [0.02, 0.02, 0.01]
+pos = [0.0, 0.0, 0.01]
+
+[[ports]]
+name = "contact"
+kind = "power"
+type = "screw-terminal"
+gender = "neutral"
+role = "passthrough"
+pins = ["NC.1", "NC.2"]
+v_max = { value = 600.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 10.0, unit = "A", src = "S1", fidelity = "datasheet" }
+note = "Normally-closed contact: closed released, open when pressed and latched."
+
+[[ports]]
+name = "panel"
+kind = "mech"
+type = "panel-hole.22"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+thickness = 0.0085
+note = "22 mm round panel hole, panel up to 8.5 mm (S1); retained by the threaded collar."
+
+[[connectors]]
+id = "NC"
+name = "NC contact, 2 screw terminals"
+type = "screw-terminal"
+gender = "neutral"
+joinable = true
+pos = [0.0, 0.0, -0.040]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.012
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 says '1 NC contact' and '2 terminals'; the terminal spacing and the screw-terminal style (versus solder lugs) of the contact block are not stated."
+pose_rationale = "Rear of the contact block (positional estimate)."
+pins = [
+  { number = 1, name = "NC1", kind = "power", dir = "io", v_max = 600.0, i_max = 10.0 },
+  { number = 2, name = "NC2", kind = "power", dir = "io", v_max = 600.0, i_max = 10.0 },
+]
+
+[visual]
+src = "V1"
+note = "Red 40 mm mushroom head on a black 22 mm body (listing photo); drawn as a generic box."
+
+[[visual.elements]]
+gen = "box_device"
+
+[[sources]]
+id = "S1"
+url = "https://vxb.com/fr/products/red-mushroom-emergency-stop-button-switch-22mm-nc"
+title = "VXB: Red Mushroom Emergency Stop Button Switch 22mm NC Latching 600V 10A Beefy Rugged Stop Button (2-pack)"
+accessed = "2026-10-11"
+quote = "Red Mushroom Emergency Stop Button Switch 22mm NC Latching 600V 10A ... 2-Pack ... 600V UI ... Ith 10A ... 1 NC contact ... 40 mm (1.6\") mushroom head ... 22 mm (0.87\") mounting hole ... 8.5 mm (0.33\") max panel thickness ... 2 terminals ... weight ~80 g per switch"
+
+[[sources]]
+id = "V1"
+url = "https://vxb.com/fr/products/red-mushroom-emergency-stop-button-switch-22mm-nc"
+title = "VXB listing photo (appearance only)"
+accessed = "2026-10-11"
+quote = "Red Mushroom Emergency Stop Button Switch 22mm NC"

@@ -1,0 +1,68 @@
+id = "so101-waveshare-mounting-plate"
+name = "SO-101 Waveshare driver-board mounting plate (3D printed, follower base)"
+category = "frame.printed"
+vendor = "TheRobotStudio (open design, Apache-2.0)"
+part_number = "WaveShare_Mounting_Plate_SO101.stl (sim mesh waveshare_mounting_plate_so101_v2.stl)"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/STL/SO101/Individual/WaveShare_Mounting_Plate_SO101.stl"
+
+[params]
+volume_solid = { value = 9.09e-6, unit = "m^3", fidelity = "derived", derivation ="Signed-volume integral over the 1254 triangles of meshes/so101/waveshare_mounting_plate_so101_v2.stl (binary STL, metres) = 9.09 cm^3. Solid." }
+infill_fraction = { value = 0.15, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale ="Repo README gives only material, nozzle/layer height and 15% infill, no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile). Thin plate: likely near-solid in practice." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/so101/waveshare_mounting_plate_so101_v2.stl"
+material = "pla"
+urdf_link = "base_link"
+origin_xyz = [-0.0309827, -0.000199441, 0.0474]
+origin_rpy = [1.5708, 0.0, 1.5708]
+bbox_min = [-0.0255, -0.021, 0.0]
+bbox_max = [0.0255, 0.021, 0.0076]
+
+# Ports derived by tools/so101_ports.py (closure check: python tools/so101_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame.
+[[ports]]
+name = "base_seat"
+kind = "mech"
+type = "bolt-pattern.so101-base-waveshare-plate"
+gender = "neutral"
+pos = [-2.2439e-08, 2.2439e-08, 0.00810895759]
+axis = [-3.673205e-06, 3.673205e-06, 0.999999999987]
+ref = [0.999999999993, 1.3e-11, 3.673205e-06]
+symmetry = 1
+thickness = 0.004
+fidelity = "derived"
+derivation = "tools/so101_ports.py from meshes/so101/so101_new_calib.urdf (SO-ARM100 a758567): mate frame M at the centre of the bbox overlap of the two parts (mid-plane of the gap where the bboxes only touch), axis along the thinnest overlap dimension from so101-base towards so101-waveshare-mounting-plate; port = inv(T_part) @ M (a) or inv(T_part) @ M @ Rx(pi) (b)"
+thickness_rationale = "No published or measurable value; 4 mm placeholder = two 2 mm printed walls clamped by M3 screws. Estimated."
+
+[[ports]]
+name = "board_seat"
+kind = "mech"
+type = "bolt-pattern.37x28.m2.5"
+gender = "neutral"
+pos = [0.0, 9.8969e-08, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.0016
+fidelity = "estimated"
+rationale = "Hole pattern centre (x, y) derived from the four hole rings in the plate mesh (spacing 37.000 x 28.000 mm, centre (0.0000, 0.0001) mm in the plate frame, matching the 37.00 x 28.00 mm board pattern; the mesh features there are 5 mm diameter circles, so M2.5 is the briefing's thread tag, not read from the mesh); the board face is the plate's -z face (z = 0, the outer slab face, axis -z): the plate is a 51 x 42 x 4 mm slab (z 0..4) whose 18 x 18 mm central block rises to z = 0.0076 on the +z side, and that +z side is the one facing the base (world: plate z = +x, the base starts 1 mm beyond the block; base_seat is on it). The board therefore sits on the exposed -z face, clear of the base and base motor holder. This face choice is inferred from the mesh and the URDF placement (the mesh holes are through the slab at z = 0 and z = 0.004), not read from an assembly drawing; the URDF does not model the board."
+thickness_rationale = "Board PCB thickness not published; 1.6 mm is the common standard PCB thickness; estimated."
+
+[[sources]]
+id = "S1"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/README.md"
+title = "SO-ARM100 README, Printing the Parts, Step 1 (commit a758567)"
+accessed = "2026-10-06"
+quote = "Material: PLA+ || Nozzle Diameter and Precision: 0.4mm nozzle diameter at 0.2mm layer height or 0.6mm nozzle at 0.4mm layer height. || Infill Density: 15%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/TheRobotStudio/SO-ARM100/blob/a758567c3978dfeefe282ede0500085a48fe8f78/Simulation/SO101/so101_new_calib.urdf"
+title = "SO-ARM100 Simulation/SO101/so101_new_calib.urdf (commit a758567), part placement in link base_link"
+accessed = "2026-10-06"
+quote = "<!-- Part waveshare_mounting_plate_so101_v2 --> <visual> <origin xyz=\"-0.0309827 -0.000199441 0.0474\" rpy=\"1.5708 -1.35493e-14 1.5708\"/>"
+license = "Apache-2.0"

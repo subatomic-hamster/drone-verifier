@@ -1,0 +1,43 @@
+id = "nsk-623"
+name = "NSK 623 miniature deep-groove ball bearing, open, 3x10x4 mm"
+category = "structure.bearing"
+vendor = "NSK"
+part_number = "623"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+
+[params]
+bore_diameter      = { value = 0.003, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter     = { value = 0.010, unit = "m", src = "S1", fidelity = "datasheet" }
+width              = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+dynamic_load_rating = { value = 695, unit = "N", src = "S1", fidelity = "datasheet" }
+static_load_rating  = { value = 218, unit = "N", src = "S1", fidelity = "datasheet" }
+mass               = { value = 0.00165, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "bore"
+kind = "mech"
+type = "bore.3"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Inner ring bore; axisymmetric (360 = discrete stand-in for continuous)"
+
+[[ports]]
+name = "housing"
+kind = "mech"
+type = "housing.10"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+note = "Outer ring OD; axisymmetric"
+
+[[sources]]
+id = "S1"
+url = "https://www.nsk.com/content/dam/nsk/common/catalogs/ctrgPdf/e1102m.pdf"
+title = "NSK Rolling Bearings catalog, miniature and small ball bearings table (open type; mass in g)"
+accessed = "2026-10-07"
+quote = "10 4.0 4.0 0.15 0.15 695 218 50 000 60 000 623 623 ZZ — — 4.2 4.3 08.8 08.0 0.15 0.15 1.65 1.66"

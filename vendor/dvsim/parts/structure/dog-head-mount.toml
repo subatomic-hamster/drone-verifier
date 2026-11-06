@@ -1,0 +1,61 @@
+id = "dog-head-mount"
+name = "Dog head mount (3D printed PLA): Mid-360 seat tilted nose-down 25 degrees plus D435i nose plate"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "head_mount"
+url = "cad/dog/parts.py"
+
+# cad/dog/parts.py head_mount(). Frame: origin at the bottom centre of the base plate, +x forward. The Mid-360 seat is tilted nose-down by TILT_DEG = 25 degrees (env DOG_LIDAR_TILT): the lidar's lower FOV edge (-7 deg) then looks 32 deg below the horizon
+# (geometry in docs/dog/actuator-study.md). Symmetric about the XZ plane.
+
+[mirror]
+symmetry = "xz"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+lidar_tilt      = { value = 0.4363, unit = "rad", fidelity = "estimated", rationale = "25 deg nose-down: chosen so the ground is visible from about 0.72 m ahead of a 0.45 m high sensor, 0.42 m beyond an assumed front foot at 0.30 m; the foot area itself is covered by the accumulated map (docs/dog/actuator-study.md, head geometry)." }
+mass            = { value = 0.1122, unit = "kg", fidelity = "derived", derivation = "Mesh volume 133.7 cm3 x PLA 1.24 g/cm3, shell + 30 % infill model, by cad/dog/build.py." }
+price           = { value = 2.24, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.1122 kg x 20 USD/kg (PLA spool; docs/dog/actuator-study.md prices the printed parts at 45 USD for 2.239 kg); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-head-mount.stl"
+material = "pla"
+bbox_min = [-0.065, -0.05, 0.0]
+bbox_max = [0.069, 0.05, 0.06234]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Underside of the base plate: bolts to the chassis top with 4 x M3 at (+-55, +-40) mm."
+
+[[ports]]
+name = "lidar"
+kind = "mech"
+type = "bolt-pattern.livox-mid360-base.m3"
+gender = "neutral"
+pos = [-0.00746, 0.0, 0.04544]
+axis = [0.4226183, 0.0, 0.9063078]
+ref = [-0.9063078, 0.0, 0.4226183]
+symmetry = 1
+note = "Top face of the tilted seat for the Mid-360 base. The axis is the seat normal: tilted 25 deg about +y, so it points up and FORWARD (nose-down lidar; the SP3a port had the sign of the x component wrong). Position = Pos(-10, 0, 40) + 6 mm along the normal (top face centre). The ref points up and BACK, so the lidar's +x (azimuth 0, connector side) faces the rear."
+
+[[ports]]
+name = "camera"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.069, 0.0, 0.022]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 0.0, 1.0]
+symmetry = 1
+note = "Front face of the 4 mm nose plate (x in [65, 69] mm): the D435i rear face lies on it and the camera looks forward; ref +z = the camera's +x (image up)."

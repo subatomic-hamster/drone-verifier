@@ -1,0 +1,128 @@
+id = "cuas2-rotor-plate"
+name = "cuas2 rotor_plate (3D printed PETG, M1, group pan, root of the pan group, frame B)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "rotor_plate"
+url = "cad/cuas2/modules/base_pan.py"
+
+# Mesh in frame B (the part frame IS frame B at pan = 0). Root of the pan group: yokes are bolted pairs (identity closure mates); every bought part of the group is seated by a `seat_*` port whose pose is the
+# child's part-frame pose in frame B (axis = child +z, ref = child +x), so mating the child's `origin` port reproduces it.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/rotor_plate.stl"
+material = "petg"
+bbox_min = [-0.09, -0.09, 0.002]
+bbox_max = [0.09, 0.09275, 0.038]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port (the pan joint is the mate of this port with the base plate's seat_rotor)."
+
+[[ports]]
+name = "frame_up"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Part frame, axis +z: 'a' side of the mates to the printed parts of the pan group (identity)."
+
+[[ports]]
+name = "seat_lazy_susan"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.018]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Lazy-susan underside on the stator posts, z = POST_H 18 mm in frame B (cad/cuas2 params)."
+
+[[ports]]
+name = "seat_magnet_pan"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.082, 0.0, 0.027]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Pan-home magnet in the rotor underside at x -82 mm, disc underside z 27 mm (cad/cuas2 modules/base_pan.py)."
+
+[[ports]]
+name = "seat_nema_tilt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.048161, 0.062, 0.2]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt NEMA 17 flange face on the outer face of the left cheek (y = CHEEK_IN_Y + CHEEK_T = 62 mm), x = -C_TILT, on the tilt-axis height 200 mm; shaft towards -y."
+
+[[ports]]
+name = "seat_pulley_tilt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [-0.048161, 0.052, 0.2]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "estimated"
+rationale = "20T pulley on the tilt shaft inside the left cheek (y 52 to 40 mm per the CAD envelope); lib frame orientation assumed."
+
+[[ports]]
+name = "seat_hall_tilt"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.05125, 0.2295]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Tilt-home hall on the left cheek inner face at x 0, z = H_T + 29.5 (cad/cuas2 modules/tilt_head.py)."
+
+[[ports]]
+name = "seat_brg_left"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0555, 0.2]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Left trunnion 608ZZ centre on the tilt axis, y = +55.5 mm (cad/cuas2 manifest)."
+
+[[ports]]
+name = "seat_brg_right"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, -0.0555, 0.2]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+fidelity = "derived"
+derivation = "Right trunnion 608ZZ centre on the tilt axis, y = -55.5 mm (cad/cuas2 manifest)."

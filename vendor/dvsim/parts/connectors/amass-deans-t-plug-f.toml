@@ -1,0 +1,98 @@
+id = "amass-deans-t-plug-f"
+name = "Amass AM1015SE-F T-plug connector (Deans-type, female, wire-solder)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics); RS-PRO relabel"
+part_number = "AM1015SE-F"
+url = "https://www.electrokit.com/en/batterikontakt-t-plug-hona-typ-deans"
+
+# Deans-type T-plug (Amass clone of the W. S. Deans Ultra Plug). The original Deans plug is 'rated for 60 Amps' by hobby retailers; the DigiKey
+# TechForum comparison (S2) gives 15 A continuous / 30 A peak for a Deans connector. Three sources, three numbers: i_max here is the Amass /
+# electrokit one (25 A continuous), the lower DigiKey figure is kept as a param so a conservative design can use it.
+[params]
+current_rated       = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+current_burst       = { value = 50, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance  = { value = 0.00045, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 1000, unit = "1", src = "S1", fidelity = "datasheet" }
+mass                = { value = 0.0029, unit = "kg", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "12 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+current_cont_digikey_forum = { value = 15, unit = "A", src = "S2", fidelity = "literature" }
+
+[[ports]]
+name = "female"
+pins = ["MATE.1", "MATE.2"]
+kind = "power"
+type = "deans"
+gender = "female"
+v_max = { value = 500, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 50, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "25 A continuous, 50 A momentary (electrokit listing of the Amass part); DigiKey forum figure for a Deans connector is 15 A continuous / 30 A peak"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 25, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, up to 12 AWG"
+
+# Pin level (estimated): 2-pole connector; contacts numbered 1..2 in a line, solder cup n belongs to mating contact n.
+[[connectors]]
+id = "MATE"
+name = "mating contacts (2-pole)"
+type = "deans"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "Pole count is the part designation (T-plug, 2-pole); S1 gives no contact numbering, polarity marking or pole spacing, so the contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin, cable side opposite."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.008
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.electrokit.com/en/batterikontakt-t-plug-hona-typ-deans"
+title = "Electrokit - Battery connector T-plug female type Deans 25A (Amass / RS-PRO)"
+accessed = "2026-10-07"
+quote = "Specifications: | Rated voltage: 500 VDC | Rated current: 25A continuous (50A momentary) | Max cable area: 12AWG | Contact resistance: 0.45 mOhm | Weight: 2.9g | Operating temperature -20 to 120°C | Contact: Gold plated | Use times: 1000 cycles | Manufacturer: Amass / RS-PRO"
+
+[[sources]]
+id = "S2"
+url = "https://forum.digikey.com/t/xt30-xt60-xt90-deans-connector-comparison/34551"
+title = "DigiKey TechForum - XT30, XT60, XT90, & Deans Connector Comparison"
+accessed = "2026-10-07"
+quote = "Deans (T-Plug) connectors are also popular for power applications requiring up to 30A Peak, 15A continuous (16-18 AWG Wire) also sold as a mating set."

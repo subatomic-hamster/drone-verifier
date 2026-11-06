@@ -1,0 +1,50 @@
+id = "ettinger-05-12-143-m2.5-standoff"
+name = "Ettinger 05.12.143 hex standoff M2.5 male-female, brass, 14 mm body / 20 mm overall"
+category = "structure.standoff"
+vendor = "Ettinger"
+part_number = "05.12.143"
+url = "https://www.element14.cn/en-CN/ettinger/05-12-143/spacer-standoff-hex-m2-5-sw4x14mm/dp/2311419"
+
+[params]
+thread_diameter = { value = 2.5e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 14e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+overall_length  = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 1.5e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[params.stud_length]
+value = 6e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Overall length 20 mm minus body length 14 mm (both from S1)."
+
+[[ports]]
+name = "thread_female"
+kind = "mech"
+type = "thread.m2.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.014
+note = "Threaded bore in the hex body, opening on the bottom face; depth assumed equal to the body length (full-length thread not stated for this series)"
+
+[[ports]]
+name = "thread_male"
+kind = "mech"
+type = "thread.m2.5"
+gender = "male"
+pos = [0.0, 0.0, 0.020]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.006
+note = "Stud on top, length = overall minus body length"
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/ettinger/05-12-143/spacer-standoff-hex-m2-5-sw4x14mm/dp/2311419"
+title = "Ettinger 05.12.143 Standoff, Brass, M2.5, Hex Male-Female, 14 mm, 20 mm (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Brass; Standoff Type Hex Male-Female; Thread Size - Metric M2.5; Body Length 14mm; Overall Length 20mm; External Width 4mm; Product Range 05.12 Series; Weight (kg): .0015"

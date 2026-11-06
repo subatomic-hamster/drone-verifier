@@ -1,0 +1,89 @@
+id = "jst-sh-8p"
+name = "JST SH 1.0 mm wire-to-board connector, 8 positions (FPV 4-in-1 ESC port)"
+category = "connector"
+vendor = "JST"
+part_number = "SHR-08V-S housing / SM08B-SRSS-TB header (series ratings)"
+url = "https://www.jst-mfg.com/product/pdf/eng/eSH.pdf"
+
+# Series datasheet: ratings apply to every SH position count. No mating-cycle count or mass in the datasheet text; the
+# housing and header part numbers above appear in the datasheet's part-number tables.
+[params]
+pitch               = { value = 1.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+current_rated       = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 50, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_initial_max = { value = 0.020, unit = "ohm", src = "S1", fidelity = "datasheet" }
+contact_resistance_after_test_max = { value = 0.040, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 1e8, unit = "ohm", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 248.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 358.15, unit = "K", src = "S1", fidelity = "datasheet" }
+wire_awg_min        = { value = 32, unit = "AWG", src = "S1", fidelity = "datasheet" }
+wire_awg_max        = { value = 28, unit = "AWG", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "housing"
+pins = ["HOUSING.1", "HOUSING.2", "HOUSING.3", "HOUSING.4", "HOUSING.5", "HOUSING.6", "HOUSING.7", "HOUSING.8"]
+kind = "power"
+type = "jst-sh.8"
+gender = "female"
+v_max = { value = 50, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Cable-side crimp housing; the 1.0 A rating is for AWG #28 wire"
+
+[[ports]]
+name = "header"
+pins = ["HEADER.1", "HEADER.2", "HEADER.3", "HEADER.4", "HEADER.5", "HEADER.6", "HEADER.7", "HEADER.8"]
+kind = "power"
+type = "jst-sh.8"
+gender = "male"
+v_max = { value = 50, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 1.0, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+
+# Pin level (derived): 8 circuits in one row, numbered 1..8; the function of each contact is defined by the board that uses it, not by the connector.
+[[connectors]]
+id = "HOUSING"
+name = "cable-side crimp housing (8 circuits)"
+type = "jst-sh.8"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+src = "S1"
+fidelity = "derived"
+derivation = "Contact count is the part designation (8 positions); pitch is the S1 series value (1.0 mm); numbering 1..8 along the row is assumed."
+pose_rationale = "A catalogue connector has no board frame: mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" }, { number = 4, name = "4", kind = "power" },
+  { number = 5, name = "5", kind = "power" }, { number = 6, name = "6", kind = "power" }, { number = 7, name = "7", kind = "power" }, { number = 8, name = "8", kind = "power" },
+]
+
+[[connectors]]
+id = "HEADER"
+name = "board-side header (8 circuits)"
+type = "jst-sh.8"
+gender = "male"
+pos = [0.03, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+src = "S1"
+fidelity = "derived"
+derivation = "As HOUSING."
+pose_rationale = "Placed 30 mm to the side of the housing so the halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" }, { number = 2, name = "2", kind = "power" }, { number = 3, name = "3", kind = "power" }, { number = 4, name = "4", kind = "power" },
+  { number = 5, name = "5", kind = "power" }, { number = 6, name = "6", kind = "power" }, { number = 7, name = "7", kind = "power" }, { number = 8, name = "8", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.jst-mfg.com/product/pdf/eng/eSH.pdf"
+title = "SH CONNECTOR 1.0 mm pitch Wire-to-Board connectors (JST datasheet)"
+accessed = "2026-10-07"
+quote = "Current rating: 1.0 A AC/DC（AWG #28） Voltage rating: 50 V AC/DC Temperature range: ‑25℃ to +85℃ ... Contact resistance: Initial value/ 20 mΩ max. After environmental tests/ 40 mΩ max. Insulation resistance: 100 MΩ min. ... Conductor size/ AWG #32 to AWG #28"

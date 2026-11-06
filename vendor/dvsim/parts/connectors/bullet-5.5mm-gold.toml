@@ -1,0 +1,107 @@
+id = "bullet-5.5mm-gold"
+name = "5.5 mm gold bullet connector pair (RC ESC-to-motor, male / female)"
+category = "connector"
+vendor = "generic (Vetco VUPN627 listing)"
+part_number = "VUPN627"
+url = "https://vetco.net/products/vupn627_5-5mm_rc_bullet_connector_-_5_pair"
+
+# Generic hobby part, no manufacturer datasheet. Vetco gives only a burst-type rating (120 A, short bursts). A continuous rating is not published for the
+# 5.5 mm size: i_max is ESTIMATED as the 4 mm figure (70 A, Oscar Liang rule, see bullet-4mm-gold), a lower bound because a 5.5 mm pin has a larger
+# contact area. No mass or contact resistance published.
+[params]
+current_burst       = { value = 120, unit = "A", src = "S1", fidelity = "datasheet" }
+diameter            = { value = 0.0055, unit = "m", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "10-12 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["M.1"]
+kind = "power"
+type = "bullet.5.5"
+gender = "male"
+i_max = { value = 70, unit = "A", fidelity = "estimated", rationale = "Vetco publishes only 'up to 120A (short bursts, depending on installation and wire gauge)'. 70 A is the continuous figure Oscar Liang gives for the smaller 4 mm bullet (the 6 mm size is 120 A in the same list); a 5.5 mm pin carries at least the 4 mm rating." }
+i_burst = { value = 120, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Pin 5.5 mm; recommended wire 10-12 AWG"
+
+[[ports]]
+name = "female"
+pins = ["F.1"]
+kind = "power"
+type = "bullet.5.5"
+gender = "female"
+i_max = { value = 70, unit = "A", fidelity = "estimated", rationale = "Same as the male half: 4 mm bullet rating (Oscar Liang, 70 A) as a lower bound; Vetco publishes only the 120 A short-burst figure." }
+i_burst = { value = 120, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 70, unit = "A", fidelity = "estimated", rationale = "Follows the pin rating (estimated, see male port)." }
+role = "passthrough"
+note = "Solder cup, 10-12 AWG"
+
+# Pin level (derived): a bullet connector is a single-contact plug and socket; one contact per half, one solder cup.
+[[connectors]]
+id = "M"
+name = "male bullet pin"
+type = "bullet.5.5"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "A bullet connector pair is one single-conductor contact per half (S1 lists a pin diameter, not a pin count); no other pins exist."
+pose_rationale = "Mating face at the origin (the part has no geometry)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[connectors]]
+id = "F"
+name = "female bullet socket"
+type = "bullet.5.5"
+gender = "female"
+pos = [0.02, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "As M: one contact per half."
+pose_rationale = "Second half placed 20 mm to the side so the two halves do not overlap."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cup"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.01]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 1
+src = "S1"
+fidelity = "derived"
+derivation = "One solder cup per contact."
+pose_rationale = "Cable side of the body (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://vetco.net/products/vupn627_5-5mm_rc_bullet_connector_-_5_pair"
+title = "Vetco - 5.5mm RC bullet connector, 5 pair (VUPN627)"
+accessed = "2026-10-07"
+quote = "Connector Type: Bullet (male/female pair) | Connector Size: 5.5mm diameter | Contact Material: Gold-plated brass for excellent conductivity | Recommended Wire Size: 10-12 AWG (accepts most common RC wires) | Rated Current: Up to 120A (short bursts, depending on installation and wire gauge)"

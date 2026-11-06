@@ -1,0 +1,41 @@
+id = "hqprop-5x4.3x3-v2s"
+name = "HQProp Freestyle 5x4.3x3 V2S 3-blade polycarbonate propeller"
+category = "prop"
+vendor = "HQProp"
+part_number = "5X4.3X3V2S"
+url = "https://pyrodrone.com/products/hq-freestyle-prop-5x4-3x3v2s-2cw-2ccw-poly-carbonate"
+
+# Part frame: origin at the hub centre on the blade mid-plane, z up (thrust direction). The bore faces down (-z) toward the motor.
+# The source lists "Shaft: 5mm" (the 5 mm motor shaft this hub is made for) -> read as the hub bore. Adaptor rings: not supplied.
+
+[params]
+diameter    = { value = 0.127, unit = "m", src = "S1", fidelity = "datasheet" }             # 5 in
+pitch       = { value = 0.10922, unit = "m", src = "S1", fidelity = "datasheet" }           # 4.3 in
+blade_count = { value = 3, unit = "1", src = "S1", fidelity = "datasheet" }
+mass        = { value = 0.0038, unit = "kg", src = "S1", fidelity = "datasheet" }
+material    = { value = "Poly Carbonate", unit = "text", src = "S1", fidelity = "datasheet" }
+hub_diameter = { value = 0.0128, unit = "m", src = "S1", fidelity = "datasheet" }
+hub_thickness = { value = 0.0065, unit = "m", src = "S1", fidelity = "datasheet" }
+bore_diameter = { value = 0.005, unit = "m", src = "S1", fidelity = "datasheet" }
+j_prop      = { value = 5.11e-6, unit = "kg*m^2", fidelity = "derived", derivation = "Slender uniform rod about its midpoint: J = m*L^2/12 = 0.0038*0.127^2/12 = 5.11e-6 kg*m^2. Upper bound (real blades keep mass nearer the hub)." }
+
+[geometry]
+shape = "cylinder"
+size = [0.0635, 0.00325]       # disc envelope: radius D/2, half of the 6.5 mm hub thickness
+
+[[ports]]
+name = "hub"
+kind = "mech"
+ref = [1.0, 0.0, 0.0]  # along a blade (+x), as holybro-1045-prop
+symmetry = 1  # a blade direction, but the prop spins freely about z (builder uses a hinge, not k), as holybro-1045-prop
+type = "bore.5"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+
+[[sources]]
+id = "S1"
+url = "https://pyrodrone.com/products/hq-freestyle-prop-5x4-3x3v2s-2cw-2ccw-poly-carbonate"
+title = "PyroDrone - HQ Freestyle prop 5x4.3x3V2S (2CW 2CCW) poly carbonate"
+accessed = "2026-10-07"
+quote = "Propeller Diameter: 5 inch|Pitch : 4.3|Blades : 3|Material : Poly Carbonate|Weight : 3.8g|Hub Diameter : 12.8mm|Hub Thickness:6.5mm|Shaft :5mm"

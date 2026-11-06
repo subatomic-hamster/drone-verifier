@@ -1,0 +1,219 @@
+id = "fold-esc-4in1"
+name = "4-in-1 ESC, 20 A class per channel, 2-4S, bidirectional DShot (generic AM32 / Bluejay board, 28 x 28 mm)"
+category = "esc"
+vendor = "generic (part not chosen: spec 10 Q8)"
+part_number = "4in1-20A (to be chosen)"
+url = "docs/fold/bom.md"
+
+# Spec 3.3 / 3.1: "4-in-1, 20 A class per channel, 2-4S, bidirectional DShot, current sensor output to the FC ADC" is a class, not a bought part: every number here is
+# [est] until a board is picked (bom.md lists candidates to look up). Frame: origin at the board centre on the underside, +z up.
+
+[params]
+mass = { value = 0.006, unit = "kg", fidelity = "estimated", rationale = "Spec 3.1 ESC line: a bare 20 x 20 to 28 x 28 mm 4-in-1 board is 5-8 g; weigh the chosen board." }
+price = { value = 28.0, unit = "USD", fidelity = "estimated", rationale = "Spec 3.5 estimate; no listing fetched." }
+current_continuous = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "'20 A class per channel' (spec 3.3)." }
+current_peak = { value = 25.0, unit = "A", fidelity = "estimated", rationale = "Class value for 10 s bursts; not a datasheet." }
+v_cells_min = { value = 2, unit = "cells", fidelity = "estimated", rationale = "Spec 3.3: 2-4S." }
+v_cells_max = { value = 4, unit = "cells", fidelity = "estimated", rationale = "Spec 3.3: 2-4S." }
+r_on_total = { value = 0.012, unit = "ohm", fidelity = "estimated", rationale = "Same assumption as the x500v2 ESC part: 2 conducting FETs of ~6 mOhm each; unpublished for a class." }
+switching_loss_fraction = { value = 0.0015, unit = "1", fidelity = "estimated", rationale = "As the x500v2 ESC part (a fraction of motor-side power)." }
+quiescent_current = { value = 0.02, unit = "A", fidelity = "estimated", rationale = "MCU, four gate drivers and the on-board regulator from the pack; 20 mA assumed." }
+
+[geometry]
+shape = "box"
+size = [0.014, 0.014, 0.0025]
+pos = [0.0, 0.0, 0.0025]
+
+[[ports]]
+name = "base"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+
+[[ports]]
+name = "power_in"
+kind = "power"
+type = "solder-pad"
+gender = "neutral"
+role = "sink"
+pins = ["PWR.VBAT", "PWR.G"]
+v_max = { value = 16.8, unit = "V", fidelity = "estimated", rationale = "4S x 4.2 V (spec 3.3: 2-4S)." }
+i_max = { value = 60.0, unit = "A", fidelity = "estimated", rationale = "Board pads rated for 4 channels at 15 A average; class value." }
+
+[[ports]]
+name = "m1"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+pins = ["M1.A", "M1.B", "M1.C"]
+i_max = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "As current_continuous." }
+
+[[ports]]
+name = "m2"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+pins = ["M2.A", "M2.B", "M2.C"]
+i_max = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "As current_continuous." }
+
+[[ports]]
+name = "m3"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+pins = ["M3.A", "M3.B", "M3.C"]
+i_max = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "As current_continuous." }
+
+[[ports]]
+name = "m4"
+kind = "power"
+type = "motor-3phase"
+gender = "neutral"
+role = "source"
+pins = ["M4.A", "M4.B", "M4.C"]
+i_max = { value = 20.0, unit = "A", fidelity = "estimated", rationale = "As current_continuous." }
+
+[[ports]]
+name = "sig"
+kind = "signal"
+type = "dshot"
+gender = "neutral"
+pins = ["SIG.M1", "SIG.M2", "SIG.M3", "SIG.M4", "SIG.G"]
+
+[[ports]]
+name = "sense"
+kind = "signal"
+type = "analog"
+gender = "neutral"
+pins = ["SIG.VBAT", "SIG.CUR", "SIG.G"]
+
+[[connectors]]
+id = "PWR"
+name = "battery pads VBAT, GND (BEC inputs share them)"
+type = "solder-pad"
+port_type = "solder-pad"
+gender = "neutral"
+joinable = true
+pos = [-0.014, 0.0, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.004
+fidelity = "estimated"
+rationale = "Pad pitch and side are layout choices of the (unchosen) board."
+pins = [
+  { number = "VBAT", name = "VBAT", kind = "power", dir = "in", v = 12.6, v_max = 16.8 },
+  { number = "G", name = "GND", kind = "ground" },
+]
+
+[[connectors]]
+id = "M1"
+name = "motor 1 pads"
+type = "solder-pad"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.009, -0.014, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+fidelity = "estimated"
+rationale = "Layout choice. On the -y edge (was the +x edge): the BEC now sits on rail 1 behind the ESC, which left no room for phase 1 to turn back toward pod 1."
+pins = [
+  { number = "A", name = "A", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "B", name = "B", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "C", name = "C", kind = "power", dir = "out", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "M2"
+name = "motor 2 pads"
+type = "solder-pad"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.014, 0.01, 0.0]
+axis = [1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+fidelity = "estimated"
+rationale = "Layout choice."
+pins = [
+  { number = "A", name = "A", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "B", name = "B", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "C", name = "C", kind = "power", dir = "out", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "M3"
+name = "motor 3 pads"
+type = "solder-pad"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.0, 0.014, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+fidelity = "estimated"
+rationale = "Layout choice."
+pins = [
+  { number = "A", name = "A", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "B", name = "B", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "C", name = "C", kind = "power", dir = "out", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "M4"
+name = "motor 4 pads"
+type = "solder-pad"
+port_type = "motor-3phase"
+gender = "neutral"
+pos = [0.0, -0.014, 0.0]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+fidelity = "estimated"
+rationale = "Layout choice."
+pins = [
+  { number = "A", name = "A", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "B", name = "B", kind = "power", dir = "out", i_max = 20.0 },
+  { number = "C", name = "C", kind = "power", dir = "out", i_max = 20.0 },
+]
+
+[[connectors]]
+id = "SIG"
+name = "signal plug (8p): M1-M4, CUR, VBAT, GND"
+type = "jst-sh-8p"
+port_type = "dshot"
+gender = "neutral"
+pos = [-0.014, -0.01, 0.0]
+axis = [-1.0, 0.0, 0.0]
+ref = [0.0, 1.0, 0.0]
+rows = 1
+cols = 8
+pitch = 0.001
+fidelity = "estimated"
+rationale = "Layout choice; the usual 8-pin 4-in-1 plug."
+pins = [
+  { number = "M1", name = "M1", kind = "signal", dir = "in", v = 3.3 },
+  { number = "M2", name = "M2", kind = "signal", dir = "in", v = 3.3 },
+  { number = "M3", name = "M3", kind = "signal", dir = "in", v = 3.3 },
+  { number = "M4", name = "M4", kind = "signal", dir = "in", v = 3.3 },
+  { number = "CUR", name = "current sense", kind = "signal", dir = "out", v = 3.3 },
+  { number = "VBAT", name = "pack voltage", kind = "signal", dir = "out", v = 3.3 },
+  { number = "G", name = "GND", kind = "ground" },
+]

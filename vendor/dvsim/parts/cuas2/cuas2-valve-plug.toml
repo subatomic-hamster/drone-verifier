@@ -1,0 +1,32 @@
+id = "cuas2-valve-plug"
+name = "cuas2 valve_plug (3D printed PETG, M4 single-pocket plug valve, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas2 (own design)"
+part_number = "valve_plug"
+url = "cad/cuas2/modules/feeder.py"
+
+# Mesh in the head frame H, shown at the BORE pose (pocket aligned with the barrel bore). The gate servo turns it +-60 deg about the plug axis (the y-parallel axis at L x = XV = -47.8 mm, z = 0) to LOAD;
+# the gate hinge is left to the integration step (the SG92R is not modelled as a joint here).
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py INFILL." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py LAYER." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py NOZZLE." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/cuas2/params.py WALLS." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas2/valve_plug.stl"
+material = "petg"
+bbox_min = [-0.0538, -0.015, -0.041]
+bbox_max = [-0.0258, 0.024, -0.013]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1

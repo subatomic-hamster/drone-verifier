@@ -1,0 +1,39 @@
+id = "ruthex-insert-m2x4"
+name = "ruthex M2 heat-set threaded insert, 4.0 mm long, brass"
+category = "fastener.insert"
+vendor = "ruthex"
+part_number = "RX-M2x4"
+url = "https://www.3djake.ch/fr-CH/ruthex/inserts-filetes-m2-m3-m4-m5"
+
+# Frame: origin at the open (screw-side) face on the axis, +z out of the face; the insert body extends to z = -L.
+[params]
+length          = { value = 4.0e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+outer_diameter  = { value = 3.6e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+centre_diameter = { value = 3.1e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+hole_diameter   = { value = 3.2e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+min_wall        = { value = 1.3e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+
+[params.mass]
+value = 0.00028
+unit = "kg"
+fidelity = "estimated"
+rationale = "No mass published. Brass tube of the stated outer diameter (3.6 mm) and length, bore = M2 minor diameter 1.6 mm (nominal - 1.082 x 0.4 mm pitch), density 8500 kg/m3 (typical brass, assumed): pi/4*(3.6^2-1.6^2)*4.0 = 32.7 mm3 -> 0.28 g, knurl ignored; about +-30 %."
+
+[[ports]]
+name = "thread"
+kind = "mech"
+type = "thread.m2"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.004
+note = "Internal M2 thread over the full 4.0 mm length (assumed through-threaded). Melt it into a 3.2 mm hole (S1 D3)."
+
+[[sources]]
+id = "S1"
+url = "https://www.3djake.ch/fr-CH/ruthex/inserts-filetes-m2-m3-m4-m5"
+title = "ruthex Inserts Filetes M2/M3/M4/M5 (3DJake product page, technical table; decimal commas in the page)"
+accessed = "2026-10-07"
+quote = "⌀ D1| ⌀ D2| ⌀ D3| L| l (min.)| M2| 3,6| 3,1| 3,2| 4,0| 1,3| M3| 4,6| 3,9| 4,0| 5,7| 1,6| M4| 6,3| 5,5| 5,6| 8,1| 2,1| M5| 7,1| 6,3| 6,4| 9,5| 2,6"

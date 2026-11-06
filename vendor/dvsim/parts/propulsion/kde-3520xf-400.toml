@@ -1,0 +1,92 @@
+id = "kde-3520xf-400"
+name = "KDE Direct KDE3520XF-400 brushless motor"
+category = "motor.bldc"
+vendor = "KDE Direct"
+part_number = "KDE3520XF-400"
+url = "https://www.kdedirect.com/products/kde3520xf-400"
+
+# Part frame: origin at the centre of the mounting face, +z along the shaft towards the prop.
+# Ports as a top-level inline-table array (TOML requires it before the first [table] header).
+ports = [
+  { name = "base_25_m4", kind = "mech", type = "bolt-circle.25.4.m4", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 4, note = "Estimated: S1 lists only 'M4/3 x ф 25 mm'; hole count 4 assumed (same circle on T-Motor drawings)." },
+  { name = "base_32_m3", kind = "mech", type = "bolt-circle.32.3.m3", gender = "female", pos = [0.0, 0.0, 0.0], axis = [0.0, 0.0, -1.0], ref = [1.0, 0.0, 0.0], symmetry = 3, note = "Estimated: S1 lists only 'M3/2.5 x ф 32 mm'; hole count 3 assumed (same circle on T-Motor drawings)." },
+  { name = "shaft", kind = "mech", type = "shaft.4", gender = "male", pos = [0.0, 0.0, 0.0505], axis = [0.0, 0.0, 1.0], ref = [1.0, 0.0, 0.0], symmetry = 360, note = "Estimated: tip height = Motor Length 45 mm + Shaft Length 5.5 mm (S1); assumes the listed Motor Length excludes the protruding shaft." },
+  { name = "phase", pins = ["PH.1", "PH.2", "PH.3"], kind = "power", type = "motor-3phase", gender = "neutral", role = "sink", v_max = { value = 34.8, unit = "V", fidelity = "derived", derivation = "8S x 4.35 V/cell (LiHV) = 34.8 V from the Voltage Range '14.8 V (4S LiPo) - 34.8 V (8S LiHV)' (S1)." }, i_max = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }, note = "i_max is the 180 s continuous current ('Maximum Continuous Current'); the motor needs 5 mph+ airflow for it (vendor footnote)" },
+]
+
+[params]
+mass = { value = 0.245, unit = "kg", src = "S1", fidelity = "datasheet" }  # with wires/bullets
+mass_no_cable = { value = 0.19, unit = "kg", src = "S1", fidelity = "datasheet" }  # motor only
+kv = { value = 400, unit = "rpm/V", src = "S1", fidelity = "datasheet" }
+kt = { value = 0.0239, unit = "N*m/A", src = "S1", fidelity = "datasheet" }  # Kt (Motor Torque Constant)
+km = { value = 0.0855, unit = "N*m/sqrt(W)", src = "S1", fidelity = "datasheet" }  # Km (Motor Constant)
+r_winding = { value = 0.078, unit = "ohm", src = "S1", fidelity = "datasheet" }  # Rm phase-to-phase, delta wound
+i0 = { value = 0.3, unit = "A", src = "S1", fidelity = "datasheet" }  # Io (@10V)
+i0_voltage = { value = 10.0, unit = "V", src = "S1", fidelity = "datasheet" }
+i_peak = { value = 45.0, unit = "A", src = "S1", fidelity = "datasheet" }  # Maximum Continuous Current (180 s)
+p_max = { value = 1335.0, unit = "W", src = "S1", fidelity = "datasheet" }  # Maximum Continuous Power (180 s)
+cells_min = { value = 4, unit = "S", src = "S1", fidelity = "datasheet" }  # 14.8 V (4S LiPo) - 34.8 V (8S LiHV)
+cells_max = { value = 8, unit = "S", src = "S1", fidelity = "datasheet" }
+configuration = { value = "12 (12S14P) / 14 (12S14P)", unit = "text", src = "S1", fidelity = "datasheet" }  # stator poles / magnet poles
+diameter = { value = 0.0422, unit = "m", src = "S1", fidelity = "datasheet" }
+length_body = { value = 0.045, unit = "m", src = "S1", fidelity = "datasheet" }
+shaft_diameter = { value = 0.004, unit = "m", src = "S1", fidelity = "datasheet" }
+j_rotor_bell = { value = 2.4e-05, unit = "kg*m^2", src = "S1", fidelity = "datasheet" }  # Motor Rotor Inertia, kg*cm^2 x 1e-4
+
+[tables.thrust_test]
+# VALIDATION TARGET. KDE performance data sheet (xlsx), prop '15.5" x 5.3 DUAL-EDN (KDE)', 33.6V supply. All printed rows; thrust 'Thrust Output' columns in g and N as printed.
+columns = ["throttle_pct", "voltage_V", "current_A", "power_W", "rpm", "thrust_N", "thrust_g", "torque_Nm", "efficiency_g_per_W"]
+rows = [
+  [25.0, 33.6, 2.2, 74.0, 3550, 6.77, 690, 0.14, 9.38],
+  [37.5, 33.6, 5.0, 168.0, 4800, 12.36, 1260, 0.24, 7.5],
+  [50.0, 33.6, 9.6, 322.0, 5940, 19.33, 1970, 0.36, 6.12],
+  [62.5, 33.6, 15.3, 514.0, 6990, 27.17, 2770, 0.52, 5.39],
+  [75.0, 33.6, 22.8, 766.0, 7820, 35.11, 3579, 0.67, 4.67],
+  [87.5, 33.6, 30.7, 1032.0, 8630, 42.38, 4320, 0.81, 4.19],
+  [100.0, 33.6, 40.5, 1360.0, 9200, 48.15, 4908, 0.92, 3.61],
+]
+prop_label = "KDE 15.5 in x 5.3 DUAL-EDN (KDE)"
+src = "S2"
+fidelity = "datasheet"
+
+[geometry]
+shape = "cylinder"
+size = [0.0211, 0.02525]
+pos = [0.0, 0.0, 0.02525]
+
+# Pin level: three phase leads. S1 mentions only 'wires/bullets' in the listing mass: no gauge, length, connector or phase labels.
+[[connectors]]
+id = "PH"
+name = "phase leads (3)"
+type = "wire-lead"
+port_type = "motor-3phase"
+gender = "neutral"
+joinable = true
+pos = [0.0, -0.0211, 0.004]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 3
+pitch = 0.003
+src = "S1"
+fidelity = "estimated"
+rationale = "S1 only says the listed mass includes 'wires/bullets': no gauge, length, connector or phase labels. Three phase leads drawn side by side at the base, 3 mm apart, phases A B C by convention."
+pins = [
+  { number = 1, name = "A", kind = "power", dir = "in", i_max = 45.0 },
+  { number = 2, name = "B", kind = "power", dir = "in", i_max = 45.0 },
+  { number = 3, name = "C", kind = "power", dir = "in", i_max = 45.0 },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.kdedirect.com/products/kde3520xf-400"
+title = "KDE Direct - KDE3520XF-400 product page (Full Specifications)"
+accessed = "2026-10-07"
+quote = "Full Specifications : Kv (Motor Velocity Constant)| 400 RPM/V|Kt (Motor Torque Constant)| 0.0239 Nm/A|Km (Motor Constant)| 0.0855 Nm/ √(W)|Maximum Continuous Current*| 45 A (180 s)|Maximum Continuous Power*| 1335 W (180 s)|Voltage Range| 14.8 V (4S LiPo) - 34.8 V (8S LiHV)|Io (@10V)| 0.3 A|Rm (Phase to Phase Resistance Delta Wound)| 0.078 Ω|Stator Poles| 12 (12S14P)|Magnetic Poles| 14 (12S14P)|Mount Pattern| M4/3 x ф 25 mm, M3/2.5 x ф 32 mm|Shaft Diameter| ф4 mm ( ф 5 mm Internal)|Shaft Length| 5.5 mm|Motor Diameter| ф42.2 mm|Motor Rotor Inertia| 0.240 kg*cm^2|Motor Length| 45 mm|Motor Weight| 190 g (245 g with Wires/Bullets)"
+
+[[sources]]
+id = "S2"
+url = "https://cdn.shopify.com/s/files/1/0496/8205/files/KDE3520-400kV_rev2.xlsx"
+title = "KDE Direct KDE3520XF-400 performance testing data sheet (XLSX linked from the product page)"
+accessed = "2026-10-07"
+quote = "KDE3520XF-400|33.6V    [8S]|15.5\" x 5.3 DUAL-EDN (KDE)|0.25|2.20|74.0|690|6.77|3550|0.140|9.38 (values rounded for display; columns: THROTTLE RANGE, AMPERAGE [A], POWER INPUT [W], THRUST OUTPUT [g], [N], RPM [rev/min], TORQUE [Nm], Efficiency [g/W]; first printed row)"

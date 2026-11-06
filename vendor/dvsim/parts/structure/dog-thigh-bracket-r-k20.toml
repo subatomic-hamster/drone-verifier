@@ -1,0 +1,60 @@
+id = "dog-thigh-bracket-r-k20"
+name = "Dog thigh bracket, right, knee linkage ratio 2.0 (3D printed PLA, L = 220 mm): mirror of dog-thigh-bracket-l-k20"
+category = "frame.printed"
+vendor = "dvsim dog (own design)"
+part_number = "thigh_bracket (right, ratio 2.0)"
+url = "cad/dog/parts.py"
+
+# Mirror image (XZ plane) of dog-thigh-bracket-l-k20, L_THIGH = 220 mm; same solid as dog-thigh-bracket-r. -y outboard (right).
+
+[mirror]
+opposite = "dog-thigh-bracket-l-k20"
+
+[params]
+infill_fraction = { value = 0.3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+wall_count      = { value = 3, unit = "1", fidelity = "estimated", rationale = "Print setting: cad/dog/params.py." }
+length          = { value = 0.22, unit = "m", fidelity = "estimated", rationale = "Design value L_THIGH (cad/dog/params.py)." }
+knee_range      = { value = [0.0, 1.02], unit = "rad", fidelity = "derived", derivation = "As dog-thigh-bracket-l-k20 (same linkage, mirrored): NEGATED and swapped, because a mirrored hinge turns the other way for the same mirror-image motion (report mirror_signs -1), so the right leg's flexion is positive about its reflected axis." }
+mass            = { value = 0.0381, unit = "kg", fidelity = "derived", derivation = "Same mesh as dog-thigh-bracket-r: volume 45.1 cm3 x PLA 1.24 g/cm3, shell + 30 % infill model, by cad/dog/build.py; identical to the left twin." }
+price           = { value = 0.76, unit = "USD", fidelity = "estimated", rationale = "Filament only: 0.0381 kg x 20 USD/kg (PLA spool); print time, failed prints and inserts not priced." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/dog/dog-thigh-bracket-r.stl"
+material = "pla"
+bbox_min = [-0.02998, -0.012, -0.23999]
+bbox_max = [0.02998, 0.0, 0.02998]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "flange.steadywin-gim8108-output"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Hip pitch axis, inboard face of the plate on the hip actuator output."
+
+[[ports]]
+name = "knee"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, -0.013, -0.22]
+axis = [0.0, -1.0, 0.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "Knee hinge axis; the shank beam is centred on y = -13 mm."
+
+[[ports]]
+name = "rod"
+kind = "mech"
+type = "frame.origin"
+pos = [-0.002248, -0.025, -0.084031]
+axis = [0.1454246, 0.0, 0.9893693]
+ref = [0.9893693, 0.0, -0.1454246]
+symmetry = 1
+note = "Centre of the knee push rod at the rest pose."

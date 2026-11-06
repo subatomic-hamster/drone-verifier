@@ -1,0 +1,129 @@
+id = "amass-as150-fm"
+name = "Amass AS150 anti-spark connector pair (AS150-F / AS150-M)"
+category = "connector"
+vendor = "Amass (Changzhou Amass Electronics)"
+part_number = "AS150-F/M"
+url = "https://www.china-amass.net/as150-f-product/"
+
+# The AS150 has a built-in anti-spark pin. Amass page: 65 A on 8 AWG at <= 85 K rise; Holybro's table (S2) says 75 A continuous (4 h, < 60 K) /
+# 150 A burst (1 min) for AS150 on 8 AWG: i_max uses the lower Amass value, the Holybro figures are kept as params. No mass published.
+[params]
+current_rated       = { value = 65, unit = "A", src = "S1", fidelity = "datasheet" }
+voltage_rated       = { value = 150, unit = "V", src = "S1", fidelity = "datasheet" }
+contact_resistance_max = { value = 0.0008, unit = "ohm", src = "S1", fidelity = "datasheet" }
+insulation_resistance_min = { value = 2e9, unit = "ohm", src = "S1", fidelity = "datasheet" }
+mating_cycles       = { value = 100, unit = "1", src = "S1", fidelity = "datasheet" }
+temp_min            = { value = 253.15, unit = "K", src = "S1", fidelity = "datasheet" }
+temp_max            = { value = 393.15, unit = "K", src = "S1", fidelity = "datasheet" }
+recommended_wire    = { value = "8 AWG", unit = "text", src = "S1", fidelity = "datasheet" }
+current_cont_holybro = { value = 75, unit = "A", src = "S2", fidelity = "datasheet" }
+current_burst_holybro = { value = 150, unit = "A", src = "S2", fidelity = "datasheet" }
+
+[[ports]]
+name = "male"
+pins = ["M.1", "M.2"]
+kind = "power"
+type = "as150"
+gender = "male"
+v_max = { value = 150, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 65, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 150, unit = "A", src = "S2", fidelity = "datasheet" }
+role = "passthrough"
+note = "AS150-M half; 65 A on 8 AWG (85 K rise). 150 A burst (1 min) from the Holybro table."
+
+[[ports]]
+name = "female"
+pins = ["F.1", "F.2"]
+kind = "power"
+type = "as150"
+gender = "female"
+v_max = { value = 150, unit = "V", src = "S1", fidelity = "datasheet" }
+i_max = { value = 65, unit = "A", src = "S1", fidelity = "datasheet" }
+i_burst = { value = 150, unit = "A", src = "S2", fidelity = "datasheet" }
+role = "passthrough"
+note = "AS150-F half; same ratings."
+
+[[ports]]
+name = "wire"
+pins = ["WIRE.1", "WIRE.2"]
+kind = "power"
+type = "wire-lead"
+gender = "neutral"
+i_max = { value = 65, unit = "A", src = "S1", fidelity = "datasheet" }
+role = "passthrough"
+note = "Solder cup, 8 AWG"
+
+# Pin level (estimated): AS150 is a 2-pole connector pair; contacts numbered 1..2 on each half; the solder cups WIRE.n serve contact n of whichever half is used.
+[[connectors]]
+id = "M"
+name = "AS150-M mating contacts (2-pole)"
+type = "as150"
+gender = "male"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0125
+src = "S1"
+fidelity = "estimated"
+rationale = "Two power contacts per half is the AS150 design; S1 gives no contact numbering, polarity marking or pole spacing, so contacts are numbered 1..2 and the spacing is a typical value for the family."
+pose_rationale = "Connector body geometry is not in S1: contacts on the mating face at the origin."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "F"
+name = "AS150-F mating contacts (2-pole)"
+type = "as150"
+gender = "female"
+pos = [0.05, 0.0, 0.0]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0125
+src = "S1"
+fidelity = "estimated"
+rationale = "As M."
+pose_rationale = "Second half placed 50 mm to the side so the two halves do not overlap (the pair is a single catalogue part with no assembled geometry)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[connectors]]
+id = "WIRE"
+name = "solder cups (2)"
+type = "wire-lead"
+gender = "neutral"
+pos = [0.0, 0.0, -0.02]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+rows = 1
+cols = 2
+pitch = 0.0125
+src = "S1"
+fidelity = "estimated"
+rationale = "One solder cup per contact; cup n joins contact n. Spacing follows the mating contacts (not published)."
+pose_rationale = "Cable side of the body at z = -20 mm (positional estimate)."
+pins = [
+  { number = 1, name = "1", kind = "power" },
+  { number = 2, name = "2", kind = "power" },
+]
+
+[[sources]]
+id = "S1"
+url = "https://www.china-amass.net/as150-f-product/"
+title = "AMASS AS150-F/M product page (Amass), electrical SPEC"
+accessed = "2026-10-07"
+quote = "Electrical specifications | Current rating | 65A（8AWG△≤85K） | Rated voltage | 150V DC | Insulation Resistance | ≥2000MΩ | Contact Resistance | ≤0.8mΩ | Mechanical characteristics | Plug Life. | 100 times | Environmental resistance | Work Temperature | -20℃ to 120℃"
+
+[[sources]]
+id = "S2"
+url = "https://docs.holybro.com/power-module-and-pdb/power-module/connector-and-wire-rating.md"
+title = "Connector & Wire Rating (Holybro docs), genuine AMASS connector rating"
+accessed = "2026-10-07"
+quote = "AS150 8AWG 75A 150A (columns: plug, wire size, cont. current 4 hours temperature rise < 60 C, burst current 1 minute)"

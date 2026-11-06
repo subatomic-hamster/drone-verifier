@@ -1,0 +1,72 @@
+id = "koch-base"
+name = "Koch v1.1 follower base (3D printed, base_link)"
+category = "frame.printed"
+vendor = "Jess Moss / Hugging Face (Koch v1.1, Apache-2.0); original design Alexander Koch"
+part_number = "Follower_Base.STL (sim mesh base_link.STL)"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/hardware/follower/STL/Follower_Base.STL"
+
+[params]
+volume_solid = { value = 2.4888e-5, unit = "m^3", fidelity = "derived", derivation = "Signed-volume (divergence theorem) integral over the 836 triangles of meshes/koch/base_link.STL (binary STL, metres) = 24.888 cm^3. Solid; excludes infill. The upstream hardware/follower/STL/Follower_Base.STL (mm) integrates to 24888.1 mm^3, the same solid." }
+infill_fraction = { value = 0.30, unit = "1", src = "S1", fidelity = "datasheet" }
+layer_height    = { value = 0.0002, unit = "m", src = "S1", fidelity = "datasheet" }
+nozzle_diameter = { value = 0.0004, unit = "m", src = "S1", fidelity = "datasheet" }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "The Koch v1.1 README gives material, layer height, maximum nozzle diameter and ~30 % infill (its author used 37 %), no perimeter count; 2 perimeters is a common slicer default (not verified against a specific slicer profile)." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/koch/base_link.STL"
+material = "pla"
+urdf_link = "base_link"
+origin_xyz = [0.0, 0.0, 0.0]
+origin_rpy = [0.0, 0.0, 0.0]
+bbox_min = [0.0, -0.0675, 0.0]
+bbox_max = [0.08, 0.091, 0.009]
+# mesh units metres; the mesh is already in the URDF link frame (visual origin identity). The plate lies on z = 0 (the table), 9 mm thick, 80 x 158.5 mm.
+
+# Ports derived by tools/koch_ports.py (closure check: python tools/koch_ports.py --check). Port frame: z = axis (outward), x = ref, y = z x x; part frame = mesh frame = URDF link frame.
+# servo_seat: seat of the shoulder_pan servo (Dynamixel XL430-W250-T) in the base; mate with robotis-xl430-w250-t `base`.
+[[ports]]
+name = "servo_seat"
+kind = "mech"
+type = "bolt-pattern.dynamixel-xl430-base"
+gender = "neutral"
+pos = [0.023999997386, 0.0, 0.003000000259]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 2
+thickness = 0.003
+fidelity = "derived"
+derivation = "tools/koch_ports.py from meshes/koch/follower.urdf (s1lent4gnt/koch-v1-1 cc1a4eb): F = S_joint_1 @ P_base @ Rx(pi) (printed part frame = parent link frame); the holder is the printed part of the link whose *_motor mesh contains the servo"
+thickness_rationale = "No published or measurable value (exported mesh, no screw-boss data); 3 mm placeholder (2 mm printed wall plus boss margin), the value used by the SO-101 parts. Estimated."
+servo_joint = "shoulder_pan"
+
+# table_seat: underside of the plate, where the table C-clamp (BOM: 'Table Clamp', not modelled) grips it.
+[[ports]]
+name = "table_seat"
+kind = "mech"
+type = "flat-mount"
+gender = "neutral"
+pos = [0.039999996286, 0.011749997735, 1.602e-09]
+axis = [0.0, 0.0, -1.0]
+ref = [0.0, 1.0, 0.0]
+symmetry = 1
+thickness = 0.009
+fidelity = "derived"
+derivation = "tools/koch_ports.py from meshes/koch/follower.urdf (s1lent4gnt/koch-v1-1 cc1a4eb): centre of the bounding box of the base mesh vertices on the lowest plane (z = 0.000000 m, the underside of the plate), axis -z (out of the underside), ref along +y (the long side of the plate, 158.5 mm). Placement of the clamp along the plate is not specified upstream"
+thickness_rationale = "Base plate thickness: the base mesh is 9 mm tall (bbox z 0 .. 0.009 m); the table clamp grips this plate. Derived from the mesh bounding box, not a published value."
+
+[[sources]]
+id = "S1"
+url = "https://github.com/jess-moss/koch-v1-1/blob/1a553e1fa7d5404b51bbd83b99b0f7eba54888e0/README.md"
+title = "Koch v1.1 README, Printing the Parts, Step 1 (commit 1a553e1)"
+accessed = "2026-10-07"
+quote = "Precision: 0.2mm minimum height layer || Material: PLA+, ABS, PETG or other reasonably strong plastics. || Nozzle Diameter: 0.4mm maximum nozzle diameter || Infill Density: ~30%"
+license = "Apache-2.0"
+
+[[sources]]
+id = "S2"
+url = "https://github.com/s1lent4gnt/koch-v1-1/blob/cc1a4eb9b27978b6bc3bb34f12fa5a7d229f1fde/simulation/follower.urdf"
+title = "s1lent4gnt/koch-v1-1 simulation/follower.urdf (commit cc1a4eb, a fork of jess-moss/koch-v1-1), link base_link and joint_1"
+accessed = "2026-10-07"
+quote = "<link name=\"base_link\"> || <mesh filename=\"package://follower/meshes/base_link.STL\" /> || <joint name=\"joint_1\" type=\"revolute\"> <origin xyz=\"0.012 0 0.0409\" rpy=\"0 0 0\" /> <parent link=\"base_link\" /> <child link=\"link_1\" />"
+license = "Apache-2.0"

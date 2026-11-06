@@ -1,0 +1,32 @@
+id = "cuas-lite-tilt-hub"
+name = "cuas-lite tilt_hub (3D printed PETG, group tilt)"
+category = "frame.printed"
+vendor = "dvsim cuas-lite (own design)"
+part_number = "tilt_hub"
+url = "cad/cuas-lite/parts.py"
+
+# Printed from cad/cuas-lite/parts.py (4.3 g, supports: none). The mesh is the CAD's dvsim mesh (m), already in its group frame (head frame H for the tilt group): the part frame IS that frame.
+
+[params]
+infill_fraction = { value = 0.2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+layer_height    = { value = 0.0002, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+nozzle_diameter = { value = 0.0004, unit = "m", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+wall_count      = { value = 2, unit = "1", fidelity = "estimated", rationale = "Print setting: spec 6.4, cad/cuas-lite/params.py." }
+
+[geometry]
+shape = "mesh"
+mesh = "meshes/cuas-lite/tilt_hub.stl"
+material = "petg"
+bbox_min = [-0.017, 0.0685, -0.017]
+bbox_max = [0.017, 0.0765, 0.017]
+
+[[ports]]
+name = "origin"
+kind = "mech"
+type = "frame.origin"
+gender = "neutral"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 1
+note = "The part frame as a port: the chassis's seat port mates here."

@@ -1,0 +1,50 @@
+id = "ettinger-05-14-203-m4-standoff"
+name = "Ettinger 05.14.203 hex standoff M4 male-female, brass, 20 mm body / 28 mm overall"
+category = "structure.standoff"
+vendor = "Ettinger"
+part_number = "05.14.203"
+url = "https://www.element14.cn/en-CN/ettinger/05-14-203/spacer-m4-20mm-length/dp/1467030"
+
+[params]
+thread_diameter = { value = 4e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+body_length     = { value = 20e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+overall_length  = { value = 28e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+across_flats    = { value = 7e-3, unit = "m", src = "S1", fidelity = "datasheet" }
+mass            = { value = 6.713e-3, unit = "kg", src = "S1", fidelity = "datasheet" }
+
+[params.stud_length]
+value = 8e-3
+unit = "m"
+fidelity = "derived"
+derivation = "Overall length 28 mm minus body length 20 mm (both from S1)."
+
+[[ports]]
+name = "thread_female"
+kind = "mech"
+type = "thread.m4"
+gender = "female"
+pos = [0.0, 0.0, 0.0]
+axis = [0.0, 0.0, -1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.020
+note = "Threaded bore in the hex body, opening on the bottom face; depth assumed equal to the body length"
+
+[[ports]]
+name = "thread_male"
+kind = "mech"
+type = "thread.m4"
+gender = "male"
+pos = [0.0, 0.0, 0.028]
+axis = [0.0, 0.0, 1.0]
+ref = [1.0, 0.0, 0.0]
+symmetry = 360
+length = 0.008
+note = "Stud on top, length = overall minus body length"
+
+[[sources]]
+id = "S1"
+url = "https://www.element14.cn/en-CN/ettinger/05-14-203/spacer-m4-20mm-length/dp/1467030"
+title = "Ettinger 05.14.203 Standoff, Brass, M4, Hex Male-Female, 20 mm, 28 mm (element14 China product page)"
+accessed = "2026-10-07"
+quote = "Standoff Material Brass; Standoff Type Hex Male-Female; Thread Size - Metric M4; Body Length 20mm; Overall Length 28mm; External Width 7mm; Product Range 05.14 Series; Weight (kg): .006713"
