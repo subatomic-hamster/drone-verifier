@@ -1,5 +1,6 @@
-"""Demo driver.  demo.py serve [--port 8790] | single MODEL | versus LOW HIGH | replay
-serve: the Start panel at /web/index.html on 127.0.0.1 (POST /api/start, POST /api/stop, GET /api/status), reports and leaderboard beside it.
+"""Demo driver.  demo.py serve [--port 8790] | single MODEL | versus LOW HIGH | replay | stage A B
+stage: two GUI sessions, side by side, each agent started by hand; buttons on 127.0.0.1:PORT, a read-only view for the room on the LAN at PORT+1 through sslip.io.
+serve:the Start panel at /web/index.html on 127.0.0.1 (POST /api/start, POST /api/stop, GET /api/status), reports and leaderboard beside it.
 single/versus: GUI sessions on hfbox, bridge, agents started live, URL printed.
 replay: serves web/ plus results/ (saved events.jsonl + leaderboard.json) with no hfbox link at all.
 URL convention (GUI worker must honour, or change URL_* below): live ?live=8801[,8802]  replay ?replay=1
@@ -73,6 +74,10 @@ class Static(http.server.SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-cache")  # a stale app.js on stage
+        super().end_headers()
+
     def _shown(self):
         # as the file server will read it: /web/../harness is not under /web/
         p = posixpath.normpath(urllib.parse.unquote(self.path.split("?")[0]))
@@ -85,9 +90,9 @@ class Static(http.server.SimpleHTTPRequestHandler):
         return super().do_HEAD() if self._shown() else self.send_error(404)
 
 
-def serve(handler=Static, port=0):
-    """Static server on 127.0.0.1 only; returns the port."""
-    srv = http.server.ThreadingHTTPServer(("127.0.0.1", port), handler)
+def serve(handler=Static, port=0, host="127.0.0.1"):
+    """Static server, on 127.0.0.1 unless told otherwise; returns the port."""
+    srv = http.server.ThreadingHTTPServer((host, port), handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return srv.server_address[1]
 
@@ -153,9 +158,7 @@ def check(port):
             die(f"{path} on port {port} does not answer ({e})")
 
 
-def live(models, level="whatif"):
-    prompt = render_prompt(level)
-    ports = free_ports(len(models))
+def open_sessions(models, ports, level):
     print("PORTS", ",".join(map(str, ports)), flush=True)
     # not the bench's session letters: its run dirs and scores stay its own
     for m, p, s in zip(models, ports, "LR"):
@@ -169,6 +172,12 @@ def live(models, level="whatif"):
         )
         if r.returncode:
             die(f"could not start session on hfbox: {r.stderr[-200:]}")
+
+
+def live(models, level="whatif"):
+    prompt = render_prompt(level)
+    ports = free_ports(len(models))
+    open_sessions(models, ports, level)
     tun = bridge(ports)
     try:
         time.sleep(4)
@@ -630,6 +639,160 @@ def panel_handler(panel):
     return H
 
 
+# ---- the stage: two sessions up, each agent started by hand, a read-only view for the room -------------------------------
+SESSION_ROUTES = re.compile(r"/s/(\d+)/(state|events|events\.jsonl|stream)")
+VIEW_FILES = ("leaderboard.json", "events.jsonl", "results.json", "stream.mp4", "stream.json", "refly.jsonl", "stage-prompt.txt", "planted.json")  # fmt: skip
+
+
+class Slot:
+    def __init__(self, model, port, level, prompt_file):
+        self.model, self.port, self.level, self.prompt_file = model, port, level, prompt_file  # fmt: skip
+        self.p = None
+
+    def start(self):
+        out = RESULTS / f"demo-{runname(self.model, self.level)}-{self.port}"
+        out.mkdir(parents=True, exist_ok=True)
+        runner = str(Path(__file__).parent / "run_agent.py")
+        argv = [sys.executable, runner, "--model", self.model, "--port", str(self.port), "--run-dir", str(out), "--prompt-file", str(self.prompt_file)]  # fmt: skip
+        with open(out / "stage.log", "w") as f:
+            self.p = subprocess.Popen(argv, cwd=ROOT, stdin=subprocess.DEVNULL, stdout=f, stderr=subprocess.STDOUT, start_new_session=True)  # fmt: skip
+
+    def stop(self):
+        if self.p and self.p.poll() is None:
+            signal_all([*descendants(self.p.pid), self.p.pid], signal.SIGTERM)
+
+    def state(self):
+        if self.p is None:
+            return "ready"
+        try:
+            s = json.load(urllib.request.urlopen(f"http://127.0.0.1:{self.port}/state", timeout=2))  # fmt: skip
+        except Exception:
+            s = {}
+        if s.get("finished"):
+            return f"finished, strict {s.get('score')}"
+        if self.p.poll() is not None:
+            return "agent stopped"
+        return f"running, verify left {(s.get('budget') or {}).get('verify_left', '?')}"
+
+
+class Stage:
+    """The Panel's interface, so panel_handler serves it: a slot per model, each started once. A new take is a new `demo.py stage`."""
+
+    def __init__(self, slots):
+        self.slots, self.lock = slots, threading.Lock()
+
+    def start(self, body):
+        slot = body.get("slot") if isinstance(body, dict) else None
+        if type(slot) is not int or not 0 <= slot < len(self.slots):
+            return 400, dict(error="bad slot")
+        with self.lock:
+            if self.slots[slot].p is not None:
+                return 409, dict(
+                    error="already started: relaunch the stage for a new take"
+                )
+            self.slots[slot].start()
+        return 200, dict(slot=slot)
+
+    def stop(self, body):
+        slot = body.get("slot") if isinstance(body, dict) else None
+        if type(slot) is not int or not 0 <= slot < len(self.slots):
+            return 400, dict(error="bad slot")
+        self.slots[slot].stop()
+        return 200, dict(slot=slot)
+
+    def status(self):
+        return 200, dict(control=True, slots=[dict(model=s.model, port=s.port, state=s.state()) for s in self.slots])  # fmt: skip
+
+    def close(self):
+        for s in self.slots:
+            s.stop()
+
+
+def stage_handlers(stage, view_port, lan):
+    """(control, view). Control has the buttons and answers on 127.0.0.1 only. View is the same page for the room: no POST route at all, and only the files the page reads."""
+    ports = {s.port for s in stage.slots}
+
+    class Control(panel_handler(stage)):
+        def do_GET(self):
+            m = SESSION_ROUTES.fullmatch(self.path.split("?")[0])
+            if not m:
+                return super().do_GET()
+            if not self._ours() or int(m[1]) not in ports:
+                return self.send_error(404)
+            try:
+                req = urllib.request.Request(f"http://127.0.0.1:{m[1]}/{m[2]}", headers={"Accept": self.headers.get("Accept", "*/*")})  # fmt: skip
+                up = urllib.request.urlopen(req, timeout=300)
+            except Exception:
+                return self.send_error(503)  # the page retries
+            try:
+                self.send_response(up.status)
+                self.send_header("Content-Type", up.headers.get("Content-Type", "application/octet-stream"))  # fmt: skip
+                self.end_headers()
+                while b := up.read1(65536):
+                    self.wfile.write(b)
+                    self.wfile.flush()
+            except OSError:
+                pass  # the viewer left
+            finally:
+                up.close()
+
+    class View(Control):
+        def _ours(self):
+            return self.headers.get("Host") in {f"{lan}:{view_port}", f"{lan.replace('.', '-')}.sslip.io:{view_port}"}  # fmt: skip
+
+        def _shown(self):
+            p = posixpath.normpath(urllib.parse.unquote(self.path.split("?")[0]))
+            return p.startswith("/web/") or (p.startswith("/results/") and p.endswith(VIEW_FILES))  # fmt: skip
+
+        def do_GET(self):
+            if self._ours() and self.path.split("?")[0] == "/api/status":
+                return self._json(200, {**stage.status()[1], "control": False})
+            return super().do_GET()
+
+        def do_POST(self):
+            self._json(403, dict(error="view only"))
+
+    return Control, View
+
+
+def lan_ip():
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.connect(("1.1.1.1", 80))  # picks the route, sends nothing
+        return s.getsockname()[0]
+
+
+def stage(models, level, port):
+    prompt_file = RESULTS / "stage-prompt.txt"
+    prompt_file.write_text(render_prompt(level))
+    ports = free_ports(2)
+    open_sessions(models, ports, level)
+    tun = bridge(ports)
+    st = Stage([Slot(m, p, level, prompt_file) for m, p in zip(models, ports)])
+    page = f"/web/index.html?live={','.join(map(str, ports))}&via=1&stage=1"
+    try:
+        time.sleep(4)
+        if tun and tun.poll() is not None:
+            die("ssh bridge to hfbox did not come up (ssh agent / funnel)")
+        for p in ports:
+            check(p)
+        lan, view_port = lan_ip(), port + 1
+        control, view = stage_handlers(st, view_port, lan)
+        serve(control, port)
+        serve(view, view_port, lan)
+        print(f"OPEN http://127.0.0.1:{port}{page}", flush=True)
+        print(f"VIEW http://{lan.replace('.', '-')}.sslip.io:{view_port}{page}", flush=True)  # fmt: skip
+        while True:
+            time.sleep(60)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        st.close()
+        if tun:
+            tun.terminate()
+        for p in ports:
+            sh(HF, "stop", f"demo-{p}")
+
+
 def panel_main(port, fake):
     panel = Panel(fake)
     serve(panel_handler(panel), port)
@@ -645,7 +808,7 @@ def panel_main(port, fake):
 
 if __name__ == "__main__":
     a = argparse.ArgumentParser()
-    a.add_argument("mode", choices=["serve", "single", "versus", "replay", "refly"])
+    a.add_argument("mode", choices=["serve", "single", "versus", "replay", "refly", "stage"])  # fmt: skip
     a.add_argument("models", nargs="*", help="refly: two run names under results/")
     a.add_argument("--scenario", choices=["nominal", "wind", "rain"], default="wind")
     a.add_argument("--feedback", choices=LEVELS, default="whatif")
@@ -667,6 +830,8 @@ if __name__ == "__main__":
         replay()
     elif a.mode == "serve":
         panel_main(a.port, a.fake)
+    elif a.mode == "stage" and len(a.models) == 2:
+        stage(a.models, a.feedback, a.port)
     elif (
         a.mode == "single"
         and len(a.models) == 1

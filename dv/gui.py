@@ -40,6 +40,7 @@ MAX_BEHIND = (
     8  # fragments of 200 ms a client may lag before it skips to the next key frame
 )
 TYPE_S = 5.0  # show_code never takes longer than this
+REVEAL_S = 1.5  # between parts when one design_set adds several
 FLY_TIMEOUT_S = 240.0  # a tool never waits longer than this for the window's flight
 BLANK = '<mujoco model="blank"><worldbody><geom name="floor" type="plane" size="3 3 0.1"/></worldbody></mujoco>'
 PAGES = {"design": "build", "program": "program", "run": "simulate"}
@@ -324,6 +325,10 @@ class ViewerUI:
     def design_changed(self, design):
         self.q.put(("design", getattr(design, "design", design)))
 
+    def reveal(self, designs):
+        """Intermediate designs of one design_set, one part further each: for the audience only, the tool has already answered."""
+        self.q.put(("reveal", designs))
+
     def show_code(self, text, path="controller.py"):
         self.q.put(("code", text, str(path)))
 
@@ -451,6 +456,12 @@ class ViewerUI:
             self.seq += 1
             self._ui("ui.camera", preset="iso")  # pitch above the floor
         self._ui("ui.frame", instances=[])
+
+    def _do_reveal(self, designs):
+        for d in designs:
+            self._do_design(d)
+            if self.stopped.wait(REVEAL_S):
+                return
 
     def _do_page(self, name):
         name = PAGES.get(name, name)

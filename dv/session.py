@@ -202,8 +202,24 @@ class Session:
         self._ui("design_changed", b.design)
         return b, out
 
+    def _reveal(self, choices, merged):
+        """With a window, one design_set of many parts shows them one at a time. Picture only: the agent's call, the checks and the score are the same, and a headless session never comes here."""
+        new = [s for s in D.SLOTS if s in choices and choices[s] != self.choices.get(s)]
+        if isinstance(self.ui, NullUI) or len(new) < 2:
+            return
+        step = {k: v for k, v in merged.items() if k not in new}
+        designs = []
+        try:
+            for slot in new[:-1]:
+                step[slot] = choices[slot]
+                designs.append(D.apply(dict(step)).design)
+        except D.DesignError:
+            return  # a bad part: the real apply reports it
+        self._ui("reveal", designs)
+
     def design_set(self, choices):
         merged = {**self.choices, **choices}
+        self._reveal(choices, merged)
         b, broken = self.apply(merged)
         p = b.props or {}
         self._ui("page", "design")

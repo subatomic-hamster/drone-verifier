@@ -8,6 +8,9 @@
 
 const P = new URLSearchParams(location.search);
 const HOST = P.get("host") || "127.0.0.1";
+// ?via=1: through this page's own server, the only way another machine reaches a session
+const sessionUrl = (port, path) =>
+  P.get("via") ? `/s/${port}${path}` : `http://${HOST}:${port}${path}`;
 const app = document.getElementById("app");
 const el = (html) => {
   const t = document.createElement("template");
@@ -562,7 +565,7 @@ function hasMoof(b) {
 
 // The session's fragmented MP4 (GET /stream) through Media Source. Each attempt is one MediaSource; a dropped link or a stall starts a new one.
 function liveVideo(box, port) {
-  const url = `http://${HOST}:${port}/stream`;
+  const url = sessionUrl(port, "/stream");
   const note = el(`<span class="nolink">connecting to the window...</span>`);
   box.append(note);
   const stat = { bytes: 0, reconnects: 0, seeks: 0, video: null };
@@ -729,7 +732,7 @@ function loop(draw) {
 function liveSession(port) {
   const f = new Feed(`session ${port}`);
   const events = () => {
-    const es = new EventSource(`http://${HOST}:${port}/events`); // the server replays from seq 0, Feed drops what it has seen
+    const es = new EventSource(sessionUrl(port, "/events")); // the server replays from seq 0, Feed drops what it has seen
     es.onmessage = (m) => {
       try {
         f.event(JSON.parse(m.data));
@@ -743,7 +746,7 @@ function liveSession(port) {
     };
   };
   const state = () =>
-    fetch(`http://${HOST}:${port}/state`)
+    fetch(sessionUrl(port, "/state"))
       .then((r) => {
         if (!r.ok) throw new Error(r.status);
         return r.json();
@@ -1206,7 +1209,53 @@ function fail(e) {
   console.error(e);
 }
 
+// ?stage=1: above the two sessions, each one's Start and Stop (only where the server says control) and its state
+function stageBar() {
+  const app = document.getElementById("app");
+  const bar = el(
+    `<div style="height:44px;display:flex;gap:24px;align-items:center;padding:0 16px;font-size:1rem"></div>`,
+  );
+  app.style.height = "calc(100% - 44px)";
+  app.before(bar);
+  const send = (path, slot) =>
+    fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slot }),
+    }).then(refresh);
+  const refresh = () =>
+    fetch("/api/status", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((st) => {
+        bar.innerHTML =
+          st.slots
+            .map(
+              (s, i) => `<span><b>${esc(s.model)}</b>
+              ${st.control && s.state === "ready" ? `<button data-go="${i}">Start</button>` : ""}
+              ${st.control && s.state.startsWith("running") ? `<button data-stop="${i}">Stop</button>` : ""}
+              <span class="dim">${esc(s.state)}</span></span>`,
+            )
+            .join("") +
+          `<a style="color:var(--fg)" href="../results/stage-prompt.txt" target="_blank">initial prompt</a>
+           <a style="color:var(--fg)" href="?board=1" target="_blank">leaderboard</a>
+           ${st.control ? "" : `<span class="dim">view only</span>`}`;
+        bar.querySelectorAll("[data-go]").forEach((b) => {
+          b.onclick = () => {
+            b.disabled = true;
+            send("/api/start", parseInt(b.dataset.go, 10));
+          };
+        });
+        bar.querySelectorAll("[data-stop]").forEach((b) => {
+          b.onclick = () => send("/api/stop", parseInt(b.dataset.stop, 10));
+        });
+      })
+      .catch(() => {});
+  refresh();
+  setInterval(refresh, 2000);
+}
+
 (function main() {
+  if (P.get("stage")) stageBar();
   const live = P.get("live")
     ? P.get("live").split(",")
     : [P.get("a"), P.get("b")].filter(Boolean);
