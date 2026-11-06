@@ -195,9 +195,19 @@ if __name__ == "__main__":
                     "cost_usd_bom",
                     "mass_kg",
                     "cost_by_kind",
+                    "feedback",
+                    "pass_within_budget",
+                    "first_viable",
+                    "robustness_gap",
+                    "prediction_error",
+                    "thrust_l1_vs_static_sim_pct",
+                    "viable_designs",
                 )
             },
         )
+        print("energy_invariant", res["energy_invariant"]["ok"], res["energy_invariant"]["flights"][0], len(res["energy_invariant"]["flights"]))  # fmt: skip
+        assert res["feedback"] == "whatif" and res["pass_within_budget"] is True
+        assert res["first_viable"] and res["viable_designs"] and res["energy_invariant"]["ok"]  # fmt: skip
         print("OK")
     finally:
         srv.terminate()
