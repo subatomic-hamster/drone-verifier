@@ -99,7 +99,7 @@ def handle(port, f):
 
 def main():
     port = int(sys.argv[1])
-    if port not in range(8801, 8805):
+    if port not in range(8801, 8811):
         sys.exit("port not allowed")
     send({"hello": True})
     for line in sys.stdin.buffer:

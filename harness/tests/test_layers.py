@@ -14,9 +14,9 @@ import leaderboard
 
 def test_plan():
     t = bench.plan(["fable", "opus", "sonnet", "haiku"], ["whatif"], 1, sweep=True)
-    assert [(m, l) for m, l, _ in t] == [("haiku", l) for l in bench.LEVELS] + [
-        ("sonnet", l) for l in bench.LEVELS
-    ] + [("opus", "whatif"), ("fable", "whatif")]
+    assert [(m, l) for m, l, _ in t] == [(m, "whatif") for m in bench.COST_ORDER] + [
+        (m, l) for m in ("haiku", "sonnet") for l in bench.LEVELS[:3]
+    ]
     assert bench.plan(
         ["haiku"],
         ["whatif", "diag"],

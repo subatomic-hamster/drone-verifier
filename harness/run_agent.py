@@ -52,10 +52,15 @@ def post(port, path, body, timeout=5):
         req = urllib.request.Request(
             f"http://127.0.0.1:{port}{path}",
             json.dumps(body).encode(),
-            {"Content-Type": "application/json"},
+            # the MCP endpoint answers 406 without both Accept types
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream",
+            },
         )
         return urllib.request.urlopen(req, timeout=timeout).read()
-    except Exception:
+    except Exception as e:
+        post.last_error = repr(e)
         return None  # a dead feed must never kill the agent
 
 
@@ -215,7 +220,25 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
                 post(port, "/agent-event", e)
     p.wait()
     timer.cancel()
-    if not st.finish_called:  # agent ran out of budget / time / died: score what it left behind (held-out rerun runs inside finish)
+
+    def is_finished():
+        try:
+            return bool(
+                json.load(
+                    urllib.request.urlopen(f"http://127.0.0.1:{port}/state", timeout=10)
+                ).get("finished")
+            )
+        except Exception:
+            return False
+
+    harness_finish = (
+        not is_finished()
+    )  # the server's word, not the stream's: the agent's own finish may have errored
+    for _ in range(
+        3
+    ):  # agent ran out of budget / time / died: score what it left behind (held-out rerun runs inside finish)
+        if is_finished():
+            break
         mcp_call(
             port,
             "finish",
@@ -230,7 +253,7 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
         "wall_s": round(time.time() - t0, 1),
         "killed_at_wall_limit": bool(killed),
         "rc": p.returncode,
-        "finish_by_harness": not st.finish_called,
+        "finish_by_harness": harness_finish,
         "claude_cost_usd": st.cost,
         "tokens": {"input": st.inp, "output": st.out},
         "errors": st.errors,

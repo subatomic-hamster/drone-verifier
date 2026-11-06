@@ -13,6 +13,7 @@ import os
 import queue
 import subprocess
 import sys
+import threading
 import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -24,8 +25,11 @@ from run_agent import ROOT, run_agent
 HF = str(ROOT / "scripts" / "hf.sh")
 RESULTS = ROOT / "results"
 REMOTE_RUNS = "/workspace/wt/dv/runs"
-PORTS = [8801, 8802, 8803, 8804]
-SESSIONS = dict(zip(PORTS, "ABCD"))
+PORTS = list(
+    range(8803, 8811)
+)  # 8 headless sessions (8801/8802 stay free for the GUI demo): agents wait on the LLM, flights are capped by the flock slots in dv.verify
+SESSIONS = dict(zip(PORTS, "ABCDEFGH"))
+START_LOCK = threading.Lock()
 LEVELS = ["none", "passfail", "diag", "whatif"]
 COST_ORDER = ["haiku", "sonnet", "opus", "fable"]
 SWEEP = {"haiku": LEVELS, "sonnet": LEVELS, "opus": ["whatif"], "fable": ["whatif"]}
@@ -40,6 +44,7 @@ def plan(models, levels, trials, sweep=False, done=lambda name: False):
     combos = [(m, l) for m in models for l in (SWEEP[m] if sweep else levels)]
     combos.sort(
         key=lambda ml: (
+            ml[1] != "whatif",  # every model at whatif first, then the other levels
             COST_ORDER.index(ml[0]) if ml[0] in COST_ORDER else 9,
             LEVELS.index(ml[1]),
         )
@@ -105,12 +110,13 @@ def one(model, level, trial, port, prompt, wall_s):
         ssh(
             f"rm -rf {run}"
         )  # leftovers of a failed attempt must not pass for this run's results
-        r = sh(
-            HF,
-            "bg",
-            name,
-            f"python -m dv.server --session {sess} --port {port} --model {rn} --trial {trial} --feedback {level}",
-        )
+        with START_LOCK:  # hf.sh bg rsyncs the tree: one at a time
+            r = sh(
+                HF,
+                "bg",
+                name,
+                f"python -m dv.server --session {sess} --port {port} --model {rn} --trial {trial} --feedback {level}",
+            )
         if r.returncode:
             return f"{tag}: ERROR session start failed: {r.stderr[-200:]}"
         if not wait_state(port):
@@ -141,7 +147,7 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument("--models", default="haiku,sonnet,opus,fable")
     a.add_argument("--trials", type=int, default=1)
-    a.add_argument("--parallel", type=int, default=4)
+    a.add_argument("--parallel", type=int, default=8)
     a.add_argument(
         "--feedback", default="whatif", help="comma list of none,passfail,diag,whatif"
     )
@@ -149,7 +155,7 @@ def main():
     a.add_argument(
         "--wall-min",
         type=float,
-        help="agent wall limit in minutes (default: task.toml)",
+        help="agent wall limit in minutes (default 12 with --sweep, else task.toml)",
     )
     a = a.parse_args()
     levels = a.feedback.split(",")
@@ -189,7 +195,8 @@ def main():
     time.sleep(4)
     if tun.poll() is not None:
         sys.exit("ERROR: bridge did not start (port in use?)")
-    wall_s = a.wall_min * 60 if a.wall_min else None
+    wall_min = a.wall_min or (12 if a.sweep else None)
+    wall_s = wall_min * 60 if wall_min else None
 
     def job(t):
         p = ports.get()
@@ -197,6 +204,10 @@ def main():
             return one(*t, p, prompts[t[1]], wall_s)
         finally:
             ports.put(p)
+            subprocess.run(
+                [sys.executable, str(Path(__file__).parent / "leaderboard.py")],
+                capture_output=True,
+            )  # partial data stays usable
 
     try:
         with ThreadPoolExecutor(n) as ex:

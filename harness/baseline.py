@@ -25,20 +25,15 @@ FIXED = ("battery_x_mm", "battery_y_mm")
 
 
 def l1(b):
-    """-> (ok, reason, kind). CORE's analytic module if present (l1 / check, returning a dict with ok), else G2's thrust run."""
-    from dv import verify as V
+    """-> (ok, reason, kind). CORE's dv.analytic.l1 (None while the design has no pack or ESC counts as failed)."""
+    from dv import analytic
 
-    try:
-        from dv import analytic
-
-        fn = getattr(analytic, "l1", None) or getattr(analytic, "check", None)
-        if fn:
-            r = fn(b)
-            return bool(r["ok"]), r.get("reason", ""), "analytic"
-    except ImportError:
-        pass
-    r = V.g2(b)
-    return r["ok"], r["reason"], "g2-static-thrust"
+    r = getattr(b, "l1", None) or analytic.l1(b)
+    return (
+        (bool(r["ok"]), r["reason"], "analytic")
+        if r
+        else (False, "no pack or ESC to analyse", "analytic")
+    )
 
 
 def screen(choices):

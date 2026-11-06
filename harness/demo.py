@@ -16,7 +16,7 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from bench import HF, PORTS, sh, wait_state
+from bench import HF, sh, wait_state
 from run_agent import ROOT, run_agent
 
 # served from the repo root in both modes: the page reads ../results/ too
@@ -68,7 +68,7 @@ def live(models):
     prompt = sh(HF, "run", "python -m dv.render_prompt").stdout
     if not prompt.strip():
         die("dv.render_prompt printed nothing on hfbox")
-    ports = PORTS[: len(models)]
+    ports = [8801, 8802][: len(models)]  # GUI sessions; the benchmark uses 8803-8810
     for m, p, s in zip(models, ports, "AB"):
         r = sh(
             HF,
