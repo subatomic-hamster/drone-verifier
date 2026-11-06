@@ -27,7 +27,11 @@ def mean(xs):
 
 
 def passed(r):
-    return bool(r.get("pass_within_budget", r.get("score", 0) >= 100))
+    """A run passed if a verify inside its budget did, or if its final state took every strict gate on the held-out seed: pass_within_budget alone reads a final-100 run that never verified as 0/1."""
+    return (
+        bool(r.get("pass_within_budget"))
+        or r.get("score_strict", r.get("score", 0)) >= 100
+    )
 
 
 def pareto(points):
@@ -56,6 +60,22 @@ def first_test_score(r):
     return r.get("first_test_score", r.get("score") if r.get("baseline") else None)
 
 
+def use_hard(r):
+    """The page's keys hold the hidden exam (dv/partial.py); strict and partial stay as *_strict and *_partial. A run the exam has not scored ranks unscored rather than mixing scales."""
+    ft = r.get("first_test") or {}
+    base = r.get("baseline")
+    r["score_strict"] = r.get("score", 0)
+    r["first_test_score_strict"] = first_test_score(r)
+    r["score_partial"] = r.get("partial_score")
+    r["first_test_score_partial"] = (
+        r.get("partial_score") if base else ft.get("partial_score")
+    )
+    r["first_test_score"] = r.get("hard_score") if base else ft.get("hard_score")
+    if "hard_score" in r:
+        r["score"] = r["hard_score"]
+    return r
+
+
 def entry(model, rs):
     best = max(rs, key=lambda r: r.get("score", 0))
     g = lambda k: mean(r.get(k) for r in rs)
@@ -71,7 +91,11 @@ def entry(model, rs):
         "trials": len(rs),
         "n_note": f"n={len(rs)}" + (" (one run: not a rate)" if len(rs) == 1 else ""),
         "first_test_score": mean(first_test_score(r) for r in rs),
+        "first_test_score_strict": g("first_test_score_strict"),
+        "first_test_score_partial": g("first_test_score_partial"),
         "score": g("score"),
+        "score_strict": g("score_strict"),
+        "score_partial": g("score_partial"),
         "best_gate": ok[-1] if ok else None,
         "gates": [
             {k: x.get(k) for k in ("id", "pass", "points", "max_points")}
@@ -123,7 +147,7 @@ def build(results_dir=RESULTS):
                 r["cost_usd"] = a["claude_cost_usd"]
             if a.get("tokens", {}).get("input"):
                 r["tokens"] = a["tokens"]
-        runs.append((base_model(r, f.parent.name), r))
+        runs.append((base_model(r, f.parent.name), use_hard(r)))
     main, curve = {}, {}
     for m, r in runs:
         if r.get("baseline") or r.get("feedback", "whatif") == "whatif":
@@ -134,11 +158,13 @@ def build(results_dir=RESULTS):
             )
             c["runs"] += 1
             c["passed"] += passed(r)
-            c.setdefault("first_tests", []).append(first_test_score(r))
+            for k, v in (("first_test", first_test_score(r)), ("final", r["score"]), ("first_test_strict", r["first_test_score_strict"]), ("final_strict", r["score_strict"])):  # fmt: skip
+                c.setdefault(k, []).append(v)
     for lv in curve.values():
         for c in lv.values():
             c["rate"] = round(c["passed"] / c["runs"], 2)
-            c["first_test"] = mean(c.pop("first_tests"))
+            for k in ("first_test", "final", "first_test_strict", "final_strict"):
+                c[k] = mean(c[k])
     entries = [entry(m, rs) for m, rs in main.items()]
     # rank on the first test (unscored last), ties: final score, fewer verify calls, then less wall time, then fewer tokens
     entries.sort(
@@ -164,11 +190,11 @@ if __name__ == "__main__":
     (RESULTS / "leaderboard.json").write_text(json.dumps(lb, indent=1))
     e = lb["entries"]
     if "--pick" in sys.argv:
-        e = [x for x in e if not x["baseline"]]
+        e = [x for x in e if not x["baseline"] and x["first_test_score"] is not None]
         if not e:
             sys.exit("ERROR: no results yet")
         print(
-            f"lowest {e[-1]['model']} {e[-1]['score']}\nhighest {e[0]['model']} {e[0]['score']}"
+            f"lowest {e[-1]['model']} {e[-1]['first_test_score']}\nhighest {e[0]['model']} {e[0]['first_test_score']}"
         )
     else:
         for x in e:
@@ -177,4 +203,4 @@ if __name__ == "__main__":
                 f"{x['model']:12} first={x['first_test_score']} final={x['score']:6} {x['n_note']} gate={x['best_gate']} pass={p['passed']}/{p['runs']} verify={x['verify_calls']} ${x['cost_usd']}{' [baseline]' if x['baseline'] else ''}"
             )
         for m, lv in lb["feedback_curve"].items():
-            print(m, {l: f"{c['passed']}/{c['runs']}" for l, c in lv.items()})
+            print(m, {l: f"first={c['first_test']} final={c['final']} n={c['runs']}" for l, c in lv.items()})  # fmt: skip

@@ -64,6 +64,20 @@ Per run in `results.json`, per model on the leaderboard:
 - **Flights**: L0 or L1 failure still stops before the simulator, so an over-budget design earns no flight points. After G3, the rest fly whether or not G3 passed, if the design lifted off in G3; otherwise they are 0 unflown.
 - All on the held-out seed, for the state at final and at first test. Fields: `partial_score`, `partial_gates`, `first_test.partial_score`, `first_test.partial_gates`. `harness/first_test.py --all` adds them.
 
+### Hidden exam
+
+The gates an agent sees are the practice test; this is the exam. Same mission, limits and held-out seed, for the state at final and at first test; agents never see these conditions. Numbers in `task.toml [hard]`, code in `dv/partial.py`, fields `hard_score`, `hard_gates`, `first_test.hard_score`, `first_test.hard_gates`. On the leaderboard `score` and `first_test_score` carry it; `score_strict`, `first_test_score_strict`, `score_partial`, `first_test_score_partial` stay. Strict scores, gate passes and planted flaws do not change.
+
+- **Conditions**, about double: wind 6 m/s; rain 50 mm/h with 4 m/s wind; robustness mass +-10 %, CG +-10 mm, thrust +-6 %, extra sensor noise 1.0, backlash 2 deg, gyro bias 0.4 deg/s, accel bias 0.1 m/s2. G3 stays still air.
+- **One flight**, 0 to 1: `sum(0.2 x part x quality) x exp(-peak tilt / 300 deg)`, then the partial tilt factor past the limit. Parts as above, passing or not. Each quality is below 1 for any real flight, so 100 is out of reach by construction.
+  - lift-off: quality 1.
+  - altitude: `exp(-rms / 0.5 m)`, rms of true height from target, first to last 2 Hz sample in the band.
+  - hold: `exp(-std / 0.5 m)`, standard deviation of height over that window.
+  - landing: `exp(-touchdown / 2.5 m/s)`.
+  - accuracy: `exp(-distance / 2.5 m)`.
+- **Gates** as partial: G1, G2 rule fractions; L0 or L1 failure flies nothing; no lift-off in G3 stops the rest.
+- **Calibration was on the reference only, set once before any agent run was scored; these numbers are frozen.** The reference passes all 8 harder flights and scores 86.2: G1 10, G2 10, G3 25.43 of 30, G4 11.61 of 15, G5 12.23 of 15, G6 16.88 of 20. Do-nothing 20 (no flight points), open-loop 26.3.
+
 ## Baselines (`harness/baseline.py`)
 
 - **Brute force**: enumerate the whole catalog through L0 and L1, report how many pass, then fly the cheapest and lightest non-dominated few with the reference controller.

@@ -2,7 +2,7 @@
 `verify` that flew; L0/L1 refusals fly nothing, so they do not count), flies that design and controller on the held-out seed through V.run_gates, and adds `first_test` and `first_test_score`
 to results.json. `score` stays the final score. Nothing else in the run dir is written. Safe to rerun; a finished run only, so live sessions are left alone.
 
-Also adds partial credit (dv/partial.py) for the final and first-test states: partial_score, partial_gates, first_test.partial_score, first_test.partial_gates; baselines too.
+Also adds partial credit and the hidden exam (dv/partial.py) for the final and first-test states: partial_score, partial_gates, hard_score, hard_gates, and the same under first_test; baselines too.
 
 On hfbox: python harness/first_test.py [--force | --repartial] RUN_DIR...    or --all ($DV_RUNS/*)    --dump prints what is done, as JSON
 On the laptop: python harness/first_test.py --pull             merges --dump into results/*/results.json, matched by the event log's first timestamp (a baseline by model)"""
@@ -12,11 +12,12 @@ import os
 import subprocess
 import sys
 import threading
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 APPLY = threading.Lock()
+HARD = {}  # (design, code, seed) -> Future of its hard score
 WORKERS = 4
 
 
@@ -120,7 +121,8 @@ def partial_fields(rd, res):
     seed = heldout.heldout_seed()
     choices = json.loads((rd / "design.json").read_text()) if (rd / "design.json").exists() else {}  # fmt: skip
     code = (rd / "controller.py").read_text() if (rd / "controller.py").exists() else ""
-    final = P.score(_apply(choices), code, seed)
+    # a state that passed every strict gate on this seed flew only passing flights: 100, with nothing to fly
+    final = P.perfect() if res["score"] == 100 else P.score(_apply(choices), code, seed)
     if res.get(
         "baseline"
     ):  # one shot: leaderboard.py reads its final as its first test
@@ -128,12 +130,47 @@ def partial_fields(rd, res):
     st = replay(last_run(rd / "events.jsonl"))
     if "reason" in st:
         return final, dict(partial_score=0.0, partial_gates=[])
+    if res["first_test"]["score"] == 100:
+        return final, P.perfect()
     same = st["choices"] == choices and st["code"] == code
     return final, final if same else P.score(_apply(st["choices"]), st["code"], seed)
 
 
-def add_partial(rd, res):
-    final, first = partial_fields(rd, res)
+def _hard(choices, code, seed):
+    """P.score(hard=True), once per state: runs often share one (first test = final), and a thread that finds its state in flight waits for it."""
+    from dv import partial as P
+
+    k = json.dumps(choices, sort_keys=True), code, seed
+    with APPLY:
+        fut, own = HARD.get(k), k not in HARD
+        if own:
+            fut = HARD[k] = Future()
+    if own:
+        try:
+            fut.set_result(P.score(_apply(choices), code, seed, hard=True))
+        except Exception as e:
+            fut.set_exception(e)
+    return fut.result()
+
+
+def hard_fields(rd, res):
+    """The hidden exam for the final and first-test states, on the held-out seed. A strict 100 is not exempt: quality is what it measures."""
+    from dv import heldout
+
+    seed = heldout.heldout_seed()
+    choices = json.loads((rd / "design.json").read_text()) if (rd / "design.json").exists() else {}  # fmt: skip
+    code = (rd / "controller.py").read_text() if (rd / "controller.py").exists() else ""
+    final = _hard(choices, code, seed)
+    if res.get("baseline"):
+        return final, None
+    st = replay(last_run(rd / "events.jsonl"))
+    if "reason" in st:
+        return final, dict(hard_score=0.0, hard_gates=[])
+    return final, _hard(st["choices"], st["code"], seed)
+
+
+def add_scores(rd, final, first):
+    """Merges final-state fields and first-test fields into results.json."""
     res = json.loads((rd / "results.json").read_text())
     res.update(final)
     if first is not None:
@@ -162,7 +199,9 @@ def process(run_dir, force=False, repartial=False):
     if not res.get("baseline") and ("first_test" not in res or force):
         res = add_fields(rd / "results.json", first_test(rd))
     if "partial_score" not in res or force or repartial:
-        res = add_partial(rd, res)
+        res = add_scores(rd, *partial_fields(rd, res))
+    if "hard_score" not in res or force:
+        res = add_scores(rd, *hard_fields(rd, res))
     return res
 
 
@@ -177,12 +216,12 @@ def key(run_dir, res):
 
 
 def dump(runs):
-    """Finished run dirs that have the fields -> {key: {run, first_test, first_test_score, partial_score, partial_gates}}."""
+    """Finished run dirs that have the fields -> {key: {run, first_test, first_test_score, partial_*, hard_*}}."""
     out = {}
     for rd in runs:
         if finished(rd):
             res = json.loads((rd / "results.json").read_text())
-            got = {k: res[k] for k in ("first_test", "first_test_score", "partial_score", "partial_gates") if k in res}  # fmt: skip
+            got = {k: res[k] for k in ("first_test", "first_test_score", "partial_score", "partial_gates", "hard_score", "hard_gates") if k in res}  # fmt: skip
             if got:
                 out[key(rd, res)] = dict(run=rd.name, **got)
     return out
@@ -207,14 +246,24 @@ def pull():
         print(row(f.parent.name, _write(f, res)))
 
 
-HEAD = f"{'run':24} {'first partial':>13} {'final partial':>13} {'first strict':>12} {'final strict':>12}"
+HEAD = f"{'run':24} {'first hard':>10} {'final hard':>10} {'first partial':>13} {'final partial':>13} {'first strict':>12} {'final strict':>12}"
 
 
 def row(name, res):
     ft = res.get("first_test") or {}
     first = ft.get("partial_score", res.get("partial_score"))
+    hard = ft.get("hard_score", res.get("hard_score"))
     strict = res.get("first_test_score", res["score"] if res.get("baseline") else None)
-    return f"{name:24} {first!s:>13} {res.get('partial_score')!s:>13} {strict!s:>12} {res['score']!s:>12}"
+    return f"{name:24} {hard!s:>10} {res.get('hard_score')!s:>10} {first!s:>13} {res.get('partial_score')!s:>13} {strict!s:>12} {res['score']!s:>12}"
+
+
+def priority(run_dir):
+    """Scoring order, so results are usable if time runs out: baselines, then the whatif runs by model, then the other feedback levels by the same order."""
+    res = json.loads((Path(run_dir) / "results.json").read_text())
+    name = res.get("model") or ""
+    order = ["human", "brute_force", "opus", "fable", "sonnet", "haiku"]
+    rank = next((i for i, m in enumerate(order) if m in name), len(order))
+    return (0 if res.get("baseline") or res.get("feedback", "whatif") == "whatif" else 1), rank, str(run_dir)  # fmt: skip
 
 
 def main():
@@ -227,13 +276,16 @@ def main():
     every = sorted(p for p in runs.iterdir() if p.is_dir()) if ("--all" in args or "--dump" in args) else []  # fmt: skip
     if "--dump" in args:
         return print(json.dumps(dump(every)))
-    todo = [rd for rd in (every or [Path(a) for a in args]) if finished(rd)]
+    todo = sorted(
+        (rd for rd in (every or [Path(a) for a in args]) if finished(rd)), key=priority
+    )
+    print(HEAD, flush=True)
     # the flights queue on the machine's flock slots, whatever else is flying
     with ThreadPoolExecutor(WORKERS) as ex:
-        done = list(ex.map(lambda rd: process(rd, force, repartial), todo))
-    print(HEAD)
-    for rd, res in zip(todo, done):
-        print(row(rd.name, res), flush=True)
+        for rd, res in zip(
+            todo, ex.map(lambda rd: process(rd, force, repartial), todo)
+        ):
+            print(row(rd.name, res), flush=True)
     return None
 
 

@@ -79,6 +79,33 @@ hold = 0.2
 landing = 0.2
 accuracy = 0.2
 
+[hard]                   # dv/partial.py: the hidden exam, see docs/LAYERS.md. Calibrated on the reference only, then frozen
+[hard.scenarios.wind]    # about double [scenarios.wind]
+wind_ms = 6.0
+w20_ms = 6.0
+rain_mmh = 0.0
+[hard.scenarios.rain]    # about double [scenarios.rain]
+wind_ms = 4.0
+w20_ms = 4.0
+rain_mmh = 50.0
+rain_t_on_s = 3.0
+rain_ramp_s = 2.0
+[hard.robust]            # about double [robust]
+mass_tol = 0.10
+cg_tol_m = 0.010
+thrust_tol = 0.06
+noise_extra = 1.0
+backlash_deg = 2.0
+gyro_bias_dps = 0.4
+accel_bias_ms2 = 0.1
+wind_ms = 0.0
+[hard.scales]            # each quality is exp(-value / scale). Set once on the reference, frozen before any agent run was scored
+alt_rms_m = 0.5
+hold_std_m = 0.5
+touchdown_m_s = 2.5
+land_dist_m = 2.5
+tilt_deg = 300.0
+
 [[gates]]
 id = "G1"
 name = "static"

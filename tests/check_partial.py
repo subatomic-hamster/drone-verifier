@@ -54,6 +54,42 @@ def main():
     r = P.score(D.apply({}), CODE, SEED)
     show("empty design", r)
     assert r["partial_score"] == 0.0
+
+    # the hidden exam: frozen on the reference, in its band, deterministic; no flight reaches 1.0
+    row = dict(z=3.0)
+    assert P.hard_mission(good, [row, dict(z=2.9), row]) < 1.0
+    assert P.hard_mission(dict(z_max_m=0.0, t_end_s=15.0), [dict(z=0.0)]) == 0.0
+    assert P.hard_mission(dict(good, touchdown_m_s=0.2), [row]) > P.hard_mission(
+        good, [row]
+    )
+    assert P.hard_mission(dict(good, land_dist_m=0.1), [row]) > P.hard_mission(
+        good, [row]
+    )
+
+    def show_hard(name, h):
+        print(
+            name,
+            h["hard_score"],
+            [(g["id"], g["points"]) for g in h["hard_gates"]],
+            flush=True,
+        )
+
+    h = P.score(b, CODE, SEED, hard=True)
+    show_hard("hard reference", h)
+    assert 85.0 <= h["hard_score"] <= 92.0, h["hard_score"]
+    assert P.score(b, CODE, SEED, hard=True) == h, "hard rerun differs"
+    print("hard rerun identical")
+    fl = [f for g in h["hard_gates"][2:] for f in ([g["flight"]] if "flight" in g else g["flights"])]  # fmt: skip
+    print("hard reference flights passed", sum(f["pass"] for f in fl), "of", len(fl))
+    assert all(f["mission"] < 1.0 for f in fl)
+
+    h = P.score(b, (R / "do_nothing.py").read_text(), SEED, hard=True)
+    show_hard("hard do_nothing", h)
+    assert h["hard_score"] == 20.0 and all(g["points"] == 0 for g in h["hard_gates"][2:])  # fmt: skip
+
+    h = P.score(b, (R / "open_loop.py").read_text(), SEED, hard=True)
+    show_hard("hard open_loop", h)
+    assert 20.0 < h["hard_score"] < 86.0
     print("OK")
 
 
