@@ -57,6 +57,9 @@ The agent works only through the MCP tools at `http://127.0.0.1:8801/mcp`. The r
 
     python harness/bench.py --models haiku,sonnet,opus,fable --trials 1 --parallel 4
 
+Models: `haiku sonnet opus fable` run through Claude Code; `nemotron` (NVIDIA NIM, free, `nvidia/nemotron-3.5-super-vl-120b-a12b`),
+`deepseek-flash` and `deepseek-pro` (paid, direct DeepSeek provider) run through the `omp` CLI, isolated the same way (only our MCP tools, no built-ins).
+
 `bench.py` starts one headless session per run through `scripts/hf.sh` on `hfbox` (ports 8801-8804), runs the agents from this machine,
 and pulls results into `results/`. `python harness/leaderboard.py` builds the leaderboard. To run it on another Linux host, change `HOST`,
 `DIR` and the dvsim paths at the top of `scripts/hf.sh` and `harness/bridge.py`.
