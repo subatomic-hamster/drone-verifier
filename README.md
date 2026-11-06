@@ -60,9 +60,13 @@ The agent works only through the MCP tools at `http://127.0.0.1:8801/mcp`. The r
 Models: `haiku sonnet opus fable` run through Claude Code; `nemotron` (NVIDIA NIM, free, `nvidia/nemotron-3.5-super-vl-120b-a12b`),
 `deepseek-flash` and `deepseek-pro` (paid, direct DeepSeek provider) run through the `omp` CLI, isolated the same way (only our MCP tools, no built-ins).
 
-`bench.py` starts one headless session per run through `scripts/hf.sh` on `hfbox` (ports 8801-8804), runs the agents from this machine,
-and pulls results into `results/`. `python harness/leaderboard.py` builds the leaderboard. To run it on another Linux host, change `HOST`,
-`DIR` and the dvsim paths at the top of `scripts/hf.sh` and `harness/bridge.py`.
+`bench.py` starts one headless session per run through `scripts/hf.sh` (ports 8804-8811), runs the agents from this machine,
+and pulls results into `results/`. `python harness/leaderboard.py` builds the leaderboard. Where the sessions run is one knob, `DV_HOST`:
+an ssh host name (default `hfbox`; `DV_DIR` sets its work dir, default `/workspace/wt/dv`), or `local`, which runs the same commands as
+local subprocesses with no ssh, rsync or bridge: runs and logs go under `.dv/` in the repo, `DVSIM_ROOT` defaults to `vendor/dvsim`
+(and `DV_RUNS`, `DV_PORT_BASE` override the run dir and first port). Needs `tmux`. Example, everything on this machine:
+
+    DV_HOST=local python harness/bench.py --models haiku --trials 1 --parallel 1
 
 ## Run the demo
 
@@ -71,4 +75,5 @@ and pulls results into `results/`. `python harness/leaderboard.py` builds the le
     python harness/demo.py replay              # saved results, no remote host at all
 
 Live demos use `scripts/hf.sh` (rsync of this repo to hfbox, dvsim build there) and `harness/bridge.py` (ssh-exec bridge, because hfbox
-refuses port forwarding). `scripts/hf.sh` points `DVSIM_ROOT` at an existing dvsim build on hfbox, not at `vendor/dvsim`.
+refuses port forwarding). On a remote host `scripts/hf.sh` points `DVSIM_ROOT` at an existing dvsim build there, not at `vendor/dvsim`;
+`harness/demo.py` does not support `DV_HOST=local` yet.
