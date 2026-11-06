@@ -181,6 +181,10 @@ class Stream:
         if self.rec:
             if self.frags == 1:
                 self.rec.write(self.init)
+                # the replay page lines the recording up with events.jsonl by this
+                Path(self.rec.name).with_suffix(".json").write_text(
+                    json.dumps(dict(t0=time.time() - 0.2))
+                )
             self.rec.write(frag)
             self.rec.flush()
             if self.rec.tell() > REC_MAX_BYTES:
@@ -292,7 +296,9 @@ class ViewerUI:
         self.prog_dir.mkdir(parents=True, exist_ok=True)
         self.port = port
         self.design = getattr(design, "design", design)
-        self.lock = lock or threading.RLock()
+        # Not the session's lock, which a tool holds for all of a verify: the window would stop following for that long.
+        # Nothing else touches a Design once apply() has built it, and a new design is a new object.
+        self.lock = threading.RLock()
         self.b = _B(
             lambda: self.design,
             self.run_dir / "gui_build",
@@ -454,11 +460,17 @@ class ViewerUI:
             self._ui("prog.ui", cmd="cmd", name="close_tab")
             time.sleep(0.2)
         (self.prog_dir / name).write_text("")
+        del self.b.log[:-50]  # the Backend logs every request, for good
+        seen = len(self.b.log)
         self._ui("prog.ui", cmd="open", path=name)
         self.opened = name
-        time.sleep(
-            0.6
-        )  # the buffer loads through the window's queue; text typed before that is lost
+        # the buffer loads through the window's queue; text typed before its prog.read comes back is lost
+        limit = time.monotonic() + 5.0
+        while time.monotonic() < limit and not any(
+            r[0].get("tool") == "prog.read" for r in self.b.log[seen:]
+        ):
+            time.sleep(0.05)
+        time.sleep(0.25)  # the reply reaches the window at its next 100 ms drain
         self._ui("prog.ui", cmd="dock", name="output")  # not the shell's tab
         pause = 0.12
         lines = text.splitlines(keepends=True)
@@ -558,7 +570,7 @@ class ViewerUI:
                     f=True,
                 ),
                 h.text(
-                    str(reason or "")[:70],
+                    str(reason or "")[:100],
                     at=(0.5, 0.32),
                     a="t",
                     size=20,

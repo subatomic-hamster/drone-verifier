@@ -19,8 +19,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 from bench import HF, PORTS, sh, wait_state
 from run_agent import ROOT, run_agent
 
-URL_LIVE = "http://127.0.0.1:{web}/index.html?live={ports}"
-URL_REPLAY = "http://127.0.0.1:{web}/index.html?replay=1"
+# served from the repo root in both modes: the page reads ../results/ too
+URL_LIVE = "http://127.0.0.1:{web}/web/index.html?live={ports}"
+URL_REPLAY = "http://127.0.0.1:{web}/web/index.html?replay=1"
 
 
 def die(msg):
@@ -92,7 +93,7 @@ def live(models):
             die("ssh tunnel to hfbox did not come up (ssh agent / funnel)")
         for p in ports:
             check(p)
-        web = serve(ROOT / "web")
+        web = serve(ROOT)
         print(
             "OPEN",
             URL_LIVE.format(web=web, ports=",".join(map(str, ports))),
