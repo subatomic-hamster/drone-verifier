@@ -6,6 +6,7 @@ results/
 *.webm
 *.png
 *.jpg
+!docs/media/*
 __pycache__/
 .venv/
 .pytest_cache/

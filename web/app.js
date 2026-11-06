@@ -900,7 +900,10 @@ const PALETTE = [
 const or = (x, show) => (x === null || x === undefined ? "-" : show(x));
 
 function curveSvg(curve) {
-  const models = Object.keys(curve || {});
+  // a model tested at one level draws no curve, only clutter
+  const models = Object.keys(curve || {}).filter(
+    (m) => LEVELS.filter((l) => curve[m][l]).length > 1,
+  );
   if (!models.length) return NO_RUNS;
   const W = 620,
     H = 330,
@@ -1022,7 +1025,9 @@ async function startBoard(url) {
       e.first_test_score !== null &&
       e.first_test_score !== undefined,
   );
-  const low = ranked[ranked.length - 1],
+  // the side by side needs a flight to show: the lowest that flew
+  const flown = ranked.filter((e) => e.flights > 0);
+  const low = (flown.length ? flown : ranked).at(-1),
     top = ranked[0];
   const rows = es
     .map((e) => {
@@ -1045,7 +1050,7 @@ async function startBoard(url) {
         : two && e === top
           ? `<span class="tag">HIGHEST</span>`
           : two && e === low
-            ? `<span class="tag">LOWEST</span>`
+            ? `<span class="tag">LOWEST THAT FLEW</span>`
             : "";
       const cls = e.baseline
         ? "base"

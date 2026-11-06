@@ -202,8 +202,11 @@ if __name__ == "__main__":
         e = [x for x in e if not x["baseline"] and x["first_test_score"] is not None]
         if not e:
             sys.exit("ERROR: no results yet")
+        flown = [
+            x for x in e if x["flights"]
+        ] or e  # the side by side needs a flight to show
         print(
-            f"lowest {e[-1]['model']} {e[-1]['first_test_score']}\nhighest {e[0]['model']} {e[0]['first_test_score']}"
+            f"lowest {flown[-1]['model']} {flown[-1]['first_test_score']}\nhighest {e[0]['model']} {e[0]['first_test_score']}"
         )
     else:
         for x in e:

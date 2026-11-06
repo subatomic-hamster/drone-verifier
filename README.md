@@ -1,11 +1,34 @@
 # drone-verifier
 
-A benchmark that watches AI agents design a hopper drone and proves or disproves their work in simulation. An agent picks real
-parts from a catalog (budget, mass, envelope), writes a flight controller, and a verifier flies it through gates (static, lift,
-nominal, wind, rain, robustness). The score is gate points on held-out seeds. Design notes: `docs/DESIGN.md`.
+Give an AI agent a budget and a parts catalog, ask it to build a drone that hops to 3 m and lands where it started, and let a simulator decide whether it works. Nothing the agent claims counts.
 
-The simulator is dvsim (proprietary robot design and MuJoCo-based sim kernel), **vendored** at `vendor/dvsim` (commit and date in
-`vendor/dvsim/VENDORED`). A fresh clone builds it from source; no dvsim checkout is needed anywhere.
+![Haiku's hopper fails on tilt at 0.25 m while Opus's flies the mission in wind, recorded re-flights](docs/media/versus.gif)
+
+An agent picks real parts (budget, mass, envelope), writes a flight controller, and a verifier flies it through gates: static, lift, nominal, wind, rain, robustness. Every step happens in a real robot design tool, so you can watch the hopper get assembled, wired and programmed, then see the verdict. Design notes: `docs/DESIGN.md`.
+
+The simulator is dvsim (robot design and MuJoCo-based sim kernel), **vendored** at `vendor/dvsim` (commit and date in `vendor/dvsim/VENDORED`). A fresh clone builds it from source; no dvsim checkout is needed anywhere.
+
+## Inside the build
+
+Each screen is dvsim's own GUI, streamed to a browser as the agent works through its tools. These come from recorded benchmark designs.
+
+|                                                                                         |                                                                                  |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| ![Empty airframe kit on the BUILD page](docs/media/modeling-empty.jpg)                  | ![Haiku's finished hopper on the BUILD page](docs/media/modeling-haiku.jpg)      |
+| **Start.** The fixed airframe kit, with the design rule errors the agent has to clear.  | **Modeling.** Haiku's design: 27 parts, 1.131 kg, 0 design rule errors.          |
+| ![Opus's controller on the PROGRAM page](docs/media/program-opus.jpg)                   | ![Opus's hopper in flight, wind scenario](docs/media/flight-opus.jpg)            |
+| **Programming.** Opus's flight controller, typed into the PROGRAM page as it writes it. | **Simulation.** The same design flying in wind, with its wiring on the airframe. |
+| ![FAIL verdict on Haiku's flight](docs/media/fail-haiku.jpg)                            | ![PASS verdict on Opus's flight](docs/media/pass-opus.jpg)                       |
+| **Fail.** Haiku's controller tips past the 30 degree limit at 0.25 m.                   | **Pass.** Opus's completes the mission.                                          |
+
+## Side by side
+
+The dashboard runs two sessions together, with the verifier's layers, the height trace and every tool call the agent makes. The scores in the header are strict gates at final.
+
+|                                                                                               |                                                                                                    |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| ![Haiku and Opus, both past the static and analytic layers](docs/media/versus-program.jpg)    | ![Haiku's height trace stops early while Opus's completes](docs/media/versus-flight.jpg)           |
+| **Before flight.** Both clear the cheap layers, L0 static and L1 analytic, in under a second. | **In flight.** Same scenario and seed: Haiku's trace stops at 0.26 m, Opus's goes to 3 m and back. |
 
 ## Results
 
@@ -31,6 +54,50 @@ Its numbers were frozen on the human reference before any agent was scored. Per-
 (c) 48 free-tier quota errors, and killed at the wall limit. (d) Spent its 12 minutes without flying; every call reached xAI. Runs were capped at 12 minutes.
 
 Exam scores of Opus, the first and final state of Haiku, and the human reference were re-flown from their saved state and matched; the other runs were not re-flown. Simulation only: nothing here was built or flown for real.
+
+![Leaderboard](docs/media/leaderboard.jpg)
+
+![Feedback curve, cost against mass, planted flaws](docs/media/panels.jpg)
+
+## How it verifies
+
+Cheap checks first; a design reaches the simulator only after the cheap layers pass (`docs/LAYERS.md`).
+
+| Layer        | Checks                                                                 | Time       |
+| ------------ | ---------------------------------------------------------------------- | ---------- |
+| L0 static    | cost, mass, envelope, design rules, compatibility of parts             | < 1 s      |
+| L1 analytic  | thrust to weight, hover throttle and power, flight time, peak currents | < 1 s      |
+| L2 sim       | MuJoCo mission under the agent's controller: nominal, wind, rain       | 5-6 s      |
+| L3 perturbed | same mission with randomized mass, thrust and wind on held-out seeds   | 5-6 s each |
+| L4 real      | not built: nothing here has flown for real                             |            |
+
+Trust checks: 13 of 13 planted flaws flagged with 0 of 4 false positives, the reference scores 100 strict, do-nothing and open-loop controllers earn no flight points on the strict gates, and re-flying at half the timestep left the top scores unchanged.
+
+## Architecture
+
+```
+laptop                                                 GPU host (build of dvsim)
+  harness/ -- one agent per model ------ MCP over ssh --> dv/server.py, one process per session
+  web/ dashboard (static, any browser)                      tools (filtered dvsim) -> Design, DRC, BOM
+       <- events, leaderboard, H.264 stream -- ssh exec     verifier: gates -> one subprocess per flight
+                                                            sandbox: agent controller in a child, nobody uid
+                                                            dvsim viewer: Build / Wiring / Simulate / Program
+```
+
+Agents get only the MCP tools: no shell, no filesystem, no dvsim repo, no reference design.
+
+## Repo layout
+
+| Path           | What                                                                |
+| -------------- | ------------------------------------------------------------------- |
+| `dv/`          | Task limits, tools, verifier layers, scoring, sandbox, GUI session  |
+| `harness/`     | Agent runner, benchmark driver, leaderboard, baselines, demo driver |
+| `web/`         | Dashboard: live, side by side, replay, leaderboard, start panel     |
+| `reference/`   | Human reference design and controller, negative controls            |
+| `tests/`       | Controls, planted flaws, feedback levels, scoring, sandbox escapes  |
+| `benchmark/`   | Published scores for every run                                      |
+| `docs/`        | `DESIGN.md`, `LAYERS.md`, README images                             |
+| `vendor/dvsim/` | dvsim: C++ kernel, Vulkan viewer, Python design layer, parts, prices |
 
 ## Prerequisites
 
