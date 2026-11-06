@@ -16,7 +16,7 @@ from dvsim.design import bom as _bom
 from dvsim.design.assembly import loads
 
 HERE = Path(__file__).resolve().parent
-DVSIM = Path(os.environ.get("DVSIM_ROOT", "/workspace/wt/dv-dvsim/src"))
+DVSIM = Path(os.environ["DVSIM_ROOT"])  # the only way to the dvsim tree (hf.sh sets it)
 TASK = tomllib.loads((HERE / "task.toml").read_text())
 SLOTS = TASK["slots"]
 LIMITS = TASK["limits"]
@@ -30,8 +30,11 @@ def library():
     global _lib
     if _lib is None:
         _lib = Library(DVSIM / "parts")
-        for part, price in TASK["kit"].items():
-            _price(_lib, part, price)
+        for part, price in TASK[
+            "kit"
+        ].items():  # only where dvsim's own part has no price
+            if _lib.get(part).value("price") is None:
+                _price(_lib, part, price)
         for slot in SLOTS.values():
             for o in slot["options"]:
                 _price(_lib, o["part"], o["price"], o.get("price_src"))
@@ -179,6 +182,7 @@ def apply(choices):
         )  # the MJCF is flown from other directories
         bm = _bom.bom(b.report, lib)
         b.cost = bm["total"]["cost"] + gnss_price
+        b.cost_by_kind = _cost_by_kind(bm, gnss_price)
         b.mass = b.report["mass"]["total"]
         b.bom = bm
         b.props = mass_props(b.xml)
@@ -189,8 +193,21 @@ def apply(choices):
             sum((lib.get(i["part"]).value("price") or 0.0) for i in insts) + gnss_price
         )
         b.mass = sum((lib.get(i["part"]).value("mass") or 0.0) for i in insts)
-        b.bom, b.props, b.envelope_mm = None, None, [0, 0, 0]
+        b.bom, b.props, b.envelope_mm, b.cost_by_kind = None, None, [0, 0, 0], {}
     return b
+
+
+def _cost_by_kind(bm, gnss_price):
+    """USD by what kind of line it is. The GNSS chip is off-board in the assembly, so dvsim's BOM has no line for it."""
+    kinds = {}
+    for ln in bm["lines"]:
+        k = "estimated" if ln.get("fidelity") == "estimated" else "sourced"
+        kinds[k] = round(kinds.get(k, 0.0) + (ln["unit_price"] or 0.0) * ln["count"], 2)
+    if gnss_price:
+        kinds["gnss_overlay"] = gnss_price
+    if bm["missing"]:
+        kinds["unpriced_lines"] = len(bm["missing"])
+    return kinds
 
 
 # ---- slots that need more than a swap -----------------------------------------------------------------------------------

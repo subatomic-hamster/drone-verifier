@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-DVSIM = Path(os.environ.get("DVSIM_ROOT", "/workspace/wt/dv-dvsim/src"))
+DVSIM = Path(os.environ["DVSIM_ROOT"])
 sys.path.insert(0, str(DVSIM / "examples" / "hopper"))
 
 import estimator as est_mod
@@ -194,6 +194,7 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
     """The flight loop, in this process. emit(dict) gets flight_tick events. load_sim(path) -> Sim (default dvsim.Sim.load: the GUI passes one bound to its window); on_tick(sim, t) runs every control
     tick (the GUI's pacing). -> result dict (never raises for agent mistakes)."""
     import dvsim
+
     from dv.sandbox import Controller
 
     t_wall = time.perf_counter()
@@ -459,6 +460,18 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
     if spec.get("log"):
         Path(spec["log"]).write_bytes(sim.log())
         res["state_hash"] = f"{sim.state_hash():016x}"
+        # what the GUI needs to replay this flight (and any score to be re-checked): the dvsim native.json, the flight's own MJCF
+        (Path(spec["log"]).parent / "native.json").write_text(
+            json.dumps(
+                dict(
+                    tick=sim.tick,
+                    dt=SIM_DT,
+                    state_hash=res["state_hash"],
+                    diverged=bool(sim.diverged),
+                )
+            )
+        )
+        (Path(spec["log"]).parent / "scene.xml").write_text(model.read_text())
     model.unlink(missing_ok=True)
     try:
         wd.rmdir()
@@ -480,7 +493,11 @@ def static_thrust(xml, secs=2.0):
         sim.set("/devices/esc", "throttle", [1.0])
         thrust, ib, v = 0.0, 0.0, 99.0
         steps = int(secs / SIM_DT)
-        for _ in range(steps // 4):
+        for i in range(steps // 4):
+            if (
+                i == steps // 8
+            ):  # spin-up current is a transient: the numbers are those of the second half
+                thrust, ib, v = 0.0, 0.0, 99.0
             sim.step(4)
             thrust = max(thrust, float(sim.query("/devices/rotor", "thrust")[0][0]))
             ib = max(ib, abs(float(sim.query("/devices/battery", "current")[0][0])))
