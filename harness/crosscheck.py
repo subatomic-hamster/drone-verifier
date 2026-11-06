@@ -1,5 +1,5 @@
 """Second sim: re-fly each run's final design + controller at half timestep on the held-out seeds and add `crosscheck` to its results.json.
-Not run during agent runs. Needs CORE's half-timestep helper in dv.verify (one of HALF_NAMES; it takes (built, code, seed) like run_gates).
+Not run during agent runs. Uses CORE's dv.heldout.crosscheck(run_dir). Only whatif runs scoring >= MIN_SCORE (50).
 
   python harness/crosscheck.py            laptop: ships results/*/design.json + controller.py to hfbox, flies there, merges the answer
   python harness/crosscheck.py --remote DIR...   on hfbox: DIR holds design.json, controller.py, results.json; prints one JSON line per DIR
@@ -15,28 +15,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 HF = str(ROOT / "scripts" / "hf.sh")
 RR = "/workspace/wt/dv/runs"
-HALF_NAMES = ("run_gates_half", "run_gates_halfstep", "crosscheck_gates")
+MIN_SCORE = 50  # whatif runs scoring at least this are re-flown
 
 
 def fly_half(rd):
-    from dv import design as D
     from dv import heldout
-    from dv import verify as V
 
-    fn = next((getattr(V, n) for n in HALF_NAMES if hasattr(V, n)), None)
-    if fn is None:
-        sys.exit(
-            f"ERROR: dv.verify has none of {HALF_NAMES}: CORE's half-timestep helper is not committed yet"
-        )
-    rd = Path(rd)
-    res = json.loads((rd / "results.json").read_text())
-    choices = json.loads((rd / "design.json").read_text())
-    code = (rd / "controller.py").read_text()
-    r = fn(D.apply(choices), code, heldout.heldout_seed())
+    r = heldout.crosscheck(
+        rd
+    )  # CORE's half-timestep re-fly; does not touch results.json
     return dict(
-        score_full=res["score"],
+        score_full=r["score_was"],
         score_half=r["score"],
-        score_change=round(r["score"] - res["score"], 1),
+        score_change=r["change"],
         gates_half=[{"id": g["id"], "pass": g["pass"]} for g in r["gates"]],
         dt_scale=0.5,
     )
@@ -65,7 +56,10 @@ def main():
         if (d / "results.json").exists()
         and (d / "design.json").exists()
         and (d / "controller.py").read_text().strip()
-        and "crosscheck" not in json.loads((d / "results.json").read_text())
+        and (r := json.loads((d / "results.json").read_text()))
+        and "crosscheck" not in r
+        and r.get("feedback") == "whatif"
+        and (r.get("score") or 0) >= MIN_SCORE
     ]
     if not todo:
         sys.exit(
