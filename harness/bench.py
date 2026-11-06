@@ -26,8 +26,8 @@ HF = str(ROOT / "scripts" / "hf.sh")
 RESULTS = ROOT / "results"
 REMOTE_RUNS = "/workspace/wt/dv/runs"
 PORTS = list(
-    range(8803, 8811)
-)  # 8 headless sessions (8801/8802 stay free for the GUI demo): agents wait on the LLM, flights are capped by the flock slots in dv.verify
+    range(8804, 8812)
+)  # 8 headless sessions (8801-8803 stay free for the GUI demo and its bridge): agents wait on the LLM, flights are capped by the flock slots in dv.verify
 SESSIONS = dict(zip(PORTS, "ABCDEFGH"))
 START_LOCK = threading.Lock()
 LEVELS = ["none", "passfail", "diag", "whatif"]
