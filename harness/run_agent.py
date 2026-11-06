@@ -33,6 +33,8 @@ OMP_MODELS = {
     "nemotron": "nvidia/nvidia/nemotron-3.5-super-vl-120b-a12b",
     "deepseek-flash": "deepseek/deepseek-flash",
     "deepseek-pro": "deepseek/deepseek-v4-pro",
+    "gemini-flash-lite": "google/gemini-3.5-flash-lite",  # needs GEMINI_API_KEY in the environment
+    "grok": "xai/grok-4.7",  # needs XAI_API_KEY in the environment; limited quota, 1-2 runs at most
 }
 
 
