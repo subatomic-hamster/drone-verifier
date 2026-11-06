@@ -108,6 +108,15 @@ def build(results_dir=RESULTS):
     runs = []
     for f in sorted(Path(results_dir).glob("*/results.json")):
         r = json.loads(f.read_text())
+        a = (
+            f.parent / "agent.json"
+        )  # the final usage event arrives after finish: the harness's own totals are the complete ones
+        if a.exists():
+            a = json.loads(a.read_text())
+            if a.get("claude_cost_usd") is not None:
+                r["cost_usd"] = a["claude_cost_usd"]
+            if a.get("tokens", {}).get("input"):
+                r["tokens"] = a["tokens"]
         runs.append((base_model(r, f.parent.name), r))
     main, curve = {}, {}
     for m, r in runs:
