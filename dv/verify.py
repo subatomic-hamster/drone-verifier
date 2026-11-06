@@ -13,7 +13,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from dv import design as D
-from dv import flight as F
 
 TASK = D.TASK
 GATES = {g["id"]: g for g in TASK["gates"]}
@@ -59,8 +58,9 @@ def seeds_for(base):
     )
 
 
-def make_spec(b, code, scenario, seed, scatter=None, log=None):
+def make_spec(b, code, scenario, seed, scatter=None, log=None, sim_dt=None):
     spec = dict(
+        sim_dt=sim_dt,
         xml=None,
         scenario=scenario,
         seed=seed,
@@ -70,7 +70,7 @@ def make_spec(b, code, scenario, seed, scatter=None, log=None):
             {"wind_ms": TASK["robust"]["wind_ms"], "w20_ms": 0.0, "rain_mmh": 0.0},
         ),
         code=code,
-        cfg=D.controller_cfg(b, getattr(b, "static", None)),
+        cfg=D.controller_cfg(b),
         mission=TASK["mission"],
         sandbox=TASK["sandbox"],
         soc_min_pct=TASK["limits"]["soc_min_pct"],
@@ -162,30 +162,28 @@ def g1(b):
 
 
 def g2(b):
-    st = getattr(b, "static", None) or F.static_thrust(b.xml)
-    b.static = st
-    tw = st["thrust_n"] / (b.props["mass"] * F.veh.G)
-    lim = TASK["limits"]["tw_min"]
-    pack = D.library().get(b.choices["battery"]).value("i_max_continuous")
-    msgs = []
-    if tw < lim:
-        msgs.append(
-            f"thrust to weight {tw:.2f} below {lim:g}: {st['thrust_n']:.1f} N at full duty for {b.props['mass']:.3f} kg, pack {st['vbat']:.1f} V at {st['i_batt_a']:.0f} A"
-        )
-    if pack and st["i_batt_a"] > pack:
-        msgs.append(f"pack current {st['i_batt_a']:.0f} A over its {pack:g} A rating")
-    return dict(
-        ok=not msgs,
-        reason="; ".join(msgs) or f"thrust to weight {tw:.2f}, {st['i_batt_a']:.0f} A",
-        tw=tw,
-    )
+    """L1: dv/analytic.py, from part specs."""
+    if b.l1 is None:
+        return dict(ok=False, reason="choose a pack and an ESC first", tw=None)
+    return dict(ok=b.l1["ok"], reason=b.l1["reason"], tw=b.l1["tw"])
 
 
-def run_gates(b, code, base_seed, emit=None, log_dir=None):
-    """-> dict(gates, score, flights). Later gates are listed as not run."""
+def layers(b):
+    """L0 then L1, no simulator. -> None when both pass, else {gate, reason} of the first that fails."""
+    for gate, fn in (("G1", g1), ("G2", g2)):
+        r = fn(b)
+        if not r["ok"]:
+            return dict(gate=gate, reason=r["reason"])
+    return None
+
+
+def run_gates(b, code, base_seed, emit=None, log_dir=None, sim_dt=None):
+    """-> dict(gates, score, flights, flown: [{scenario, seed, pass, metrics}]). Later gates are listed as not run."""
     seeds = seeds_for(base_seed)
     gates, score, flights = [], 0.0, 0
+    flown = []
     stop = False
+    keep = lambda r: flown.append({k: r[k] for k in ("scenario", "seed", "pass", "metrics")})  # fmt: skip
 
     def done(gid, ok, reason, points=None):
         nonlocal score, stop
@@ -213,9 +211,10 @@ def run_gates(b, code, base_seed, emit=None, log_dir=None):
         )
         if log:
             Path(log).parent.mkdir(parents=True, exist_ok=True)
-        spec = make_spec(b, code, scenario, seeds[scenario], log=log)
+        spec = make_spec(b, code, scenario, seeds[scenario], log=log, sim_dt=sim_dt)
         r = fly(spec, b, emit)
         flights += 1
+        keep(r)
         compress_log(spec)
         done(
             gid,
@@ -236,12 +235,14 @@ def run_gates(b, code, base_seed, emit=None, log_dir=None):
             flight(gid, sc)
     if not stop:
         specs = [
-            make_spec(b, code, "robust", s, scatter=TASK["robust"])
+            make_spec(b, code, "robust", s, scatter=TASK["robust"], sim_dt=sim_dt)
             for s in seeds["robust"]
         ]
         with ThreadPoolExecutor(len(specs)) as ex:
             rs = list(ex.map(lambda s: fly(s, b, emit, ticks=s is specs[0]), specs))
         flights += len(rs)
+        for x in rs:
+            keep(x)
         good = sum(x["pass"] for x in rs)
         pts = round(GATES["G6"]["points"] * good / len(rs), 1)
         bad = [x for x in rs if not x["pass"]]
@@ -265,4 +266,4 @@ def run_gates(b, code, base_seed, emit=None, log_dir=None):
                     reason="not run: an earlier gate failed",
                 )
             )
-    return dict(gates=gates, score=round(score, 1), flights=flights)
+    return dict(gates=gates, score=round(score, 1), flights=flights, flown=flown)

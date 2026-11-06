@@ -18,6 +18,10 @@ mass_max_kg = 1.35
 envelope_mm = [370, 370, 380]
 tw_min = 1.8
 soc_min_pct = 20.0
+hover_throttle_max_pct = 62.0  # reference 55.9 % + 10 %; about the same design as T/W 1.8
+hover_power_max_w = 510.0      # reference 456 W + 10 %; about what a 2200 mAh pack hovers at the mass limit
+flight_time_min_s = 300.0      # reference 331 s - 10 %
+harness_plug = "xt60"    # the plug on the airframe's battery lead
 
 [budget]
 verify = 12
@@ -64,12 +68,12 @@ wind_ms = 0.0
 [[gates]]
 id = "G1"
 name = "static"
-what = "cost, mass, envelope, design rules"
+what = "cost, mass, envelope, design rules, compatibility (pack voltage, connector, ESC and regulator current ratings); runs before any flight"
 points = 10
 [[gates]]
 id = "G2"
 name = "lift"
-what = "thrust to weight, pack and ESC current margins in a static thrust run"
+what = "from part specs, no simulator: thrust to weight, hover throttle, hover power, flight time, peak current against pack and ESC ratings"
 points = 10
 [[gates]]
 id = "G3"
@@ -107,12 +111,18 @@ part = "tattu-1400mah-6s-150c-xt60"
 [[slots.battery.options]]
 part = "gnb-4000mah-6s-70c-tplug"
 [[slots.battery.options]]
+part = "tattu-2200mah-6s-150c-rline5-xt60"
+[[slots.battery.options]]
+part = "tattu-4500mah-6s-25c-xt60"
+[[slots.battery.options]]
+part = "iflight-fullsend-6s1p-4000mah-liion-40t"
+[[slots.battery.options]]
 part = "gnb-3000mah-4s-100c-xt60"
 [[slots.battery.options]]
 part = "ovonic-3500mah-4s-130c-xt60"
 
 [slots.esc]
-what = "the fan's speed controller; the fan draws about 105 A at full throttle on 6S and the ESC limits motor current to its continuous rating"
+what = "the fan's speed controller; it limits motor current to its continuous rating"
 instances = ["esc"]
 [[slots.esc.options]]
 part = "hobbywing-platinum-120a-v5-esc"

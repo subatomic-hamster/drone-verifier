@@ -3,7 +3,6 @@
 Prices are dvsim's (parts/_prices, read by Library and summed by bom()); task.toml holds none. The GNSS chip is an off-board data instance whose module the harness carries, so dvsim's
 BOM has no line for it: the module's dvsim price is added to the BOM total and its mass set on the harness, as assemblies/hopper.toml does for its RTK receiver."""
 
-import math
 import os
 import re
 import tomllib
@@ -15,12 +14,15 @@ from dvsim.design import Design, DesignError, Library, compute
 from dvsim.design import bom as _bom
 from dvsim.design.assembly import loads
 
+from dv import analytic
+
 HERE = Path(__file__).resolve().parent
 DVSIM = Path(os.environ["DVSIM_ROOT"])  # the only way to the dvsim tree (hf.sh sets it)
 TASK = tomllib.loads((HERE / "task.toml").read_text())
 SLOTS = TASK["slots"]
 LIMITS = TASK["limits"]
 ASSEMBLY = DVSIM / "assemblies" / "hopper.toml"
+MOTOR = "qx-qf3538-2000kv-edf-motor"  # fixed airframe
 EST = "drone-verifier catalog value, see dv/task.toml"
 _lib = None
 
@@ -144,6 +146,8 @@ def apply(choices):
         ):
             raise DesignError(f"{k} must be a number of mm within +-200")
     d = Design(loads(ASSEMBLY.read_text()), lib, None)
+    # dvsim re-runs the whole DRC after every edit (0.2 s each, 15 edits): only the final one counts, and L0 must stay well under a second
+    d.check = lambda *a, **k: []
     for slot, s in SLOTS.items():
         part = choices.get(slot)
         fn = globals().get(f"_slot_{slot}")
@@ -155,6 +159,7 @@ def apply(choices):
         else:
             for iid in s["instances"]:
                 d.swap(iid, part)
+    del d.check
     b = Built()
     b.design, b.choices = d, dict(choices)
     b.findings = [f.as_dict() for f in d.check()]
@@ -188,6 +193,7 @@ def apply(choices):
         b.cost += gnss_price
         b.mass = sum((lib.get(i["part"]).value("mass") or 0.0) for i in insts)
         b.bom, b.props, b.envelope_mm, b.cost_by_kind = None, None, [0, 0, 0], {}
+    b.l1 = analytic.l1(b)
     return b
 
 
@@ -467,16 +473,49 @@ def static_violations(b):
         not b.missing,
         "unchosen slots: " + ", ".join(b.missing) if b.missing else "all slots chosen",
     )
+    return out + _compat(b)
+
+
+def _compat(b):
+    """L0 compatibility rules, from the part files: each names its rule and gives both numbers."""
+    lib, c, out = library(), b.choices, []
+
+    def rule(name, v, lim, ok, msg):
+        out.append(dict(name=name, value=v, limit=lim, ok=bool(ok), message=f"{name.upper()}: {msg}"))  # fmt: skip
+
+    pack = lib.get(c["battery"]) if c.get("battery") else None
+    if pack:
+        v = pack.value("v_full")
+        plug = next(p["type"] for p in pack.ports if p.get("kind") == "power")
+        want = LIMITS["harness_plug"]
+        rule("connector", plug, want, plug == want, f"pack plug {plug}, the airframe's lead has {want}")  # fmt: skip
+        vm = next(p["v_max"]["value"] for p in lib.get(MOTOR).ports if p.get("kind") == "power")  # fmt: skip
+        rule("pack_v_motor", v, vm, v <= vm, f"pack {v:g} V full, motor rated {vm:g} V")
+        if c.get("esc"):
+            ve = next(p["v_max"]["value"] for p in lib.get(c["esc"]).ports if p["name"] == "power_in")  # fmt: skip
+            rule("pack_v_esc", v, ve, v <= ve, f"pack {v:g} V full, ESC rated {ve:g} V")
+        if c.get("regulator"):
+            vr = lib.get(c["regulator"]).value("input_voltage_max")
+            rule("pack_v_regulator", v, vr, v <= vr, f"pack {v:g} V full, regulator input rated {vr:g} V")  # fmt: skip
+    if pack and c.get("esc") and b.report:
+        rate = analytic.power_specs(b)["i_esc"]
+        need = analytic.motor_amps(LIMITS["tw_min"] * b.mass * analytic.G)
+        rule("esc_current", round(need, 1), rate, need <= rate, f"motor needs {need:.0f} A for T/W {LIMITS['tw_min']:g} at {b.mass:.3f} kg, ESC rated {rate:g} A")  # fmt: skip
+    if c.get("regulator") and c.get("servo"):
+        rate = lib.get(c["regulator"]).value("output_current_typ_max")
+        stall = lib.get(c["servo"]).value("stall_current_5v")
+        fc = lib.get("pjrc-teensy-4-0").value("supply_current_600mhz")
+        sensor = lib.get(c["range"]).params if c.get("range") else {}
+        peak = (sensor.get("supply_current_peak") or {}).get("value", 0.0)
+        # the busier rail, as dvsim's CURRENT_PEAK_OVER_RATING warning counts it
+        need = 2 * stall + fc + peak
+        rule("regulator_current", round(need, 2), rate, need <= rate, f"two servos at stall, flight computer and range sensor draw {need:.2f} A, regulator rated {rate:g} A")  # fmt: skip
     return out
 
 
-def controller_cfg(b, static=None):
+def controller_cfg(b):
     """What the controller gets as cfg: the design's numbers (never gains). Lists of numbers arrive as numpy arrays."""
-    import sys
-
-    sys.path.insert(0, str(DVSIM / "examples" / "hopper"))
-    import vehicle as veh
-
+    veh = analytic.veh
     lib, c = library(), b.choices
     p = b.props
     esc = lib.get(c["esc"])
@@ -491,12 +530,7 @@ def controller_cfg(b, static=None):
     ) or _value(esc, "current_continuous")
     batt = lib.get(c["battery"])
     gain = 0.5 * veh.JET_FACTOR**2 / veh.A_EXIT * veh.VANE_AREA * veh.CN_ALPHA
-
-    def volts(T):
-        n = math.sqrt(T / (veh.CT0 * veh.RHO0 * veh.D_FAN**4))
-        return veh.KE * 2 * math.pi * n + (
-            veh.CQ0 * veh.RHO0 * n * n * veh.D_FAN**5 / veh.KE + veh.I0
-        ) * (veh.R_MOTOR + r_esc)
+    volts = lambda T: analytic.motor_volts(T, r_esc)
 
     return dict(
         g=veh.G,
@@ -504,7 +538,7 @@ def controller_cfg(b, static=None):
         cg=p["cg"],
         inertia=p["inertia"],
         h_stand=p["h_stand"],
-        thrust_max_n=(static or {}).get("thrust_n"),
+        thrust_max_n=b.l1 and b.l1["thrust_max_n"],
         dt=0.004,
         t_cal=TASK["mission"]["t_cal_s"],
         mission={
@@ -565,4 +599,7 @@ def flight_inputs(b):
         servo=dict(
             p=2000, d=6000
         ),  # XL330 runtime gains as examples/hopper/vehicle.py: the default P 400 sags under load
+        pack={
+            k: _value(library().get(c["battery"]), k) for k in ("capacity_ah", "v_full")
+        },
     )

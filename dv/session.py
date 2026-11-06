@@ -7,13 +7,14 @@ import time
 from pathlib import Path
 
 from dv import design as D
-from dv import flight as F
 from dv import heldout, verify
 from dv.events import Events
 from dv.sandbox import Controller, check_source
 
 TASK = D.TASK
 RUNS = lambda: Path(os.environ.get("DV_RUNS", "runs"))
+FILTERED = ("design_set", "design_report", "fly", "verify", "finish")
+FLY_GATE = dict(nominal="G3", wind="G4", rain="G5")
 
 
 class NullUI:
@@ -36,17 +37,21 @@ class NullUI:
 
 
 class Session:
-    def __init__(self, name, model="unknown", trial=1, ui=None, run_dir=None):
+    def __init__(
+        self, name, model="unknown", trial=1, ui=None, run_dir=None, feedback="whatif"
+    ):
         self.name, self.model, self.trial = name, model, trial
+        self.feedback = feedback
         self.run_dir = Path(run_dir) if run_dir else RUNS() / f"{name}-{model}-{trial}"
         self.run_dir.mkdir(parents=True, exist_ok=True)
         os.chmod(
             self.run_dir, 0o700
         )  # the agent's child runs as nobody; it has no business here
         (self.run_dir / "meta.json").write_text(
-            json.dumps(dict(model=model, trial=trial, session=name))
+            json.dumps(dict(model=model, trial=trial, session=name, feedback=feedback))
         )
         self.ev = Events(name, self.run_dir / "events.jsonl")
+        self.ev.emit("config", feedback=feedback, model=model, trial=trial)
         self.ui = ui or NullUI()
         self.lock = threading.RLock()
         self.choices, self.code = {}, ""
@@ -100,7 +105,14 @@ class Session:
             if self.finished is not None and tool != "finish":
                 out = dict(ok=False, error="the session is finished")
             elif (
-                tool not in ("finish", "task_info", "parts_search", "design_report")
+                tool
+                not in (
+                    "finish",
+                    "task_info",
+                    "parts_search",
+                    "design_report",
+                    "what_if",
+                )
                 and self.wall_left() == 0.0
             ):
                 out = dict(
@@ -123,31 +135,51 @@ class Session:
                 summary=out.get("summary") or out.get("error") or "",
             )
             self.emit_budget()
+            return self.for_agent(tool, out)
+
+    def for_agent(self, tool, out):
+        """What the agent receives at this feedback level. Events, the GUI and the run's files always have the full result."""
+        if self.feedback in ("diag", "whatif") or tool not in FILTERED:
             return out
+        if "error" in out and "gate" not in out:  # malformed input still errors
+            return out
+        if self.feedback == "none":
+            return {"recorded": True}
+        if tool in ("verify", "finish") and "gates" in out:
+            gates = [{"id": g["id"], "pass": g["pass"]} for g in out["gates"]]
+        elif tool == "fly" and "scenario" in out:
+            gates = [{"id": FLY_GATE[out["scenario"]], "pass": out["pass"]}]
+        else:
+            bad = out.get("gate") or (verify.layers(self.built) or {}).get("gate")
+            gates = [{"id": g, "pass": g != bad} for g in ("G1", "G2")]
+            gates = gates[:1] if bad == "G1" else gates
+        return {"gates": gates}
 
     # ---- design
     def apply(self, choices):
         b = D.apply(choices)
         self.choices, self.built = dict(choices), b
-        b.static = None
-        complete = bool(b.xml) and not b.missing
-        tw = None
-        if complete:
-            b.static = F.static_thrust(b.xml)
-            tw = b.static["thrust_n"] / (b.props["mass"] * F.veh.G)
+        l1 = b.l1 or {}
+        tw = l1.get("tw") if b.xml and not b.missing else None
         (self.run_dir / "design.json").write_text(json.dumps(self.choices, indent=1))
         L = TASK["limits"]
         self.meters = dict(
             cost_usd=round(b.cost, 2),
             mass_kg=round(b.mass, 4),
             envelope_mm=b.envelope_mm,
-            tw=None if tw is None else round(tw, 3),
+            tw=tw,
+            hover_throttle_pct=l1.get("hover_throttle_pct"),
+            hover_power_w=l1.get("hover_power_w"),
+            flight_time_s=l1.get("flight_time_s"),
             drc_errors=len(b.errors),
             limits=dict(
                 cost_usd=L["cost_max_usd"],
                 mass_kg=L["mass_max_kg"],
                 envelope_mm=L["envelope_mm"],
                 tw=L["tw_min"],
+                hover_throttle_pct=L["hover_throttle_max_pct"],
+                hover_power_w=L["hover_power_max_w"],
+                flight_time_s=L["flight_time_min_s"],
             ),
         )
         self.ev.emit("meters", **self.meters)
@@ -156,17 +188,7 @@ class Session:
             errors=[dict(rule=e["code"], message=e["message"]) for e in b.errors],
             warnings=len(b.warnings),
         )
-        cons = D.static_violations(b)
-        if tw is not None:
-            cons.append(
-                dict(
-                    name="tw",
-                    value=round(tw, 2),
-                    limit=L["tw_min"],
-                    ok=tw >= L["tw_min"],
-                    message=f"thrust to weight {tw:.2f} against {L['tw_min']:g}",
-                )
-            )
+        cons = D.static_violations(b) + l1.get("checks", [])
         out = []
         for c in cons:
             if c["name"] == "slots" or (c["name"] == "drc" and b.missing):
@@ -196,9 +218,40 @@ class Session:
             cg_mm=[round(v * 1000, 1) for v in p["cg"]] if p else None,
             broken_constraints=broken,
             design_errors=[f"{e['code']}: {e['message']}" for e in b.errors][:8],
+            margins=[c["message"] for c in (b.l1 or {}).get("checks", [])],
             summary=f"${b.cost:.0f}, {b.mass:.3f} kg, T/W {self.meters['tw']}, {len(broken)} broken"
             + (f", unchosen: {b.missing}" if b.missing else ""),
         )
+
+    def what_if(self, slot, part):
+        """L0 and L1 of one swap, not applied. Uses no budget."""
+        if slot not in D.SLOTS:
+            raise D.DesignError(f"unknown slot '{slot}'. Slots: {', '.join(D.SLOTS)}")
+        if not part:
+            raise ValueError("part is empty")
+        now, then = self.built, D.apply({**self.choices, slot: part})
+
+        def nums(b):
+            l1 = b.l1 or {}
+            return dict(
+                cost_usd=round(b.cost, 2),
+                mass_kg=round(b.mass, 4),
+                thrust_to_weight=l1.get("tw"),
+                **{k: l1.get(k) for k in ("hover_throttle_pct", "hover_power_w", "flight_time_s", "i_pack_peak_a", "i_motor_peak_a")},
+            )  # fmt: skip
+
+        a, z = nums(now), nums(then)
+        broken = [c["message"] for c in D.static_violations(then) + (then.l1 or {}).get("checks", []) if not c["ok"] and c["name"] != "slots" and not (c["name"] == "drc" and then.missing)]  # fmt: skip
+        return dict(
+            slot=slot,
+            part=part,
+            current=now.choices.get(slot),
+            before=a,
+            after=z,
+            change={k: round(z[k] - a[k], 3) for k in a if a[k] is not None and z[k] is not None},
+            would_break=broken,
+            summary=f"{slot} -> {part}: ${then.cost:.0f}, {then.mass:.3f} kg, {len(broken)} broken",
+        )  # fmt: skip
 
     def design_report(self):
         b = self.built
@@ -215,9 +268,9 @@ class Session:
             design_warnings=len(b.warnings),
             mass_props=b.props
             and {k: b.props[k] for k in ("mass", "cg", "inertia", "h_stand")},
-            static_thrust=b.static,
+            analytic=b.l1,
             thrust_to_weight=self.meters["tw"],
-            cfg=D.controller_cfg(b, b.static) if complete else None,
+            cfg=D.controller_cfg(b) if complete else None,
             summary="design report",
         )
 
@@ -249,9 +302,7 @@ class Session:
             self._ui("show_code", code, str(self.run_dir / "controller.py"))
             b = self.built
             if b.xml and not b.missing:
-                c = Controller(
-                    code, D.controller_cfg(b, b.static), deadline_s=1.0, init_s=5.0
-                )
+                c = Controller(code, D.controller_cfg(b), deadline_s=1.0, init_s=5.0)
                 if not c.dead:
                     c.step(
                         0.0,
@@ -283,16 +334,6 @@ class Session:
         )
 
     # ---- flights
-    def _ready(self):
-        b = self.built
-        if b.missing:
-            return f"choose parts for: {', '.join(b.missing)}"
-        if not b.xml:
-            return f"the design does not build: {b.build_error}"
-        if not self.code:
-            return "no controller: call write_controller"
-        return None
-
     def _replay(self, scenario, passed, reason):
         d = self.run_dir / "flight_last"
         if (d / "replay.dvsimog.gz").exists():
@@ -310,9 +351,13 @@ class Session:
     def fly(self, scenario):
         if scenario not in TASK["scenarios"]:
             raise ValueError(f"unknown scenario '{scenario}': nominal, wind or rain")
-        why = self._ready()
-        if why:
-            return dict(ok=False, error=why)
+        if self.built.missing:
+            return dict(ok=False, error=f"choose parts for: {', '.join(self.built.missing)}")  # fmt: skip
+        bad = verify.layers(self.built)
+        if bad:
+            return dict(ok=False, error=f"{bad['gate']} fails, not flown: {bad['reason']}", gate=bad["gate"])  # fmt: skip
+        if not self.code:
+            return dict(ok=False, error="no controller: call write_controller")
         self._ui("page", "run")
         seed = verify.seeds_for(TASK["public"]["seed"])[scenario]
         log = None
@@ -337,9 +382,9 @@ class Session:
         )
 
     def verify(self):
-        if self.verify_left <= 0:
+        # only a call that reaches the simulator uses up the budget
+        if self.verify_left <= 0 and self.code and not verify.layers(self.built):
             return dict(ok=False, error="no verify calls left: call finish")
-        self.verify_left -= 1
         self.attempt += 1
         self._ui("page", "run")
         r = verify.run_gates(
@@ -349,9 +394,11 @@ class Session:
             emit=self.ev.emit,
             log_dir=self.run_dir,
         )
+        if r["flights"]:
+            self.verify_left -= 1
         self.flights += r["flights"]
         self.score = r["score"]
-        self.ev.emit("verify", attempt=self.attempt, gates=r["gates"], score=r["score"])
+        self.ev.emit("verify", attempt=self.attempt, gates=r["gates"], score=r["score"], charged=bool(r["flights"]))  # fmt: skip
         nom = next(g for g in r["gates"] if g["id"] == "G3")
         if nom["reason"] and not nom["reason"].startswith("not run"):
             self._replay("nominal", nom["pass"], nom["reason"])
@@ -390,6 +437,7 @@ class Session:
             session=self.name,
             model=self.model,
             trial=self.trial,
+            feedback=self.feedback,
             meters=self.meters,
             budget=self.budget(),
             score=self.score,

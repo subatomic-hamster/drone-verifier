@@ -1,4 +1,4 @@
-"""One session's server: `python -m dv.server --session A --port 8801 [--gui] [--model NAME] [--trial N]`. MCP (streamable HTTP, JSON answers, stateless) at /mcp and the session's HTTP routes on one port.
+"""One session's server: `python -m dv.server --session A --port 8801 [--gui] [--model NAME] [--trial N] [--feedback none|passfail|diag|whatif]`. MCP (streamable HTTP, JSON answers, stateless) at /mcp and the session's HTTP routes on one port.
 Tools run in worker threads, so a long verify never blocks /state, /events or /agent-event."""
 
 import argparse
@@ -13,7 +13,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse, PlainTextResponse, StreamingResponse
 
 from dv.session import Session
-from dv.tools import TOOLS
+from dv.tools import LEVELS, TOOLS
 
 
 def build_app(sess, host="127.0.0.1"):
@@ -59,6 +59,12 @@ def build_app(sess, host="127.0.0.1"):
     @srv.tool(description=TOOLS["finish"])
     async def finish(note: str = "") -> str:
         return await run("finish", dict(note=note), sess.finish)
+
+    if sess.feedback == "whatif":
+
+        @srv.tool(description=TOOLS["what_if"])
+        async def what_if(slot: str, part: str) -> str:
+            return await run("what_if", dict(slot=slot, part=part), sess.what_if)
 
     @srv.custom_route("/state", methods=["GET"])
     async def state(_):
@@ -122,8 +128,9 @@ def main():
     ap.add_argument("--gui", action="store_true")
     ap.add_argument("--model", default="unknown")
     ap.add_argument("--trial", type=int, default=1)
+    ap.add_argument("--feedback", choices=LEVELS, default="whatif")
     a = ap.parse_args()
-    sess = Session(a.session, a.model, a.trial)
+    sess = Session(a.session, a.model, a.trial, feedback=a.feedback)
     uv = uvicorn.Server(
         uvicorn.Config(
             build_app(sess, a.host), host=a.host, port=a.port, log_level="warning"

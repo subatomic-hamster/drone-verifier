@@ -28,6 +28,7 @@ LIM = math.radians(20.0)  # mechanical range of the vane hinges
 TOUCH_Z = 0.02  # m above the standing height: feet down
 TICK_EVERY = 25  # control ticks between flight_tick events (10 Hz)
 TELEM_EVERY = 125  # control ticks between telemetry rows returned to the agent (2 Hz)
+RECOVER_DEG = 10.0  # recovery time = longest stretch in the air above this tilt
 
 
 def _play(y, x, b):
@@ -212,9 +213,13 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
         h["xml"]["batt_share"] = spec["batt_mass"] / props["mass"]
     wd = Path(tempfile.mkdtemp(prefix="dv-flight-", dir=spec.get("tmp")))
     model = wd / "scene.xml"
-    model.write_text(
-        scene_xml(Path(spec["xml"]).read_text(), spec["seed"], sc, h["xml"])
-    )
+    text = scene_xml(Path(spec["xml"]).read_text(), spec["seed"], sc, h["xml"])
+    sim_dt = spec.get("sim_dt") or SIM_DT  # the crosscheck flies at half the timestep
+    stride = round(CTRL_DT / sim_dt)
+    if sim_dt != SIM_DT:
+        text, hits = re.subn(r'timestep="[^"]+"', f'timestep="{sim_dt}"', text)
+        assert hits, "no timestep attribute in the MJCF"
+    model.write_text(text)
     sim = (load_sim or dvsim.Sim.load)(str(model))
     if spec.get("log"):
         sim.start_log()
@@ -252,11 +257,14 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
     rain_last = -1.0
     sim.step(1)
     k = 0
-    max_ticks = int((m["mission_s"] + 2.0) / SIM_DT)
+    max_ticks = int((m["mission_s"] + 2.0) / sim_dt)
+    soc0, e_wh, ah = None, 0.0, 0.0
+    sat_ticks, air_ticks, tilt_since, recovery = 0, 0, None, 0.0
+    hover_n, hover_duty, hover_i = 0, 0.0, 0.0
     while k < max_ticks:
-        if k % STRIDE == 0:
-            t = sim.tick * SIM_DT
-            n = k // STRIDE
+        if k % stride == 0:
+            t = sim.tick * sim_dt
+            n = k // stride
             gyro = sim.query("/devices/imu", "gyro")[0]
             accel = sim.query("/devices/imu", "accel")[0]
             pr = q("/devices/baro", "pressure")
@@ -338,6 +346,21 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
                 max(i_peak, abs(ib)),
                 max(thrust_peak, th),
             )
+            soc0 = soc if soc0 is None else soc0
+            e_wh += vb * abs(ib) * CTRL_DT / 3600.0
+            ah += abs(ib) * CTRL_DT / 3600.0
+            if judge.t_lift is not None and judge.t_touch is None:
+                air_ticks += 1
+                sat_ticks += (
+                    duty >= 0.995 or max(abs(v) for v in vanes) >= veh.VANE_LIMIT
+                )
+                if tl > RECOVER_DEG:
+                    tilt_since = t if tilt_since is None else tilt_since
+                    recovery = max(recovery, t - tilt_since)
+                else:
+                    tilt_since = None
+                if judge.in_band_since is not None and t - judge.in_band_since > 0.5:
+                    hover_n, hover_duty, hover_i = hover_n + 1, hover_duty + duty, hover_i + abs(ib)  # fmt: skip
             if n % TICK_EVERY == 0 and emit:
                 emit(
                     dict(
@@ -378,7 +401,7 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
                 break
         sim.step(1)
         k += 1
-    t_end = sim.tick * SIM_DT
+    t_end = sim.tick * sim_dt
     ctl.close()
     q_end = sim.query("/world/frame", "quat")[0]
     final_tilt = tilt_deg(q_end)
@@ -432,6 +455,19 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
             t_end,
             f"controller too slow: {ctl.late} of {ctl.steps} steps missed the {sb['step_deadline_ms']} ms deadline",
         )
+    # the anti-exploit invariant: what the pack gave cannot exceed what it holds, and the integrated power must match the charge the pack's state of charge says it gave
+    pack = spec["pack"]
+    v_mean = e_wh / ah if ah > 0 else 0.0
+    soc_wh = ((soc0 or soc) - soc) * pack["capacity_ah"] * v_mean
+    available = (soc0 or soc) * pack["capacity_ah"] * pack["v_full"]
+    energy = dict(
+        used_wh=round(e_wh, 4),
+        from_soc_wh=round(soc_wh, 4),
+        available_wh=round(available, 3),
+        ok=bool(e_wh <= available and abs(e_wh - soc_wh) <= max(0.03 * e_wh, 0.02)),
+    )
+    if e_wh > available:
+        j.violate(t_end, f"energy invariant broken: {e_wh:.1f} Wh used, {available:.1f} Wh available")  # fmt: skip
     res = dict(
         scenario=spec["scenario"],
         seed=spec["seed"],
@@ -445,6 +481,12 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
             hold_s=round(j.hold_best, 2),
             touchdown_m_s=round(j.td_speed, 3),
             land_dist_m=round(dist, 3),
+            miss_distance_m=round(dist, 3),
+            saturation_pct=round(100.0 * sat_ticks / max(air_ticks, 1), 1),
+            recovery_s=round(recovery, 2),
+            hover_duty_pct=round(100.0 * hover_duty / hover_n, 1) if hover_n else None,
+            hover_i_a=round(hover_i / hover_n, 2) if hover_n else None,
+            energy=energy,
             tilt_max_deg=round(j.tilt_max, 2),
             final_tilt_deg=round(final_tilt, 2),
             soc_end_pct=round(soc * 100, 1),
@@ -465,7 +507,7 @@ def run_flight(spec, emit=None, load_sim=None, on_tick=None):
             json.dumps(
                 dict(
                     tick=sim.tick,
-                    dt=SIM_DT,
+                    dt=sim_dt,
                     state_hash=res["state_hash"],
                     diverged=bool(sim.diverged),
                 )
