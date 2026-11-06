@@ -176,16 +176,22 @@ def remote(n_fly):
 def main():
     a = argparse.ArgumentParser()
     a.add_argument("--remote", action="store_true")
+    a.add_argument(
+        "--pull",
+        action="store_true",
+        help="only copy the finished baseline results from hfbox",
+    )
     a.add_argument("--fly", type=int, default=4, help="candidates to fly")
     a = a.parse_args()
     if a.remote:
         sys.path.insert(0, str(ROOT))
         return remote(a.fly)
-    r = subprocess.run(
-        [HF, "run", f"python harness/baseline.py --remote --fly {a.fly}"]
-    )
-    if r.returncode:
-        sys.exit("ERROR: baseline run on hfbox failed")
+    if not a.pull:
+        r = subprocess.run(
+            [HF, "run", f"python harness/baseline.py --remote --fly {a.fly}"]
+        )
+        if r.returncode:
+            sys.exit("ERROR: baseline run on hfbox failed")
     for name, local in (("human", "human-1"), ("brute_force", "brute_force-1")):
         (ROOT / "results" / local).mkdir(parents=True, exist_ok=True)
         for f in (
