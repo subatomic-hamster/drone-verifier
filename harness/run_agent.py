@@ -10,6 +10,7 @@ no session persistence. --bare is NOT used: it refuses the OAuth login and deman
 import argparse
 import json
 import os
+import shutil
 import signal
 import subprocess
 import tempfile
@@ -25,6 +26,13 @@ MODELS = {
     "sonnet": "claude-sonnet-5-5",
     "opus": "claude-opus-5-5",
     "fable": "claude-fable-5-1",
+}
+# alias -> omp model selector (omp CLI instead of claude). nemotron goes through NVIDIA NIM (free tier, cost 0). The deepseek-* ones use the
+# direct deepseek provider and cost real money: never run without the owner's go-ahead.
+OMP_MODELS = {
+    "nemotron": "nvidia/nvidia/nemotron-3.5-super-vl-120b-a12b",
+    "deepseek-flash": "deepseek/deepseek-flash",
+    "deepseek-pro": "deepseek/deepseek-v4-pro",
 }
 
 
@@ -144,6 +152,79 @@ class Stream:
         return ev
 
 
+class OmpStream(Stream):
+    """Same contract as Stream for `omp --mode json`: one message_end per assistant message carries text blocks, toolCall blocks and usage."""
+
+    def feed(self, d):
+        m = d.get("message") or {}
+        if d.get("type") != "message_end" or m.get("role") != "assistant":
+            return []
+        ev = []
+        for b in m.get("content", []):
+            if b.get("type") == "text" and b["text"].strip():
+                ev.append({"kind": "agent_text", "text": b["text"]})
+            elif b.get("type") == "toolCall" and b.get("name", "").endswith("__finish"):
+                self.finish_called = True
+        u = m.get("usage") or {}
+        self.inp += u.get("input", 0) + u.get("cacheRead", 0) + u.get("cacheWrite", 0)
+        self.out += u.get("output", 0)
+        self.cost = (self.cost or 0) + (u.get("cost") or {}).get("total", 0)
+        if m.get("stopReason") == "error":
+            self.errors.append(str(m.get("errorMessage"))[:300])
+        ev.append(
+            {
+                "kind": "agent_usage",
+                "input_tokens": self.inp,
+                "output_tokens": self.out,
+                "cost_usd": self.cost,
+            }
+        )
+        return ev
+
+
+def omp_cmd(model, port, prompt, cwd, wall_s):
+    """(cmd, env, extra temp dir) for omp. Isolation proved by negative test (see README): --no-tools leaves only the MCP tools, the project
+    .omp/mcp.json in the fresh cwd supplies ours, and a throwaway HOME + agent dir hide the user's mcp.json, skills, rules, memory and
+    AGENTS.md. Only agent.db (the provider logins) is symlinked in: omp --profile would lose them. Nothing is copied or printed."""
+    home = tempfile.mkdtemp(prefix="dv-omp-home-")
+    agent = Path(home) / "agent"
+    agent.mkdir()
+    real = Path(os.environ.get("PI_CODING_AGENT_DIR") or Path.home() / ".omp" / "agent")
+    (agent / "agent.db").symlink_to(real / "agent.db")
+    (Path(cwd) / ".omp").mkdir()
+    (Path(cwd) / ".omp" / "mcp.json").write_text(
+        json.dumps(
+            {
+                "mcpServers": {
+                    "dv": {
+                        "type": "http",
+                        "url": f"http://127.0.0.1:{port}/mcp",
+                    }
+                }
+            }
+        )
+    )
+    cmd = [
+        "omp",
+        "--model",
+        OMP_MODELS[model],
+        "--mode",
+        "json",
+        "--no-tools",
+        "--no-extensions",
+        "--no-skills",
+        "--no-rules",
+        "--no-lsp",
+        "--no-session",
+        "--no-title",
+        "--max-time",
+        str(int(wall_s)),
+        "-p",
+        prompt,
+    ]
+    return cmd, {**os.environ, "HOME": home, "PI_CODING_AGENT_DIR": str(agent)}, home
+
+
 def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=False):
     lim_wall, lim_usd = task_limits()
     wall_s, budget_usd = wall_s or lim_wall, budget_usd or lim_usd
@@ -186,11 +267,15 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
         str(budget_usd),
     ]
     env = {**os.environ, "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1"}
+    omp = model in OMP_MODELS
+    if omp:
+        cmd, env, omp_home = omp_cmd(model, port, prompt, cwd, wall_s)
     t0 = time.time()
     p = subprocess.Popen(
         cmd,
         cwd=cwd,
         env=env,
+        stdin=subprocess.DEVNULL,  # omp waits for EOF on a piped stdin
         stdout=subprocess.PIPE,
         stderr=open(run_dir / "stderr.log", "w"),
         text=True,
@@ -207,7 +292,7 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
 
     timer = threading.Timer(wall_s + 60, kill)
     timer.start()
-    st = Stream()
+    st = OmpStream() if omp else Stream()
     with open(run_dir / "stream.jsonl", "w") as raw:
         for line in p.stdout:
             raw.write(line)
@@ -218,8 +303,14 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
                 continue
             for e in st.feed(d):
                 post(port, "/agent-event", e)
+            if (
+                omp and (st.cost or 0) > budget_usd
+            ):  # claude enforces its own --max-budget-usd
+                kill()
     p.wait()
     timer.cancel()
+    if omp:
+        shutil.rmtree(omp_home, ignore_errors=True)
 
     def is_finished():
         try:
@@ -234,11 +325,11 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
     harness_finish = (
         not is_finished()
     )  # the server's word, not the stream's: the agent's own finish may have errored
-    for _ in range(
-        3
-    ):  # agent ran out of budget / time / died: score what it left behind (held-out rerun runs inside finish)
-        if is_finished():
-            break
+    deadline = (
+        time.time() + 240
+    )  # a dead link (network drop) is retried for 4 minutes, then the run is reported lost, never hung
+    while time.time() < deadline and not is_finished():
+        # agent ran out of budget / time / died: score what it left behind (held-out rerun runs inside finish)
         mcp_call(
             port,
             "finish",
@@ -246,7 +337,10 @@ def run_agent(model, port, run_dir, prompt, wall_s=None, budget_usd=None, quiet=
                 "note": "harness: agent ended without calling finish"
                 + (" (wall limit)" if killed else "")
             },
+            timeout=min(600, max(30, deadline - time.time() + 300)),
         )
+        if not is_finished():
+            time.sleep(15)
     meta = {
         "model": model,
         "port": port,

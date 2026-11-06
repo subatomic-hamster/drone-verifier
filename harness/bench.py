@@ -124,8 +124,8 @@ def one(model, level, trial, port, prompt, wall_s):
         run_agent(model, port, out, prompt, wall_s=wall_s, quiet=True)
         res = None
         for _ in range(
-            90
-        ):  # held-out rerun runs inside finish; wait up to 15 min for results.json
+            30
+        ):  # finish (called by run_agent) already waited for the held-out rerun: results.json is there, or the run is lost (5 min cap)
             res = ssh_cat(f"{run}/results.json")
             if res:
                 break
