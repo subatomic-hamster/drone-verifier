@@ -122,7 +122,15 @@ def main():
     n = min(a.parallel, len(PORTS))
     ports = queue.Queue()
     [ports.put(p) for p in PORTS[:n]]
-    tun = subprocess.Popen([HF, "tunnel", *map(str, PORTS[:n])])
+    # sshd forbids port forwarding: the bridge speaks to dv/pipe.py over plain ssh exec
+    tun = subprocess.Popen(
+        [
+            sys.executable,
+            str(Path(__file__).parent / "bridge.py"),
+            "--port",
+            ",".join(map(str, PORTS[:n])),
+        ]
+    )
     time.sleep(4)
     if tun.poll() is not None:
         sys.exit(

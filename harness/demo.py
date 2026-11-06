@@ -46,13 +46,15 @@ def check(port):
     try:
         socket.create_connection(("127.0.0.1", port), 3).close()
     except OSError:
-        die(f"tunnel down: nothing listening on 127.0.0.1:{port} (hf.sh tunnel {port})")
+        die(
+            f"tunnel down: nothing listening on 127.0.0.1:{port} (python harness/bridge.py --port {port})"
+        )
     st = wait_state(port, 150)
     if not st:
         die(
             f"/state on port {port} does not answer (session not up: hf.sh log demo-{port})"
         )
-    for path in ("/events", "/stream.mjpg"):
+    for path in ("/events", "/stream"):
         try:
             r = urllib.request.urlopen(f"http://127.0.0.1:{port}{path}", timeout=60)
             r.read(1)
@@ -75,7 +77,15 @@ def live(models):
         )
         if r.returncode:
             die(f"could not start session on hfbox: {r.stderr[-200:]}")
-    tun = subprocess.Popen([HF, "tunnel", *map(str, ports)])
+    # sshd forbids port forwarding: the bridge speaks to dv/pipe.py over plain ssh exec
+    tun = subprocess.Popen(
+        [
+            sys.executable,
+            str(Path(__file__).parent / "bridge.py"),
+            "--port",
+            ",".join(map(str, ports)),
+        ]
+    )
     try:
         time.sleep(4)
         if tun.poll() is not None:
@@ -127,7 +137,12 @@ if __name__ == "__main__":
     a = a.parse_args()
     if a.mode == "replay":
         replay()
-    elif a.mode == "single" and len(a.models) == 1 or a.mode == "versus" and len(a.models) == 2:
+    elif (
+        a.mode == "single"
+        and len(a.models) == 1
+        or a.mode == "versus"
+        and len(a.models) == 2
+    ):
         live(a.models)
     else:
         die("usage: demo.py single MODEL | versus LOW HIGH | replay")
