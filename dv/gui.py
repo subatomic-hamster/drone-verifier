@@ -247,7 +247,9 @@ class _Chords:
         d = self._d
         out = Path(out)
         out.mkdir(parents=True, exist_ok=True)
-        xml, report = compute(d.asm, d.lib.dir, out, d.lib, route=False)
+        # dv/refly.py routes for real: its wires were routed into DVSIM_ROUTE_CACHE before the window opened
+        route = bool(os.environ.get("DV_ROUTE_WIRES"))
+        xml, report = compute(d.asm, d.lib.dir, out, d.lib, route=route)
         xp = out / f"{report['assembly']}.xml"
         xp.write_text(xml, encoding="utf-8", newline="\n")
         return {"xml": xp, "report": report}
@@ -280,6 +282,11 @@ class ViewerUI:
             def _dispatch(self, req):
                 if req.get("tool") == "rev" and self.frozen:
                     return self.frozen
+                if req.get("tool") == "prog.hover":
+                    return {
+                        "ok": False,
+                        "error": "no pointer on stage",
+                    }  # the unmoved mouse hovers a word: the popup covers the code
                 return super()._dispatch(req)
 
             def state(self, d):

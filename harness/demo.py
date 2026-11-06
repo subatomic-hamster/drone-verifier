@@ -22,6 +22,7 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+import hosts
 from bench import (
     HF,
     LEVELS,
@@ -33,6 +34,7 @@ from bench import (
     runname,
     sh,
     ssh,
+    ssh_cat,
     wait_state,
 )
 from run_agent import ROOT, run_agent, task_limits
@@ -113,6 +115,20 @@ def free_ports(n):
     die(f"no {n} free ports in {LIVE_PORTS}")
 
 
+def bridge(ports):
+    """sshd forbids port forwarding: the bridge speaks to dv/pipe.py over plain ssh exec. None when the sessions run on this machine."""
+    if hosts.LOCAL:
+        return None
+    return subprocess.Popen(
+        [
+            sys.executable,
+            str(Path(__file__).parent / "bridge.py"),
+            "--port",
+            ",".join(map(str, ports)),
+        ]
+    )
+
+
 def check(port):
     """One-line failure for each piece that is down: tunnel, /state, /events stream, GUI stream."""
     try:
@@ -151,18 +167,10 @@ def live(models, level="whatif"):
         )
         if r.returncode:
             die(f"could not start session on hfbox: {r.stderr[-200:]}")
-    # sshd forbids port forwarding: the bridge speaks to dv/pipe.py over plain ssh exec
-    tun = subprocess.Popen(
-        [
-            sys.executable,
-            str(Path(__file__).parent / "bridge.py"),
-            "--port",
-            ",".join(map(str, ports)),
-        ]
-    )
+    tun = bridge(ports)
     try:
         time.sleep(4)
-        if tun.poll() is not None:
+        if tun and tun.poll() is not None:
             die("ssh tunnel to hfbox did not come up (ssh agent / funnel)")
         for p in ports:
             check(p)
@@ -188,7 +196,8 @@ def live(models, level="whatif"):
     except KeyboardInterrupt:
         pass
     finally:
-        tun.terminate()
+        if tun:
+            tun.terminate()
         for p in ports:
             sh(HF, "stop", f"demo-{p}")
 
@@ -202,6 +211,96 @@ def replay():
             time.sleep(60)
     except KeyboardInterrupt:
         pass
+
+
+def refly(runs, scenario, wait_s=20):
+    """Two finished runs' saved designs and controllers, flown again side by side on the same scenario and seed, for the picture. No agent, no finish:
+    their results.json stay as they are. stream.mp4, stream.json and refly.jsonl land in results/<run>/, which the versus replay plays."""
+    dirs = [RESULTS / r for r in runs]
+    if runs[0] == runs[1]:
+        die("two different runs")
+    for r, d in zip(runs, dirs):
+        if not re.fullmatch(r"[\w.-]+-\d+", r):
+            die(f"bad run name: {r}")
+        for f in ("design.json", "controller.py"):
+            if not (d / f).exists():
+                die(f"no {d / f}")
+    scores = {d: (d / "results.json").read_bytes() for d in dirs if (d / "results.json").exists()}  # fmt: skip
+    ports = free_ports(2)
+    print("PORTS", ",".join(map(str, ports)), flush=True)
+    route = f"DVSIM_ROUTE_CACHE={hosts.DIR}/route-cache"
+    remote = [f"{hosts.DIR}/refly/{r}" for r in runs]
+    for d, rd in zip(dirs, remote):
+        if ssh(f"mkdir -p {rd}").returncode:
+            die("cannot reach the session host")
+        for f in ("design.json", "controller.py"):
+            hosts.run(f"cat > {rd}/{f}", input=(d / f).read_text())
+    # the wires first, once per geometry: a window asking for them would freeze for minutes
+    designs = {(d / "design.json").read_bytes(): rd for d, rd in zip(dirs, remote)}
+
+    def warm(rd):
+        r = sh(
+            HF,
+            "run",
+            f"{route} python -m dv.refly --warm --design {rd}/design.json 2>&1 | tail -1",
+            timeout=1800,
+        )
+        print("wires", rd.rsplit("/", 1)[1], r.stdout.strip()[-200:], flush=True)
+
+    ts = [threading.Thread(target=warm, args=(rd,)) for rd in designs.values()]
+    [t.start() for t in ts]
+    [t.join() for t in ts]
+    run_dirs = []
+    for r, d, rd, p, s in zip(runs, dirs, remote, ports, "RS"):
+        name, trial = r.rsplit("-", 1)
+        res = json.loads(scores[d]) if d in scores else {}
+        level = next((v for v in LEVELS if v == res.get("feedback")), "whatif")
+        run = f"{REMOTE_RUNS}/{s}-{name}-{trial}"
+        ssh(f"rm -rf {run}")  # R and S are this command's letters: not a bench run
+        run_dirs.append(run)
+        if sh(HF, "bg", f"refly-{p}", f"{route} python -X faulthandler -m dv.refly --session {s} --port {p} --model {name} --trial {trial} --feedback {level} --design {rd}/design.json --code {rd}/controller.py --scenario {scenario}").returncode:  # fmt: skip
+            die("could not start a session on hfbox")
+    tun = bridge(ports)
+    try:
+        time.sleep(4)
+        if tun and tun.poll() is not None:
+            die("bridge did not start")
+        for p in ports:
+            check(p)
+        print("OPEN", URL_LIVE.format(web=serve(), ports=",".join(map(str, ports))), flush=True)  # fmt: skip
+        print(f"flying in {wait_s} s", flush=True)
+        time.sleep(wait_s)
+        ssh("touch " + " ".join(f"{run}/refly.go" for run in run_dirs))
+        end = time.time() + 240
+        while time.time() < end:
+            done = ssh("ls " + " ".join(f"{run}/refly.done" for run in run_dirs))
+            if done.returncode == 0:
+                break
+            time.sleep(3)
+        else:
+            die("the flights did not end in 240 s (hf.sh log refly-PORT)")
+        for run, d in zip(run_dirs, dirs):
+            ev = ssh_cat(f"{run}/events.jsonl") or ""
+            verdict = [json.loads(ln) for ln in ev.splitlines() if '"flight_end"' in ln]
+            print(d.name, *[(v["scenario"], v["seed"], v["pass"], v["reason"][:80]) for v in verdict], flush=True)  # fmt: skip
+            (d / "refly.jsonl").write_text(ev)
+            for f in ("stream.mp4", "stream.json"):
+                with open(d / f, "wb") as out:
+                    if subprocess.run(hosts.argv(f"cat {run}/{f}"), stdout=out, stderr=subprocess.DEVNULL, timeout=600).returncode:  # fmt: skip
+                        print(f"could not copy {f} of {d.name}", flush=True)
+        for d, before in scores.items():
+            if (d / "results.json").read_bytes() != before:
+                die(f"{d}/results.json changed")
+        print(f"recorded; results.json untouched ({len(scores)} checked). Ctrl-C closes the sessions", flush=True)  # fmt: skip
+        while True:
+            time.sleep(60)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if tun:
+            tun.terminate()
+        for p in ports:
+            sh(HF, "stop", f"refly-{p}")
 
 
 # ---- the Start panel --------------------------------------------------------------------------------------------------
@@ -330,7 +429,11 @@ class Run:
                 signal_all([*tree, self.p.pid], signal.SIGKILL)
                 self.p.wait()
             for name in self.remote():
-                sh(HF, "stop", name)
+                for _ in range(10):  # the link drops for minutes at a time
+                    sh(HF, "stop", name)
+                    if ssh(f"tmux has-session -t dv-{name}").returncode == 1:
+                        break  # the box answered: it is gone
+                    time.sleep(30)
 
         threading.Thread(target=work, daemon=True).start()
 
@@ -540,8 +643,9 @@ def panel_main(port, fake):
 
 if __name__ == "__main__":
     a = argparse.ArgumentParser()
-    a.add_argument("mode", choices=["serve", "single", "versus", "replay"])
-    a.add_argument("models", nargs="*")
+    a.add_argument("mode", choices=["serve", "single", "versus", "replay", "refly"])
+    a.add_argument("models", nargs="*", help="refly: two run names under results/")
+    a.add_argument("--scenario", choices=["nominal", "wind", "rain"], default="wind")
     a.add_argument("--feedback", choices=LEVELS, default="whatif")
     a.add_argument("--port", type=int, default=8790)
     a.add_argument(
@@ -551,9 +655,13 @@ if __name__ == "__main__":
     # also when started in the background, where SIGINT comes ignored; a SIGTERM closes the sessions the same way
     signal.signal(signal.SIGINT, signal.default_int_handler)
     signal.signal(signal.SIGTERM, signal.default_int_handler)
-    if set(a.models) - {*MODELS, "fake"}:
+    if a.mode == "refly":
+        if len(a.models) != 2:
+            die("usage: demo.py refly RUN_A RUN_B [--scenario wind|rain|nominal]")
+        refly(a.models, a.scenario)
+    elif set(a.models) - {*MODELS, "fake"}:
         die(f"unknown model: {a.models}; one of {[*MODELS, 'fake']}")
-    if a.mode == "replay":
+    elif a.mode == "replay":
         replay()
     elif a.mode == "serve":
         panel_main(a.port, a.fake)

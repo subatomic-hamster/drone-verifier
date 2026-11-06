@@ -38,6 +38,7 @@ const AGENT_SAW = {
 };
 const TARGET = 3.0,
   BAND = 0.3;
+const REPLAY_LAG_S = 2.5; // model load, the camera's first move, the stream's lag
 
 // ---- one session's state, built only from its events ------------------------------------------------------------------
 class Feed {
@@ -66,7 +67,42 @@ class Feed {
     this.flying = 0;
     this.flyingWhat = null;
     this.finishing = false;
+    this.nominalS = null; // how long the window takes over the flight it replays
+    this.later = []; // verdicts waiting for the picture
+    this.laterAt = 0;
+    this.now = 0; // set by tick: the wall clock live, the recording's clock in a replay
     this.dirty = true;
+  }
+
+  // The window replays the nominal flight after the headless one was judged. Its verdict waits for the picture; the same replay's length is
+  // estimated from the flight (ponytail: an event from the window would be exact, but a replay queued behind typing runs a few seconds late).
+  holdFor(e) {
+    if (!e.t || this.finishing) return 0;
+    if (
+      e.kind === "flight_end" &&
+      (e.scenario === "nominal" || this.replaysAll)
+    ) {
+      this.nominalS = (e.metrics || {}).t_end_s ?? null;
+      return this.nominalS;
+    }
+    if (e.kind === "verify") {
+      const g3 = e.gates.find((g) => g.id === "G3");
+      if (g3 && !String(g3.reason ?? "").startsWith("not run"))
+        return this.nominalS;
+    }
+    return 0;
+  }
+
+  flush() {
+    const held = this.later;
+    this.later = [];
+    for (const e of held) this.apply(e);
+    if (held.length) this.dirty = true;
+  }
+
+  tick(now) {
+    this.now = now;
+    if (this.later.length && now >= this.laterAt) this.flush();
   }
 
   // Before the first verify of a design the rungs come from these; a design or controller change voids what they said.
@@ -86,9 +122,27 @@ class Feed {
       this.seq = e.seq;
     }
     this.dirty = true;
+    // something new is on: what was held has no picture to wait for any more
+    if (["meters", "code", "flight_start", "final"].includes(e.kind))
+      this.flush();
+    const hold = this.holdFor(e);
+    if (hold) {
+      this.later.push(e);
+      this.laterAt = this.now + hold + REPLAY_LAG_S;
+      return;
+    }
+    if (this.later.length && (e.kind === "flight_end" || e.kind === "verify")) {
+      this.later.push(e); // stays in order behind the held one
+      return;
+    }
+    this.apply(e);
+  }
+
+  apply(e) {
     if (e.feedback) this.feedback = e.feedback;
     switch (e.kind) {
       case "config":
+        if (e.replays_all) this.replaysAll = true;
         if (e.model && e.model !== "unknown") this.label = e.model;
         break;
       case "agent_text":
@@ -658,7 +712,7 @@ function versusView(fs, mounts) {
       v.className =
         "verdict " + (f.last ? (f.last.pass ? "pass" : "fail") : "");
       v.innerHTML = f.last
-        ? `${esc(f.last.text)}<small>${esc(String(f.last.why ?? "").slice(0, 110))}${f.last.of ? " &middot; " + esc(f.last.of) : ""}</small>`
+        ? `${esc(f.last.text)}<small>${[String(f.last.why ?? "").slice(0, 110), f.last.of].filter(Boolean).map(esc).join(" &middot; ")}</small>`
         : "";
     });
 }
@@ -700,6 +754,8 @@ function liveSession(port) {
         f.dirty = true;
       })
       .catch(() => setTimeout(state, 2000));
+  f.tick(Date.now() / 1000);
+  setInterval(() => f.tick(Date.now() / 1000), 200);
   events();
   state();
   const mount = (box, badge) => {
@@ -726,7 +782,13 @@ function startLive(ports) {
 const MAX_GAP_S = 2; // no video: long silences are cut to this at playback
 
 async function replaySession(url, video, speed) {
-  const r = await fetch(url);
+  // demo.py refly leaves the log that goes with stream.mp4 beside the run's own events
+  const refly = new URL("refly.jsonl", new URL(url, location.href));
+  const reflown = await fetch(refly, { method: "HEAD" }).then(
+    (x) => x.ok,
+    () => false,
+  );
+  const r = await fetch(reflown ? refly : url);
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
   let ev = (await r.text())
     .split("\n")
@@ -743,9 +805,9 @@ async function replaySession(url, video, speed) {
   const f = new Feed(name);
   const abs = new URL(url, location.href);
   try {
-    f.feedback = (
-      await (await fetch(new URL("results.json", abs))).json()
-    ).feedback;
+    const res = await (await fetch(new URL("results.json", abs))).json();
+    f.feedback = res.feedback;
+    if (reflown) f.score = res.score ?? null; // the run's score: a re-fly earns none
   } catch (e) {
     /* no results beside the events: the events may carry it */
   }
@@ -778,6 +840,7 @@ async function replaySession(url, video, speed) {
         clock = ev[i].t - t0 - MAX_GAP_S;
     }
     last = now;
+    f.tick(t0 + clock);
     while (i < ev.length && ev[i].t - t0 <= clock) f.event(ev[i++]);
   };
   const mount = (box, badge) => {
@@ -907,16 +970,17 @@ function paretoSvg(es) {
 
 function trustHtml(p) {
   if (!p) return NO_RUNS;
-  const fp = Array.isArray(p.false_positives)
-    ? p.false_positives.length
-    : p.false_positives;
-  const rows = (p.rows || [])
+  // tests/check_planted.py says it in its summary line: "flagged 13/13 = 1.00; false positives 0/4"
+  const said = /false positives (\d+)\/(\d+)/.exec((p.summary || []).join(" "));
+  const fp = said ? parseInt(said[1], 10) : p.false_positives;
+  const fpText = said ? `${said[1]}/${said[2]}` : (fp ?? "?");
+  const rows = (p.flaws || p.rows || [])
     .map(
       (r) =>
-        `<div class="${r.flagged ? "" : "red"}"><span>${esc(r.flaw)}</span><b>${r.flagged ? esc(r.layer ?? "flagged") : "MISSED"}</b></div>`,
+        `<div class="${r.flagged ? "" : "red"}"><span>${esc(r.name ?? r.flaw)}</span><b>${r.flagged ? esc(r.layer ?? "flagged") : "MISSED"}</b></div>`,
     )
     .join("");
-  return `<div class="trustnum"><span><b>${p.flagged}/${p.total}</b> planted flaws flagged</span><span><b class="${fp ? "red" : ""}">${fp}</b> false positives</span></div><div class="trustrows">${rows}</div>`;
+  return `<div class="trustnum"><span><b>${p.flagged}/${p.total}</b> planted flaws flagged</span><span><b class="${fp ? "red" : ""}">${esc(String(fpText))}</b> false positives</span></div><div class="trustrows">${rows}</div>`;
 }
 
 async function fetchJson(url) {
@@ -937,6 +1001,7 @@ async function startBoard(url) {
   const es = [...((lb && lb.entries) || [])].sort(
     (a, b) =>
       !!a.baseline - !!b.baseline ||
+      (b.first_test_score ?? -1) - (a.first_test_score ?? -1) ||
       b.score - a.score ||
       a.verify_calls - b.verify_calls ||
       a.wall_s - b.wall_s ||
@@ -944,7 +1009,13 @@ async function startBoard(url) {
   );
   const events = (m) => `${results}${encodeURIComponent(m)}-0/events.jsonl`;
   const here = location.pathname;
-  const ranked = es.filter((e) => !e.baseline);
+  // the ranking is the verifier's score of the agent's very first test; a run without one is not placed
+  const ranked = es.filter(
+    (e) =>
+      !e.baseline &&
+      e.first_test_score !== null &&
+      e.first_test_score !== undefined,
+  );
   const low = ranked[ranked.length - 1],
     top = ranked[0];
   const rows = es
@@ -955,7 +1026,11 @@ async function startBoard(url) {
         (id) =>
           `<span class="chip ${gateClass(byId[id], id, firstBad)}">${id}</span>`,
       ).join("");
-      const two = ranked.length > 1;
+      const two =
+        ranked.length > 1 && top.first_test_score !== low.first_test_score; // a tie has no lowest
+      const first = e.first_test_score;
+      const known = first !== null && first !== undefined;
+      const gain = known ? Math.round((e.score - first) * 10) / 10 : null;
       const tag = e.baseline
         ? `<span class="tag">BASELINE</span>`
         : two && e === top
@@ -978,7 +1053,7 @@ async function startBoard(url) {
         fv = e.first_viable,
         pe = e.prediction_error || {};
       return `<tr class="${cls}" title="${esc(String(why ?? ""))}"><td class="name">${name}${tag}</td>
-      <td class="score"><b>${e.score}</b></td><td><div class="chips">${chips}</div></td>
+      <td class="score">${known ? `<b>${first}</b>` : `<span class="dim small">no data</span>`}</td><td class="final">${e.score}</td><td>${known ? `${gain > 0 ? "+" : ""}${gain}` : "no data"}</td><td><div class="chips">${chips}</div></td>
       <td>${p ? `${p.passed}/${p.runs}` : "-"}</td>
       <td>${fv && fv.reached ? `${fv.reached}/${fv.runs} ${or(fv.mean_cost_usd, (c) => "$" + c.toFixed(0))}` : "-"}</td>
       <td>${or(e.robustness_gap, (g) => g.toFixed(1))}</td>
@@ -994,8 +1069,8 @@ async function startBoard(url) {
       : "";
   const n = Math.max(0, ...es.map((e) => e.trials || 0));
   const table = es.length
-    ? `<table><tr><th>model</th><th>score</th><th>gates</th><th>pass in budget</th><th>first viable</th><th>robust gap</th><th>L1 vs sim err % hover / time</th><th>verify</th><th>flights</th><th>time</th><th>LLM cost</th><th>tokens</th></tr>${rows}</table>
-    <div class="actions dim"><span>up to ${n} run${n === 1 ? "" : "s"} per model: a demonstration, not a statistic. Score on held-out seeds. Prediction error is model against sim, not real flight.</span>${vs}</div>`
+    ? `<table><tr><th>model</th><th>first test</th><th>final</th><th>gain</th><th>gates</th><th>pass in budget</th><th>first viable</th><th>robust gap</th><th>L1 vs sim err % hover / time</th><th>verify</th><th>flights</th><th>time</th><th>LLM cost</th><th>tokens</th></tr>${rows}</table>
+    <div class="actions dim"><span>up to ${n} run${n === 1 ? "" : "s"} per model: a demonstration, not a statistic. Ranked on the first test; final is on held-out seeds after iterating. Prediction error is model against sim, not real flight.</span>${vs}</div>`
     : NO_RUNS;
   app.append(
     el(`<div class="board"><h1>Leaderboard</h1>${table}
@@ -1203,7 +1278,32 @@ if (P.get("selftest")) {
   });
   const crashed = layersOf(h);
   h.event({ kind: "meters", tw: 2.1 });
+  // a nominal verdict waits for the replay, and a new flight lets it through
+  const w = new Feed("w");
+  w.tick(100);
+  w.event({ kind: "flight_start", scenario: "nominal", seed: 1, t: 90 });
+  const end = {
+    kind: "flight_end",
+    scenario: "nominal",
+    pass: true,
+    t: 95,
+    metrics: { t_end_s: 10 },
+  };
+  w.event(end);
+  const heldBack = w.last === null;
+  w.tick(105);
+  const stillHeld = w.last === null;
+  w.tick(113);
+  const released = w.last && w.last.pass;
+  const v = new Feed("v");
+  v.tick(100);
+  v.event(end);
+  v.event({ kind: "flight_start", scenario: "wind", seed: 1, t: 96 });
   const ok =
+    heldBack &&
+    stillHeld &&
+    released &&
+    v.last !== null &&
     f.score === 20 &&
     f.last.text === "L2 FAILS" &&
     f.gates.G1.pass &&
