@@ -70,7 +70,7 @@ prompt, the tools and the gates.
 | ------------------------------------------------- | --------------------------------- | ---------- |
 | cost (dvsim BOM: parts, printed, wire, connectors) | <= $620 (reference $574.04 + 8 %) | static     |
 | mass, all-up                                      | <= 1.35 kg                        | static     |
-| envelope                                          | <= 350 x 350 x 400 mm             | static     |
+| envelope                                          | <= 370 x 370 x 380 mm             | static     |
 | design rules                                      | 0 errors from dvsim DRC            | static     |
 | thrust to weight at full charge                   | >= 1.8                            | lift       |
 | battery left at landing                           | >= 20 % state of charge           | flight     |
@@ -102,7 +102,7 @@ recorded (`replay.dvsimog`, hash) so any score can be replayed.
 
 ## Scoring and budgets
 
-Score = gate points, held-out seeds, 0 to 100. Ties break on `verify` calls, then wall time, then tokens. Each agent gets the
+Strict score = gate points, held-out seeds, 0 to 100. The leaderboard ranks on the score at the agent's first simulator test, then the final score (scales in LAYERS.md), then `verify` calls, wall time, tokens. Each agent gets the
 same prompt, 25 min wall clock, 12 `verify` calls. Reported alongside: flights flown, tokens, time to first passing flight,
 gate reached per attempt, the failure reasons in order. With 1-2 trials per model this is a demonstration, not a statistic;
 the leaderboard says n.
