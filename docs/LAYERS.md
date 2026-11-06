@@ -76,7 +76,7 @@ The gates an agent sees are the practice test; this is the exam. Same mission, l
   - landing: `exp(-touchdown / 2.5 m/s)`.
   - accuracy: `exp(-distance / 2.5 m)`.
 - **Gates** as partial: G1, G2 rule fractions; L0 or L1 failure flies nothing; no lift-off in G3 stops the rest.
-- **Calibration was on the reference only, set once before any agent run was scored; these numbers are frozen.** The reference passes all 8 harder flights and scores 86.2: G1 10, G2 10, G3 25.43 of 30, G4 11.61 of 15, G5 12.23 of 15, G6 16.88 of 20. Do-nothing 20 (no flight points), open-loop 26.3.
+- **Calibration was on the reference only, set once before any agent run got an exam score (partial-credit scores had been seen); these numbers are frozen.** The reference passes all 8 harder flights and scores 86.2: G1 10, G2 10, G3 25.43 of 30, G4 11.61 of 15, G5 12.23 of 15, G6 16.88 of 20. Do-nothing 20 (no flight points), open-loop 26.3.
 
 ## Baselines (`harness/baseline.py`)
 

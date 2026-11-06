@@ -12,14 +12,27 @@ The simulator is dvsim (robot design and MuJoCo-based sim kernel), **vendored** 
 
 Each screen is dvsim's own GUI, streamed to a browser as the agent works through its tools. These come from recorded benchmark designs.
 
-|                                                                                         |                                                                                  |
-| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| ![Empty airframe kit on the BUILD page](docs/media/modeling-empty.jpg)                  | ![Haiku's finished hopper on the BUILD page](docs/media/modeling-haiku.jpg)      |
-| **Start.** The fixed airframe kit, with the design rule errors the agent has to clear.  | **Modeling.** Haiku's design: 27 parts, 1.131 kg, 0 design rule errors.          |
-| ![Opus's controller on the PROGRAM page](docs/media/program-opus.jpg)                   | ![Opus's hopper in flight, wind scenario](docs/media/flight-opus.jpg)            |
-| **Programming.** Opus's flight controller, typed into the PROGRAM page as it writes it. | **Simulation.** The same design flying in wind, with its wiring on the airframe. |
-| ![FAIL verdict on Haiku's flight](docs/media/fail-haiku.jpg)                            | ![PASS verdict on Opus's flight](docs/media/pass-opus.jpg)                       |
-| **Fail.** Haiku's controller tips past the 30 degree limit at 0.25 m.                   | **Pass.** Opus's completes the mission.                                          |
+|                                                                                         |                                                                                        |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| ![Haiku's finished hopper on the BUILD page](docs/media/modeling-haiku.jpg)             | ![Opus's design on the WIRING page](docs/media/wiring-opus.jpg)                        |
+| **Modeling.** Haiku's design: 27 parts, 1.131 kg, 0 design rule errors.                 | **Wiring.** Opus's design: pin-level wires with gauges, 10 AWG power to 26 AWG signal. |
+| ![Opus's controller on the PROGRAM page](docs/media/program-opus.jpg)                   | ![Opus's hopper in flight, wind scenario](docs/media/flight-opus.jpg)                  |
+| **Programming.** Opus's flight controller, typed into the PROGRAM page as it writes it. | **Simulation.** The same design flying in wind, with its wiring on the airframe.       |
+| ![FAIL verdict on Haiku's flight](docs/media/fail-haiku.jpg)                            | ![PASS verdict on Opus's flight](docs/media/pass-opus.jpg)                             |
+| **Fail.** Haiku's controller tips past the 30 degree limit at 0.25 m.                   | **Pass.** Opus's completes the mission.                                                |
+
+## Same task, different models
+
+Opus, Sonnet and Fable each chose the same seven parts on their own and differ only in where they put the battery; the score gap between them comes from their controllers. DeepSeek Flash went for a cheaper ESC and a higher-rated pack.
+
+|                                                                            |                                                                               |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| ![Opus's hopper](docs/media/build-opus.jpg)                                | ![Sonnet's hopper](docs/media/build-sonnet.jpg)                               |
+| **Opus.** Battery at x 59, y 8.5 mm. 212-line controller.                  | **Sonnet.** Battery at x 60, y 0 mm. 143-line controller.                     |
+| ![Fable's hopper](docs/media/build-fable.jpg)                              | ![DeepSeek Flash's hopper](docs/media/build-deepseek-flash.jpg)               |
+| **Fable.** Battery at x 59, y 8 mm. 258-line controller.                   | **DeepSeek Flash.** E80 ESC and 150C pack: 1.156 kg, one design rule warning. |
+| ![Sonnet's controller](docs/media/program-sonnet.jpg)                      | ![Fable's controller](docs/media/program-fable.jpg)                           |
+| **Sonnet's code.** Climb and hold phases, with a filtered height estimate. | **Fable's code.** Corrects its altitude estimate from the range sensor.       |
 
 ## Side by side
 
@@ -34,7 +47,7 @@ The dashboard runs two sessions together, with the verifier's layers, the height
 
 One run per model at full feedback, so this is a demonstration, not a statistic. Ranked on the hidden exam score of the agent's state at its first simulator test.
 The exam has about double the wind, rain and scatter of the gates the agents see, and scores flight quality continuously, so 100 is out of reach (`docs/LAYERS.md`).
-Its numbers were frozen on the human reference before any agent was scored. Per-run scores: `benchmark/`.
+Its numbers were calibrated on the human reference only and frozen before any agent got an exam score, though partial-credit scores had already been seen at that point. Per-run scores: `benchmark/`.
 
 | Model                                             | First test (exam) | Final (exam) | Strict gates, final | Flights | Cost      |
 | ------------------------------------------------- | ----------------- | ------------ | ------------------- | ------- | --------- |
@@ -51,7 +64,7 @@ Its numbers were frozen on the human reference before any agent was scored. Per-
 | Baseline: brute force, fixed reference controller | 49.8              | 49.8         | 20                  |         |           |
 
 (a) Killed at the wall limit; the harness finished the run and it did not pass inside the verify budget. (b) Six connection resets during the run.
-(c) 48 free-tier quota errors, and killed at the wall limit. (d) Spent its 12 minutes without flying; every call reached xAI. Runs were capped at 12 minutes.
+(c) 48 free-tier quota errors, and killed at the wall limit. (d) Spent its 12 minutes without flying; every call reached xAI. Runs were cut off at 12 minutes although the prompt told agents they had 25, which likely cost the slower models points.
 
 Exam scores of Opus, the first and final state of Haiku, and the human reference were re-flown from their saved state and matched; the other runs were not re-flown. Simulation only: nothing here was built or flown for real.
 
