@@ -1007,6 +1007,106 @@ async function startBoard(url) {
   );
 }
 
+// ---- the Start panel (harness/demo.py serve) --------------------------------------------------------------------------
+async function api(path, body) {
+  const r = await fetch(
+    path,
+    body === undefined
+      ? {}
+      : {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+  );
+  return { code: r.status, data: await r.json() };
+}
+
+function startPanel(st) {
+  const models = st.models
+    .map(
+      (m) =>
+        `<label class="pick"><input type="checkbox" name="model" value="${esc(m.name)}"> ${esc(m.name)} <span class="${m.paid ? "red" : "green"}">${m.paid ? "paid" : "free"}</span>${m.note && m.note !== "free" ? ` <span class="dim">${esc(m.note)}</span>` : ""}</label>`,
+    )
+    .join("");
+  const modes = [
+    ["design", "design task: one model, live window"],
+    ["versus", "versus: two models, live windows"],
+    ["benchmark", "benchmark: headless, fills the leaderboard"],
+  ]
+    .map(
+      ([v, t], i) =>
+        `<label class="pick"><input type="radio" name="mode" value="${v}" ${i ? "" : "checked"}> ${t}</label>`,
+    )
+    .join("");
+  const levels = st.levels
+    .map(
+      (l) =>
+        `<option value="${esc(l)}" ${l === "whatif" ? "selected" : ""}>${esc(l)}</option>`,
+    )
+    .join("");
+  const root = el(`<div class="start"><h1>Start a run</h1>
+    <div class="startgrid">
+      <div class="panel"><h2>Models</h2>${models}</div>
+      <div class="panel"><h2>Mode</h2>${modes}
+        <h2>Feedback level</h2><select name="feedback">${levels}</select>
+        <h2>Trials (benchmark)</h2><input type="number" name="trials" min="1" max="${st.max_trials}" value="1">
+        <div class="actions"><button class="go">Start</button></div>
+        <div class="confirm" hidden><div class="ctext"></div><button class="yes">Confirm and start</button> <button class="no">Cancel</button></div>
+        <div class="msg red"></div>
+      </div>
+      <div class="panel"><h2>Runs</h2><div class="runs"></div></div>
+    </div>
+    <div class="dim"><a href="?replay=1">Leaderboard</a></div></div>`);
+  app.append(root);
+  const q = (s) => root.querySelector(s);
+  const asked = (confirm) => ({
+    mode: q("[name=mode]:checked").value,
+    models: [...root.querySelectorAll("[name=model]:checked")].map(
+      (c) => c.value,
+    ),
+    feedback: q("[name=feedback]").value,
+    trials: parseInt(q("[name=trials]").value, 10),
+    ...(confirm ? { confirm: true } : {}),
+  });
+  const send = async (confirm) => {
+    q(".msg").textContent = "";
+    q(".confirm").hidden = true;
+    const r = await api("/api/start", asked(confirm));
+    if (r.data.need_confirm) {
+      q(".ctext").textContent = r.data.text;
+      q(".confirm").hidden = false;
+    } else if (r.code !== 200) q(".msg").textContent = r.data.error;
+    refresh();
+  };
+  q(".go").onclick = () => send(false);
+  q(".yes").onclick = () => send(true);
+  q(".no").onclick = () => {
+    q(".confirm").hidden = true;
+  };
+  const runs = q(".runs");
+  runs.onclick = (e) => {
+    const id = e.target.dataset.stop;
+    if (id) api("/api/stop", { id: parseInt(id, 10) }).then(refresh);
+  };
+  const refresh = async () => {
+    const { data } = await api("/api/status");
+    runs.innerHTML =
+      [...data.runs]
+        .reverse()
+        .map(
+          (r) =>
+            `<div class="run"><div><b>#${r.id} ${esc(r.mode)}</b> ${esc(r.feedback)} <span class="dim">${esc(r.state)}, pid ${r.pid}</span>${r.alive ? ` <button data-stop="${r.id}">Stop</button>` : ""}</div>
+            ${r.rows.map((x) => `<div class="row"><span>${esc(x.name)}</span><span>${esc(x.state)}</span></div>`).join("")}
+            ${r.url ? `<a href="${esc(r.url)}" target="_blank">open the ${r.mode === "benchmark" ? "leaderboard" : "live page"}</a>` : ""}
+            <div class="dim small">${esc(r.last)}</div></div>`,
+        )
+        .join("") || `<div class="dim">nothing running</div>`;
+  };
+  refresh();
+  setInterval(refresh, 2000);
+}
+
 // ---- entry ------------------------------------------------------------------------------------------------------------
 function fail(e) {
   const hint =
@@ -1032,11 +1132,16 @@ function fail(e) {
           : "../results/leaderboard.json",
       ).catch(fail);
     else
-      app.append(
-        el(
-          `<div class="err" style="color:var(--fg)">Say which: ?live=8801 | ?a=8801&amp;b=8802 | ?replay=&lt;events.jsonl&gt;&amp;speed=4 | ?replay=1 (leaderboard)</div>`,
-        ),
-      );
+      api("/api/status")
+        .then((r) => startPanel(r.data))
+        .catch(() =>
+          // a plain static server: no panel behind this page
+          app.append(
+            el(
+              `<div class="err" style="color:var(--fg)">Say which: ?live=8801 | ?a=8801&amp;b=8802 | ?replay=&lt;events.jsonl&gt;&amp;speed=4 | ?replay=1 (leaderboard)</div>`,
+            ),
+          ),
+        );
   } catch (e) {
     fail(e);
   }
