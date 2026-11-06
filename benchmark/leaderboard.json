@@ -1,0 +1,553 @@
+{
+ "updated": "2026-11-06T15:12:45-0500",
+ "entries": [
+  {
+   "model": "human",
+   "baseline": true,
+   "trials": 1,
+   "n_note": "n=1 (one run: not a rate)",
+   "first_test_score": 100.0,
+   "score": 100.0,
+   "best_gate": "G6",
+   "gates": [
+    {
+     "id": "G1",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G2",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G3",
+     "pass": true,
+     "points": 30,
+     "max_points": 30
+    },
+    {
+     "id": "G4",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G5",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G6",
+     "pass": true,
+     "points": 20.0,
+     "max_points": 20
+    }
+   ],
+   "verify_calls": 0,
+   "flights": 16,
+   "wall_s": null,
+   "cost_usd": 0.0,
+   "tokens": 0,
+   "failure_reasons": [],
+   "pass_within_budget": {
+    "runs": 1,
+    "passed": 1,
+    "rate": 1.0
+   },
+   "first_viable": {
+    "runs": 1,
+    "reached": 1,
+    "mean_cost_usd": 574.04,
+    "mean_iterations": 1,
+    "mean_verify_calls": 0
+   },
+   "robustness_gap": 0.0,
+   "prediction_error": {
+    "hover_throttle_pct": null,
+    "flight_time_pct": null
+   },
+   "pareto": [
+    {
+     "cost_usd": 574.04,
+     "mass_kg": 1.261
+    }
+   ],
+   "crosscheck": null
+  },
+  {
+   "model": "opus",
+   "baseline": false,
+   "trials": 1,
+   "n_note": "n=1 (one run: not a rate)",
+   "first_test_score": 100.0,
+   "score": 100.0,
+   "best_gate": "G6",
+   "gates": [
+    {
+     "id": "G1",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G2",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G3",
+     "pass": true,
+     "points": 30,
+     "max_points": 30
+    },
+    {
+     "id": "G4",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G5",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G6",
+     "pass": true,
+     "points": 20.0,
+     "max_points": 20
+    }
+   ],
+   "verify_calls": 1,
+   "flights": 11,
+   "wall_s": 235.0,
+   "cost_usd": 1.0,
+   "tokens": 1189216,
+   "failure_reasons": [],
+   "pass_within_budget": {
+    "runs": 1,
+    "passed": 1,
+    "rate": 1.0
+   },
+   "first_viable": {
+    "runs": 1,
+    "reached": 1,
+    "mean_cost_usd": 584.2,
+    "mean_iterations": 7,
+    "mean_verify_calls": 0
+   },
+   "robustness_gap": 0.0,
+   "prediction_error": {
+    "hover_throttle_pct": -4.8,
+    "flight_time_pct": 11.4
+   },
+   "pareto": [
+    {
+     "cost_usd": 584.2,
+     "mass_kg": 1.267
+    }
+   ],
+   "crosscheck": {
+    "runs": 1,
+    "mean_score_change": 0.0
+   }
+  },
+  {
+   "model": "fable",
+   "baseline": false,
+   "trials": 1,
+   "n_note": "n=1 (one run: not a rate)",
+   "first_test_score": 50.0,
+   "score": 100.0,
+   "best_gate": "G6",
+   "gates": [
+    {
+     "id": "G1",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G2",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G3",
+     "pass": true,
+     "points": 30,
+     "max_points": 30
+    },
+    {
+     "id": "G4",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G5",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G6",
+     "pass": true,
+     "points": 20.0,
+     "max_points": 20
+    }
+   ],
+   "verify_calls": 2,
+   "flights": 26,
+   "wall_s": 775.8,
+   "cost_usd": null,
+   "tokens": 3857672,
+   "failure_reasons": [
+    "G6: 2 of 5 seeds pass; first failure: tilt 30.1 deg over the 30 deg limit at height 0.69 m, t=7.8 s",
+    "G6: 3 of 5 seeds pass; first failure: tilt 30.2 deg over the 30 deg limit at height 2.27 m, t=9.3 s"
+   ],
+   "pass_within_budget": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0
+   },
+   "first_viable": {
+    "runs": 1,
+    "reached": 1,
+    "mean_cost_usd": 584.2,
+    "mean_iterations": 7,
+    "mean_verify_calls": 0
+   },
+   "robustness_gap": -8.0,
+   "prediction_error": {
+    "hover_throttle_pct": -3.6,
+    "flight_time_pct": 8.3
+   },
+   "pareto": [
+    {
+     "cost_usd": 584.2,
+     "mass_kg": 1.267
+    }
+   ],
+   "crosscheck": {
+    "runs": 1,
+    "mean_score_change": 0.0
+   }
+  },
+  {
+   "model": "sonnet",
+   "baseline": false,
+   "trials": 1,
+   "n_note": "n=1 (one run: not a rate)",
+   "first_test_score": 20.0,
+   "score": 100.0,
+   "best_gate": "G6",
+   "gates": [
+    {
+     "id": "G1",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G2",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G3",
+     "pass": true,
+     "points": 30,
+     "max_points": 30
+    },
+    {
+     "id": "G4",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G5",
+     "pass": true,
+     "points": 15,
+     "max_points": 15
+    },
+    {
+     "id": "G6",
+     "pass": true,
+     "points": 20.0,
+     "max_points": 20
+    }
+   ],
+   "verify_calls": 2,
+   "flights": 32,
+   "wall_s": 552.9,
+   "cost_usd": 1.7,
+   "tokens": 7419034,
+   "failure_reasons": [
+    "G6: 4 of 5 seeds pass; first failure: did not hold the altitude band for 3 s: longest 2.9 s (peak 2.94 m)"
+   ],
+   "pass_within_budget": {
+    "runs": 1,
+    "passed": 1,
+    "rate": 1.0
+   },
+   "first_viable": {
+    "runs": 1,
+    "reached": 1,
+    "mean_cost_usd": 584.2,
+    "mean_iterations": 10,
+    "mean_verify_calls": 0
+   },
+   "robustness_gap": 0.0,
+   "prediction_error": {
+    "hover_throttle_pct": -4.4,
+    "flight_time_pct": 11.2
+   },
+   "pareto": [
+    {
+     "cost_usd": 584.2,
+     "mass_kg": 1.267
+    }
+   ],
+   "crosscheck": {
+    "runs": 1,
+    "mean_score_change": 0.0
+   }
+  },
+  {
+   "model": "brute_force",
+   "baseline": true,
+   "trials": 1,
+   "n_note": "n=1 (one run: not a rate)",
+   "first_test_score": 20.0,
+   "score": 20.0,
+   "best_gate": "G2",
+   "gates": [
+    {
+     "id": "G1",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G2",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G3",
+     "pass": false,
+     "points": 0,
+     "max_points": 30
+    },
+    {
+     "id": "G4",
+     "pass": false,
+     "points": 0,
+     "max_points": 15
+    },
+    {
+     "id": "G5",
+     "pass": false,
+     "points": 0,
+     "max_points": 15
+    },
+    {
+     "id": "G6",
+     "pass": false,
+     "points": 0,
+     "max_points": 20
+    }
+   ],
+   "verify_calls": 0,
+   "flights": 2,
+   "wall_s": null,
+   "cost_usd": 0.0,
+   "tokens": 0,
+   "failure_reasons": [
+    "G3: nominal flight failed: tilt 30.0 deg over the 30 deg limit at height 0.18 m, t=4.7 s",
+    "G4: not run: an earlier gate failed",
+    "G5: not run: an earlier gate failed",
+    "G6: not run: an earlier gate failed"
+   ],
+   "pass_within_budget": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0
+   },
+   "first_viable": {
+    "runs": 1,
+    "reached": 1,
+    "mean_cost_usd": 482.38,
+    "mean_iterations": 1,
+    "mean_verify_calls": 0
+   },
+   "robustness_gap": 0.0,
+   "prediction_error": {
+    "hover_throttle_pct": null,
+    "flight_time_pct": null
+   },
+   "pareto": [
+    {
+     "cost_usd": 482.38,
+     "mass_kg": 1.149
+    }
+   ],
+   "crosscheck": null
+  },
+  {
+   "model": "haiku",
+   "baseline": false,
+   "trials": 1,
+   "n_note": "n=1 (one run: not a rate)",
+   "first_test_score": 20.0,
+   "score": 20.0,
+   "best_gate": "G2",
+   "gates": [
+    {
+     "id": "G1",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G2",
+     "pass": true,
+     "points": 10,
+     "max_points": 10
+    },
+    {
+     "id": "G3",
+     "pass": false,
+     "points": 0,
+     "max_points": 30
+    },
+    {
+     "id": "G4",
+     "pass": false,
+     "points": 0,
+     "max_points": 15
+    },
+    {
+     "id": "G5",
+     "pass": false,
+     "points": 0,
+     "max_points": 15
+    },
+    {
+     "id": "G6",
+     "pass": false,
+     "points": 0,
+     "max_points": 20
+    }
+   ],
+   "verify_calls": 1,
+   "flights": 15,
+   "wall_s": 711.7,
+   "cost_usd": 0.55,
+   "tokens": 11794202,
+   "failure_reasons": [
+    "G3: nominal flight failed: tilt 30.0 deg over the 30 deg limit at height 1.40 m, t=6.2 s"
+   ],
+   "pass_within_budget": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0
+   },
+   "first_viable": {
+    "runs": 1,
+    "reached": 0,
+    "mean_cost_usd": null,
+    "mean_iterations": null,
+    "mean_verify_calls": null
+   },
+   "robustness_gap": 0.0,
+   "prediction_error": {
+    "hover_throttle_pct": null,
+    "flight_time_pct": null
+   },
+   "pareto": [],
+   "crosscheck": null
+  }
+ ],
+ "feedback_curve": {
+  "fable": {
+   "whatif": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 50.0
+   }
+  },
+  "haiku": {
+   "none": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 20.0
+   },
+   "passfail": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 20.0
+   },
+   "diag": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 20.0
+   },
+   "whatif": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 20.0
+   }
+  },
+  "opus": {
+   "whatif": {
+    "runs": 1,
+    "passed": 1,
+    "rate": 1.0,
+    "first_test": 100.0
+   }
+  },
+  "sonnet": {
+   "none": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 0.0
+   },
+   "passfail": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 20.0
+   },
+   "diag": {
+    "runs": 1,
+    "passed": 0,
+    "rate": 0.0,
+    "first_test": 20.0
+   },
+   "whatif": {
+    "runs": 1,
+    "passed": 1,
+    "rate": 1.0,
+    "first_test": 20.0
+   }
+  }
+ }
+}

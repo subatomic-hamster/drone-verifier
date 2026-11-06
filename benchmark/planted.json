@@ -1,0 +1,110 @@
+{
+ "updated": "2026-11-06T14:24:37-0500",
+ "flagged": 13,
+ "total": 13,
+ "flaws": [
+  {
+   "name": "undersized ESC",
+   "flagged": true,
+   "layer": "L0",
+   "gate": "G1",
+   "why": "ESC_CURRENT: motor needs 56 A for T/W 1.8 at 1.174 kg, ESC rated 40 A"
+  },
+  {
+   "name": "overloaded low-C pack",
+   "flagged": true,
+   "layer": "L1",
+   "gate": "G2",
+   "why": "pack gives 72 A at full throttle, rated 35 A"
+  },
+  {
+   "name": "pack too small for the mission",
+   "flagged": true,
+   "layer": "L1",
+   "gate": "G2",
+   "why": "flight time 213 s at hover down to 20 % charge, limit 300 s"
+  },
+  {
+   "name": "wrong pack voltage (4S on a 6S fan)",
+   "flagged": true,
+   "layer": "L1",
+   "gate": "G2",
+   "why": "thrust to weight 1.34, limit 1.8: 16.1 N at full throttle for 1.225 kg, pack 15.3 V, ESC 120 A; hover at 83 % throttle, "
+  },
+  {
+   "name": "wrong pack voltage (6S on a 3S ESC)",
+   "flagged": true,
+   "layer": "L0",
+   "gate": "G1",
+   "why": "2 design rule errors, first: PIN_VOLTAGE_MISMATCH: wire 'batt_esc': batt.OUT.1 / esc.IN.1: BAT+ drives 25.2 V, above the"
+  },
+  {
+   "name": "connector mismatch",
+   "flagged": true,
+   "layer": "L0",
+   "gate": "G1",
+   "why": "CONNECTOR: pack plug deans, the airframe's lead has xt60"
+  },
+  {
+   "name": "over budget",
+   "flagged": true,
+   "layer": "L0",
+   "gate": "G1",
+   "why": "cost $789.15 against the $620 limit"
+  },
+  {
+   "name": "overweight",
+   "flagged": true,
+   "layer": "L0",
+   "gate": "G1",
+   "why": "mass 1.610 kg against the 1.35 kg limit; 3 design rule errors, first: INTERFERENCE: batt and duct overlap by 2.5 mm at r"
+  },
+  {
+   "name": "under-rated regulator",
+   "flagged": true,
+   "layer": "L0",
+   "gate": "G1",
+   "why": "REGULATOR_CURRENT: two servos at stall, flight computer and range sensor draw 3.19 A, regulator rated 1 A"
+  },
+  {
+   "name": "no yaw control",
+   "flagged": true,
+   "layer": "L2",
+   "gate": "G3",
+   "why": "nominal flight failed: tilt 30.4 deg over the 30 deg limit at height 2.82 m, t=9.9 s"
+  },
+  {
+   "name": "no altitude hold",
+   "flagged": true,
+   "layer": "L2",
+   "gate": "G3",
+   "why": "nominal flight failed: did not hold the altitude band for 3 s: longest 1.0 s (peak 7.32 m)"
+  },
+  {
+   "name": "hard landing",
+   "flagged": true,
+   "layer": "L2",
+   "gate": "G3",
+   "why": "nominal flight failed: touchdown at 4.03 m/s, limit 1.5 m/s"
+  },
+  {
+   "name": "ignores wind",
+   "flagged": true,
+   "layer": "L2",
+   "gate": "G3",
+   "why": "nominal flight failed: landed 3.40 m from the takeoff point, limit 1 m"
+  }
+ ],
+ "clean": [
+  "reference                              yes       100  $574 1.261 kg L1 55.9 %, 331.2 s; error {'hover_throttle_pct': -4.0, 'flight_time_pct': 10.0}; energy ok 8/8, first {'used_wh': 1.9113, 'from_soc_wh': 1.9136, 'available_wh': 55.44, 'ok': True}; ",
+  "M9N GNSS, rocket legs                  yes       100  $584 1.267 kg L1 56.0 %, 328.8 s; error {'hover_throttle_pct': -4.1, 'flight_time_pct': 10.0}; energy ok 8/8, first {'used_wh': 1.9218, 'from_soc_wh': 1.924, 'available_wh': 55.44, 'ok': True}; ",
+  "R-Line pack                            yes       100  $592 1.286 kg L1 56.5 %, 321.4 s; error {'hover_throttle_pct': -4.2, 'flight_time_pct': 10.2}; energy ok 8/8, first {'used_wh': 1.9726, 'from_soc_wh': 1.9749, 'available_wh': 55.44, 'ok': True}; ",
+  "M8N GNSS, VL53L1X range                yes       100  $562 1.285 kg L1 56.5 %, 321.7 s; error {'hover_throttle_pct': -4.1, 'flight_time_pct': 9.9}; energy ok 8/8, first {'used_wh': 1.9689, 'from_soc_wh': 1.9711, 'available_wh': 55.44, 'ok': True}; ",
+  "flagged 13/13 = 1.00; false positives 0/4",
+  "L0+L1 wall (apply + checks), worst of 9: 0.748 s, best 0.105 s; one flight in the sim: 4.6 s to 6.0 s"
+ ],
+ "summary": [
+  "flagged 13/13 = 1.00; false positives 0/4",
+  "L0+L1 wall (apply + checks), worst of 9: 0.748 s, best 0.105 s; one flight in the sim: 4.6 s to 6.0 s"
+ ]
+}
