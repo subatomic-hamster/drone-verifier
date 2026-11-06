@@ -188,7 +188,10 @@ def omp_cmd(model, port, prompt, cwd, wall_s):
     """(cmd, env, extra temp dir) for omp. Isolation proved by negative test (see README): --no-tools leaves only the MCP tools, the project
     .omp/mcp.json in the fresh cwd supplies ours, and a throwaway HOME + agent dir hide the user's mcp.json, skills, rules, memory and
     AGENTS.md. Only agent.db (the provider logins) is symlinked in: omp --profile would lose them. Nothing is copied or printed."""
-    home = tempfile.mkdtemp(prefix="dv-omp-home-")
+    # on disk: omp unpacks a 116 MB native addon into HOME, and each live run would take that from the /tmp quota
+    cache = Path.home() / ".cache" / "drone-verifier"
+    cache.mkdir(parents=True, exist_ok=True)
+    home = tempfile.mkdtemp(prefix="dv-omp-home-", dir=cache)
     agent = Path(home) / "agent"
     agent.mkdir()
     real = Path(os.environ.get("PI_CODING_AGENT_DIR") or Path.home() / ".omp" / "agent")
