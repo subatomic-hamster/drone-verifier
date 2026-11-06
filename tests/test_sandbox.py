@@ -157,6 +157,8 @@ def test_legal_numpy_controller_works():
         "    def __init__(self, cfg):\n"
         "        self.m = cfg.mass; self.I = np.diag(cfg.inertia); self._h = np.linalg.inv(self.I)\n"
         "    def step(self, t, s):\n"
+        "        a = np.linalg.pinv(np.eye(3)) + np.cross(np.eye(3), np.eye(3)); b = float(a.min() + a.max() + a.std() + np.median(a) + np.interp(0.5, [0, 1], [0, 1]) + np.random.default_rng(1).normal())\n"
+        "        c = str(a) + repr(np.percentile(a, 50))\n"
         "        d = float(np.clip(self.m * 0.3 + math.sin(t) * 0.0, 0, 1))\n"
         "        return {'duty': d, 'vanes': list(np.zeros(4))}\n"
     )

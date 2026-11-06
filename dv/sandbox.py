@@ -197,8 +197,29 @@ def child_main():
     import numpy as np
     import numpy.fft  # everything lazy is loaded before the uid drop
     import numpy.linalg
+
+    # whatever numpy loads lazily is loaded now: after the lockdown no file can be opened
+    import numpy.ma
+    import numpy.polynomial
     import numpy.random
 
+    a = np.eye(3)
+    (
+        np.median(a),
+        np.percentile(a, 50),
+        np.linalg.pinv(a),
+        np.linalg.solve(a, a),
+        np.linalg.norm(a),
+        np.fft.fft(a),
+        np.random.default_rng(0).normal(),
+        a.min(),
+        a.max(),
+        a.mean(),
+        a.std(),
+        np.cross(a, a),
+        np.interp(0.5, [0, 1], [0, 1]),
+        str(a),
+    )
     banned = _numpy_module_attrs()
     os.chdir(sys.argv[2])
     _lockdown()
@@ -216,7 +237,9 @@ def child_main():
             return
 
         def guarded_import(name, globals=None, locals=None, fromlist=(), level=0):
-            if level or name not in ALLOWED_IMPORTS:
+            # numpy's C code imports its own internals through the calling frame's builtins, so an already loaded numpy.* module must pass; the agent's own import statements were checked by the AST
+            internal = name in sys.modules and name.split(".")[0] == "numpy"
+            if level or not (name in ALLOWED_IMPORTS or internal):
                 raise ImportError(f"import of {name} is not allowed")
             return builtins.__import__(name, globals, locals, fromlist, level)
 
