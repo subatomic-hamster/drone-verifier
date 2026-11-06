@@ -23,7 +23,7 @@ Each screen is dvsim's own GUI, streamed to a browser as the agent works through
 
 ## Same task, different models
 
-Opus, Sonnet and Fable each chose the same seven parts on their own and differ only in where they put the battery; the score gap between them comes from their controllers. DeepSeek Flash went for a cheaper ESC and a higher-rated pack.
+Opus, Sonnet and Fable each chose the same seven parts on their own and differ in hardware only by where they put the battery, so the score gap between them most likely comes from their controllers. DeepSeek Flash went for a cheaper ESC and a higher-rated pack.
 
 |                                                                            |                                                                               |
 | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
