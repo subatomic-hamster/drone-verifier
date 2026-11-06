@@ -1,0 +1,10 @@
+runs/
+results/
+*.dvsimog
+*.mp4
+*.webm
+*.png
+*.jpg
+__pycache__/
+.venv/
+.pytest_cache/
