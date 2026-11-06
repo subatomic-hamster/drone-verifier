@@ -66,16 +66,16 @@ Numbers below are provisional: the reference design pins them so it passes with 
 hopper (RTK GNSS, 120 A ESC, about $850) fails on cost. Final values live in `dv/task.toml`, the single source for the
 prompt, the tools and the gates.
 
-| constraint                      | value                   | checked by |
-| ------------------------------- | ----------------------- | ---------- |
-| cost (BOM, catalog prices)      | <= $700                 | static     |
-| mass, all-up                    | <= 1.35 kg              | static     |
-| envelope                        | <= 350 x 350 x 400 mm   | static     |
-| design rules                    | 0 errors from dvsim DRC  | static     |
-| thrust to weight at full charge | >= 1.8                  | lift       |
-| battery left at landing         | >= 20 % state of charge | flight     |
+| constraint                                        | value                             | checked by |
+| ------------------------------------------------- | --------------------------------- | ---------- |
+| cost (dvsim BOM: parts, printed, wire, connectors) | <= $620 (reference $574.04 + 8 %) | static     |
+| mass, all-up                                      | <= 1.35 kg                        | static     |
+| envelope                                          | <= 350 x 350 x 400 mm             | static     |
+| design rules                                      | 0 errors from dvsim DRC            | static     |
+| thrust to weight at full charge                   | >= 1.8                            | lift       |
+| battery left at landing                           | >= 20 % state of charge           | flight     |
 
-Mission: from the pad, climb to 3.0 m (+-0.3 m), hold 3 s, land within 0.5 m of the takeoff point at <= 1.5 m/s, tilt never
+Mission: from the pad, climb to 3.0 m (+-0.3 m), hold 3 s, land within 1.0 m of the takeoff point at <= 1.5 m/s, tilt never
 over 30 deg, upright at rest, inside 40 s.
 
 ## Verification gauntlet
