@@ -76,8 +76,33 @@ def main():
         for i in range(extra):
             b = D.apply(REF)
             b.static = None
-            r = verify.run_gates(b, code, 7000 + 100 * i)
+            ends = []
+            r = verify.run_gates(
+                b,
+                code,
+                7000 + 100 * i,
+                emit=lambda k, **f: ends.append(f) if k == "flight_end" else None,
+            )
             scores.append(r["score"])
+            for f in ends:
+                m = f["metrics"]
+                print(
+                    "   ",
+                    f["scenario"],
+                    "dist",
+                    m.get("land_dist_m"),
+                    "td",
+                    m.get("touchdown_m_s"),
+                    "tilt",
+                    m.get("tilt_max_deg"),
+                    "zmax",
+                    m.get("z_max_m"),
+                    "soc",
+                    m.get("soc_end_pct"),
+                    "wall",
+                    m.get("wall_s"),
+                    flush=True,
+                )
             fails = [
                 f"{g['id']}: {g['reason'][:140]}"
                 for g in r["gates"]

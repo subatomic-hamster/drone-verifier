@@ -18,13 +18,12 @@ class Events:
 
     def emit(self, kind, **fields):
         with self.cond:
+            now = round(time.time(), 3)
+            # the pinned flight_tick carries its own t (flight seconds), which wins over the unix t; ut is the unix time on every event
             ev = dict(
-                seq=len(self.items),
-                t=round(time.time(), 3),
-                session=self.session,
-                kind=kind,
-                **fields,
+                seq=len(self.items), t=now, ut=now, session=self.session, kind=kind
             )
+            ev.update(fields)
             self.items.append(ev)
             if self.f:
                 self.f.write(json.dumps(ev, default=str) + "\n")

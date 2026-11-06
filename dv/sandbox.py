@@ -22,7 +22,7 @@ BANNED_NAMES = {
 }  # fmt: skip
 BANNED_ATTRS = {
     # file and process surfaces of numpy
-    "load", "save", "savez", "savez_compressed", "loadtxt", "savetxt", "genfromtxt", "fromfile", "tofile", "fromregex", "memmap", "DataSource", "dump", "dumps",
+    "os", "sys", "subprocess", "builtins", "importlib", "load", "save", "savez", "savez_compressed", "loadtxt", "savetxt", "genfromtxt", "fromfile", "tofile", "fromregex", "memmap", "DataSource", "dump", "dumps",
     "ctypes", "ctypeslib", "f2py", "distutils", "testing", "test", "show_config", "show_runtime", "get_include", "lookfor", "source", "info", "who", "from_dlpack",
     "setflags", "getfield", "setfield", "seterrcall", "frombuffer", "tobytes", "fromstring", "byte_bounds", "add_newdoc", "deprecate", "safe_eval",
     # string formatting walks attributes from a string, frames and generators reach globals

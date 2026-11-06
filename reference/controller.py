@@ -43,7 +43,7 @@ class Controller:
             self.phase = "spool"
         if self.phase == "spool":
             self.T = min(self.T + 8.0 * dt, 1.3 * self.m * self.g)
-            if z > 0.03:
+            if z > 0.06 and self.T > 0.95 * self.m * self.g:
                 self.phase, self.zref, self.iz = "climb", z, 0.0
         elif self.phase == "climb":
             vref = 1.0
@@ -75,6 +75,10 @@ class Controller:
             self.ixy = np.clip(self.ixy + 0.3 * exy * dt, -1.0, 1.0)
             self.iz = float(np.clip(self.iz + 0.8 * (self.zref - z) * dt, -3.0, 3.0))
         axy = np.clip(1.2 * exy - 2.0 * s.vel[:2] + self.ixy, -2.5, 2.5)
+        if self.phase == "spool":
+            axy = np.zeros(
+                2
+            )  # on the legs: level, whatever the young GNSS estimate says
         az = 2.5 * (self.zref - z) + 3.0 * (vref - vz) + self.iz
         n = np.array([axy[0], axy[1], self.g])
         n = n / np.linalg.norm(n)
@@ -104,10 +108,9 @@ class Controller:
         tau += np.cross(rate, np.array([0.0, 0.0, H]))
         tau[2] += self.c.fan.yaw_torque_per_newton * T
         # allocation
-        forces = (
-            self.pinv_xy @ tau[:2]
-            + np.ones(4) * float(np.clip(tau[2], -0.1, 0.1)) / self.yaw_per_n
-        )
+        k = self.c.vanes.force_per_rad_per_newton * T
         lim = self.c.vanes.limit_rad
-        d = np.clip(forces / (self.c.vanes.force_per_rad_per_newton * T), -lim, lim)
+        d = np.clip(self.pinv_xy @ tau[:2] / k, -lim, lim)  # roll and pitch first
+        yaw = float(tau[2]) / self.yaw_per_n / k  # yaw gets what range is left
+        d = d + float(np.clip(yaw, -lim - d.min(), lim - d.max()))
         return {"duty": self.duty(self.T, s.vbat), "vanes": [float(v) for v in d]}

@@ -88,7 +88,9 @@ def catalog(slot=None, query=None):
     for name in [slot] if slot else SLOTS:
         s = SLOTS[name]
         opts = []
-        for o in s["options"]:
+        for o in sorted(
+            s["options"], key=lambda x: x["part"]
+        ):  # alphabetical: the file's order says nothing
             pt = library().get(o["part"])
             spec = dict(mass_kg=_value(pt, "mass"))
             spec.update(
@@ -103,6 +105,7 @@ def catalog(slot=None, query=None):
                 part=o["part"],
                 name=o.get("name") or pt.raw.get("name", o["part"]),
                 price_usd=o["price"],
+                price_estimated=not o.get("price_src"),
                 spec=spec,
             )
             if query and query.lower() not in (row["part"] + " " + row["name"]).lower():

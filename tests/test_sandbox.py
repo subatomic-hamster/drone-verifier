@@ -82,10 +82,13 @@ def test_child_cannot_read_root_only_file_even_past_the_ast():
     os.unlink(path)
     print(r.stdout, r.stderr)
     assert "uid 65534" in r.stdout
+    # os.system reports a spawn that RLIMIT_NPROC refused as exit status 127 (32512), not as an OSError: the shell never ran
     assert (
-        "ESCAPED" not in r.stdout.replace("sh ESCAPED", "sh ESCAPED")
-        or "sh ESCAPED -1" in r.stdout
+        "open ESCAPED" not in r.stdout
+        and "write ESCAPED" not in r.stdout
+        and "fork ESCAPED" not in r.stdout
     )
+    assert "sh ESCAPED 0" not in r.stdout
     assert (
         "open denied" in r.stdout
         and "write denied" in r.stdout
@@ -97,16 +100,24 @@ def test_nobody_can_import_numpy_from_the_venv():
     import subprocess
     import sys
 
-    probe = "import os\nos.setgroups([]);os.setgid(65534);os.setuid(65534)\nimport numpy,numpy.linalg,numpy.random\nprint(os.getuid(),numpy.__version__)"
+    fd, path = tempfile.mkstemp(prefix="dv-secret-")
+    os.close(fd)
+    os.chmod(path, stat.S_IRUSR)
+    probe = (
+        "import os,sys\nos.setgroups([]);os.setgid(65534);os.setuid(65534)\nimport numpy,numpy.linalg,numpy.random\nprint(os.getuid(),numpy.__version__)\n"
+        "try:\n    open(sys.argv[1]); print('READ ROOT FILE')\nexcept PermissionError: print('root-only file denied by the uid alone')\n"
+    )
     r = subprocess.run(
-        [sys.executable, "-I", "-c", probe],
+        [sys.executable, "-I", "-c", probe, path],
         capture_output=True,
         text=True,
         cwd="/",
         env=dict(OMP_NUM_THREADS="1"),
     )
+    os.unlink(path)
     print(r.stdout, r.stderr)
     assert r.stdout.startswith("65534 "), r.stderr
+    assert "root-only file denied by the uid alone" in r.stdout
 
 
 @pytest.mark.parametrize(
