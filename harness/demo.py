@@ -52,6 +52,8 @@ MODELS = {
     "nemotron": dict(paid=False, note="free"),
     "deepseek-flash": dict(paid=True, note="untested"),
     "deepseek-pro": dict(paid=True, note="untested"),
+    "gemini-flash-lite": dict(paid=True, note="Gemini 3.5 Flash Lite"),
+    "grok": dict(paid=True, note="Grok 4.7, limited quota"),
 }
 FAKE = dict(paid=False, note="no agent")
 LIVE_PORTS = [8801, 8802, 8803, *range(8812, 8820)]  # never the bench's PORTS

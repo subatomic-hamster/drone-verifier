@@ -907,25 +907,31 @@ function curveSvg(curve) {
     L = 62,
     B = 34,
     T = 66;
-  const x = (i, k) => L + 30 + (i * (W - L - 90)) / 3 + k * 7, // a little apart: several models often share a rate
-    y = (r) => H - B - r * (H - B - T);
+  const x = (i, k) => L + 30 + (i * (W - L - 90)) / 3 + k * 7, // a little apart: several models often share a score
+    y = (v) => H - B - (v / 100) * (H - B - T);
   let s = `<svg viewBox="0 0 ${W} ${H}">`;
-  for (const r of [0, 0.5, 1])
-    s += `<line x1="${L}" x2="${W}" y1="${y(r)}" y2="${y(r)}" class="grid"/><text x="${L - 8}" y="${y(r) + 7}" text-anchor="end">${r * 100}%</text>`;
+  for (const v of [0, 50, 100])
+    s += `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" class="grid"/><text x="${L - 8}" y="${y(v) + 7}" text-anchor="end">${v}</text>`;
+  s += `<text x="${L - 8}" y="${T - 22}" text-anchor="end">exam score</text>`;
   LEVELS.forEach((l, i) => {
     s += `<text x="${x(i, 0)}" y="${H - 8}" text-anchor="middle">${l}</text>`;
   });
-  const stack = {};
   models.forEach((m, k) => {
     const c = PALETTE[k % PALETTE.length];
-    const pts = LEVELS.map((l, i) => [curve[m][l], i]).filter(([p]) => p);
-    s += `<polyline fill="none" stroke="${c}" stroke-width="3" points="${pts.map(([p, i]) => `${x(i, k)},${y(p.rate)}`).join(" ")}"/>`;
-    for (const [p, i] of pts) {
-      const key = `${i}:${p.rate}`;
-      stack[key] = (stack[key] || 0) + 1;
-      s += `<circle cx="${x(i, k)}" cy="${y(p.rate)}" r="6" fill="${c}"/>`;
-      s += `<text x="${x(i, 0) + 10}" y="${y(p.rate) - 10 - (stack[key] - 1) * 19}" fill="${c}">${p.passed}/${p.runs}</text>`;
-    }
+    const line = (key, dash) => {
+      const pts = LEVELS.map((l, i) => [curve[m][l], i]).filter(
+        ([p]) => p && p[key] !== null && p[key] !== undefined,
+      );
+      if (!pts.length) return;
+      s += `<polyline fill="none" stroke="${c}" stroke-width="2.5" ${dash ? 'stroke-dasharray="6 5"' : ""} points="${pts.map(([p, i]) => `${x(i, k)},${y(p[key])}`).join(" ")}"/>`;
+      for (const [p, i] of pts) {
+        s += `<circle cx="${x(i, k)}" cy="${y(p[key])}" r="6" ${dash ? `fill="none" stroke="${c}" stroke-width="2.5"` : `fill="${c}"`}><title>${esc(m)} ${LEVELS[i]}: ${dash ? "first test" : "final"} ${p[key]}, n=${p.runs}</title></circle>`;
+        if (!dash)
+          s += `<text x="${x(i, 0) + 10}" y="${y(p[key]) - 10}" fill="${c}" font-size="12">${p[key]} (n=${p.runs})</text>`;
+      }
+    };
+    line("first_test", true);
+    line("final", false);
     s += `<text x="${L + k * 110}" y="22" fill="${c}" font-weight="700">${esc(m)}</text>`;
   });
   return s + "</svg>";
@@ -1030,9 +1036,12 @@ async function startBoard(url) {
         ranked.length > 1 && top.first_test_score !== low.first_test_score; // a tie has no lowest
       const first = e.first_test_score;
       const known = first !== null && first !== undefined;
-      const gain = known ? Math.round((e.score - first) * 10) / 10 : null;
+      const gain =
+        known && e.score !== null && e.score !== undefined
+          ? Math.round((e.score - first) * 10) / 10
+          : null;
       const tag = e.baseline
-        ? `<span class="tag">BASELINE</span>`
+        ? `<span class="tag">BASELINE, not an agent</span>`
         : two && e === top
           ? `<span class="tag">HIGHEST</span>`
           : two && e === low
@@ -1053,14 +1062,14 @@ async function startBoard(url) {
         fv = e.first_viable,
         pe = e.prediction_error || {};
       return `<tr class="${cls}" title="${esc(String(why ?? ""))}"><td class="name">${name}${tag}</td>
-      <td class="score">${known ? `<b>${first}</b>` : `<span class="dim small">no data</span>`}</td><td class="final">${e.score}</td><td>${known ? `${gain > 0 ? "+" : ""}${gain}` : "no data"}</td><td><div class="chips">${chips}</div></td>
+      <td class="score">${known ? `<b>${first}</b>` : `<span class="dim small">no data</span>`}</td><td class="final">${or(e.score, (v) => v)}</td><td>${or(e.score_strict, (v) => v)}</td><td>${gain !== null ? `${gain > 0 ? "+" : ""}${gain}` : "-"}</td><td><div class="chips">${chips}</div></td>
       <td>${p ? `${p.passed}/${p.runs}` : "-"}</td>
       <td>${fv && fv.reached ? `${fv.reached}/${fv.runs} ${or(fv.mean_cost_usd, (c) => "$" + c.toFixed(0))}` : "-"}</td>
       <td>${or(e.robustness_gap, (g) => g.toFixed(1))}</td>
       <td>${or(pe.hover_throttle_pct, (x) => x.toFixed(1))} / ${or(pe.flight_time_pct, (x) => x.toFixed(1))}</td>
       <td>${or(e.verify_calls, (x) => x)}</td><td>${or(e.flights, (x) => x)}</td>
       <td>${or(e.wall_s, (w) => `${Math.floor(w / 60)}:${String(Math.round(w % 60)).padStart(2, "0")}`)}</td>
-      <td>${e.baseline ? "no LLM" : or(e.cost_usd, (c) => "$" + c.toFixed(2))}</td><td>${e.baseline ? "-" : or(e.tokens, (t) => (t / 1000).toFixed(0) + "k")}</td></tr>`;
+      <td>${e.baseline ? "no LLM" : or(e.cost_usd, (c) => "$" + c.toFixed(2)).replace("-", "unknown")}</td><td>${e.baseline ? "-" : or(e.tokens, (t) => (t / 1000).toFixed(0) + "k")}</td></tr>`;
     })
     .join("");
   const vs =
@@ -1069,13 +1078,13 @@ async function startBoard(url) {
       : "";
   const n = Math.max(0, ...es.map((e) => e.trials || 0));
   const table = es.length
-    ? `<table><tr><th>model</th><th>first test</th><th>final</th><th>gain</th><th>gates</th><th>pass in budget</th><th>first viable</th><th>robust gap</th><th>L1 vs sim err % hover / time</th><th>verify</th><th>flights</th><th>time</th><th>LLM cost</th><th>tokens</th></tr>${rows}</table>
-    <div class="actions dim"><span>up to ${n} run${n === 1 ? "" : "s"} per model: a demonstration, not a statistic. Ranked on the first test; final is on held-out seeds after iterating. Prediction error is model against sim, not real flight.</span>${vs}</div>`
+    ? `<table><tr><th>model</th><th>First test (exam)</th><th>Final (exam)</th><th>Strict gates</th><th>gain</th><th>gates</th><th>pass in budget</th><th>first viable</th><th>robust gap</th><th>L1 vs sim err % hover / time</th><th>verify</th><th>flights</th><th>time</th><th>LLM cost</th><th>tokens</th></tr>${rows}</table>
+    <div class="actions dim"><span>up to ${n} run${n === 1 ? "" : "s"} per model: a demonstration, not a statistic. Ranked on the first test (hidden exam, 0 to 100, 100 out of reach by construction); final is the exam after iterating; strict gates is the practice-test score on the held-out seed, a different scale. Human and brute force are baselines, listed after the agents. Prediction error is model against sim, not real flight.</span>${vs}</div>`
     : NO_RUNS;
   app.append(
     el(`<div class="board"><h1>Leaderboard</h1>${table}
     <div class="panels">
-      <div class="panel"><h2>Does verification help? Pass rate by feedback level</h2>${curveSvg(lb && lb.feedback_curve)}<div class="dim small">passed/runs at each level. The level is what the agent saw; this page always shows the full result.</div></div>
+      <div class="panel"><h2>Does verification help? Exam score 0 to 100 by feedback level</h2>${curveSvg(lb && lb.feedback_curve)}<div class="dim small">Solid: final exam score. Dashed, hollow: first test. Each point is the mean over n runs, mostly n=1: one run, not a statistic. The level is what the agent saw; this page always shows the full result.</div></div>
       <div class="panel"><h2>Cost vs mass, best viable designs</h2>${paretoSvg(es)}<div class="dim small">Non-dominated designs per model; lower left is better. Hollow: baseline.</div></div>
       <div class="panel"><h2>Can the verifier be trusted?</h2>${trustHtml(planted)}</div>
     </div></div>`),

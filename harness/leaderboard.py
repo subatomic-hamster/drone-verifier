@@ -27,11 +27,13 @@ def mean(xs):
 
 
 def passed(r):
-    """A run passed if a verify inside its budget did, or if its final state took every strict gate on the held-out seed: pass_within_budget alone reads a final-100 run that never verified as 0/1."""
-    return (
-        bool(r.get("pass_within_budget"))
-        or r.get("score_strict", r.get("score", 0)) >= 100
-    )
+    """The run's own pass_within_budget, raw: a verify inside the budget passed. A run killed at the wall limit and scored after a harness finish is not one."""
+    return bool(r.get("pass_within_budget"))
+
+
+def passed_final(r):
+    """The final state took every strict gate on the held-out seed, whether or not it verified in budget."""
+    return r.get("score_strict", r.get("score", 0)) >= 100
 
 
 def pareto(points):
@@ -50,7 +52,11 @@ def viable(r):
     fv = r.get("first_viable")
     if fv and fv.get("cost_usd") is not None and fv.get("mass_kg") is not None:
         v.append(fv)
-    if passed(r) and r.get("cost_usd_bom") is not None and r.get("mass_kg") is not None:
+    if (
+        (passed(r) or passed_final(r))
+        and r.get("cost_usd_bom") is not None
+        and r.get("mass_kg") is not None
+    ):
         v.append({"cost_usd": r["cost_usd_bom"], "mass_kg": r["mass_kg"]})
     return v
 
@@ -71,13 +77,14 @@ def use_hard(r):
         r.get("partial_score") if base else ft.get("partial_score")
     )
     r["first_test_score"] = r.get("hard_score") if base else ft.get("hard_score")
-    if "hard_score" in r:
-        r["score"] = r["hard_score"]
+    r["score"] = r.get(
+        "hard_score"
+    )  # None, not the strict number, when the exam has not scored it
     return r
 
 
 def entry(model, rs):
-    best = max(rs, key=lambda r: r.get("score", 0))
+    best = max(rs, key=lambda r: r["score_strict"])
     g = lambda k: mean(r.get(k) for r in rs)
     ok = [x["id"] for x in best.get("gates", []) if x.get("pass")]
     tok = lambda r: sum((r.get("tokens") or {}).values())
@@ -112,6 +119,7 @@ def entry(model, rs):
             "passed": n_pass,
             "rate": round(n_pass / len(rs), 2),
         },
+        "passed_final": {"runs": len(rs), "passed": sum(passed_final(r) for r in rs)},
         "first_viable": {
             "runs": len(rs),
             "reached": len(fv),
@@ -158,6 +166,7 @@ def build(results_dir=RESULTS):
             )
             c["runs"] += 1
             c["passed"] += passed(r)
+            c["passed_final"] = c.get("passed_final", 0) + passed_final(r)
             for k, v in (("first_test", first_test_score(r)), ("final", r["score"]), ("first_test_strict", r["first_test_score_strict"]), ("final_strict", r["score_strict"])):  # fmt: skip
                 c.setdefault(k, []).append(v)
     for lv in curve.values():
@@ -170,7 +179,7 @@ def build(results_dir=RESULTS):
     entries.sort(
         key=lambda e: (
             -(e["first_test_score"] if e["first_test_score"] is not None else -1),
-            -e["score"],
+            -(e["score"] if e["score"] is not None else -1),
             e["verify_calls"] or 0,
             e["wall_s"] or 0,
             e["tokens"],
@@ -200,7 +209,7 @@ if __name__ == "__main__":
         for x in e:
             p = x["pass_within_budget"]
             print(
-                f"{x['model']:12} first={x['first_test_score']} final={x['score']:6} {x['n_note']} gate={x['best_gate']} pass={p['passed']}/{p['runs']} verify={x['verify_calls']} ${x['cost_usd']}{' [baseline]' if x['baseline'] else ''}"
+                f"{x['model']:12} first={x['first_test_score']} final={x['score']}{x['n_note']} gate={x['best_gate']} pass={p['passed']}/{p['runs']} verify={x['verify_calls']} ${x['cost_usd']}{' [baseline]' if x['baseline'] else ''}"
             )
         for m, lv in lb["feedback_curve"].items():
             print(m, {l: f"first={c['first_test']} final={c['final']} n={c['runs']}" for l, c in lv.items()})  # fmt: skip
