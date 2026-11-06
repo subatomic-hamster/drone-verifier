@@ -2,10 +2,9 @@
 
 Everything is a real capture of the real software: the viewer window under Xvfb (UI shots) or the offscreen Vulkan renderer
 (`Sim.render`) of a state reached by a real run (model shots). Run on a host with a Vulkan device, xvfb and (for the PX4 shots)
-the PX4 stack, e.g. on hfbox (GPU jobs hold the shared GPU lock):
+the PX4 stack:
 
-    tools/remote.sh run --gpu '.venv/bin/python tools/screenshots.py all --runs /tmp/dvsim-shots-runs --out build/screens'
-    rsync -e 'ssh -o BatchMode=yes' -a hfbox:/workspace/wt/dvsim/src/build/screens/ docs/showcase/screens/
+    .venv/bin/python tools/screenshots.py all --runs /tmp/dvsim-shots-runs --out build/screens
 
 Subcommands (NAME... = a subset of the shot names, default all; `list` prints them):
     scenarios [--runs DIR] [NAME...]   run the scenarios the model shots replay (`dvsim program`; PX4 ones ~1 min each, CPU only)
