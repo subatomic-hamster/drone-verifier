@@ -4,6 +4,7 @@ scripts/hf.sh uses the same three variables. All of harness/ goes through argv()
 
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
