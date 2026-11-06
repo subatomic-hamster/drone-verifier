@@ -209,6 +209,7 @@ class Session:
             cost_usd=round(b.cost, 2),
             mass_kg=round(b.mass, 4),
             envelope_mm=b.envelope_mm,
+            cost_by_kind=b.cost_by_kind,
             bom=b.bom and b.bom["lines"],
             design_errors=[f"{e['code']}: {e['message']}" for e in b.errors],
             design_warnings=len(b.warnings),

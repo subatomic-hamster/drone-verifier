@@ -316,11 +316,14 @@ def child_main():
             return
         try:
             m = json.loads(raw)
-            out = step(m["t"], _conv(m["s"], np))
+            s = _conv(m["s"], np)
+            cpu0 = time.process_time()
+            out = step(m["t"], s)
             duty, vanes = float(out["duty"]), [float(x) for x in out["vanes"]]
+            cpu = time.process_time() - cpu0
             if len(vanes) != 4:
                 raise ValueError("vanes must have 4 entries")
-            send(dict(duty=duty, vanes=vanes))
+            send(dict(duty=duty, vanes=vanes, cpu=cpu))
         except BaseException as e:  # noqa: BLE001
             send(dict(error=f"{type(e).__name__}: {scrub(e)}", line=_err_line(e)))
             return
@@ -328,7 +331,8 @@ def child_main():
 
 # ---------------------------------------------------------------------------------------------------------------- parent
 class Controller:
-    """One sandboxed controller for one flight. step() -> (duty, vanes): holds the last command when the child is late; after `dead` is set the command is zero (motor off).
+    """One sandboxed controller for one flight. step() -> (duty, vanes): holds the last command when step() used more than deadline_s of CPU; after `dead` is set the command is zero
+    (motor off). The sim waits for the reply, so lateness is CPU time, not wall time: other jobs on a shared box cannot fail a flight or change it. No reply in hang_s of wall time = hung.
     Fields: late (steps held), steps, error (first error text, with the line), dead."""
 
     def __init__(self, code, cfg, deadline_s=0.025, init_s=5.0, hang_s=1.0):
@@ -336,7 +340,6 @@ class Controller:
         self.late = self.steps = 0
         self.error = None
         self.dead = False
-        self.pending_since = None
         self.last = (0.0, [0.0, 0.0, 0.0, 0.0])
         self.buf = b""
         self.cwd = tempfile.mkdtemp(prefix="dv-empty-")
@@ -415,21 +418,16 @@ class Controller:
         self.steps += 1
         if self.dead:
             return self.last
-        if self.pending_since is None:
-            self._send(dict(t=t, s=s))
-            if self.dead:
-                return self.last
-            self.pending_since = time.perf_counter()
-        r = self._recv(self.deadline_s)
+        self._send(dict(t=t, s=s))
+        if self.dead:
+            return self.last
+        r = self._recv(self.hang_s)
         if r is None:
             self.late += 1
-            if time.perf_counter() - self.pending_since > self.hang_s:
-                self._die(
-                    f"controller hung at t={t:.2f} s: step() did not return within {self.hang_s} s"
-                )
+            self._die(
+                f"controller hung at t={t:.2f} s: step() did not return within {self.hang_s} s"
+            )
             return self.last
-        was_late = time.perf_counter() - self.pending_since > self.deadline_s
-        self.pending_since = None
         if "error" in r:
             self._die(
                 f"step() raised at t={t:.2f} s: {r['error']}"
@@ -447,7 +445,7 @@ class Controller:
         except (KeyError, TypeError, ValueError):
             self._die(f"step() returned NaN, inf or a bad command at t={t:.2f} s")
             return self.last
-        if was_late:
+        if r.get("cpu", 0.0) > self.deadline_s:
             self.late += 1
             return self.last
         self.last = (duty, vanes)

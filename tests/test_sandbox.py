@@ -1,8 +1,10 @@
 """Escapes that must fail, and a legal numpy controller that must work. Run on hfbox as root (`pytest tests/test_sandbox.py`): the uid drop is part of what is tested."""
 
 import os
+import signal
 import stat
 import tempfile
+import threading
 
 import pytest
 from dv.sandbox import Controller, check_source
@@ -131,6 +133,28 @@ def test_hang_or_memory_in_step_ends_the_controller(body):
     c, out = run(src(step=body), n=80, deadline_s=0.02, hang_s=0.3)
     assert c.dead and c.error
     assert out == (0.0, [0.0, 0.0, 0.0, 0.0])
+
+
+def test_lateness_is_cpu_time_not_wall_time():
+    """A stalled child (a busy shared box) is not late; a step that burns CPU is, and its command is dropped."""
+    code = (
+        "class Controller:\n"
+        "    def __init__(self, cfg):\n"
+        "        self.n = 0\n"
+        "    def step(self, t, s):\n"
+        "        self.n += 1\n"
+        "        x = 0\n"
+        "        for i in range(5000000 if self.n == 2 else 0):\n"
+        "            x += i\n"
+        "        return dict(duty=self.n / 10.0, vanes=[0.0, 0.0, 0.0, 0.0])\n"
+    )
+    c = Controller(code, CFG, deadline_s=0.02)
+    os.kill(c.p.pid, signal.SIGSTOP)
+    threading.Timer(0.2, os.kill, (c.p.pid, signal.SIGCONT)).start()
+    assert c.step(0.0, S)[0] == 0.1 and c.late == 0  # stalled 0.2 s, no CPU used
+    assert c.step(0.004, S)[0] == 0.1 and c.late == 1  # burned CPU: held
+    assert c.step(0.008, S)[0] == 0.3 and c.late == 1
+    c.close()
 
 
 def test_hang_in_init_does_not_start():

@@ -1,7 +1,7 @@
 """The agent's design: slot choices applied to a real dvsim Design built from assemblies/hopper.toml, so mates, wires and devices are real and dvsim's DRC and BOM are the truth.
 
-Prices live in dv/task.toml and are written into the in-memory part library (dvsim's BOM reads `price` from there). The GNSS chip is an off-board data instance whose module the
-harness carries, so its price is added to the BOM total and its mass set on the harness, as assemblies/hopper.toml does for its RTK receiver."""
+Prices are dvsim's (parts/_prices, read by Library and summed by bom()); task.toml holds none. The GNSS chip is an off-board data instance whose module the harness carries, so dvsim's
+BOM has no line for it: the module's dvsim price is added to the BOM total and its mass set on the harness, as assemblies/hopper.toml does for its RTK receiver."""
 
 import math
 import os
@@ -26,18 +26,12 @@ _lib = None
 
 
 def library():
-    """The parts library with the catalog's prices. ponytail: mutated in memory, dvsim's files are never touched."""
+    """The parts library with the catalog's seat and joint additions. ponytail: mutated in memory, dvsim's files are never touched."""
     global _lib
     if _lib is None:
         _lib = Library(DVSIM / "parts")
-        for part, price in TASK[
-            "kit"
-        ].items():  # only where dvsim's own part has no price
-            if _lib.get(part).value("price") is None:
-                _price(_lib, part, price)
         for slot in SLOTS.values():
             for o in slot["options"]:
-                _price(_lib, o["part"], o["price"], o.get("price_src"))
                 pt = _lib.get(o["part"])
                 if o.get(
                     "joinable"
@@ -58,14 +52,11 @@ def library():
     return _lib
 
 
-def _price(lib, part, usd, src=None):
-    """`src` = where a real price came from; without one the price is marked estimated (task.toml, dvsim part files carry almost no prices)."""
-    lib.get(part).params["price"] = dict(
-        value=float(usd),
-        unit="USD",
-        fidelity="literature" if src else "estimated",
-        **({"derivation": src} if src else {"rationale": EST}),
-    )
+def _price(part):
+    """dvsim's price of one unit: {cost, fidelity?, kind} whether sold, printed or by weight; None if it has none."""
+    lib = library()
+    p = _bom._part_price(lib, part, lib.get(part).value("mass") or 0.0)
+    return p if isinstance(p, dict) else None
 
 
 def option(slot, part):
@@ -101,11 +92,13 @@ def catalog(slot=None, query=None):
                 }
             )
             spec.update(o.get("spec", {}))
+            price = _price(o["part"])
             row = dict(
                 part=o["part"],
                 name=o.get("name") or pt.raw.get("name", o["part"]),
-                price_usd=o["price"],
-                price_estimated=not o.get("price_src"),
+                price_usd=round(price["cost"], 2),
+                price_estimated=price.get("kind") == "printed"
+                or price.get("fidelity") == "estimated",
                 spec=spec,
             )
             if query and query.lower() not in (row["part"] + " " + row["name"]).lower():
@@ -176,41 +169,26 @@ def apply(choices):
         )
     except (DesignError, KeyError, ValueError, IndexError) as e:
         b.build_error = str(e)
-    gnss_price = (
-        option("gnss", choices["gnss"])["price"] if choices.get("gnss") else 0.0
-    )
+    gnss_price = _price(choices["gnss"])["cost"] if choices.get("gnss") else 0.0
     if b.report:
         b.xml = re.sub(
             r'file="(?!/)', f'file="{lib.root}/', b.xml
         )  # the MJCF is flown from other directories
         bm = _bom.bom(b.report, lib)
         b.cost = bm["total"]["cost"] + gnss_price
-        b.cost_by_kind = _cost_by_kind(bm, gnss_price)
+        b.cost_by_kind = {k: round(v, 2) for k, v in bm["by_kind"].items()}
+        b.cost_by_kind["gnss_module"] = round(gnss_price, 2)
         b.mass = b.report["mass"]["total"]
         b.bom = bm
         b.props = mass_props(b.xml)
         b.envelope_mm = b.props["envelope_mm"]
     else:  # a partial design that does not build yet: sum the instances
         insts = [i for i in d.doc["instances"] if not i.get("offboard")]
-        b.cost = (
-            sum((lib.get(i["part"]).value("price") or 0.0) for i in insts) + gnss_price
-        )
+        b.cost = sum((_price(i["part"]) or {}).get("cost", 0.0) for i in insts)
+        b.cost += gnss_price
         b.mass = sum((lib.get(i["part"]).value("mass") or 0.0) for i in insts)
         b.bom, b.props, b.envelope_mm, b.cost_by_kind = None, None, [0, 0, 0], {}
     return b
-
-
-def _cost_by_kind(bm, gnss_price):
-    """USD by what kind of line it is. The GNSS chip is off-board in the assembly, so dvsim's BOM has no line for it."""
-    kinds = {}
-    for ln in bm["lines"]:
-        k = "estimated" if ln.get("fidelity") == "estimated" else "sourced"
-        kinds[k] = round(kinds.get(k, 0.0) + (ln["unit_price"] or 0.0) * ln["count"], 2)
-    if gnss_price:
-        kinds["gnss_overlay"] = gnss_price
-    if bm["missing"]:
-        kinds["unpriced_lines"] = len(bm["missing"])
-    return kinds
 
 
 # ---- slots that need more than a swap -----------------------------------------------------------------------------------
